@@ -7,23 +7,25 @@
 
 
 float x, y;
-std::mutex* drawing;
 
 void eventLoop() {
     bool left = false;
     while (true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
-        drawing->lock();
         if (x > 0.5f) left = true;
         if (x < -0.5f) left = false;
         if (left == false) x += 0.01f;
         else x -= 0.01f;
-        drawing->unlock();
     }
 }
 
 void drawingLoop() {
-    sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(2000, 2000), "Tetris!");
+    sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
+
+   // sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(desktopMode.width, desktopMode.height, 
+      //  desktopMode.bitsPerPixel), "MORD!", sf::Style::Titlebar);
+
+    sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(1000, 1000), "MORD!", sf::Style::Titlebar);
     Renderer::init(cWindow);
     sf::Event* event = new sf::Event();
     while (cWindow->isOpen()) {
@@ -38,11 +40,13 @@ void drawingLoop() {
         cWindow->clear();//clear with every iteration
 
         //draw here-------------------------------------------------------
-        drawing->lock();
 
-        Renderer::drawRectRC(500, 500, 100, 100, sf::Color(255, 255, 0, 255));
+        Renderer::drawRect(500, 100, 400, 400, sf::Color(255, 255, 0, 255));
+
+        Renderer::drawRect(900, 100, 100, 100, sf::Color(255, 0, 0, 255));
+        Renderer::drawRectOutline(900, 100, 100, 100, sf::Color(255, 255, 255, 255), 10);
+
         //\draw here------------------------------------------------------
-        drawing->unlock();
         cWindow->display();//display things drawn since clear() was called
 
     }
@@ -58,7 +62,6 @@ void init() {
     x = -0.5f;
     y = 0.0f;
     Renderer::initGrid(1000, 1000);
-    drawing = new std::mutex();
     std::thread* rThread = new std::thread(&drawingLoop);
     eventLoop();
 }
