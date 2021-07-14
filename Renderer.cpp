@@ -3,13 +3,14 @@
 
 //Call this-----------------------------------------------------------------------------------------------------------
 sf::RenderWindow* Renderer::currentWindow;
-
+sf::Vector2u firstSize;
 void Renderer::init(sf::RenderWindow* window) {
     Renderer::currentWindow = window;
     window->setPosition(sf::Vector2i(0, 0));
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
+    firstSize = Renderer::currentWindow->getSize();
 }
 
  int maxRows, maxCols;
@@ -21,44 +22,42 @@ void Renderer::initGrid(int rows, int cols) {
 //coord conversion-------------------------------------------------------------------------------------------------------
 
 void fromRowCol(int* ioRow, int* ioCol) {
-    auto size = Renderer::currentWindow->getSize();
     float helpRow = (float)*ioRow;
     float helpCol = (float)*ioCol;
-    *ioRow = (helpRow / maxRows) * size.y;
-    *ioCol = (helpCol / maxCols) * size.x;
-    
+    *ioRow = (helpRow / maxRows) * firstSize.x;
+    *ioCol = (helpCol / maxCols) * firstSize.y;
 }
 
 void fromRowColBounds(int* ioW, int* ioH) {
     auto size = Renderer::currentWindow->getSize();
     float helpW = (float)*ioW;
     float helpH = (float)*ioH;
-    *ioW = (helpW / maxCols) * size.x;
-    *ioH = (helpH / maxRows) * size.y;
+    *ioW = (helpW / maxCols) * firstSize.x;
+    *ioH = (helpH / maxRows) * firstSize.y;
 }
 
 void fromCartesianCoords(float* ioX, float* ioY) {
     auto size = Renderer::currentWindow->getSize();
-    *ioX = (float)(((*ioX + 1.0f) / 2.0f) * ((float)size.x));
-    *ioY = (float)(((1.0f - *ioY) / 2.0f) * ((float)size.y));
+    *ioX = (float)(((*ioX + 1.0f) / 2.0f) * ((float)firstSize.x));
+    *ioY = (float)(((1.0f - *ioY) / 2.0f) * ((float)firstSize.y));
 }
 
 void toCartesianCoords(float* ioX, float* ioY) {
     auto size = Renderer::currentWindow->getSize();
-    *ioX = (float)((*ioX * 2.0f / (float)size.x) - 1.0f);
-    *ioY = (float)((-*ioY * 2.0f / ((float)size.y)) + 1.0f);
+    *ioX = (float)((*ioX * 2.0f / (float)firstSize.x) - 1.0f);
+    *ioY = (float)((-*ioY * 2.0f / ((float)firstSize.y)) + 1.0f);
 }
 
 void fromCartesianBounds(float* ioX, float* ioY) {
     auto size = Renderer::currentWindow->getSize();
-    *ioX = (int)((*ioX / 2.0f) * ((float)size.x));
-    *ioY = (int)((*ioY / 2.0f) * ((float)size.y));
+    *ioX = (int)((*ioX / 2.0f) * ((float)firstSize.x));
+    *ioY = (int)((*ioY / 2.0f) * ((float)firstSize.y));
 }
 
 void toCartesianBounds(float* ioX, float* ioY) {
     auto size = Renderer::currentWindow->getSize();
-    *ioX = (int)((*ioX * 2.0f) / ((float)size.x));
-    *ioY = (int)((*ioY * 2.0f) / ((float)size.y));
+    *ioX = (int)((*ioX * 2.0f) / ((float)firstSize.x));
+    *ioY = (int)((*ioY * 2.0f) / ((float)firstSize.y));
 }
 
 //\coord conversion-------------------------------------------------------------------------------------------------------
@@ -124,7 +123,7 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
 }
 
 
-/*
+
 void Renderer::drawRectC(float ioX, float ioY, float width, float height, sf::Color c) {
     fromCartesianBounds(&width, &height);
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
@@ -217,4 +216,4 @@ void Renderer::drawText(float x, float y, float size, sf::Color c, char const* i
     currentWindow->draw(*text);
     delete text;
     delete font;
-}*/
+}

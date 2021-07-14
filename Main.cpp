@@ -25,7 +25,7 @@ void drawingLoop() {
    // sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(desktopMode.width, desktopMode.height, 
       //  desktopMode.bitsPerPixel), "MORD!", sf::Style::Titlebar);
 
-    sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(1000, 1000), "MORD!", sf::Style::Titlebar);
+    sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
     Renderer::init(cWindow);
     sf::Event* event = new sf::Event();
     while (cWindow->isOpen()) {
@@ -41,11 +41,8 @@ void drawingLoop() {
 
         //draw here-------------------------------------------------------
 
-        Renderer::drawRect(500, 100, 400, 400, sf::Color(255, 255, 0, 255));
-
-        Renderer::drawRect(900, 100, 100, 100, sf::Color(255, 0, 0, 255));
-        Renderer::drawRectOutline(900, 100, 100, 100, sf::Color(255, 255, 255, 255), 10);
-
+        Renderer::drawRect(10, 10, 990, 50, sf::Color(255, 255, 0, 255));
+        Renderer::drawRectC(-0.9f, -0.9f, 1.0f, 1.0f, sf::Color(255, 255, 0, 255));
         //\draw here------------------------------------------------------
         cWindow->display();//display things drawn since clear() was called
 
@@ -61,7 +58,7 @@ void drawingLoop() {
 void init() {
     x = -0.5f;
     y = 0.0f;
-    Renderer::initGrid(1000, 1000);
+    Renderer::initGrid(1920, 1080);
     std::thread* rThread = new std::thread(&drawingLoop);
     eventLoop();
 }
