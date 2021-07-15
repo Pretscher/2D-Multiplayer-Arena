@@ -21,10 +21,6 @@ void eventLoop() {
 
 void drawingLoop() {
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
-
-   // sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(desktopMode.width, desktopMode.height,
-      //  desktopMode.bitsPerPixel), "MORD!", sf::Style::Titlebar);
-
     sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
     Renderer::init(cWindow);
     sf::Event* event = new sf::Event();
