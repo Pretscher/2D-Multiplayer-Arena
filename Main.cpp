@@ -1,25 +1,10 @@
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include <thread>
-#include <mutex>
 #include "Renderer.hpp"
+#include "Eventhandling.hpp"
 
-//based
-
-float x, y;
-
-void eventLoop() {
-    bool left = false;
-    while (true) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
-        if (x > 0.5f) left = true;
-        if (x < -0.5f) left = false;
-        if (left == false) x += 0.01f;
-        else x -= 0.01f;
-    }
-}
-
-void drawingLoop() {
+void initDrawing() {
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
     Renderer::init(cWindow);
@@ -36,7 +21,8 @@ void drawingLoop() {
         cWindow->clear();//clear with every iteration
 
         //draw here-------------------------------------------------------
-
+        eventhandling::eventloop();
+        eventhandling::drawingloop();
 
         //\draw here------------------------------------------------------
         cWindow->display();//display things drawn since clear() was called
@@ -51,11 +37,9 @@ void drawingLoop() {
 
 
 void init() {
-    x = -0.5f;
-    y = 0.0f;
     Renderer::initGrid(1920, 1080);
-    std::thread* rThread = new std::thread(&drawingLoop);
-    eventLoop();
+    initDrawing();
+
 }
 
 int main() {
