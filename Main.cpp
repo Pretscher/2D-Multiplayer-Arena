@@ -35,14 +35,8 @@ void initDrawing() {
     std::exit(0);
 }
 
-
-void init() {
-    Renderer::initGrid(1920, 1080);
-    initDrawing();
-
-}
-
 int main() {
-    init();
+    eventhandling::init();
+    initDrawing();
     return 0;
 }

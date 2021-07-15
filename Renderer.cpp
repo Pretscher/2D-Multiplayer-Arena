@@ -24,16 +24,16 @@ void Renderer::initGrid(int rows, int cols) {
 void fromRowCol(int* ioRow, int* ioCol) {
     float helpRow = (float)*ioRow;
     float helpCol = (float)*ioCol;
-    *ioRow = (helpRow / maxRows) * firstSize.x;
-    *ioCol = (helpCol / maxCols) * firstSize.y;
+    *ioRow = (helpRow / maxRows) * firstSize.y;
+    *ioCol = (helpCol / maxCols) * firstSize.x;
 }
 
 void fromRowColBounds(int* ioW, int* ioH) {
     auto size = Renderer::currentWindow->getSize();
     float helpW = (float)*ioW;
     float helpH = (float)*ioH;
-    *ioW = (helpW / maxCols) * firstSize.x;
-    *ioH = (helpH / maxRows) * firstSize.y;
+    *ioW = (helpW / maxCols) * firstSize.y;
+    *ioH = (helpH / maxRows) * firstSize.x;
 }
 
 void fromCartesianCoords(float* ioX, float* ioY) {

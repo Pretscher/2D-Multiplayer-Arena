@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\A%2a-Algorithmus">
+      <UniqueIdentifier>{5d5155e8-e7ba-4861-b6d4-4c21d55f6bfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -27,6 +30,18 @@
     <ClCompile Include="Eventhandling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="aStarAlgorithm\Algorithm.cpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="aStarAlgorithm\BinaryHeap.cpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="aStarAlgorithm\Graph.cpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="aStarAlgorithm\HeapNode.cpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.hpp">
@@ -37,6 +52,21 @@
     </ClInclude>
     <ClInclude Include="Eventhandling.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aStarAlgorithm\Algorithm.hpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="aStarAlgorithm\BinaryHeap.hpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="aStarAlgorithm\Graph.hpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="aStarAlgorithm\GraphNode.hpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="aStarAlgorithm\HeapNode.hpp">
+      <Filter>Header Files\A%2a-Algorithmus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -147,12 +147,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aStarAlgorithm\Algorithm.cpp" />
+    <ClCompile Include="aStarAlgorithm\BinaryHeap.cpp" />
+    <ClCompile Include="aStarAlgorithm\Graph.cpp" />
+    <ClCompile Include="aStarAlgorithm\HeapNode.cpp" />
     <ClCompile Include="Eventhandling.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aStarAlgorithm\Algorithm.hpp" />
+    <ClInclude Include="aStarAlgorithm\BinaryHeap.hpp" />
+    <ClInclude Include="aStarAlgorithm\Graph.hpp" />
+    <ClInclude Include="aStarAlgorithm\GraphNode.hpp" />
+    <ClInclude Include="aStarAlgorithm\HeapNode.hpp" />
     <ClInclude Include="Eventhandling.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Renderer.hpp" />
