@@ -41,8 +41,7 @@ void drawingLoop() {
 
         //draw here-------------------------------------------------------
 
-        Renderer::drawRect(10, 10, 990, 50, sf::Color(255, 255, 0, 255));
-        Renderer::drawRectC(-0.9f, -0.9f, 1.0f, 1.0f, sf::Color(255, 255, 0, 255));
+
         //\draw here------------------------------------------------------
         cWindow->display();//display things drawn since clear() was called
 
