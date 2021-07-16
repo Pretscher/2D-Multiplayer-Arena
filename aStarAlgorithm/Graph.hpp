@@ -13,7 +13,6 @@ public:
 	int** neighbourCosts;
 	int* heapIndices;
 	int** neighbourIndices;
-	bool** isUseable;
 	int* currentGraph;
 	int graphNodeCount;
 	int** rawIndices;
@@ -22,20 +21,6 @@ public:
 	int cols;
 
 	void generateWorldGraph(bool** isUseable);
-
-	~Graph() {
-		delete[] xCoords;
-		delete[] yCoords;
-		delete[] neighbourCount;
-		delete[] heapIndices;
-		delete[] currentGraph;
-		for (int i = 0; i < graphNodeCount; i++) {
-			delete[] neighbourCosts[i];
-			delete[] neighbourIndices[i];
-			delete[] rawIndices[i];
-		}
-		delete[] neighbourCosts;
-		delete[] neighbourIndices;
-		delete[] rawIndices;
-	}
+	int getIndexFromCoords(int row, int col);
+	~Graph();
 };

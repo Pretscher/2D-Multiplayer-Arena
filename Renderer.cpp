@@ -36,28 +36,12 @@ void fromRowColBounds(int* ioW, int* ioH) {
     *ioH = (helpH / maxRows) * firstSize.x;
 }
 
-void fromCartesianCoords(float* ioX, float* ioY) {
+void toRowCol(int* io_X, int* io_Y) {
     auto size = Renderer::currentWindow->getSize();
-    *ioX = (float)(((*ioX + 1.0f) / 2.0f) * ((float)firstSize.x));
-    *ioY = (float)(((1.0f - *ioY) / 2.0f) * ((float)firstSize.y));
-}
-
-void toCartesianCoords(float* ioX, float* ioY) {
-    auto size = Renderer::currentWindow->getSize();
-    *ioX = (float)((*ioX * 2.0f / (float)firstSize.x) - 1.0f);
-    *ioY = (float)((-*ioY * 2.0f / ((float)firstSize.y)) + 1.0f);
-}
-
-void fromCartesianBounds(float* ioX, float* ioY) {
-    auto size = Renderer::currentWindow->getSize();
-    *ioX = (int)((*ioX / 2.0f) * ((float)firstSize.x));
-    *ioY = (int)((*ioY / 2.0f) * ((float)firstSize.y));
-}
-
-void toCartesianBounds(float* ioX, float* ioY) {
-    auto size = Renderer::currentWindow->getSize();
-    *ioX = (int)((*ioX * 2.0f) / ((float)firstSize.x));
-    *ioY = (int)((*ioY * 2.0f) / ((float)firstSize.y));
+    float helpRow = (float)*io_X;
+    float helpCol = (float)*io_Y;
+    *io_X = (helpRow / firstSize.y) * maxRows;
+    *io_Y = (helpCol / firstSize.x) * maxCols;
 }
 
 //\coord conversion-------------------------------------------------------------------------------------------------------
@@ -122,98 +106,13 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
     Renderer::currentWindow->draw(line, 2, sf::Lines);
 }
 
-
-
-void Renderer::drawRectC(float ioX, float ioY, float width, float height, sf::Color c) {
-    fromCartesianBounds(&width, &height);
-    sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
-
-    square->setFillColor(c);
-    fromCartesianCoords(&ioX, &ioY);
-    square->move(ioX, ioY);
-    Renderer::currentWindow->draw(*square);
-    delete square;
-}
-
-void Renderer::drawRectOutlineC(float ioX, float ioY, float width, float height, sf::Color c, float thickness) {
-    float help = 0;
-    thickness *= 1000;//for better values, realistic between 1 and 10
-    toCartesianBounds(&thickness, &help);
-
-    fromCartesianBounds(&width, &height);
-    sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width - thickness, height - thickness));
-    square->setOutlineColor(c);
-    square->setFillColor(sf::Color(0, 0, 0, 0));
-    square->setOutlineThickness(thickness);
-
-
-    fromCartesianCoords(&ioX, &ioY);
-    square->move(ioX + thickness, ioY);
-    Renderer::currentWindow->draw(*square);
-    delete square;
-}
-
-void Renderer::drawCircleC(float ioX, float ioY, float radius, sf::Color c, bool fill) {
-    float unusedHelp = 0;
-    fromCartesianBounds(&radius, &unusedHelp);
-    sf::CircleShape* circle = new sf::CircleShape(radius);
-    circle->setOutlineColor(c);
-    if (fill == true) {
-        circle->setFillColor(c);
-    }
-    else {
-        circle->setFillColor(sf::Color(0, 0, 0, 0));
-    }
-    fromCartesianCoords(&ioX, &ioY);
-    circle->move(ioX, ioY);
-    Renderer::currentWindow->draw(*circle);
-    delete circle;
-}
-
-void Renderer::drawLineC(float x1, float y1, float x2, float y2, sf::Color c) {
-    fromCartesianCoords(&x1, &y1);
-    fromCartesianCoords(&x2, &y2);
-    sf::Vertex line[] =
-    {
-        sf::Vertex(sf::Vector2f(x1, y1)),
-        sf::Vertex(sf::Vector2f(x2, y2))
-    };
-    
-    line->color = c;
-    Renderer::currentWindow->draw(line, 2, sf::Lines);
-}
-
-//Coordinate System Math----------------------------------------------------------------------------------------
-
-sf::Vector2f* Renderer::getMousePos() {
+void Renderer::getMousePos(int* o_x, int* o_y) {
     auto pos = sf::Mouse::getPosition();
     auto offset = currentWindow->getPosition();
     pos.x -= offset.x;
     pos.y -= offset.y;
-    float retX = pos.x;
-    float retY = pos.y;
-    toCartesianCoords(&retX, &retY);
-    return new sf::Vector2f(retX, retY);
-}
-
-void Renderer::drawText(float x, float y, float size, sf::Color c, char const* iText) {
-    fromCartesianCoords(&x, &y);
-
-    sf::Text* text = new sf::Text();
-    sf::Font* font = new sf::Font();
-    font->loadFromFile("consolas.ttf");
-    text->setFont(*font);
-    
-    float help = 0;
-    size *= 10000;//for better values, realistic between 1 and 10
-    toCartesianBounds(&size, &help);
-
-    text->setCharacterSize(size);
-    text->setFillColor(c);
-    text->setPosition(x, y);
-    text->setString(iText);
-    //text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    currentWindow->draw(*text);
-    delete text;
-    delete font;
+    *o_x = pos.x;
+    *o_y = pos.y;
+    toRowCol(o_x, o_y);
+    fromRowCol(o_x, o_y);
 }

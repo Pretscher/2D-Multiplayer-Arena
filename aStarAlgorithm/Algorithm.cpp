@@ -3,9 +3,12 @@
 #include <chrono>
 #include "Algorithm.hpp"
 
-int Algorithm::currentIteration;
-bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* graph, unsigned int startIndex, unsigned int goalIndex) {
+int Algorithm::currentIteration = -1;
+bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
 	currentIteration++;
+	
+	int startIndex = graph->getIndexFromCoords(startRow, startCol);
+	int goalIndex = graph->getIndexFromCoords(goalRow, goalCol);
 
 	int graphNodeCount = graph->graphNodeCount;
 	//initialize GraphnodeHeuristics
@@ -31,7 +34,8 @@ bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* gra
 	previousIndex[startIndex] = startIndex;
 	BinaryHeap* heap = new BinaryHeap(graph, graphNodeCount);
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(graph->currentGraph, graph->xCoords, graph->yCoords, graph->currentGraph[startIndex], graph->currentGraph[goalIndex]), startIndex);
+	HeapNode* toInsert = new HeapNode(getHeuristic(graph->currentGraph, graph->xCoords, graph->yCoords,
+		graph->currentGraph[startIndex], graph->currentGraph[goalIndex]), startIndex);
 	heap->insert(toInsert);
 	bool foundPath = false;
 
@@ -52,7 +56,8 @@ bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* gra
 				distanceTravelled[cNeighbourIndex] = tempDistance;
 				previousIndex[cNeighbourIndex] = cNodeIndex;
 
-				float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->currentGraph, graph->xCoords, graph->yCoords, cNeighbourIndex, goalIndex);
+				float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->currentGraph, graph->xCoords,
+					graph->yCoords, cNeighbourIndex, goalIndex);
 
 				bool alreadyInserted = true;
 				//if graphnode has been inserted to heap (index in heap initialized to -1)
@@ -68,6 +73,7 @@ bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* gra
 				}
 			}
 		}
+		delete helpNode;
 	}
 
 	if (foundPath == true) {
@@ -97,19 +103,16 @@ bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* gra
 		o_XPos[0] = graph->xCoords[startIndex];
 		o_XPos[0] = graph->yCoords[startIndex];
 		*o_pathLenght = pathLenght;
+		std::cout << "path found";
 
 		delete heap;
-		delete[] graph->neighbourCosts;
 		delete[] distanceTravelled;
 		delete[] previousIndex;
-		delete[] graph->heapIndices;
 		return true;
 	}
 	delete heap;
-	delete[] graph->neighbourCosts;
 	delete[] distanceTravelled;
 	delete[] previousIndex;
-	delete[] graph->heapIndices;
 	std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
 	return false;
 }

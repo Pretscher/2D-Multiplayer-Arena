@@ -24,7 +24,7 @@ public:
 	void bubbleDown(int indexOfNodeInHeap);
 	~BinaryHeap() {
 		for (int i = 0; i < nodeCount; i++) {
-			delete heap[i];
+			delete[] heap[i];
 		}
 		delete[] heap;
 	}

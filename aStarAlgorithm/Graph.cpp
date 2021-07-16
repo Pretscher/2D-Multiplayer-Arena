@@ -19,10 +19,27 @@ Graph::Graph(int i_rows, int i_cols) {
     yCoords = new int[lenght];
     currentGraph = new int[lenght];
     heapIndices = new int[lenght];
-    isUseable = new bool* [this->rows]; //double array so we init for y and x (in loop) seperately
 
     rawIndices = new int* [this->rows];
     neighbourCosts = nullptr; //initialized later for every run of algorithm
+}
+
+Graph::~Graph() {
+    delete[] xCoords;
+    delete[] yCoords;
+    delete[] neighbourCount;
+    delete[] heapIndices;
+    delete[] currentGraph;
+    for (int i = 0; i < graphNodeCount; i++) {
+        delete[] neighbourIndices[i];
+        delete[] neighbourCosts[i];
+        if (i < rows) {
+            delete[] rawIndices[i];
+        }
+    }
+    delete[] neighbourCosts;
+    delete[] neighbourIndices;
+    delete[] rawIndices;
 }
 
 /* MEMO:
@@ -42,9 +59,6 @@ void Graph::generateWorldGraph(bool** isUseable) {
 
             //this should be initialized in "makeRectNodesUnusable()" if it was declared unusable
             //we have to do one less iteration through everything if we ask that here :)
-            if (isUseable[y][x] != false) {
-                isUseable[y][x] = true;
-            }
             if (isUseable[y][x] == true) {
                 rawIndices[y][x] = graphNodeCount;
 
@@ -95,9 +109,25 @@ void Graph::generateWorldGraph(bool** isUseable) {
                         neighbourCount[graphNodeCount]++;
                     }
                 }
+
                 currentGraph[graphNodeCount] = graphNodeCount;
                 graphNodeCount++;
             } //End one node
+            else {
+              //  rawIndices[y][x] = NULL;
+                //xCoords[graphNodeCount] = NULL;
+               // yCoords[graphNodeCount] = NULL;
+            }
         } //end one row
     } //end all rows
+}
+
+int Graph::getIndexFromCoords(int row, int col) {
+    if (row < rows && col < cols) {
+        return rawIndices[row][col];
+    }
+    else {
+        std::cout << "out of bounds row or col in 'Graph->getIndexFromCoords'";
+        std::exit(0);
+    }
 }
