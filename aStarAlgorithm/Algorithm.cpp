@@ -4,7 +4,7 @@
 #include "Algorithm.hpp"
 
 int Algorithm::currentIteration = -1;
-bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
+bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
 	currentIteration++;
 	
 	int startIndex = graph->getIndexFromCoords(startRow, startCol);
@@ -89,19 +89,19 @@ bool Algorithm::findPath(int* o_XPos, int* o_YPos, int* o_pathLenght, Graph* gra
 		}
 		//put path indices into path array from end to front
 
-		o_XPos = new int[pathLenght];
-		o_YPos = new int[pathLenght];
+		*o_XPos = new int[pathLenght];
+		*o_YPos = new int[pathLenght];
 		int indexInPath = pathLenght;
 
 		currentIndex = goalIndex;
 		while (currentIndex != startIndex) {
-			o_XPos[indexInPath] = graph->xCoords[currentIndex];
-			o_YPos[indexInPath] = graph->yCoords[currentIndex];
+			(*o_XPos)[indexInPath] = graph->xCoords[currentIndex];
+			(*o_YPos)[indexInPath] = graph->yCoords[currentIndex];
 			currentIndex = previousIndex[currentIndex];
 			indexInPath--;
 		}
-		o_XPos[0] = graph->xCoords[startIndex];
-		o_XPos[0] = graph->yCoords[startIndex];
+		(*o_XPos)[0] = graph->xCoords[startIndex];
+		(*o_YPos)[0] = graph->yCoords[startIndex];
 		*o_pathLenght = pathLenght;
 		std::cout << "path found";
 

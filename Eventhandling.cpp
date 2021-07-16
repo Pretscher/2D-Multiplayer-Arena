@@ -10,8 +10,8 @@ Player* player;
 int rows, cols;
 float pathfindingAccuracy;
 void eventhandling::init() {
-	rows = 1920;
-	cols = 1080;
+	rows = 1080;
+	cols = 1920;
 	pathfindingAccuracy = 0.1f;
 	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
 	//and relative coords on which you can orient your drawing. Also makes drawing a rect
@@ -27,7 +27,7 @@ void eventhandling::init() {
 			collisionGrid[y][x] = true;
 		}
 	}
-	player = new Player(cols / 2, rows / 2, 0.01f);
+	player = new Player(cols / 2, rows / 2, 1.0f);
 }
 
 bool sameClick = false;
@@ -44,14 +44,21 @@ void eventhandling::eventloop() {
 
 		int mouseX, mouseY;
 		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
-		Algorithm::findPath(xPath, yPath, &pathlenght, g, player->getX() * pathfindingAccuracy, player->getY() * pathfindingAccuracy, mouseX * pathfindingAccuracy, mouseY * pathfindingAccuracy);
+		int mouseRow = mouseY * pathfindingAccuracy;
+		int mouseCol = mouseX * pathfindingAccuracy;
+
+		Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() * pathfindingAccuracy, player->getCol() * pathfindingAccuracy, mouseRow, mouseCol);
 		
+		for (int i = 0; i < pathlenght; i++) {
+			xPath[i] /= pathfindingAccuracy;
+			yPath[i] /= pathfindingAccuracy;
+		}
+		player->givePath(xPath, yPath, pathlenght);
 		delete g;
-		delete[] xPath;
-		delete[] yPath;
 	}
+	player->move();
 }
 
 void eventhandling::drawingloop() {
-	Renderer::drawRect(player->getY(), player->getX(), 100, 100, sf::Color(255, 0, 0, 255));
+	Renderer::drawRect(player->getRow(), player->getCol(), 100, 100, sf::Color(255, 0, 0, 255));
 }

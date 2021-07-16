@@ -32,8 +32,8 @@ void fromRowColBounds(int* ioW, int* ioH) {
     auto size = Renderer::currentWindow->getSize();
     float helpW = (float)*ioW;
     float helpH = (float)*ioH;
-    *ioW = (helpW / maxCols) * firstSize.y;
-    *ioH = (helpH / maxRows) * firstSize.x;
+    *ioW = (helpW / maxCols) * firstSize.x;
+    *ioH = (helpH / maxRows) * firstSize.y;
 }
 
 void toRowCol(int* io_X, int* io_Y) {

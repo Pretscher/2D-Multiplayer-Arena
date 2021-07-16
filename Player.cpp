@@ -1,7 +1,40 @@
 #include "Player.hpp"
 
-Player::Player(int i_x, int i_y, float i_vel) {
-	this->x = i_x;
-	this->y = i_y;
+int* pathXpositions;
+int* pathYpositions;
+int pathLenght;
+
+Player::Player(int i_col, int i_row, float i_vel) {
+	this->col = i_col;
+	this->row = i_row;
 	this->velocity = i_vel;
+	pathXpositions = nullptr;
+	pathYpositions = nullptr;
+	pathLenght = -1;
+}
+
+float cPathIndex;
+void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
+	//free memory in case of second path or more
+	pathXpositions = i_pathX;
+	pathYpositions = i_pathY;
+	cPathIndex = 0;
+	pathLenght = i_pathLenght;
+}
+
+void Player::move() {
+	if (pathLenght != -1) {//too lazy for booleans as you can see
+		//has to be a float so that it can be modified by non-int velocities properly
+		int roundPathIndex = int(cPathIndex);
+		//go one step in path
+		this->col = pathXpositions[roundPathIndex];
+		this->row = pathYpositions[roundPathIndex];
+
+		if (cPathIndex + velocity < pathLenght) {
+			cPathIndex += velocity;
+		}
+		else {
+			pathLenght = -1;
+		}
+	}
 }
