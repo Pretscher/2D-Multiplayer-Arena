@@ -40,10 +40,10 @@ void fromRowColBounds(int* ioW, int* ioH) {
 
 void toRowCol(int* io_X, int* io_Y) {
     auto size = Renderer::currentWindow->getSize();
-    float helpRow = (float)*io_X;
-    float helpCol = (float)*io_Y;
-    *io_X = (helpRow / size.y) * maxRows;
-    *io_Y = (helpCol / size.x) * maxCols;
+    float helpRow = (float)*io_Y;
+    float helpCol = (float)*io_X;
+    *io_Y = (helpRow / size.y) * maxRows;
+    *io_X = (helpCol / size.x) * maxCols;
 }
 
 //\coord conversion-------------------------------------------------------------------------------------------------------
@@ -111,13 +111,13 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
 void Renderer::getMousePos(int* o_x, int* o_y) {
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
-    if (pos.x <= size.x && pos.y <= size.y + 30) {
-        auto offset = currentWindow->getPosition();
-        pos.x -= offset.x;
-        pos.y -= offset.y;
-        *o_x = pos.x - (size.x / 128);//side of window
-        *o_y = pos.y - (size.y / 18);//titlebar
-        toRowCol(o_x, o_y);
+    auto offset = currentWindow->getPosition();
+    int x = pos.x - offset.x;
+    int y = pos.y - offset.y - 60;
+    toRowCol(&x, &y);
+    if (x < maxCols && y < maxRows) {
+        *o_x = x;
+        *o_y = y;
     }
 }
 
