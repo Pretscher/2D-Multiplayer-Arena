@@ -50,8 +50,8 @@ void pathFindingInit() {
 	viewSpaceLimits[2] = 0;//top
 	viewSpaceLimits[3] = 2000;//bot
 	cViewSpace = new int[2];
-	cViewSpace[0] = 1000;//row (top to bot)
-	cViewSpace[1] = 1000;//col (left to right)
+	cViewSpace[0] = 0;//row (top to bot)
+	cViewSpace[1] = 0;//col (left to right)
 
 	rows = 1080;
 	cols = 1920;
@@ -91,8 +91,8 @@ void pathFindingOnClick() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			int mouseRow = (mouseY + viewSpaceLimits[3]) / pathfindingAccuracy;
-			int mouseCol = (mouseX + viewSpaceLimits[1]) / pathfindingAccuracy;
+			int mouseRow = (mouseY + cViewSpace[0]) / pathfindingAccuracy;
+			int mouseCol = (mouseX + cViewSpace[1]) / pathfindingAccuracy;
 
 			Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() / pathfindingAccuracy, player->getCol() / pathfindingAccuracy, mouseRow, mouseCol);
 			//reverse accuracy simplification
