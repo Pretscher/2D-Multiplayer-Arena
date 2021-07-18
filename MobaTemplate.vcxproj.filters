@@ -68,5 +68,8 @@
     <ClInclude Include="aStarAlgorithm\HeapNode.hpp">
       <Filter>Header Files\A%2a-Algorithmus</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

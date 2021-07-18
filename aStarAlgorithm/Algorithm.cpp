@@ -103,7 +103,6 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		(*o_XPos)[0] = graph->xCoords[startIndex];
 		(*o_YPos)[0] = graph->yCoords[startIndex];
 		*o_pathLenght = pathLenght;
-		std::cout << "path found";
 
 		delete heap;
 		delete[] distanceTravelled;

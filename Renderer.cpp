@@ -2,11 +2,13 @@
 #include <iostream>
 
 //Call this-----------------------------------------------------------------------------------------------------------
+int* viewSpace;
+
 sf::RenderWindow* Renderer::currentWindow;
 sf::Vector2u firstSize;
 void Renderer::init(sf::RenderWindow* window) {
     Renderer::currentWindow = window;
-    window->setPosition(sf::Vector2i(0, 0));
+    window->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -40,8 +42,8 @@ void toRowCol(int* io_X, int* io_Y) {
     auto size = Renderer::currentWindow->getSize();
     float helpRow = (float)*io_X;
     float helpCol = (float)*io_Y;
-    *io_X = (helpRow / firstSize.y) * maxRows;
-    *io_Y = (helpCol / firstSize.x) * maxCols;
+    *io_X = (helpRow / size.y) * maxRows;
+    *io_Y = (helpCol / size.x) * maxCols;
 }
 
 //\coord conversion-------------------------------------------------------------------------------------------------------
@@ -108,11 +110,41 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
 
 void Renderer::getMousePos(int* o_x, int* o_y) {
     auto pos = sf::Mouse::getPosition();
-    auto offset = currentWindow->getPosition();
-    pos.x -= offset.x;
-    pos.y -= offset.y;
-    *o_x = pos.x;
-    *o_y = pos.y;
-    toRowCol(o_x, o_y);
-    fromRowCol(o_x, o_y);
+    auto size = Renderer::currentWindow->getSize();
+    if (pos.x <= size.x && pos.y <= size.y + 30) {
+        auto offset = currentWindow->getPosition();
+        pos.x -= offset.x;
+        pos.y -= offset.y;
+        *o_x = pos.x - (size.x / 128);//side of window
+        *o_y = pos.y - (size.y / 18);//titlebar
+        toRowCol(o_x, o_y);
+    }
+}
+
+void Renderer::updateViewSpace(int* io_viewSpace, int* i_viewspaceLimits, int windowRows, int windowCols) {
+    int moveSpeed = 30;
+    
+    int mouseX = -1;
+    int mouseY = -1;
+    getMousePos(&mouseX, &mouseY);
+    if (mouseX != -1) {
+        int localRow = mouseY;
+        int localCol = mouseX;
+
+        if (localRow < windowRows / 10 && io_viewSpace[0] - moveSpeed > i_viewspaceLimits[2]) {
+            io_viewSpace[0] -= moveSpeed;
+        }
+        if (localRow > windowRows * 0.9 && io_viewSpace[0] + moveSpeed < i_viewspaceLimits[3]) {
+            io_viewSpace[0] += moveSpeed;
+        }
+        if (localCol < windowCols / 10 && io_viewSpace[1] - moveSpeed > i_viewspaceLimits[0]) {
+            io_viewSpace[1] -= moveSpeed;
+        }
+        if (localCol > windowCols * 0.9 && io_viewSpace[1] + moveSpeed < i_viewspaceLimits[1]) {
+            io_viewSpace[1] += moveSpeed;
+        }
+    }
+    std::cout << " " << io_viewSpace[0];
+
+    viewSpace = io_viewSpace;
 }

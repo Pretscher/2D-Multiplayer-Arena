@@ -14,4 +14,5 @@ public:
     static void drawLine(int row1, int col1, int row2, int col2, sf::Color c);
   
     static void getMousePos(int* o_x, int* o_y);
+    static void updateViewSpace(int* viewSpace, int* viewspaceLimits, int windowRows, int windowCols);
 };
