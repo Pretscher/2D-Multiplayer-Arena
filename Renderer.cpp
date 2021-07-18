@@ -144,7 +144,6 @@ void Renderer::updateViewSpace(int* io_viewSpace, int* i_viewspaceLimits, int wi
             io_viewSpace[1] += moveSpeed;
         }
     }
-    std::cout << " " << io_viewSpace[0];
 
     viewSpace = io_viewSpace;
 }
