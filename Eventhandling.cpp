@@ -5,15 +5,21 @@
 #include "aStarAlgorithm/Algorithm.hpp"
 #include "Terrain.hpp"
 
-Player* player;
-Terrain* terrain;
+Player* player;//movable player
+Terrain* terrain;//contains every non-moving object with collision
 
-int* cViewSpace;
-int* viewSpaceLimits;
+//Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
+int* cViewSpace;//current viewspace position. [0] is row (bot to top), [1] is col (left to right) 
+int* viewSpaceLimits;//maximum viewspace.
 
-int rows, cols;
-int pathfindingAccuracy;
+int rows, cols;//rows and cols you can see at a time, viewspace limits need to be added for worldSize
+int pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
+
+//double array for every visitable (pathfindingaccuracy factored in) pixel, 
+//if it can be used for pathfinding true, else false
 bool** collisionGrid;
+
+//forward declarations
 void pathFindingOnClick();
 void pathFindingInit();
 void hardCodeTerrain();
@@ -28,19 +34,21 @@ void eventhandling::init() {
 }
 
 void eventhandling::eventloop() {
-	pathFindingOnClick();
-	player->move();
-	Renderer::updateViewSpace(cViewSpace, viewSpaceLimits, rows, cols);
+	pathFindingOnClick();//right click => find path to right clicked spot and give it to player
+	player->move();//if he has a path, he moves on this path
+	Renderer::updateViewSpace(cViewSpace, viewSpaceLimits, rows, cols);//move view space if mouse on edge of window
 }
 
 void eventhandling::drawingloop() {
 	terrain->draw();
-	Renderer::drawRect(player->getRow(), player->getCol(), 100, 100, sf::Color(255, 0, 0, 255));
+	Renderer::drawRect(player->getRow(), player->getCol(), 100, 100, sf::Color(255, 0, 0, 255));//draw Player
 }
 
 
 
 //Pathfinfing--------------------------------------------------------------------------------------------
+
+//rows and cols of one visible window + viewspace limit coords = max coords we need for pathfinding
 int worldRows;
 int worldCols;
 void pathFindingInit() {
@@ -53,6 +61,7 @@ void pathFindingInit() {
 	cViewSpace[0] = 0;//row (top to bot)
 	cViewSpace[1] = 0;//col (left to right)
 
+	//hardcoded rows and cols
 	rows = 1080;
 	cols = 1920;
 	worldRows = rows + viewSpaceLimits[3];
@@ -64,8 +73,8 @@ void pathFindingInit() {
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
 	Renderer::initGrid(rows, cols);
 
-	int pathfindingRows = worldRows / pathfindingAccuracy;
-	int pathfindingCols = worldCols / pathfindingAccuracy;
+	int pathfindingRows = worldRows / pathfindingAccuracy;//max rows for pathfinding
+	int pathfindingCols = worldCols / pathfindingAccuracy;//max cols for pathfinding
 	collisionGrid = new bool* [pathfindingRows];
 	for (int y = 0; y < pathfindingRows; y++) {
 		collisionGrid[y] = new bool[pathfindingCols];
@@ -76,9 +85,12 @@ void pathFindingInit() {
 	terrain->addCollidablesToGrid(collisionGrid, cViewSpace[0] / pathfindingAccuracy, cViewSpace[1] / pathfindingAccuracy, pathfindingRows, pathfindingCols);
 }
 
-bool sameClick = false;
+bool sameClick = false;//dont do two pathfindings on the same click
 void pathFindingOnClick() {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == false) sameClick = false;
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == false){
+		sameClick = false;
+	}
+
 	//if rightclick is pressed, find path from player to position of click
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false) {
 		sameClick = true;
