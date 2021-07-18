@@ -46,7 +46,7 @@ void eventhandling::drawingloop() {
 
 
 
-//Pathfinfing--------------------------------------------------------------------------------------------
+//Pathfinding--------------------------------------------------------------------------------------------
 
 //rows and cols of one visible window + viewspace limit coords = max coords we need for pathfinding
 int worldRows;

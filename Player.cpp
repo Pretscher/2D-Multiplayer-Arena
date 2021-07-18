@@ -1,5 +1,5 @@
 #include "Player.hpp"
-
+#include <iostream>
 int* pathXpositions;
 int* pathYpositions;
 int pathLenght;
@@ -16,6 +16,10 @@ Player::Player(int i_col, int i_row, float i_vel) {
 float cPathIndex;
 void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 	//free memory in case of second path or more
+	if (pathLenght != -1) {
+		delete[] pathXpositions;
+		delete[] pathYpositions;
+	}
 	pathXpositions = i_pathX;
 	pathYpositions = i_pathY;
 	cPathIndex = 0;

@@ -83,26 +83,31 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		//get lenght of path array
 		int pathLenght = 0;
 		int currentIndex = goalIndex;
-		while (currentIndex != startIndex) {
+		while (true) {
 			currentIndex = previousIndex[currentIndex];
 			pathLenght++;
+			if (currentIndex == startIndex) {
+				break;
+			}
 		}
-		//put path indices into path array from end to front
+		
 
 		*o_XPos = new int[pathLenght];
 		*o_YPos = new int[pathLenght];
-		int indexInPath = pathLenght;
+		*o_pathLenght = pathLenght;
 
+		//put path indices into path array from end to front
+		int indexInPath = pathLenght - 1;
 		currentIndex = goalIndex;
-		while (currentIndex != startIndex) {
+		while (true) {
 			(*o_XPos)[indexInPath] = graph->xCoords[currentIndex];
 			(*o_YPos)[indexInPath] = graph->yCoords[currentIndex];
 			currentIndex = previousIndex[currentIndex];
 			indexInPath--;
+			if (currentIndex == startIndex) {
+				break;
+			}
 		}
-		(*o_XPos)[0] = graph->xCoords[startIndex];
-		(*o_YPos)[0] = graph->yCoords[startIndex];
-		*o_pathLenght = pathLenght;
 
 		delete heap;
 		delete[] distanceTravelled;
