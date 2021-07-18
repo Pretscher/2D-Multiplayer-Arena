@@ -56,7 +56,7 @@ void Renderer::drawRect(int row, int col, int width, int height, sf::Color c) {
 
     square->setFillColor(c);
     fromRowCol(&row, &col);
-    square->move(col, row);
+    square->move(col - viewSpace[1], row - viewSpace[0]);
     Renderer::currentWindow->draw(*square);
     delete square;
 }

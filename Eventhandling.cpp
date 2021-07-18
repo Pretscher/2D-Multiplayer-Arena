@@ -41,7 +41,8 @@ void eventhandling::drawingloop() {
 
 
 //Pathfinfing--------------------------------------------------------------------------------------------
-
+int worldRows;
+int worldCols;
 void pathFindingInit() {
 	viewSpaceLimits = new int[4];
 	viewSpaceLimits[0] = 0;//left
@@ -54,14 +55,17 @@ void pathFindingInit() {
 
 	rows = 1080;
 	cols = 1920;
+	worldRows = rows + viewSpaceLimits[3];
+	worldCols = cols + viewSpaceLimits[1];
+
 	pathfindingAccuracy = 10;
 	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
 	//and relative coords on which you can orient your drawing. Also makes drawing a rect
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
 	Renderer::initGrid(rows, cols);
 
-	int pathfindingRows = rows * pathfindingAccuracy;
-	int pathfindingCols = cols * pathfindingAccuracy;
+	int pathfindingRows = worldRows / pathfindingAccuracy;
+	int pathfindingCols = worldCols / pathfindingAccuracy;
 	collisionGrid = new bool* [pathfindingRows];
 	for (int y = 0; y < pathfindingRows; y++) {
 		collisionGrid[y] = new bool[pathfindingCols];
@@ -69,7 +73,7 @@ void pathFindingInit() {
 			collisionGrid[y][x] = true;
 		}
 	}
-	terrain->addCollidablesToGrid(collisionGrid, cViewSpace[0], cViewSpace[1], rows - cViewSpace[0], cols - cViewSpace[1]);
+	terrain->addCollidablesToGrid(collisionGrid, cViewSpace[0] / pathfindingAccuracy, cViewSpace[1] / pathfindingAccuracy, pathfindingRows, pathfindingCols);
 }
 
 bool sameClick = false;
@@ -78,7 +82,7 @@ void pathFindingOnClick() {
 	//if rightclick is pressed, find path from player to position of click
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false) {
 		sameClick = true;
-		Graph* g = new Graph(rows / pathfindingAccuracy, cols / pathfindingAccuracy);
+		Graph* g = new Graph(worldRows / pathfindingAccuracy, worldCols / pathfindingAccuracy);
 		g->generateWorldGraph(collisionGrid);
 		int* xPath = nullptr;
 		int* yPath = nullptr;
@@ -87,8 +91,8 @@ void pathFindingOnClick() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			int mouseRow = mouseY / pathfindingAccuracy;
-			int mouseCol = mouseX / pathfindingAccuracy;
+			int mouseRow = (mouseY + viewSpaceLimits[3]) / pathfindingAccuracy;
+			int mouseCol = (mouseX + viewSpaceLimits[1]) / pathfindingAccuracy;
 
 			Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() / pathfindingAccuracy, player->getCol() / pathfindingAccuracy, mouseRow, mouseCol);
 			//reverse accuracy simplification
@@ -105,5 +109,5 @@ void pathFindingOnClick() {
 //Game Object initialization
 
 void hardCodeTerrain() {
-
+	terrain->addRect(1000, 1000, 500, 200);
 }
