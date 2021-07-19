@@ -25,7 +25,7 @@ void pathFindingInit();
 void hardCodeTerrain();
 
 void eventhandling::init() {
-	player = new Player(cols / 2, rows / 2, 1.0f);
+	player = new Player(cols / 2, rows / 2, 100, 100, 1.0f);
 
 	terrain = new Terrain();
 	hardCodeTerrain();
@@ -41,7 +41,7 @@ void eventhandling::eventloop() {
 
 void eventhandling::drawingloop() {
 	terrain->draw();
-	Renderer::drawRect(player->getRow(), player->getCol(), 100, 100, sf::Color(255, 0, 0, 255));//draw Player
+	Renderer::drawRect(player->getRow(), player->getCol(), player->getDrawWidth(), player->getDrawHeight(), sf::Color(255, 0, 0, 255));//draw Player
 }
 
 
@@ -82,7 +82,7 @@ void pathFindingInit() {
 			collisionGrid[y][x] = true;
 		}
 	}
-	terrain->addCollidablesToGrid(collisionGrid, cViewSpace[0] / pathfindingAccuracy, cViewSpace[1] / pathfindingAccuracy, pathfindingRows, pathfindingCols);
+	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, player->getDrawWidth(), player->getDrawHeight());
 }
 
 bool sameClick = false;//dont do two pathfindings on the same click

@@ -122,12 +122,64 @@ void Graph::generateWorldGraph(bool** isUseable) {
     } //end all rows
 }
 
+bool changeRow;
+int rowCounter;
+int colCounter;
+int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int col) {
+    int addRow = 0; 
+    int addCol = 0;
+    rowCounter = 0;
+    colCounter = 0;
+    changeRow = true;
+    int tempRow = row;
+    int tempCol = col;
+    while (rawIndices[tempRow][tempCol] < 0 && row - addRow < maxRow && col - addCol < maxCol && row - addRow >= 0 && col - addCol >= 0) {
+        if (changeRow == true) {
+            if (rowCounter == 1) {
+                addRow ++;
+                rowCounter = 0;
+            }
+            else {
+                rowCounter = 1;
+            }
+            addRow = -addRow;
+            tempRow = row + addRow;
+        }
+        if (changeRow == false) {
+            if (rowCounter == 1) {
+                addCol ++;
+                colCounter = 0;
+            }
+            else {
+                colCounter = 1;
+            }
+            addCol = -addCol;
+            tempCol = col + addCol;
+        }
+        changeRow = !changeRow;
+    }
+    if (rawIndices[tempRow][tempCol] > 0) {
+        return rawIndices[tempRow][tempCol];
+    }
+    else {
+        std::cout << "error in findUseableVertex";
+        std::exit(0);
+    }
+}
+
 int Graph::getIndexFromCoords(int row, int col) {
     if (row < rows && col < cols) {
-        return rawIndices[row][col];
+        if (rawIndices[row][col] >= 0) {
+            return rawIndices[row][col];
+        }
+        else {
+            return findNextUseableVertex(rawIndices, rows, cols, row, col);
+        }
     }
     else {
         std::cout << "out of bounds row or col in 'Graph->getIndexFromCoords'";
         std::exit(0);
     }
+    
+    
 }

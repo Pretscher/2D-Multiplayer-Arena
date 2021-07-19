@@ -4,10 +4,13 @@ int* pathXpositions;
 int* pathYpositions;
 int pathLenght;
 
-Player::Player(int i_col, int i_row, float i_vel) {
+Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel) {
 	this->col = i_col;
 	this->row = i_row;
 	this->velocity = i_vel;
+	this->drawWidth = i_width;
+	this->drawHeight = i_height;
+
 	pathXpositions = nullptr;
 	pathYpositions = nullptr;
 	pathLenght = -1;

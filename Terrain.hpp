@@ -48,21 +48,12 @@ public:
 		}
 	}
 
-	void addCollidablesToGrid(bool** grid, int startRow, int startCol, int maxRow, int maxCol) {
+	void addCollidablesToGrid(bool** grid, int pathfindingAccuracy, int playerWidth, int playerHeight) {
 		for (int i = 0; i < objectsRow->size(); i++) {
 			Rect* rect = this->objectsRow->at(i);
-			//check if rect is in bounds of given coordinates (view coordinates)
-			if (rect->getCol() + rect->getWidth() < startCol
-				|| rect->getCol() > maxCol
-				|| rect->getRow() + rect->getHeight() < startRow
-				|| rect->getRow() > maxRow) {
-				//not in bounds, do nothing for this rect
-			}
-			else {
-				for (int y = rect->getRow(); y < rect->getRow() + rect->getHeight(); y++) {
-					for (int x = rect->getCol(); x < rect->getCol() + rect->getWidth(); x++) {
-						grid[y][x] = false;
-					}
+			for (int y = (rect->getRow() - playerHeight) / pathfindingAccuracy; y < (rect->getRow() + rect->getHeight()) / pathfindingAccuracy; y++) {
+				for (int x = (rect->getCol() - playerWidth) / pathfindingAccuracy; x < (rect->getCol() + rect->getWidth()) / pathfindingAccuracy; x++) {
+					grid[y][x] = false;
 				}
 			}
 		}
