@@ -114,9 +114,9 @@ void Graph::generateWorldGraph(bool** isUseable) {
                 graphNodeCount++;
             } //End one node
             else {
-              //  rawIndices[y][x] = NULL;
-                //xCoords[graphNodeCount] = NULL;
-               // yCoords[graphNodeCount] = NULL;
+                rawIndices[y][x] = -1;
+                xCoords[graphNodeCount] = -1;
+                yCoords[graphNodeCount] = -1;
             }
         } //end one row
     } //end all rows
@@ -126,26 +126,29 @@ bool changeRow;
 int rowCounter;
 int colCounter;
 int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int col) {
-    int addRow = 0; 
+    int addRow = 0;//increment for rows and cols (swaps between negative and positive so it goes in every direction)
     int addCol = 0;
-    rowCounter = 0;
-    colCounter = 0;
-    changeRow = true;
-    int tempRow = row;
+    rowCounter = 0;//swap between adding and not adding in every iteration for rows
+    colCounter = 0;//swap between adding and not adding in every iteration for cols
+    changeRow = true;//swap between rows and cols
+    int tempRow = row;//initialize to row so the loop doesnt break instantly (we know rawIndices[row][col] is not accessible)
     int tempCol = col;
+
+    //do (basically) breathfirstsearch: add 1 to rows, then 1 to cols. then add minus 1 to rows and cols. then +2 -2 etc. Till you 
+    //found the next best useable node, which is also the nearest. 
     while (rawIndices[tempRow][tempCol] < 0 && row - addRow < maxRow && col - addCol < maxCol && row - addRow >= 0 && col - addCol >= 0) {
         if (changeRow == true) {
-            if (rowCounter == 1) {
-                addRow ++;
+            if (rowCounter == 1) {//only add every second iteration in rows so that its not (+1 -2 +3 -4 etc.) but (+1 -1 +2 -2 etc.)
+                addRow ++;//increment row indention until some node might be found
                 rowCounter = 0;
             }
             else {
                 rowCounter = 1;
             }
-            addRow = -addRow;
-            tempRow = row + addRow;
+            addRow = -addRow;//+1 -1 +2 -2 etc
+            tempRow = row + addRow;//add calculated row-indention
         }
-        if (changeRow == false) {
+        if (changeRow == false) {//same as for row
             if (rowCounter == 1) {
                 addCol ++;
                 colCounter = 0;
@@ -156,7 +159,7 @@ int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int
             addCol = -addCol;
             tempCol = col + addCol;
         }
-        changeRow = !changeRow;
+        changeRow = !changeRow; //swap between rows and cols
     }
     if (rawIndices[tempRow][tempCol] > 0) {
         return rawIndices[tempRow][tempCol];
