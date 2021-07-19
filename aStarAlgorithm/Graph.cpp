@@ -126,6 +126,9 @@ bool changeRow;
 int rowCounter;
 int colCounter;
 int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int col) {
+    //do (basically) breathfirstsearch: add 1 to rows, then 1 to cols. then add minus 1 to rows and cols. then +2 -2 etc. Till you 
+    //found the next best useable node, which is also the nearest. 
+
     int addRow = 0;//increment for rows and cols (swaps between negative and positive so it goes in every direction)
     int addCol = 0;
     rowCounter = 0;//swap between adding and not adding in every iteration for rows
@@ -134,9 +137,8 @@ int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int
     int tempRow = row;//initialize to row so the loop doesnt break instantly (we know rawIndices[row][col] is not accessible)
     int tempCol = col;
 
-    //do (basically) breathfirstsearch: add 1 to rows, then 1 to cols. then add minus 1 to rows and cols. then +2 -2 etc. Till you 
-    //found the next best useable node, which is also the nearest. 
-    while (rawIndices[tempRow][tempCol] < 0 && row - addRow < maxRow && col - addCol < maxCol && row - addRow >= 0 && col - addCol >= 0) {
+    //while no suitable index found (rawIndices[tempRow][tempCol] is -1 if unuseable) and in bounds of window)
+    while (rawIndices[tempRow][tempCol] == -1) {
         if (changeRow == true) {
             if (rowCounter == 1) {//only add every second iteration in rows so that its not (+1 -2 +3 -4 etc.) but (+1 -1 +2 -2 etc.)
                 addRow ++;//increment row indention until some node might be found
@@ -146,6 +148,16 @@ int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int
                 rowCounter = 1;
             }
             addRow = -addRow;//+1 -1 +2 -2 etc
+            if (addRow < 0){
+                if (row + addRow < 0) {
+                    addRow = -addRow;//revert change to addRow so it only goes into one direction
+                }
+            }
+            else {
+                if (row + addRow >= maxRow) {
+                    addRow = -addRow;//revert change to addRow so it only goes into one direction
+                }
+            }
             tempRow = row + addRow;//add calculated row-indention
         }
         if (changeRow == false) {//same as for row
@@ -156,7 +168,18 @@ int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int
             else {
                 colCounter = 1;
             }
+
             addCol = -addCol;
+            if (addCol < 0) {
+                if (col + addCol < 0) {
+                    addCol = -addCol;//revert change to addRow so it only goes into one direction
+                }
+            }
+            else {
+                if (col + addCol >= maxCol) {
+                    addCol = -addCol;//revert change to addRow so it only goes into one direction
+                }
+            }
             tempCol = col + addCol;
         }
         changeRow = !changeRow; //swap between rows and cols
