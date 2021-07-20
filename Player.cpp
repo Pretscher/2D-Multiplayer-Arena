@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "Renderer.hpp"
 #include <iostream>
 int* pathXpositions;
 int* pathYpositions;

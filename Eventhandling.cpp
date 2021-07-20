@@ -4,6 +4,7 @@
 #include "aStarAlgorithm/Graph.hpp"
 #include "aStarAlgorithm/Algorithm.hpp"
 #include "Terrain.hpp"
+#include "Projectile.hpp"
 
 Player* player;//movable player
 Terrain* terrain;//contains every non-moving object with collision
@@ -19,10 +20,14 @@ int pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is c
 //if it can be used for pathfinding true, else false
 bool** collisionGrid;
 
+
+std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
+
 //forward declarations
 void pathFindingOnClick();
 void pathFindingInit();
 void hardCodeTerrain();
+void projectileManagement();
 
 void eventhandling::init() {
 	player = new Player(cols / 2, rows / 2, 100, 100, 1.0f);
@@ -31,10 +36,12 @@ void eventhandling::init() {
 	hardCodeTerrain();
 
 	pathFindingInit();
+	projectiles = new std::vector<Projectile*>();
 }
 
 void eventhandling::eventloop() {
 	pathFindingOnClick();//right click => find path to right clicked spot and give it to player
+	projectileManagement();
 	player->move();//if he has a path, he moves on this path
 	Renderer::updateViewSpace(cViewSpace, viewSpaceLimits, rows, cols);//move view space if mouse on edge of window
 }
@@ -42,6 +49,9 @@ void eventhandling::eventloop() {
 void eventhandling::drawingloop() {
 	terrain->draw();
 	Renderer::drawRect(player->getRow(), player->getCol(), player->getDrawWidth(), player->getDrawHeight(), sf::Color(255, 0, 0, 255));//draw Player
+	for (int i = 0; i < projectiles->size(); i++) {
+		projectiles->at(i)->draw();
+	}
 }
 
 
@@ -67,7 +77,7 @@ void pathFindingInit() {
 	worldRows = rows + viewSpaceLimits[3];
 	worldCols = cols + viewSpaceLimits[1];
 
-	pathfindingAccuracy = 10;
+	pathfindingAccuracy = 50;
 	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
 	//and relative coords on which you can orient your drawing. Also makes drawing a rect
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
@@ -124,4 +134,31 @@ void hardCodeTerrain() {
 	terrain->addRect(1000, 1000, 500, 200);
 	terrain->addRect(200, 200, 500, 200);
 	terrain->addRect(1000, 1000, 500, 200);
+}
+
+
+
+bool samePress = false;
+void projectileManagement() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == false) {
+		samePress = false;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == true && samePress == false) {
+  		samePress = true;
+
+		float velocity = 10.0f;
+		int mouseX = -1, mouseY = -1;
+		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
+		//calculates a function between these points and moves on it
+		Projectile* p = new Projectile(player->getRow(), player->getCol(), velocity, mouseY, mouseX);
+		projectiles->push_back(p);
+	}
+
+	for (int i = 0; i < projectiles->size(); i++) {
+		Projectile* p = projectiles->at(i);
+		p->move(worldRows, worldCols);//give it the maximum rows so it know when it can stop moving
+		if (p->isDead() == true) {
+			projectiles->erase(projectiles->begin() + i);
+		}
+	}
 }

@@ -73,7 +73,7 @@ void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Colo
 
 
     fromRowCol(&row, &col);
-    square->move(col + thickness, row + thickness);
+    square->move(col - viewSpace[1] + thickness, row - viewSpace[0] + thickness);
     Renderer::currentWindow->draw(*square);
     delete square;
 }
@@ -90,7 +90,7 @@ void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill) 
         circle->setFillColor(sf::Color(0, 0, 0, 0));
     }
     fromRowCol(&row, &col);
-    circle->move(col, row);
+    circle->move(col - viewSpace[1], row - viewSpace[0]);
     Renderer::currentWindow->draw(*circle);
     delete circle;
 }
@@ -100,8 +100,8 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
     fromRowCol(&row2, &col2);
     sf::Vertex line[] =
     {
-        sf::Vertex(sf::Vector2f(col1, row1)),
-        sf::Vertex(sf::Vector2f(col2, row2))
+        sf::Vertex(sf::Vector2f(col1 - viewSpace[1], row1 - viewSpace[0])),
+        sf::Vertex(sf::Vector2f(col2 - viewSpace[1], row2 - viewSpace[0]))
     };
 
     line->color = c;
