@@ -115,17 +115,15 @@ void Graph::generateWorldGraph(bool** isUseable) {
             } //End one node
             else {
                 rawIndices[y][x] = -1;
-                xCoords[graphNodeCount] = -1;
-                yCoords[graphNodeCount] = -1;
             }
         } //end one row
     } //end all rows
 }
 
-bool changeRow;
-int rowCounter;
-int colCounter;
-int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int col) {
+static bool changeRow;
+static int rowCounter;
+static int colCounter;
+static int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int col) {
     //do (basically) breathfirstsearch: add 1 to rows, then 1 to cols. then add minus 1 to rows and cols. then +2 -2 etc. Till you 
     //found the next best useable node, which is also the nearest. 
 

@@ -1,9 +1,9 @@
 #include "Player.hpp"
 #include "Renderer.hpp"
 #include <iostream>
-int* pathXpositions;
-int* pathYpositions;
-int pathLenght;
+static int* pathXpositions;
+static int* pathYpositions;
+static int pathLenght;
 
 Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel) {
 	this->col = i_col;
@@ -17,9 +17,9 @@ Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel) {
 	pathLenght = -1;
 }
 
-float cPathIndex;
+static float cPathIndex;
 void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
-	//free memory in case of second path or more
+	//free memory in case of reassigning path
 	if (pathLenght != -1) {
 		delete[] pathXpositions;
 		delete[] pathYpositions;
@@ -42,7 +42,10 @@ void Player::move() {
 			cPathIndex += velocity;
 		}
 		else {
+			//go to state of not having a path
 			pathLenght = -1;
+			delete[] pathXpositions;
+			delete[] pathYpositions;
 		}
 	}
 }

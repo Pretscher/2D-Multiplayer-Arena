@@ -2,10 +2,10 @@
 #include <iostream>
 
 //Call this-----------------------------------------------------------------------------------------------------------
-int* viewSpace;
-
+static int* viewSpace;
+static int* viewSpaceLimits;
 sf::RenderWindow* Renderer::currentWindow;
-sf::Vector2u firstSize;
+static sf::Vector2u firstSize;
 void Renderer::init(sf::RenderWindow* window) {
     Renderer::currentWindow = window;
     window->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
@@ -21,16 +21,21 @@ void Renderer::initGrid(int rows, int cols) {
     maxCols = cols;
 }
 
+void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
+    viewSpace = io_viewSpace;
+    viewSpaceLimits = io_viewspaceLimits;
+}
+
 //coord conversion-------------------------------------------------------------------------------------------------------
 
-void fromRowCol(int* ioRow, int* ioCol) {
+static void fromRowCol(int* ioRow, int* ioCol) {
     float helpRow = (float)*ioRow;
     float helpCol = (float)*ioCol;
     *ioRow = (helpRow / maxRows) * firstSize.y;
     *ioCol = (helpCol / maxCols) * firstSize.x;
 }
 
-void fromRowColBounds(int* ioW, int* ioH) {
+static void fromRowColBounds(int* ioW, int* ioH) {
     auto size = Renderer::currentWindow->getSize();
     float helpW = (float)*ioW;
     float helpH = (float)*ioH;
@@ -38,7 +43,7 @@ void fromRowColBounds(int* ioW, int* ioH) {
     *ioH = (helpH / maxRows) * firstSize.y;
 }
 
-void toRowCol(int* io_X, int* io_Y) {
+static void toRowCol(int* io_X, int* io_Y) {
     auto size = Renderer::currentWindow->getSize();
     float helpRow = (float)*io_Y;
     float helpCol = (float)*io_X;
@@ -108,7 +113,7 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
     Renderer::currentWindow->draw(line, 2, sf::Lines);
 }
 
-void Renderer::getMousePos(int* o_x, int* o_y) {
+void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace) {
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
     auto offset = currentWindow->getPosition();
@@ -116,34 +121,44 @@ void Renderer::getMousePos(int* o_x, int* o_y) {
     int y = pos.y - offset.y - 60;
     toRowCol(&x, &y);
     if (x < maxCols && y < maxRows) {
-        *o_x = x;
-        *o_y = y;
+        if (factorInViewspace == true) {
+            *o_x = x + viewSpace[1];
+            *o_y = y + viewSpace[0];
+        }
+        else {
+            *o_x = x;
+            *o_y = y;
+        }
     }
 }
 
-void Renderer::updateViewSpace(int* io_viewSpace, int* i_viewspaceLimits, int windowRows, int windowCols) {
+void Renderer::updateViewSpace() {
     int moveSpeed = 30;
     
     int mouseX = -1;
     int mouseY = -1;
-    getMousePos(&mouseX, &mouseY);
+    getMousePos(&mouseX, &mouseY, false);
+    int* helpViewSpace = new int[2];
+    helpViewSpace[0] = viewSpace[0];
+    helpViewSpace[1] = viewSpace[1];
+
     if (mouseX != -1) {
         int localRow = mouseY;
         int localCol = mouseX;
 
-        if (localRow < windowRows / 10 && io_viewSpace[0] - moveSpeed > i_viewspaceLimits[2]) {
-            io_viewSpace[0] -= moveSpeed;
+        if (localRow < maxRows / 10 && helpViewSpace[0] - moveSpeed > viewSpaceLimits[2]) {
+            helpViewSpace[0] -= moveSpeed;
         }
-        if (localRow > windowRows * 0.9 && io_viewSpace[0] + moveSpeed < i_viewspaceLimits[3]) {
-            io_viewSpace[0] += moveSpeed;
+        if (localRow > maxRows * 0.9 && helpViewSpace[0] + moveSpeed < viewSpaceLimits[3]) {
+            helpViewSpace[0] += moveSpeed;
         }
-        if (localCol < windowCols / 10 && io_viewSpace[1] - moveSpeed > i_viewspaceLimits[0]) {
-            io_viewSpace[1] -= moveSpeed;
+        if (localCol < maxCols / 10 && helpViewSpace[1] - moveSpeed > viewSpaceLimits[0]) {
+            helpViewSpace[1] -= moveSpeed;
         }
-        if (localCol > windowCols * 0.9 && io_viewSpace[1] + moveSpeed < i_viewspaceLimits[1]) {
-            io_viewSpace[1] += moveSpeed;
+        if (localCol > maxCols * 0.9 && helpViewSpace[1] + moveSpeed < viewSpaceLimits[1]) {
+            helpViewSpace[1] += moveSpeed;
         }
     }
-
-    viewSpace = io_viewSpace;
+    delete[] viewSpace;
+    viewSpace = helpViewSpace;
 }

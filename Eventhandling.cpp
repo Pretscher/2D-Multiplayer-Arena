@@ -6,44 +6,45 @@
 #include "Terrain.hpp"
 #include "Projectile.hpp"
 
-Player* player;//movable player
-Terrain* terrain;//contains every non-moving object with collision
+static Player* player;//movable player
+static Terrain* terrain;//contains every non-moving object with collision
 
 //Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
-int* cViewSpace;//current viewspace position. [0] is row (bot to top), [1] is col (left to right) 
-int* viewSpaceLimits;//maximum viewspace.  [0] = left, [1] = right, [2] = top, [3] = bottom
+static int* cViewSpace;//current viewspace position. [0] is row (bot to top), [1] is col (left to right) 
+static int* viewSpaceLimits;//maximum viewspace.  [0] = left, [1] = right, [2] = top, [3] = bottom
 
-int rows, cols;//rows and cols you can see at a time, viewspace limits need to be added for worldSize
-int pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
+static int rows, cols;//rows and cols you can see at a time, viewspace limits need to be added for worldSize
+static int pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
 
 //double array for every visitable (pathfindingaccuracy factored in) pixel, 
 //if it can be used for pathfinding true, else false
-bool** collisionGrid;
+static bool** collisionGrid;
 
 
-std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
+static std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
 //forward declarations
-void pathFindingOnClick();
-void pathFindingInit();
-void hardCodeTerrain();
-void projectileManagement();
+static void pathFindingOnClick();
+static void pathFindingInit();
+static void hardCodeTerrain();
+static void projectileManagement();
 
 void eventhandling::init() {
-	player = new Player(cols / 2, rows / 2, 100, 100, 1.0f);
+	player = new Player(cols / 2, rows / 2, 100, 100, 0.5f);
 
 	terrain = new Terrain();
 	hardCodeTerrain();
 
 	pathFindingInit();
 	projectiles = new std::vector<Projectile*>();
+	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
 }
 
 void eventhandling::eventloop() {
+	Renderer::updateViewSpace();//move view space if mouse on edge of window
 	pathFindingOnClick();//right click => find path to right clicked spot and give it to player
 	projectileManagement();
 	player->move();//if he has a path, he moves on this path
-	Renderer::updateViewSpace(cViewSpace, viewSpaceLimits, rows, cols);//move view space if mouse on edge of window
 }
 
 void eventhandling::drawingloop() {
@@ -59,9 +60,9 @@ void eventhandling::drawingloop() {
 //Pathfinding--------------------------------------------------------------------------------------------
 
 //rows and cols of one visible window + viewspace limit coords = max coords we need for pathfinding
-int worldRows;
-int worldCols;
-void pathFindingInit() {
+static int worldRows;
+static int worldCols;
+static void pathFindingInit() {
 	viewSpaceLimits = new int[4];
 	viewSpaceLimits[0] = 0;//left
 	viewSpaceLimits[1] = 2000;//right
@@ -77,7 +78,7 @@ void pathFindingInit() {
 	worldRows = rows + viewSpaceLimits[3];
 	worldCols = cols + viewSpaceLimits[1];
 
-	pathfindingAccuracy = 50;
+	pathfindingAccuracy = 25;
 	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
 	//and relative coords on which you can orient your drawing. Also makes drawing a rect
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
@@ -95,8 +96,8 @@ void pathFindingInit() {
 	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, player->getDrawWidth(), player->getDrawHeight());
 }
 
-bool sameClick = false;//dont do two pathfindings on the same click
-void pathFindingOnClick() {
+static bool sameClick = false;//dont do two pathfindings on the same click
+static void pathFindingOnClick() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == false){
 		sameClick = false;
 	}
@@ -111,10 +112,10 @@ void pathFindingOnClick() {
 		int pathlenght = 0;
 
 		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			int mouseRow = (mouseY + cViewSpace[0]) / pathfindingAccuracy;
-			int mouseCol = (mouseX + cViewSpace[1]) / pathfindingAccuracy;
+			int mouseRow = mouseY / pathfindingAccuracy;
+			int mouseCol = mouseX / pathfindingAccuracy;
 
 			Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() / pathfindingAccuracy, player->getCol() / pathfindingAccuracy, mouseRow, mouseCol);
 			//reverse accuracy simplification
@@ -130,7 +131,7 @@ void pathFindingOnClick() {
 
 //Game Object initialization
 
-void hardCodeTerrain() {
+static void hardCodeTerrain() {
 	terrain->addRect(1000, 1000, 500, 200);
 	terrain->addRect(200, 200, 500, 200);
 	terrain->addRect(1000, 1000, 500, 200);
@@ -138,8 +139,9 @@ void hardCodeTerrain() {
 
 
 
-bool samePress = false;
-void projectileManagement() {
+static bool samePress = false;
+static void projectileManagement() {
+	//dont shoot a projectile for the same space-press
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == false) {
 		samePress = false;
 	}
@@ -148,17 +150,18 @@ void projectileManagement() {
 
 		float velocity = 10.0f;
 		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
-		Projectile* p = new Projectile(player->getRow(), player->getCol(), velocity, mouseY + cViewSpace[0], mouseX + cViewSpace[1]);
+		Projectile* p = new Projectile(player->getRow(), player->getCol(), velocity, mouseY, mouseX);
 		projectiles->push_back(p);
 	}
 
+	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
 	for (int i = 0; i < projectiles->size(); i++) {
 		Projectile* p = projectiles->at(i);
 		p->move(worldRows, worldCols);//give it the maximum rows so it know when it can stop moving
 		if (p->isDead() == true) {
-			projectiles->erase(projectiles->begin() + i);
+			projectiles->erase(projectiles->begin() + i);//delete projecile if dead
 		}
 	}
 }
