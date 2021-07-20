@@ -150,7 +150,7 @@ void projectileManagement() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
-		Projectile* p = new Projectile(player->getRow(), player->getCol(), velocity, mouseY, mouseX);
+		Projectile* p = new Projectile(player->getRow(), player->getCol(), velocity, mouseY + cViewSpace[0], mouseX + cViewSpace[1]);
 		projectiles->push_back(p);
 	}
 

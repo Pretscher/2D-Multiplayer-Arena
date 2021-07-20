@@ -27,8 +27,11 @@ public:
 	}
 
 	void move(int maxRow, int maxCol) {
+		float gotoDiff = 10.0f;
+
 		float nextCol = 0;
 		float nextRow = 0;
+
 		if (this->up == true) {
 			nextCol = this->col + this->vel;
 		}
@@ -36,6 +39,30 @@ public:
 			nextCol = this->col - this->vel;
 		}
 		nextRow = movementFunc(col);
+
+		//save if row is negative
+		bool negRow = false;
+		if (nextRow < row) negRow = true;
+
+		float rowDiff = abs(nextRow - row);
+		float colDiff = abs(nextCol - col);
+
+		float sum = gotoDiff / (colDiff + rowDiff);
+		rowDiff *= sum;
+		colDiff *= sum;
+		if (negRow == false) {
+			nextRow = this->row + rowDiff;
+		}
+		else {
+			nextRow = this->row - rowDiff;
+		}
+		if (up == true) {
+			nextCol = this->col + colDiff;
+		}
+		else {
+			nextCol = this->col - colDiff;
+		}
+
 		//check if out of window bounds (TODO: COLLISISION WITH PLAYERS)
 		if (nextCol > maxCol || nextCol < 0 || nextRow > maxCol || nextRow < 0) {
 			dead = true;
