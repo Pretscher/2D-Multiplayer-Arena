@@ -51,8 +51,8 @@ public:
 	void addCollidablesToGrid(bool** grid, int pathfindingAccuracy, int playerWidth, int playerHeight) {
 		for (int i = 0; i < objectsRow->size(); i++) {
 			Rect* rect = this->objectsRow->at(i);
-			for (int y = (rect->getRow() - playerHeight) / pathfindingAccuracy; y < (rect->getRow() + rect->getHeight()) / pathfindingAccuracy; y++) {
-				for (int x = (rect->getCol() - playerWidth) / pathfindingAccuracy; x < (rect->getCol() + rect->getWidth()) / pathfindingAccuracy; x++) {
+			for (int y = (rect->getRow() - playerHeight + pathfindingAccuracy) / pathfindingAccuracy; y < (rect->getRow() + rect->getHeight()) / pathfindingAccuracy; y++) {
+				for (int x = (rect->getCol() - playerWidth + pathfindingAccuracy) / pathfindingAccuracy; x < (rect->getCol() + rect->getWidth()) / pathfindingAccuracy; x++) {
 					grid[y][x] = false;
 				}
 			}

@@ -122,4 +122,6 @@ void pathFindingOnClick() {
 
 void hardCodeTerrain() {
 	terrain->addRect(1000, 1000, 500, 200);
+	terrain->addRect(200, 200, 500, 200);
+	terrain->addRect(1000, 1000, 500, 200);
 }
