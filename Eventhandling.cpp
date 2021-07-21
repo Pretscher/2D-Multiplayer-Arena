@@ -6,6 +6,9 @@
 #include "Terrain.hpp"
 #include "Projectile.hpp"
 
+#include <thread>
+#include <mutex>
+
 static Player* player;//movable player
 static Terrain* terrain;//contains every non-moving object with collision
 
@@ -59,10 +62,14 @@ void eventhandling::drawingloop() {
 
 //Pathfinding--------------------------------------------------------------------------------------------
 
+static std::thread* pathFindingThread;
+static std::mutex* finishedPathfinding;
 //rows and cols of one visible window + viewspace limit coords = max coords we need for pathfinding
 static int worldRows;
 static int worldCols;
 static void pathFindingInit() {
+	pathFindingThread = nullptr;
+	finishedPathfinding = new std::mutex();
 	viewSpaceLimits = new int[4];
 	viewSpaceLimits[0] = 0;//left
 	viewSpaceLimits[1] = 2000;//right
@@ -96,38 +103,53 @@ static void pathFindingInit() {
 	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, player->getDrawWidth(), player->getDrawHeight());
 }
 
+static void startPathFinding(int mouseX, int mouseY);
 static bool sameClick = false;//dont do two pathfindings on the same click
+static bool findingPath = false;
 static void pathFindingOnClick() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == false){
 		sameClick = false;
 	}
 
 	//if rightclick is pressed, find path from player to position of click
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false) {
+	finishedPathfinding->lock();
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && findingPath == false) {
 		sameClick = true;
-		Graph* g = new Graph(worldRows / pathfindingAccuracy, worldCols / pathfindingAccuracy);
-		g->generateWorldGraph(collisionGrid);
-		int* xPath = nullptr;
-		int* yPath = nullptr;
-		int pathlenght = 0;
 
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			int mouseRow = mouseY / pathfindingAccuracy;
-			int mouseCol = mouseX / pathfindingAccuracy;
-
-			Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() / pathfindingAccuracy, player->getCol() / pathfindingAccuracy, mouseRow, mouseCol);
-			//reverse accuracy simplification
-			for (int i = 0; i < pathlenght; i++) {
-				xPath[i] *= pathfindingAccuracy;
-				yPath[i] *= pathfindingAccuracy;
-			}
-			player->givePath(xPath, yPath, pathlenght);
-			delete g;
+			//if (pathFindingThread != nullptr) delete pathFindingThread;
+			findingPath = true;
+			pathFindingThread = new std::thread(&startPathFinding, mouseX, mouseY);
 		}
 	}
+	finishedPathfinding->unlock();
 }
+
+static void startPathFinding(int mouseX, int mouseY) {
+	Graph* g = new Graph(worldRows / pathfindingAccuracy, worldCols / pathfindingAccuracy);
+	g->generateWorldGraph(collisionGrid);
+	int* xPath = nullptr;
+	int* yPath = nullptr;
+	int pathlenght = 0;
+
+	int mouseRow = mouseY / pathfindingAccuracy;
+	int mouseCol = mouseX / pathfindingAccuracy;
+
+	Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() / pathfindingAccuracy, player->getCol() / pathfindingAccuracy, mouseRow, mouseCol);
+	//reverse accuracy simplification
+	for (int i = 0; i < pathlenght; i++) {
+		xPath[i] *= pathfindingAccuracy;
+		yPath[i] *= pathfindingAccuracy;
+	}
+	player->givePath(xPath, yPath, pathlenght);
+	delete g;
+	finishedPathfinding->lock();
+	findingPath = false;
+	finishedPathfinding->unlock();
+}
+
 
 //Game Object initialization
 
