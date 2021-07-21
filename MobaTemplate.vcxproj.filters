@@ -1,87 +1,84 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Header Files\A%2a-Algorithmus">
+    <Filter Include="A%2a-Algorithmus">
       <UniqueIdentifier>{5d5155e8-e7ba-4861-b6d4-4c21d55f6bfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Eventhandling">
+      <UniqueIdentifier>{9fdb86bc-524e-4530-ab06-ec127196975f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{b7772fb4-c592-4852-9b09-32c3473f29b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CrossProject">
+      <UniqueIdentifier>{76e2aa23-2479-4f49-82c4-8ab63fe6496a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Eventhandling.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="aStarAlgorithm\Algorithm.cpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClCompile>
     <ClCompile Include="aStarAlgorithm\BinaryHeap.cpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClCompile>
     <ClCompile Include="aStarAlgorithm\Graph.cpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClCompile>
     <ClCompile Include="aStarAlgorithm\HeapNode.cpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="Eventhandling.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>CrossProject</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>CrossProject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Renderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Eventhandling.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="aStarAlgorithm\Algorithm.hpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
     <ClInclude Include="aStarAlgorithm\BinaryHeap.hpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
     <ClInclude Include="aStarAlgorithm\Graph.hpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
     <ClInclude Include="aStarAlgorithm\GraphNode.hpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
     <ClInclude Include="aStarAlgorithm\HeapNode.hpp">
-      <Filter>Header Files\A%2a-Algorithmus</Filter>
+      <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Eventhandling.hpp">
+      <Filter>Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="Projectile.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Rect.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.hpp">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.hpp">
+      <Filter>CrossProject</Filter>
     </ClInclude>
     <ClInclude Include="Utils.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>CrossProject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
