@@ -1,6 +1,6 @@
 #pragma once
-
-
+#include "Rect.hpp"
+#include "Utils.hpp"
 
 
 class Projectile {
@@ -9,6 +9,8 @@ public:
 		this->row = playerRow;
 		this->col = playerCol;
 		this->vel = velocity;
+
+		this->radius = 20;
 
 		this->dead = false;
 		//calculate function for line
@@ -26,7 +28,7 @@ public:
 		else this->up = false;
 	}
 
-	void move(int maxRow, int maxCol) {
+	void move(int maxRow, int maxCol, Rect** collisionRects, int rectCount) {
 		float gotoDiff = 10.0f;
 
 		float nextCol = 0;
@@ -68,13 +70,22 @@ public:
 			dead = true;
 			return;
 		}
+
+		for (unsigned int i = 0; i < rectCount; i++) {
+			Rect* cRect = collisionRects[i];
+			if (Utils::collisionRectCircleOnlyOutline(cRect->getCol(), cRect->getRow(), cRect->getWidth(), cRect->getHeight(), nextCol, nextRow, this->radius) == true) {
+				dead = true;
+				return;
+			}
+		}
+
 		//no collisiom => move on function
 		this->row = nextRow;
 		this->col = nextCol;
 	}
 
 	void draw() {
-		Renderer::drawCircle((int)this->row, (int)this->col, 50, sf::Color(255, 0, 255, 255), true);
+		Renderer::drawCircle((int)this->row, (int)this->col, this->radius, sf::Color(255, 0, 255, 255), true);
 	}
 
 	bool isDead() {
@@ -89,6 +100,7 @@ private:
 	float yOffset;
 	bool up;
 	bool dead;
+	int radius;
 	float movementFunc(float x) {
 		return this->slope * x + this->yOffset;
 	}

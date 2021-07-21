@@ -159,7 +159,7 @@ static void projectileManagement() {
 	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
 	for (int i = 0; i < projectiles->size(); i++) {
 		Projectile* p = projectiles->at(i);
-		p->move(worldRows, worldCols);//give it the maximum rows so it know when it can stop moving
+		p->move(worldRows, worldCols, terrain->getCollidables()->data(), terrain->getCollidables()->size());//give it the maximum rows so it know when it can stop moving
 		if (p->isDead() == true) {
 			projectiles->erase(projectiles->begin() + i);//delete projecile if dead
 		}
