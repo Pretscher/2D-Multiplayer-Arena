@@ -5,12 +5,17 @@
 
 class Projectile {
 public:
-	Projectile(int playerRow, int playerCol, float velocity, int goalRow, int goalCol) {
+	Projectile(int playerRow, int playerCol, float velocity, int goalRow, int goalCol, int radius) {
+		playerRow -= radius;
+		playerCol -= radius;
 		this->row = playerRow;
 		this->col = playerCol;
 		this->vel = velocity;
+		this->radius = radius;
 
-		this->radius = 20;
+		goalRow -= radius;
+		goalCol -= radius;
+
 
 		this->dead = false;
 		//calculate function for line

@@ -32,6 +32,7 @@ static void pathFindingInit();
 static void hardCodeTerrain();
 static void projectileManagement();
 
+
 void eventhandling::init() {
 	player = new Player(cols / 2, rows / 2, 100, 100, 0.5f);
 
@@ -41,6 +42,7 @@ void eventhandling::init() {
 	pathFindingInit();
 	projectiles = new std::vector<Projectile*>();
 	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
+
 }
 
 void eventhandling::eventloop() {
@@ -52,7 +54,7 @@ void eventhandling::eventloop() {
 
 void eventhandling::drawingloop() {
 	terrain->draw();
-	Renderer::drawRect(player->getRow(), player->getCol(), player->getDrawWidth(), player->getDrawHeight(), sf::Color(255, 0, 0, 255));//draw Player
+	player->draw();
 	for (int i = 0; i < projectiles->size(); i++) {
 		projectiles->at(i)->draw();
 	}
@@ -115,7 +117,7 @@ static void pathFindingOnClick() {
 	finishedPathfinding->lock();
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && findingPath == false) {
 		sameClick = true;
-
+		player->deletePath();
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
@@ -143,11 +145,13 @@ static void startPathFinding(int mouseX, int mouseY) {
 		xPath[i] *= pathfindingAccuracy;
 		yPath[i] *= pathfindingAccuracy;
 	}
-	player->givePath(xPath, yPath, pathlenght);
-	delete g;
+
 	finishedPathfinding->lock();
+	player->givePath(xPath, yPath, pathlenght);
 	findingPath = false;
 	finishedPathfinding->unlock();
+
+	delete g;
 }
 
 
@@ -158,8 +162,6 @@ static void hardCodeTerrain() {
 	terrain->addRect(200, 200, 500, 200);
 	terrain->addRect(1000, 1000, 500, 200);
 }
-
-
 
 static bool samePress = false;
 static void projectileManagement() {
@@ -174,7 +176,28 @@ static void projectileManagement() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
-		Projectile* p = new Projectile(player->getRow(), player->getCol(), velocity, mouseY, mouseX);
+
+		int row = 0, col = 0;
+		int halfW = player->getDrawWidth() / 2;
+		int halfH = player->getDrawHeight() / 2;
+
+
+		//if projectile distination is above player
+		if (mouseY < player->getRow()) {
+			col = player->getCol() + halfW;
+			row = player->getRow();
+			player->setTexture(2);
+		}
+		//below
+		if (mouseY > player->getRow()) {
+			col = player->getCol() + halfW;
+			row = player->getRow() + player->getDrawHeight();
+			player->setTexture(3);
+		}
+
+
+
+		Projectile* p = new Projectile(row, col, velocity, mouseY, mouseX, 20);
 		projectiles->push_back(p);
 	}
 

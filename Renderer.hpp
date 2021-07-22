@@ -16,4 +16,9 @@ public:
     static void getMousePos(int* o_x, int* o_y, bool factorInViewSpace);
     static void updateViewSpace();
     static void linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits);
+
+    static void drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture);
+
+    static sf::Texture loadTexture(std::string path);
+
 };

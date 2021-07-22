@@ -63,8 +63,10 @@ void Renderer::drawRect(int row, int col, int width, int height, sf::Color c) {
     fromRowCol(&row, &col);
     square->move(col - viewSpace[1], row - viewSpace[0]);
     Renderer::currentWindow->draw(*square);
+    
     delete square;
 }
+
 
 void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness) {
     int unusedHelp = 0;
@@ -161,4 +163,28 @@ void Renderer::updateViewSpace() {
     }
     delete[] viewSpace;
     viewSpace = helpViewSpace;
+}
+
+
+sf::Texture Renderer::loadTexture(std::string path) {
+    sf::Texture texture;
+    if (!texture.loadFromFile(path))
+    {
+        std::cout << "failed to load texture of path '" << path << "'";
+        std::exit(0);
+    }
+    return texture;
+}
+
+
+void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture) {
+    fromRowColBounds(&width, &height);
+
+    sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
+    square->setTexture(&texture);
+    fromRowCol(&row, &col);
+    square->move(col - viewSpace[1], row - viewSpace[0]);
+    Renderer::currentWindow->draw(*square);
+
+    delete square;
 }
