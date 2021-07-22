@@ -45,6 +45,9 @@
     <ClCompile Include="Projectile.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aStarAlgorithm\Algorithm.hpp">
