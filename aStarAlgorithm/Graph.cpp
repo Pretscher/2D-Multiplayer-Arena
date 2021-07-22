@@ -42,6 +42,14 @@ Graph::~Graph() {
     delete[] rawIndices;
 }
 
+void Graph::reset() {
+    for (int i = 0; i < graphNodeCount; i++) {
+        delete[] neighbourCosts[i];
+    }
+    delete[] heapIndices;
+    heapIndices = new int[this->rows * this->cols];
+}
+
 /* MEMO:
 isUseable = new bool* [this->rows];
 for (int y = 0; y < this->rows; y++) {

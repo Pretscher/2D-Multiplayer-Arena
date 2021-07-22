@@ -23,4 +23,5 @@ public:
 	void generateWorldGraph(bool** isUseable);
 	int getIndexFromCoords(int row, int col);
 	~Graph();
+	void reset();
 };

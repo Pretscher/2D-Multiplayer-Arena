@@ -32,6 +32,7 @@ static void pathFindingInit();
 static void hardCodeTerrain();
 static void projectileManagement();
 
+static Graph* g;
 
 void eventhandling::init() {
 	player = new Player(cols / 2, rows / 2, 100, 100, 0.5f);
@@ -87,7 +88,7 @@ static void pathFindingInit() {
 	worldRows = rows + viewSpaceLimits[3];
 	worldCols = cols + viewSpaceLimits[1];
 
-	pathfindingAccuracy = 25;
+	pathfindingAccuracy = 20;
 	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
 	//and relative coords on which you can orient your drawing. Also makes drawing a rect
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
@@ -102,7 +103,11 @@ static void pathFindingInit() {
 			collisionGrid[y][x] = true;
 		}
 	}
+
+	//create graph from unmoving solids, can be changed dynamically
 	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, player->getDrawWidth(), player->getDrawHeight());
+	g = new Graph(worldRows / pathfindingAccuracy, worldCols / pathfindingAccuracy);
+	g->generateWorldGraph(collisionGrid);
 }
 
 static void startPathFinding(int mouseX, int mouseY);
@@ -117,6 +122,7 @@ static void pathFindingOnClick() {
 	finishedPathfinding->lock();
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && findingPath == false) {
 		sameClick = true;
+
 		player->deletePath();
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
@@ -130,8 +136,7 @@ static void pathFindingOnClick() {
 }
 
 static void startPathFinding(int mouseX, int mouseY) {
-	Graph* g = new Graph(worldRows / pathfindingAccuracy, worldCols / pathfindingAccuracy);
-	g->generateWorldGraph(collisionGrid);
+
 	int* xPath = nullptr;
 	int* yPath = nullptr;
 	int pathlenght = 0;
@@ -150,8 +155,6 @@ static void startPathFinding(int mouseX, int mouseY) {
 	player->givePath(xPath, yPath, pathlenght);
 	findingPath = false;
 	finishedPathfinding->unlock();
-
-	delete g;
 }
 
 

@@ -109,11 +109,13 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 			}
 		}
 
+		graph->reset();
 		delete heap;
 		delete[] distanceTravelled;
 		delete[] previousIndex;
 		return true;
 	}
+	graph->reset();
 	delete heap;
 	delete[] distanceTravelled;
 	delete[] previousIndex;
