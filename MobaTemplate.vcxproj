@@ -153,6 +153,7 @@
     <ClCompile Include="aStarAlgorithm\HeapNode.cpp" />
     <ClCompile Include="Eventhandling.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PathfindingHandler.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="aStarAlgorithm\GraphNode.hpp" />
     <ClInclude Include="aStarAlgorithm\HeapNode.hpp" />
     <ClInclude Include="Eventhandling.hpp" />
+    <ClInclude Include="PathfindingHandler.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="Rect.hpp" />
     <ClInclude Include="Terrain.hpp" />

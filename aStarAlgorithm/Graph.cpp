@@ -4,13 +4,14 @@
 #include "Algorithm.hpp"
 
 
-Graph::Graph(int i_rows, int i_cols) {
+Graph::Graph(int i_rows, int i_cols, float i_accuracy) {
+    accuracy = i_accuracy;
     delete[] this->currentGraph;
     this->graphNodeCount = 0;
 
-    this->cols = i_cols;
-    this->rows = i_rows;
-    int lenght = this->rows * this->cols;
+    this->cols = i_cols * accuracy;
+    this->rows = i_rows * accuracy;
+    int lenght = this->rows * cols;
 
     //init everything with given sizes
     neighbourCount = new int[lenght];
@@ -19,9 +20,14 @@ Graph::Graph(int i_rows, int i_cols) {
     yCoords = new int[lenght];
     currentGraph = new int[lenght];
     heapIndices = new int[lenght];
+    usedByMoveable = new bool[lenght];
 
     rawIndices = new int* [this->rows];
     neighbourCosts = nullptr; //initialized later for every run of algorithm
+
+
+    blockedX = new std::vector<int>();
+    blockedY = new std::vector<int>();
 }
 
 Graph::~Graph() {
@@ -40,6 +46,7 @@ Graph::~Graph() {
     delete[] neighbourCosts;
     delete[] neighbourIndices;
     delete[] rawIndices;
+    delete[] usedByMoveable;
 }
 
 void Graph::reset() {
@@ -69,7 +76,7 @@ void Graph::generateWorldGraph(bool** isUseable) {
             //we have to do one less iteration through everything if we ask that here :)
             if (isUseable[y][x] == true) {
                 rawIndices[y][x] = graphNodeCount;
-
+                usedByMoveable[graphNodeCount] = false;
                 xCoords[graphNodeCount] = x;
                 yCoords[graphNodeCount] = y;
 
@@ -128,23 +135,21 @@ void Graph::generateWorldGraph(bool** isUseable) {
     } //end all rows
 }
 
-static bool changeRow;
-static int rowCounter;
-static int colCounter;
-static int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int row, int col) {
+int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
     //do (basically) breathfirstsearch: add 1 to rows, then 1 to cols. then add minus 1 to rows and cols. then +2 -2 etc. Till you 
     //found the next best useable node, which is also the nearest. 
 
     int addRow = 0;//increment for rows and cols (swaps between negative and positive so it goes in every direction)
     int addCol = 0;
-    rowCounter = 0;//swap between adding and not adding in every iteration for rows
-    colCounter = 0;//swap between adding and not adding in every iteration for cols
-    changeRow = true;//swap between rows and cols
+    int rowCounter = 0;//swap between adding and not adding in every iteration for rows
+    int colCounter = 0;//swap between adding and not adding in every iteration for cols
+    bool changeRow = true;//swap between rows and cols
     int tempRow = row;//initialize to row so the loop doesnt break instantly (we know rawIndices[row][col] is not accessible)
     int tempCol = col;
 
+    int cIndex = -1;
     //while no suitable index found (rawIndices[tempRow][tempCol] is -1 if unuseable) and in bounds of window)
-    while (rawIndices[tempRow][tempCol] == -1) {
+    while (cIndex == -1) {
         if (changeRow == true) {
             if (rowCounter == 1) {//only add every second iteration in rows so that its not (+1 -2 +3 -4 etc.) but (+1 -1 +2 -2 etc.)
                 addRow ++;//increment row indention until some node might be found
@@ -160,7 +165,7 @@ static int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int r
                 }
             }
             else {
-                if (row + addRow >= maxRow) {
+                if (row + addRow >= rows) {
                     addRow = -addRow;//revert change to addRow so it only goes into one direction
                 }
             }
@@ -182,16 +187,30 @@ static int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int r
                 }
             }
             else {
-                if (col + addCol >= maxCol) {
+                if (col + addCol >= cols) {
                     addCol = -addCol;//revert change to addRow so it only goes into one direction
                 }
             }
             tempCol = col + addCol;
         }
         changeRow = !changeRow; //swap between rows and cols
+        cIndex = rawIndices[tempRow][tempCol];
+
+        if (moveableRelevant == true) {
+            if (cIndex != -1) {
+                if (usedByMoveable[cIndex] == true) {
+                    cIndex = -1;
+                }
+            }
+        }
+
+        if (tempRow >= rows || tempCol >= cols) {
+            std::cout << "\n\n\ncouldnt find vertex----------------------------\n\n\n";
+            break;
+        }
     }
-    if (rawIndices[tempRow][tempCol] > 0) {
-        return rawIndices[tempRow][tempCol];
+    if (cIndex > 0) {
+        return cIndex;
     }
     else {
         std::cout << "error in findUseableVertex";
@@ -199,19 +218,82 @@ static int findNextUseableVertex(int** rawIndices, int maxRow, int maxCol, int r
     }
 }
 
-int Graph::getIndexFromCoords(int row, int col) {
+int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
+    row = row * accuracy;
+    col = col * accuracy;
+
     if (row < rows && col < cols) {
-        if (rawIndices[row][col] >= 0) {
-            return rawIndices[row][col];
+        if (moveableRelevant == true) {
+            if (rawIndices[row][col] >= 0 && usedByMoveable[rawIndices[row][col]] == false) {
+                return rawIndices[row][col];
+            }
+            else {
+                return findNextUseableVertex(row, col, moveableRelevant);
+            }
         }
         else {
-            return findNextUseableVertex(rawIndices, rows, cols, row, col);
+            if (rawIndices[row][col] >= 0) {
+                return rawIndices[row][col];
+            }
+            else {
+                return findNextUseableVertex(row, col, moveableRelevant);
+            }
         }
     }
     else {
         std::cout << "out of bounds row or col in 'Graph->getIndexFromCoords'";
         std::exit(0);
     }
-    
-    
+}
+
+void Graph::disableObjectBounds(int row, int col, int width, int height) {
+    row *= accuracy;
+    col *= accuracy;
+    width *= accuracy;
+    height *= accuracy;
+
+    int minY = row - height + 1;
+    if (minY < 0) {
+        minY = 0;
+    }
+    int minX = col - width + 1;
+    if (minX < 0) {
+        minX = 0;
+    }
+    for (int y = minY; y < row + height; y++) {
+        for (int x = minX; x < col + width; x++) {
+           // if (Renderer::currentWindow != nullptr) {
+                //Renderer::drawRect(y / accuracy, x / accuracy, 2, 2, sf::Color(255, 255, 0, 255));
+           // }
+            int index = getIndexFromCoords(y / accuracy, x / accuracy, false);
+            usedByMoveable[index] = true;       
+        }
+    }
+}
+
+void Graph::enableObjectBounds(int row, int col, int width, int height) {
+    row *= accuracy;
+    col *= accuracy;
+    width *= accuracy;
+    height *= accuracy;
+
+    int minY = row - height + 1;
+    if (minY < 0) {
+        minY = 0;
+    }
+    int minX = col - width + 1;
+    if (minX < 0) {
+        minX = 0;
+    }
+    for (int y = minY; y < row + height; y++) {
+        for (int x = minX; x < col + width; x++) {
+            int index = getIndexFromCoords(y / accuracy, x / accuracy, false);
+            usedByMoveable[index] = false;
+        }
+    }
+}
+
+void Graph::moveObject(int row, int col, int oldRow, int oldCol, int width, int height) {
+    enableObjectBounds(oldRow, oldCol, width, height);
+    disableObjectBounds(row, col, width, height);
 }

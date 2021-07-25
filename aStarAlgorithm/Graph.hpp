@@ -6,7 +6,10 @@
 
 class Graph {
 public:
-	Graph(int rows, int cols);
+	Graph(int rows, int cols, float i_accuracy);
+	float accuracy;
+
+	bool* usedByMoveable;
 	int* xCoords;
 	int* yCoords;
 	int* neighbourCount;
@@ -21,7 +24,15 @@ public:
 	int cols;
 
 	void generateWorldGraph(bool** isUseable);
-	int getIndexFromCoords(int row, int col);
+	int getIndexFromCoords(int row, int col, bool moveableRelevant);
 	~Graph();
 	void reset();
+	std::vector<int>* blockedX;
+	std::vector<int>* blockedY;
+	void disableObjectBounds(int row, int col, int width, int height);
+	void moveObject(int row, int col, int oldRow, int oldCol, int width, int height);
+	void enableObjectBounds(int row, int col, int width, int height);
+
+private:
+	int findNextUseableVertex(int row, int col, bool moveableRelevant);
 };

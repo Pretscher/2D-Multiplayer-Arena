@@ -48,6 +48,9 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="PathfindingHandler.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aStarAlgorithm\Algorithm.hpp">
@@ -85,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="Utils.hpp">
       <Filter>CrossProject</Filter>
+    </ClInclude>
+    <ClInclude Include="PathfindingHandler.hpp">
+      <Filter>Eventhandling</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

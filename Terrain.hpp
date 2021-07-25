@@ -7,7 +7,7 @@ public:
 	Terrain();
 	void addRect(int row, int col, int width, int height);
 	void draw();
-	void addCollidablesToGrid(bool** grid, int pathfindingAccuracy, int playerWidth, int playerHeight);
+	void addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight);
 	std::vector<Rect*>* getCollidables();
 
 private:

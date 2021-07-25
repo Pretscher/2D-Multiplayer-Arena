@@ -5,11 +5,15 @@
 #include "aStarAlgorithm/Algorithm.hpp"
 #include "Terrain.hpp"
 #include "Projectile.hpp"
-
+#include "PathfindingHandler.hpp"
 #include <thread>
 #include <mutex>
 
-static Player* player;//movable player
+static Player** players;//all players
+static int myPlayerI;
+static int playerCount;//number of players
+static int worldRows;
+static int worldCols;
 static Terrain* terrain;//contains every non-moving object with collision
 
 //Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
@@ -17,62 +21,27 @@ static int* cViewSpace;//current viewspace position. [0] is row (bot to top), [1
 static int* viewSpaceLimits;//maximum viewspace.  [0] = left, [1] = right, [2] = top, [3] = bottom
 
 static int rows, cols;//rows and cols you can see at a time, viewspace limits need to be added for worldSize
-static int pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
-
-//double array for every visitable (pathfindingaccuracy factored in) pixel, 
-//if it can be used for pathfinding true, else false
-static bool** collisionGrid;
-
-
+static Pathfinding* pathfinding;
 static std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
 //forward declarations
-static void pathFindingOnClick();
-static void pathFindingInit();
 static void hardCodeTerrain();
 static void projectileManagement();
 
-static Graph* g;
+int playerWidth;
+int playerHeight;
+void initPlayers() {
+	playerCount = 2;
+
+	float stepsPerIteration = 0.5f;//velocity on path if path is given
+	players = new Player * [playerCount];
+	for (int i = 0; i < playerCount; i++) {
+		players[i] = new Player(500, i * 1000 / playerCount, playerWidth, playerHeight, stepsPerIteration);//places players on map, col dist depends on playercount
+	}
+	myPlayerI = 0;
+}
 
 void eventhandling::init() {
-	player = new Player(cols / 2, rows / 2, 100, 100, 0.5f);
-
-	terrain = new Terrain();
-	hardCodeTerrain();
-
-	pathFindingInit();
-	projectiles = new std::vector<Projectile*>();
-	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
-
-}
-
-void eventhandling::eventloop() {
-	Renderer::updateViewSpace();//move view space if mouse on edge of window
-	pathFindingOnClick();//right click => find path to right clicked spot and give it to player
-	projectileManagement();
-	player->move();//if he has a path, he moves on this path
-}
-
-void eventhandling::drawingloop() {
-	terrain->draw();
-	player->draw();
-	for (int i = 0; i < projectiles->size(); i++) {
-		projectiles->at(i)->draw();
-	}
-}
-
-
-
-//Pathfinding--------------------------------------------------------------------------------------------
-
-static std::thread* pathFindingThread;
-static std::mutex* finishedPathfinding;
-//rows and cols of one visible window + viewspace limit coords = max coords we need for pathfinding
-static int worldRows;
-static int worldCols;
-static void pathFindingInit() {
-	pathFindingThread = nullptr;
-	finishedPathfinding = new std::mutex();
 	viewSpaceLimits = new int[4];
 	viewSpaceLimits[0] = 0;//left
 	viewSpaceLimits[1] = 2000;//right
@@ -88,74 +57,90 @@ static void pathFindingInit() {
 	worldRows = rows + viewSpaceLimits[3];
 	worldCols = cols + viewSpaceLimits[1];
 
-	pathfindingAccuracy = 20;
-	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
-	//and relative coords on which you can orient your drawing. Also makes drawing a rect
-	//and stuff easy because width can equal height to make it have sides of the same lenght.
 	Renderer::initGrid(rows, cols);
+	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
 
-	int pathfindingRows = worldRows / pathfindingAccuracy;//max rows for pathfinding
-	int pathfindingCols = worldCols / pathfindingAccuracy;//max cols for pathfinding
-	collisionGrid = new bool* [pathfindingRows];
-	for (int y = 0; y < pathfindingRows; y++) {
-		collisionGrid[y] = new bool[pathfindingCols];
-		for (int x = 0; x < pathfindingCols; x++) {
-			collisionGrid[y][x] = true;
+	playerWidth = 100;
+	playerHeight = 100;
+
+
+	initPlayers();
+	terrain = new Terrain();
+	hardCodeTerrain();
+
+	pathfinding = new Pathfinding(worldRows, worldCols, terrain, players, playerCount);
+
+
+
+	projectiles = new std::vector<Projectile*>();
+}
+
+void eventhandling::eventloop() {
+	Renderer::updateViewSpace();//move view space if mouse on edge of window
+	pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
+	projectileManagement();
+
+	for (int i = 0; i < playerCount; i++) {
+		pathfinding->lockPlayer();
+		if (players[i]->hasPath() == true) {
+			int tempRow = players[i]->getRow();
+			int tempCol = players[i]->getCol();
+
+			players[i]->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
+			if (pathfinding->isPlayerUseable() == true) {
+				pathfinding->enableArea(tempRow, tempCol, playerWidth, playerHeight);//enable old position
+				pathfinding->disableArea(players[i]->getRow(), players[i]->getCol(), playerWidth, playerHeight);//disable new position
+			}
+			pathfinding->unlockPlayer();
+
+
+			//for efficiency only find new path if you move next to a possibly moving object
+			//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
+			if (players[i]->getRow() != tempRow && players[i]->getCol() != tempCol) {//only having a path doesnt mean you moved on it
+				//find new paths for players close to this player
+				Player* movedPlayer = players[i];
+				for (int j = 0; j < playerCount; j++) {
+					if (j != i) {
+						Player* cPlayer = players[j];
+						if (cPlayer->hasPath() == true) {
+							//did player position change?
+							if (abs(cPlayer->getRow() - movedPlayer->getRow()) < playerHeight 
+								&& abs(cPlayer->getCol() - movedPlayer->getCol()) < playerWidth) {
+
+								//find new path to same goal
+								int col = cPlayer->getPathGoalX();
+								int row = cPlayer->getPathGoalY();
+								pathfinding->findPath(col, row, myPlayerI);
+							}
+						}
+					}
+				}
+			}
+		}
+		else {
+			if (pathfinding->isPlayerUseable() == true) {
+				pathfinding->disableArea(players[i]->getRow(), players[i]->getCol(), players[i]->getWidth(), players[i]->getHeight());
+			}
+			pathfinding->unlockPlayer();
+
 		}
 	}
-
-	//create graph from unmoving solids, can be changed dynamically
-	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, player->getDrawWidth(), player->getDrawHeight());
-	g = new Graph(worldRows / pathfindingAccuracy, worldCols / pathfindingAccuracy);
-	g->generateWorldGraph(collisionGrid);
 }
 
-static void startPathFinding(int mouseX, int mouseY);
-static bool sameClick = false;//dont do two pathfindings on the same click
-static bool findingPath = false;
-static void pathFindingOnClick() {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == false){
-		sameClick = false;
+void eventhandling::drawingloop() {
+	terrain->draw();
+	for (int i = 0; i < playerCount; i++) {
+		players[i]->draw();//if he has a path, he moves on this path
 	}
-
-	//if rightclick is pressed, find path from player to position of click
-	finishedPathfinding->lock();
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && findingPath == false) {
-		sameClick = true;
-
-		player->deletePath();
-		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
-		if (mouseX != -1) {//stays at -1 if click is outside of window
-			//if (pathFindingThread != nullptr) delete pathFindingThread;
-			findingPath = true;
-			pathFindingThread = new std::thread(&startPathFinding, mouseX, mouseY);
-		}
+	for (int i = 0; i < projectiles->size(); i++) {
+		projectiles->at(i)->draw();
 	}
-	finishedPathfinding->unlock();
 }
 
-static void startPathFinding(int mouseX, int mouseY) {
 
-	int* xPath = nullptr;
-	int* yPath = nullptr;
-	int pathlenght = 0;
 
-	int mouseRow = mouseY / pathfindingAccuracy;
-	int mouseCol = mouseX / pathfindingAccuracy;
+//Pathfinding--------------------------------------------------------------------------------------------
 
-	Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() / pathfindingAccuracy, player->getCol() / pathfindingAccuracy, mouseRow, mouseCol);
-	//reverse accuracy simplification
-	for (int i = 0; i < pathlenght; i++) {
-		xPath[i] *= pathfindingAccuracy;
-		yPath[i] *= pathfindingAccuracy;
-	}
-
-	finishedPathfinding->lock();
-	player->givePath(xPath, yPath, pathlenght);
-	findingPath = false;
-	finishedPathfinding->unlock();
-}
 
 
 //Game Object initialization
@@ -180,22 +165,24 @@ static void projectileManagement() {
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
+		Player* myPlayer = players[myPlayerI];
+
 		int row = 0, col = 0;
-		int halfW = player->getDrawWidth() / 2;
-		int halfH = player->getDrawHeight() / 2;
+		int halfW = myPlayer->getWidth() / 2;
+		int halfH = myPlayer->getHeight() / 2;
 
 
 		//if projectile distination is above player
-		if (mouseY < player->getRow()) {
-			col = player->getCol() + halfW;
-			row = player->getRow();
-			player->setTexture(2);
+		if (mouseY < myPlayer->getRow()) {
+			col = myPlayer->getCol() + halfW;
+			row = myPlayer->getRow();
+			myPlayer->setTexture(2);
 		}
 		//below
-		if (mouseY > player->getRow()) {
-			col = player->getCol() + halfW;
-			row = player->getRow() + player->getDrawHeight();
-			player->setTexture(3);
+		if (mouseY > myPlayer->getRow()) {
+			col = myPlayer->getCol() + halfW;
+			row = myPlayer->getRow() + myPlayer->getHeight();
+			myPlayer->setTexture(3);
 		}
 
 

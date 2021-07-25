@@ -3,11 +3,10 @@
 #include <thread>
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
+sf::RenderWindow* cWindow;
 
 void initDrawing() {
-    sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
-    sf::RenderWindow* cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
-    Renderer::init(cWindow);
+
     sf::Event* event = new sf::Event();
     while (cWindow->isOpen()) {
         //everytime a variable you use in here is changed, please log the mutex in the thread that changes the variable.
@@ -36,7 +35,11 @@ void initDrawing() {
 }
 
 int main() {
+    cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
+    Renderer::init(cWindow);
+
     eventhandling::init();
     initDrawing();
+
     return 0;
 }
