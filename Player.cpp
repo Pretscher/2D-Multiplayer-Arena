@@ -3,13 +3,14 @@
 #include <iostream>
 
 
-Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, int i_hp, int i_dmg) {
+Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, int i_maxHp, int i_dmg) {
 	this->col = i_col;
 	this->row = i_row;
 	this->velocity = i_vel;
 	this->width = i_width;
 	this->height = i_height;
-	this->hp = i_hp;
+	this->hp = i_maxHp;
+	this->maxHp = i_maxHp;
 	this->dmg = i_dmg;
 
 	pathXpositions = nullptr;
@@ -82,7 +83,14 @@ void Player::deletePath() {
 }
 
 void Player::draw() {
-	Renderer::drawRectWithTexture(row, col, width, height, currentTexture);
+	Renderer::drawRectWithTexture(row, col, width, height, currentTexture, false);
+	
+	int barWidth = width * 1.5;
+	Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);
+	if (hp > 0) {
+		float widthMult = (float)hp / maxHp;
+		Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth * widthMult, 30, sf::Color(0, 100, 0, 255), false);
+	}
 }
 
 void Player::initTextures() {

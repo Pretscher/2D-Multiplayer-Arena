@@ -4,10 +4,10 @@
 #include "Utils.hpp"
 #include "Player.hpp"
 
-Projectile::Projectile(float velocity, int goalRow, int goalCol, int radius, Player* shootingPlayer) {
+Projectile::Projectile(int row, int col, float velocity, int goalRow, int goalCol, int radius, Player* shootingPlayer) {
 	this->player = shootingPlayer;
-	this->row = player->getRow() - radius;
-	this->col = player->getCol() - radius;
+	this->row = row - radius;//not same as player position, changes with direction because player rotates
+	this->col = col - radius;
 	this->vel = velocity;
 	this->radius = radius;
 
@@ -32,7 +32,7 @@ Projectile::Projectile(float velocity, int goalRow, int goalCol, int radius, Pla
 }
 
 void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCount) {
-	float gotoDiff = 10.0f;
+	float gotoDiff = this->vel * 2;
 
 	float nextCol = 0;
 	float nextRow = 0;
@@ -88,5 +88,5 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 }
 
 void Projectile::draw() {
-	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, sf::Color(255, 0, 255, 255), true);
+	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, sf::Color(255, 0, 255, 255), true, false);
 }

@@ -21,17 +21,19 @@ static int rows, cols;//rows and cols you can see at a time, viewspace limits ne
 static Pathfinding* pathfinding;
 static std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
+static int uiHeight;
+
 //forward declarations
 static void hardCodeTerrain();
 static void projectileManagement();
 
-void initPlayers() {
+static void initPlayers() {
 	playerCount = 2;
 
 	float stepsPerIteration = 0.5f;//velocity on path if path is given
 	players = new Player * [playerCount];
 	for (int i = 0; i < playerCount; i++) {
-		players[i] = new Player(500, i * 1000 / playerCount, 100, 100, stepsPerIteration, 200, 50);//places players on map, col dist depends on playercount
+		players[i] = new Player(500, i * 1000 / playerCount, 100, 100, stepsPerIteration, 200, 10);//places players on map, col dist depends on playercount
 	}
 	myPlayerI = 0;
 }
@@ -46,12 +48,15 @@ void eventhandling::init() {
 	cViewSpace[0] = 0;//row (top to bot)
 	cViewSpace[1] = 0;//col (left to right)
 
+	uiHeight = 900;
+
 	//hardcoded rows and cols
 	rows = 1080;
 	cols = 1920;
 	worldRows = rows + viewSpaceLimits[3];
 	worldCols = cols + viewSpaceLimits[1];
 
+	Renderer::limitMouse(uiHeight, cols);
 	Renderer::initGrid(rows, cols);
 	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
 
@@ -86,6 +91,17 @@ void eventhandling::eventloop() {
 
 }
 
+static void drawUI() {
+
+	Renderer::drawRect(uiHeight, 0, cols, rows - uiHeight, sf::Color(50, 50, 50, 255), true);
+	Renderer::drawRect(uiHeight + 50, 50, (cols - 100), 50, sf::Color(10, 10, 10, 255), true);
+	if (players[myPlayerI]->getHp() > 0) {
+		float widthMult = (float)players[myPlayerI]->getHp() / players[myPlayerI]->getMaxHp();
+		float width = ((float)cols - 100.0f) * widthMult;
+		Renderer::drawRect(uiHeight + 50, 50, width, 50, sf::Color(0, 150, 0, 255), true);
+	}
+}
+
 void eventhandling::drawingloop() {
 	terrain->draw();
 	for (int i = 0; i < playerCount; i++) {
@@ -96,6 +112,7 @@ void eventhandling::drawingloop() {
 	for (int i = 0; i < projectiles->size(); i++) {
 		projectiles->at(i)->draw();
 	}
+	drawUI();
 }
 
 
@@ -144,7 +161,7 @@ static void projectileManagement() {
 
 
 
-		Projectile* p = new Projectile(velocity, mouseY, mouseX, 20, myPlayer);
+		Projectile* p = new Projectile(row, col, velocity, mouseY, mouseX, 20, myPlayer);
 		projectiles->push_back(p);
 	}
 

@@ -327,6 +327,6 @@ void Graph::moveObject(int row, int col, int oldRow, int oldCol, int width, int 
 void Graph::debugDrawing() {
     debug = true;
     for (int i = 0; i < deactivatedY.size(); i++) {
-        Renderer::drawRect(deactivatedY.at(i), deactivatedX.at(i), 2, 2, sf::Color(255, 255, 0, 255));
+        Renderer::drawRect(deactivatedY.at(i), deactivatedX.at(i), 2, 2, sf::Color(255, 255, 0, 255), false);
     }
 }

@@ -7,7 +7,7 @@ public:
 	/**Calculates a line from player to goal (and beyond the goal in the same direction). 
 	* @param playercoords, velocity of projectile, goalcoords, radius of projectile
 	**/
-	Projectile(float velocity, int goalRow, int goalCol, int radius, Player* shootingPlayer);
+	Projectile(int row, int col, float velocity, int goalRow, int goalCol, int radius, Player* shootingPlayer);
 	/**Moves on the Line calculated in the constructor
 	* @param maximum rows/cols where movement is allowed, array of Rect* and its lenght which cannot be passed through by the projectile
 	**/

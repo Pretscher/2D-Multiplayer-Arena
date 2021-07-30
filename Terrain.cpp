@@ -11,7 +11,7 @@ void Terrain::addRect(int row, int col, int width, int height) {
 void Terrain::draw() {
 	for (unsigned int i = 0; i < objectsRow->size(); i++) {
 		Rect* rect = this->objectsRow->at(i);
-		Renderer::drawRect(rect->getRow(), rect->getCol(), rect->getWidth(), rect->getHeight(), sf::Color(100, 100, 100, 100));
+		Renderer::drawRect(rect->getRow(), rect->getCol(), rect->getWidth(), rect->getHeight(), sf::Color(200, 100, 200, 255), false);
 	}
 }
 

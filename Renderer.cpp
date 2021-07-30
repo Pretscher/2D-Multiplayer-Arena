@@ -55,20 +55,25 @@ static void toRowCol(int* io_X, int* io_Y) {
 
 //Drawing functions-------------------------------------------------------------------------------------------------------
 
-void Renderer::drawRect(int row, int col, int width, int height, sf::Color c) {
+void Renderer::drawRect(int row, int col, int width, int height, sf::Color c, bool solidWithViewspace) {
     fromRowColBounds(&width, &height);
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
 
     square->setFillColor(c);
     fromRowCol(&row, &col);
-    square->move(col - viewSpace[1], row - viewSpace[0]);
+    if (solidWithViewspace == true) {
+        square->move(col, row);
+    }
+    else {
+        square->move(col - viewSpace[1], row - viewSpace[0]);
+    }
     Renderer::currentWindow->draw(*square);
     
     delete square;
 }
 
 
-void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness) {
+void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness, bool solidWithViewspace) {
     int unusedHelp = 0;
     fromRowColBounds(&thickness, &unusedHelp);
 
@@ -80,12 +85,17 @@ void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Colo
 
 
     fromRowCol(&row, &col);
-    square->move(col - viewSpace[1] + thickness, row - viewSpace[0] + thickness);
+    if (solidWithViewspace == true) {
+        square->move(col, row);
+    }
+    else {
+        square->move(col - viewSpace[1], row - viewSpace[0]);
+    }
     Renderer::currentWindow->draw(*square);
     delete square;
 }
 
-void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill) {
+void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, bool solidWithViewspace) {
     int unusedHelp = 0;
     fromRowColBounds(&radius, &unusedHelp);
     sf::CircleShape* circle = new sf::CircleShape(radius);
@@ -97,7 +107,12 @@ void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill) 
         circle->setFillColor(sf::Color(0, 0, 0, 0));
     }
     fromRowCol(&row, &col);
-    circle->move(col - viewSpace[1], row - viewSpace[0]);
+    if (solidWithViewspace == true) {
+        circle->move(col, row);
+    }
+    else {
+        circle->move(col - viewSpace[1], row - viewSpace[0]);
+    }
     Renderer::currentWindow->draw(*circle);
     delete circle;
 }
@@ -115,6 +130,12 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
     Renderer::currentWindow->draw(line, 2, sf::Lines);
 }
 
+int mouseLimitRow, mouseLimitCol;
+void Renderer::limitMouse(int row, int col) {
+    mouseLimitRow = row;
+    mouseLimitCol = col;
+}
+
 void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace) {
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
@@ -122,7 +143,14 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace) {
     int x = pos.x - offset.x;
     int y = pos.y - offset.y - 60;
     toRowCol(&x, &y);
-    if (x < maxCols && y < maxRows) {
+
+    int limitRow = maxRows;
+    int limitCol = maxCols;
+    if (factorInViewspace == true) {
+        limitRow = mouseLimitRow;
+        limitCol = mouseLimitCol;
+    }
+    if (x < limitCol && y < limitRow) {
         if (factorInViewspace == true) {
             *o_x = x + viewSpace[1];
             *o_y = y + viewSpace[0];
@@ -177,14 +205,22 @@ sf::Texture Renderer::loadTexture(std::string path) {
 }
 
 
-void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture) {
+void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture, bool solidWithViewspace) {
     fromRowColBounds(&width, &height);
 
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
     square->setTexture(&texture);
     fromRowCol(&row, &col);
-    square->move(col - viewSpace[1], row - viewSpace[0]);
+
+    if (solidWithViewspace == true) {
+        square->move(col, row);
+    }
+    else {
+        square->move(col - viewSpace[1], row - viewSpace[0]);
+    }
+
     Renderer::currentWindow->draw(*square);
 
     delete square;
 }
+
