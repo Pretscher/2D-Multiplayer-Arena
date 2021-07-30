@@ -72,7 +72,8 @@
 	}
 
 	void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
-		finishedPathfinding->lock();
+		finishedPathfinding->try_lock();
+
 		if (findingPath == false) {
 			findingPath = true;
 			players[playerIndex]->setFindingPath(true);
@@ -122,15 +123,16 @@
 
 				this->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 				this->disableArea(players[i]->getRow(), players[i]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+
+
 				finishedPathfinding->unlock();
-
-
 				//for efficiency only find new path if you move next to a possibly moving object
 				//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
 				if (players[i]->getRow() != tempRow && players[i]->getCol() != tempCol) {//only having a path doesnt mean you moved on it
 					//find new paths for players close to this player
 					this->playerInteraction(i);
 				}
+
 			}
 			else {
 				this->disableArea(players[i]->getRow(), players[i]->getCol(), players[i]->getWidth(), players[i]->getHeight());
@@ -142,28 +144,36 @@
 	void Pathfinding::playerInteraction(int movedPlayerIndex) {
 		//find new paths for players close to this player
 		Player* movedPlayer = players[movedPlayerIndex];
+		bool unlock = true;
 		for (int j = 0; j < playerCount; j++) {
 			if (j != movedPlayerIndex) {
+				finishedPathfinding->lock();
 				Player* cPlayer = players[j];
 				if (cPlayer->hasPath() == true) {
 					//did player position change?
+
 					for (int i = 0; i < cPlayer->pathLenght; i++) {
 						int col = cPlayer->pathXpositions[i];
 						int row = cPlayer->pathYpositions[i];
-						if (row > movedPlayer->getRow() && row < movedPlayer->getRow() + players[0]->getHeight()) {
-							if (col > movedPlayer->getCol() && col < movedPlayer->getCol() + players[0]->getWidth()) {
+						if (row > movedPlayer->getRow() - players[0]->getHeight() && row < movedPlayer->getRow() + players[0]->getHeight()) {
+							if (col > movedPlayer->getCol() - players[0]->getWidth() && col < movedPlayer->getCol() + players[0]->getWidth()) {
 								int col = cPlayer->getPathGoalX();
 								int row = cPlayer->getPathGoalY();
 								this->findPath(col, row, j);
+								unlock = false;
 								break;
 							}
 						}
 					}
+
 					//if (abs((cPlayer->getRow() + (players[0]->getHeight() / 2)) - (movedPlayer->getRow() + (players[0]->getHeight() / 2))) < players[0]->getHeight() * 3
 					//	&& abs((cPlayer->getCol() + (players[0]->getWidth() / 2)) - (movedPlayer->getCol() + (players[0]->getWidth() / 2))) < players[0]->getWidth() * 3) {
 						//find new path to same goal
 
 					//}
+				}
+				if (unlock == true) {
+					finishedPathfinding->unlock();
 				}
 			}
 		}
