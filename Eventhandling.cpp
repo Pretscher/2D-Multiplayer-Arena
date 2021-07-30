@@ -1,13 +1,10 @@
 #include "Eventhandling.hpp"
 #include "Renderer.hpp"
 #include "Player.hpp"
-#include "aStarAlgorithm/Graph.hpp"
-#include "aStarAlgorithm/Algorithm.hpp"
 #include "Terrain.hpp"
 #include "Projectile.hpp"
 #include "PathfindingHandler.hpp"
-#include <thread>
-#include <mutex>
+#include "Utils.hpp"
 
 static Player** players;//all players
 static int myPlayerI;
@@ -34,7 +31,7 @@ void initPlayers() {
 	float stepsPerIteration = 0.5f;//velocity on path if path is given
 	players = new Player * [playerCount];
 	for (int i = 0; i < playerCount; i++) {
-		players[i] = new Player(500, i * 1000 / playerCount, 100, 100, stepsPerIteration);//places players on map, col dist depends on playercount
+		players[i] = new Player(500, i * 1000 / playerCount, 100, 100, stepsPerIteration, 200, 50);//places players on map, col dist depends on playercount
 	}
 	myPlayerI = 0;
 }
@@ -92,7 +89,9 @@ void eventhandling::eventloop() {
 void eventhandling::drawingloop() {
 	terrain->draw();
 	for (int i = 0; i < playerCount; i++) {
-		players[i]->draw();//if he has a path, he moves on this path
+		if (players[i]->getHp() > 0) {
+			players[i]->draw();//if he has a path, he moves on this path
+		}
 	}
 	for (int i = 0; i < projectiles->size(); i++) {
 		projectiles->at(i)->draw();
@@ -145,7 +144,7 @@ static void projectileManagement() {
 
 
 
-		Projectile* p = new Projectile(row, col, velocity, mouseY, mouseX, 20);
+		Projectile* p = new Projectile(velocity, mouseY, mouseX, 20, myPlayer);
 		projectiles->push_back(p);
 	}
 
@@ -153,6 +152,21 @@ static void projectileManagement() {
 	for (int i = 0; i < projectiles->size(); i++) {
 		Projectile* p = projectiles->at(i);
 		p->move(worldRows, worldCols, terrain->getCollidables()->data(), terrain->getCollidables()->size());//give it the maximum rows so it know when it can stop moving
+		
+		for (int j = 0; j < playerCount; j++) {
+			Player* cPlayer = players[j];
+			if (cPlayer != p->getPlayer()) {
+				if (players[j]->getHp() > 0) {
+
+					if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
+						p->getRow(), p->getCol(), p->getRadius(), 10) == true) {
+						p->setDead(true);
+						cPlayer->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());
+					}
+				}
+			}
+		}
+		
 		if (p->isDead() == true) {
 			projectiles->erase(projectiles->begin() + i);//delete projecile if dead
 		}

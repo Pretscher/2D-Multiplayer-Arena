@@ -3,7 +3,7 @@
 
 class Player {
 public:
-	Player(int i_col, int i_row, int i_width, int i_height, float i_vel);
+	Player(int i_col, int i_row, int i_width, int i_height, float i_vel, int i_hp, int i_dmg);
     void givePath(int* pathX, int* pathY, int pathLenght);
     void deletePath();
     void move();

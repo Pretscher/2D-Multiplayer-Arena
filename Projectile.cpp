@@ -2,12 +2,12 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include "Utils.hpp"
+#include "Player.hpp"
 
-Projectile::Projectile(int playerRow, int playerCol, float velocity, int goalRow, int goalCol, int radius) {
-	playerRow -= radius;
-	playerCol -= radius;
-	this->row = playerRow;
-	this->col = playerCol;
+Projectile::Projectile(float velocity, int goalRow, int goalCol, int radius, Player* shootingPlayer) {
+	this->player = shootingPlayer;
+	this->row = player->getRow() - radius;
+	this->col = player->getCol() - radius;
 	this->vel = velocity;
 	this->radius = radius;
 
@@ -19,15 +19,15 @@ Projectile::Projectile(int playerRow, int playerCol, float velocity, int goalRow
 	//calculate function for line
 	this->slope = 0;
 	this->yOffset = 0;
-	if (goalCol > playerCol) {
-		this->slope = (float)(goalRow - playerRow) / (float)(goalCol - playerCol);
+	if (goalCol > col) {
+		this->slope = (float)(goalRow - this->row) / (float)(goalCol - this->col);
 	}
 	else {
-		this->slope = (float)(playerRow - goalRow) / (float)(playerCol - goalCol);
+		this->slope = (float)(this->row - goalRow) / (float)(this->col - goalCol);
 	}
 	//f(x1) = slope * x1 + yOffset <=> f(x1) - slope * x1 = yOffset (where f(x1) is obviously y1)
-	this->yOffset = (float)playerRow - (this->slope * (float)playerCol);
-	if (goalCol > playerCol) this->up = true;
+	this->yOffset = (float)this->row - (this->slope * (float)this->col);
+	if (goalCol > this->col) this->up = true;
 	else this->up = false;
 }
 
