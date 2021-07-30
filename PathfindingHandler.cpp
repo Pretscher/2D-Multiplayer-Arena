@@ -147,13 +147,23 @@
 				Player* cPlayer = players[j];
 				if (cPlayer->hasPath() == true) {
 					//did player position change?
-					if (abs((cPlayer->getRow() + (players[0]->getHeight() / 2)) - (movedPlayer->getRow() + (players[0]->getHeight() / 2))) < players[0]->getHeight() * 3
-						&& abs((cPlayer->getCol() + (players[0]->getWidth() / 2)) - (movedPlayer->getCol() + (players[0]->getWidth() / 2))) < players[0]->getWidth() * 3) {
-						//find new path to same goal
-						int col = cPlayer->getPathGoalX();
-						int row = cPlayer->getPathGoalY();
-						this->findPath(col, row, j);
+					for (int i = 0; i < cPlayer->pathLenght; i++) {
+						int col = cPlayer->pathXpositions[i];
+						int row = cPlayer->pathYpositions[i];
+						if (row > movedPlayer->getRow() && row < movedPlayer->getRow() + players[0]->getHeight()) {
+							if (col > movedPlayer->getCol() && col < movedPlayer->getCol() + players[0]->getWidth()) {
+								int col = cPlayer->getPathGoalX();
+								int row = cPlayer->getPathGoalY();
+								this->findPath(col, row, j);
+								break;
+							}
+						}
 					}
+					//if (abs((cPlayer->getRow() + (players[0]->getHeight() / 2)) - (movedPlayer->getRow() + (players[0]->getHeight() / 2))) < players[0]->getHeight() * 3
+					//	&& abs((cPlayer->getCol() + (players[0]->getWidth() / 2)) - (movedPlayer->getCol() + (players[0]->getWidth() / 2))) < players[0]->getWidth() * 3) {
+						//find new path to same goal
+
+					//}
 				}
 			}
 		}

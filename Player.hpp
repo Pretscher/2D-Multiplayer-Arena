@@ -10,6 +10,9 @@ public:
     void draw();
     void setTexture(int index);
 
+    int* pathXpositions;
+    int* pathYpositions;
+    int pathLenght;
 private:
 
 	int row;
@@ -26,9 +29,7 @@ private:
 
     int hp;
     int dmg;
-    int* pathXpositions;
-    int* pathYpositions;
-    int pathLenght;
+
     float cPathIndex;
     bool findingPath;
 public:
