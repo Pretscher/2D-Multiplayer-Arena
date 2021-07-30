@@ -30,6 +30,7 @@ private:
     int* pathYpositions;
     int pathLenght;
     float cPathIndex;
+    bool findingPath;
 public:
     inline int getRow() { return row; }
     inline void setRow(int row) { this->row = row; }
@@ -55,6 +56,14 @@ public:
     inline bool hasPath() {
         if (pathLenght == -1) return false;
         return true;
+    }
+
+    inline void setFindingPath(bool i_findingPath) {
+        findingPath = i_findingPath;
+    }
+
+    inline bool isFindingPath() {
+        return findingPath;
     }
 
     inline int getPathGoalX() {

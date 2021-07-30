@@ -33,6 +33,11 @@ public:
 	void moveObject(int row, int col, int oldRow, int oldCol, int width, int height);
 	void enableObjectBounds(int row, int col, int width, int height);
 
+	//debugging
+
+	std::vector<int> deactivatedX = std::vector<int>();
+	std::vector<int> deactivatedY = std::vector<int>();
+	void debugDrawing();
 private:
 	int findNextUseableVertex(int row, int col, bool moveableRelevant);
 };

@@ -28,15 +28,13 @@ static std::vector<Projectile*>* projectiles;//stores all projectiles for creati
 static void hardCodeTerrain();
 static void projectileManagement();
 
-int playerWidth;
-int playerHeight;
 void initPlayers() {
 	playerCount = 2;
 
 	float stepsPerIteration = 0.5f;//velocity on path if path is given
 	players = new Player * [playerCount];
 	for (int i = 0; i < playerCount; i++) {
-		players[i] = new Player(500, i * 1000 / playerCount, playerWidth, playerHeight, stepsPerIteration);//places players on map, col dist depends on playercount
+		players[i] = new Player(500, i * 1000 / playerCount, 100, 100, stepsPerIteration);//places players on map, col dist depends on playercount
 	}
 	myPlayerI = 0;
 }
@@ -60,71 +58,35 @@ void eventhandling::init() {
 	Renderer::initGrid(rows, cols);
 	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
 
-	playerWidth = 100;
-	playerHeight = 100;
-
-
 	initPlayers();
 	terrain = new Terrain();
 	hardCodeTerrain();
 
 	pathfinding = new Pathfinding(worldRows, worldCols, terrain, players, playerCount);
 
-
-
 	projectiles = new std::vector<Projectile*>();
 }
 
+bool direction = false;
 void eventhandling::eventloop() {
 	Renderer::updateViewSpace();//move view space if mouse on edge of window
 	pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
+	pathfinding->moveObjects();
 	projectileManagement();
-
-	for (int i = 0; i < playerCount; i++) {
-		pathfinding->lockPlayer();
-		if (players[i]->hasPath() == true) {
-			int tempRow = players[i]->getRow();
-			int tempCol = players[i]->getCol();
-
-			players[i]->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
-			if (pathfinding->isPlayerUseable() == true) {
-				pathfinding->enableArea(tempRow, tempCol, playerWidth, playerHeight);//enable old position
-				pathfinding->disableArea(players[i]->getRow(), players[i]->getCol(), playerWidth, playerHeight);//disable new position
+	
+	if (pathfinding->isPlayerUseable() == true) {
+		if (players[1]->hasPath() == false && players[1]->isFindingPath() == false) {
+			if (direction == false) {
+				pathfinding->findPath(1000, 1000, 1);
+				direction = true;
 			}
-			pathfinding->unlockPlayer();
-
-
-			//for efficiency only find new path if you move next to a possibly moving object
-			//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
-			if (players[i]->getRow() != tempRow && players[i]->getCol() != tempCol) {//only having a path doesnt mean you moved on it
-				//find new paths for players close to this player
-				Player* movedPlayer = players[i];
-				for (int j = 0; j < playerCount; j++) {
-					if (j != i) {
-						Player* cPlayer = players[j];
-						if (cPlayer->hasPath() == true) {
-							//did player position change?
-							if (abs(cPlayer->getRow() - movedPlayer->getRow()) < playerHeight 
-								&& abs(cPlayer->getCol() - movedPlayer->getCol()) < playerWidth) {
-
-								//find new path to same goal
-								int col = cPlayer->getPathGoalX();
-								int row = cPlayer->getPathGoalY();
-								pathfinding->findPath(col, row, myPlayerI);
-							}
-						}
-					}
-				}
+			else {
+				pathfinding->findPath(100, 100, 1);
+				direction = false;
 			}
-		}
-		else {
-			if (pathfinding->isPlayerUseable() == true) {
-				pathfinding->disableArea(players[i]->getRow(), players[i]->getCol(), players[i]->getWidth(), players[i]->getHeight());
-			}
-			pathfinding->unlockPlayer();
-
 		}
 	}
+
 }
 
 void eventhandling::drawingloop() {
@@ -136,10 +98,6 @@ void eventhandling::drawingloop() {
 		projectiles->at(i)->draw();
 	}
 }
-
-
-
-//Pathfinding--------------------------------------------------------------------------------------------
 
 
 

@@ -112,6 +112,15 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 			}
 		}
 
+		if (pathLenght == 0) {
+			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
+			graph->reset();
+			delete heap;
+			delete[] distanceTravelled;
+			delete[] previousIndex;
+			return false;
+		}
+
 		graph->reset();
 		delete heap;
 		delete[] distanceTravelled;

@@ -16,6 +16,7 @@ Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel) {
 
 	this->initTextures();
 	currentTexture = textures[3];
+	findingPath = false;
 }
 
 
