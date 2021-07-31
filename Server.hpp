@@ -131,8 +131,12 @@ public:
                 lastMessage->push_back(recvbuf[i]);
             }
 
-            if (iResult > 0) {
-                /*
+            if (iResult < 0) {
+                std::cout << "Server recv failed with error: \n" << WSAGetLastError();
+                closesocket(ClientSocket);
+                WSACleanup();
+                return;
+                /*  this code is for > 0 to mirror message
                     std::cout << "\nServer Bytes received: " << iResult;
                     // Echo the buffer back to the sender
                     iSendResult = send(ClientSocket, recvbuf, iResult, 0);
@@ -143,15 +147,6 @@ public:
                         return;
                     }
                     std::cout << "\nServer Bytes sent:" << iSendResult;*/
-            }
-            else if (iResult == 0) {
-                //std::cout << "Server Connection closing...\n";
-            }
-            else {
-                std::cout << "Server recv failed with error: \n" << WSAGetLastError();
-                closesocket(ClientSocket);
-                WSACleanup();
-                return;
             }
         }
 

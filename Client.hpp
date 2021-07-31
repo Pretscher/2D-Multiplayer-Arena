@@ -102,13 +102,7 @@ public:
                 lastMessage->push_back(recvbuf[i]);
             }
 
-            if (iResult > 0) {
-                std::cout << "\nServer Bytes received: " << iResult;
-            }
-            else if (iResult == 0) {
-                //std::cout << "Server Connection closing...\n";
-            }
-            else {
+            if (iResult < 0) {
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();
                 closesocket(ConnectSocket);
                 WSACleanup();
