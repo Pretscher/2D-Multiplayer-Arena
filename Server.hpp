@@ -83,9 +83,7 @@ public:
             return;
         }
 
-        std::cout << "Server successfully connected, waiting for client.\n";
-
-        waitForClient();
+        std::cout << "Server successfully set up.\n";
     }
 
     void waitForClient() {
@@ -107,10 +105,11 @@ public:
     }
 
     std::string getLastMessage() {
-        std::string out = std::string();
+        std::string out = nullptr;
         for (int i = 0; i < recvbuflen; i++) {
             out.push_back(recvbuf[i]);
         }
+        
         return out;
     }
 
@@ -123,7 +122,6 @@ public:
             WSACleanup();
             return;
         }
-
         std::cout << "Server Bytes Sent: \n" << iResult;
     }
 
@@ -132,6 +130,7 @@ public:
         do {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
             if (iResult > 0) {
+            
                 std::cout << "\nServer Bytes received: " << iResult;
                 // Echo the buffer back to the sender
                 iSendResult = send(ClientSocket, recvbuf, iResult, 0);

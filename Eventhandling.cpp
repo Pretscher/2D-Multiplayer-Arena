@@ -240,6 +240,7 @@ static void projectileManagement() {
 
 static void initServer() {
 	server = new Server();
+	server->waitForClient();
 }
 
 static void initClient() {
