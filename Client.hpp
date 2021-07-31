@@ -85,7 +85,7 @@ public:
         iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
         if (iResult == SOCKET_ERROR) {
             std::cout << "Client send failed with error: \n" << WSAGetLastError();
-            closesocket(ConnectSocket);
+            //closesocket(ConnectSocket);
             WSACleanup();
             return;
         }

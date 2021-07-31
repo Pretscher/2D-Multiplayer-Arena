@@ -16,12 +16,14 @@
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 
+/**Creates a multithreading-only server which waits for a client to connect with him and send him some messages.
+**/
 class Server {
 public:
     Server() {
         WSADATA wsaData;
 
-        SOCKET ListenSocket = INVALID_SOCKET;
+        ListenSocket = INVALID_SOCKET;
         ClientSocket = INVALID_SOCKET;
 
         struct addrinfo* result = NULL;
@@ -81,6 +83,10 @@ public:
             return;
         }
 
+        waitForClient();
+    }
+
+    void waitForClient() {
         // Accept a client socket
         ClientSocket = accept(ListenSocket, nullptr, nullptr);
         if (ClientSocket == INVALID_SOCKET) {
@@ -93,9 +99,10 @@ public:
         // No longer need server socket
         closesocket(ListenSocket);
 
+        this->receive();
     }
 
-    void startConnection() {
+    void receive() {
         // Receive until the peer shuts down the connection
         do {
             std::cout << "Server receiving. \n";
@@ -143,4 +150,5 @@ private:
     char* recvbuf;
     int recvbuflen;
     SOCKET ClientSocket;
+    SOCKET ListenSocket;
 };
