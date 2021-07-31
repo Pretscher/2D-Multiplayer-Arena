@@ -95,10 +95,10 @@ void Player::draw() {
 
 void Player::initTextures() {
 	textures = new sf::Texture[4];
-	textures[0] = Renderer::loadTexture("C:/Users/julia/source/repos/MobaTemplate/Textures/mageFromAboveLeft.png");
-	textures[1] = Renderer::loadTexture("C:/Users/julia/source/repos/MobaTemplate/Textures/mageFromAboveRight.png");
-	textures[2] = Renderer::loadTexture("C:/Users/julia/source/repos/MobaTemplate/Textures/mageFromAboveTop.png");
-	textures[3] = Renderer::loadTexture("C:/Users/julia/source/repos/MobaTemplate/Textures/mageFromAboveBottom.png");
+	textures[0] = Renderer::loadTexture("Textures/mageFromAboveLeft.png");
+	textures[1] = Renderer::loadTexture("Textures/mageFromAboveRight.png");
+	textures[2] = Renderer::loadTexture("Textures/mageFromAboveTop.png");
+	textures[3] = Renderer::loadTexture("Textures/mageFromAboveBottom.png");
 }
 
 void Player::setTexture(int index) {
