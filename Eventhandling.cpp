@@ -108,7 +108,6 @@ void eventhandling::eventloop() {
 			std::string* msg = server->getLastMessage();
 			if (msg != nullptr) {
 				server->sendToClient("who are you to challenge me in my right to exist in peace");
-				delete msg;
 			}
 		}
 

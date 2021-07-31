@@ -94,18 +94,40 @@ public:
     }
 
     void receive() {
-        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        //save message
-        for (int i = 0; i < iResult; i++) {
-            lastMessage = new std::string();
-            lastMessage->push_back(recvbuf[i]);
+        do {
+            iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+            //save message
+            for (int i = 0; i < iResult; i++) {
+                lastMessage = new std::string();
+                lastMessage->push_back(recvbuf[i]);
+            }
+
+            if (iResult > 0) {
+                std::cout << "\nServer Bytes received: " << iResult;
+            }
+            else if (iResult == 0)
+                std::cout << "Server Connection closing...\n";
+            else {
+                std::cout << "Server recv failed with error: \n" << WSAGetLastError();
+                closesocket(ConnectSocket);
+                WSACleanup();
+                return;
+            }
+
+        } while (iResult > 0);
+
+        // shutdown the connection since we're done
+        iResult = shutdown(ConnectSocket, SD_SEND);
+        if (iResult == SOCKET_ERROR) {
+            std::cout << "Server shutdown failed with error: \n" << WSAGetLastError();
+            closesocket(ConnectSocket);
+            WSACleanup();
+            return;
         }
-        if (iResult > 0)
-            std::cout << "Client Bytes received: \n" << iResult;
-        else if (iResult == 0)
-            std::cout << "Client Connection closed\n";
-        else
-            std::cout << "Client recv failed with error: \n" << WSAGetLastError();
+
+        // cleanup
+        closesocket(ConnectSocket);
+        WSACleanup();
     }
 
     void disconnect() {
