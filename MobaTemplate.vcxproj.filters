@@ -13,6 +13,9 @@
     <Filter Include="CrossProject">
       <UniqueIdentifier>{76e2aa23-2479-4f49-82c4-8ab63fe6496a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{e6d16e15-02fd-4d43-bb61-347d6f505981}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aStarAlgorithm\Algorithm.cpp">
@@ -50,6 +53,12 @@
     </ClCompile>
     <ClCompile Include="PathfindingHandler.cpp">
       <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.hpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.hpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

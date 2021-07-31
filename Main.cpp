@@ -3,6 +3,9 @@
 #include <thread>
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
+#include "Server.hpp"
+#include "Client.hpp"
+
 sf::RenderWindow* cWindow;
 
 void initDrawing() {
@@ -34,12 +37,31 @@ void initDrawing() {
     std::exit(0);
 }
 
+std::thread* nThread;
+
+
+void initServer() {
+    Server* server = new Server();
+    server->startConnection();
+}
+
 int main() {
+    nThread = new std::thread(&initServer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::string s = "192.168.178.28";
+    const char* c = s.c_str();
+    Client* client = new Client(c);
+    client->sendToServer();
+    client->disconnect();
+
+
+
+    /*
     cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
     Renderer::init(cWindow);
 
     eventhandling::init();
     initDrawing();
-
+    */
     return 0;
 }

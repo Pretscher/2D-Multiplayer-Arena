@@ -157,6 +157,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Server.hpp" />
+    <ClCompile Include="Client.hpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
