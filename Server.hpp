@@ -111,7 +111,7 @@ public:
         do {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
             if (iResult > 0) {
-                std::cout << "Server Bytes received: \n" << iResult;
+                std::cout << "Server Bytes received: \n" << recvbuf;
 
                 // Echo the buffer back to the sender
                 iSendResult = send(ClientSocket, recvbuf, iResult, 0);
