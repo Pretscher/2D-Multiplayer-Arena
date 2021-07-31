@@ -27,6 +27,9 @@ static std::vector<Projectile*>* projectiles;//stores all projectiles for creati
 static int uiHeight;
 static Menu* menu;
 
+static Server* server;
+static Client* client;
+
 //forward declarations
 static void hardCodeTerrain();
 static void projectileManagement();
@@ -100,6 +103,15 @@ void eventhandling::eventloop() {
 
 
 	if (menuActive == false) {
+
+		if (server != nullptr) {
+			std::string msg = server->getLastMessage();
+			if (msg.length() > 0) {
+				std::cout << "efwhffohefwoihefwoief";
+				server->sendToClient("who are you to challenge me in my right to exist in peace");
+			}
+		}
+
 		Renderer::updateViewSpace();//move view space if mouse on edge of window
 		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
 		pathfinding->moveObjects();
@@ -226,9 +238,8 @@ static void projectileManagement() {
 
 
 
-
 static void initServer() {
-	Server* server = new Server();
+	server = new Server();
 }
 
 static void initClient() {

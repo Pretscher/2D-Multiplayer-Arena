@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-
+#include <vector>
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
@@ -106,22 +106,41 @@ public:
         this->receive();
     }
 
+    std::string getLastMessage() {
+        std::string out = std::string();
+        for (int i = 0; i < recvbuflen; i++) {
+            out.push_back(recvbuf[i]);
+        }
+    }
+
+    void sendToClient(const char* message) {
+        // Send an initial buffer
+        iResult = send(ClientSocket, message, (int)strlen(message), 0);
+        if (iResult == SOCKET_ERROR) {
+            std::cout << "Client send failed with error: \n" << WSAGetLastError();
+            //closesocket(ConnectSocket);
+            WSACleanup();
+            return;
+        }
+
+        std::cout << "Server Bytes Sent: \n" << iResult;
+    }
+
     void receive() {
         // Receive until the peer shuts down the connection
         do {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
             if (iResult > 0) {
-                std::cout << "Server Bytes received: \n" << recvbuf;
-
+                std::cout << "\nServer Bytes received: " << iResult;
                 // Echo the buffer back to the sender
                 iSendResult = send(ClientSocket, recvbuf, iResult, 0);
                 if (iSendResult == SOCKET_ERROR) {
-                    std::cout << "Server send failed with error: \n" << WSAGetLastError();
+                    std::cout << "\nServer send failed with error:" << WSAGetLastError();
                     closesocket(ClientSocket);
                     WSACleanup();
                     return;
                 }
-                std::cout << "Server Bytes sent: \n" << iSendResult;
+                std::cout << "\nServer Bytes sent:" << iSendResult;
             }
             else if (iResult == 0)
                 std::cout << "Server Connection closing...\n";
