@@ -23,7 +23,6 @@ public:
         struct addrinfo* result = NULL,
             * ptr = NULL,
             hints;
-        sendbuf = "this is a test";
         char recvbuf[DEFAULT_BUFLEN];
         
         int recvbuflen = DEFAULT_BUFLEN;
@@ -80,9 +79,9 @@ public:
         }
     }
 
-    void sendToServer() {
+    void sendToServer(const char* message) {
         // Send an initial buffer
-        iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+        iResult = send(ConnectSocket, message, (int)strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
             std::cout << "Client send failed with error: \n" << WSAGetLastError();
             //closesocket(ConnectSocket);
@@ -123,7 +122,6 @@ public:
 private:
     int iResult;
     SOCKET ConnectSocket;
-    const char* sendbuf;
     char* recvbuf;
 
     int recvbuflen;

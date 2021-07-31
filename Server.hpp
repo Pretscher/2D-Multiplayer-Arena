@@ -83,7 +83,7 @@ public:
             return;
         }
 
-        std::cout << "Server successfully connected, waiting for client.";
+        std::cout << "Server successfully connected, waiting for client.\n";
 
         waitForClient();
     }
@@ -101,7 +101,7 @@ public:
         // No longer need server socket
         closesocket(ListenSocket);
 
-        std::cout << "Server successfully connected to client. Ready to receive messages";
+        std::cout << "Server successfully connected to client. Ready to receive messages.\n";
 
         this->receive();
     }
@@ -109,7 +109,6 @@ public:
     void receive() {
         // Receive until the peer shuts down the connection
         do {
-            std::cout << "Server receiving. \n";
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
             if (iResult > 0) {
                 std::cout << "Server Bytes received: \n" << iResult;

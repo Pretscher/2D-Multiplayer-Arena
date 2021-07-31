@@ -235,5 +235,6 @@ static void initClient() {
 	std::string s = "192.168.178.28";
 	const char* c = s.c_str();
 	Client* client = new Client(c);
+	client->sendToServer("hi there");
 }
 
