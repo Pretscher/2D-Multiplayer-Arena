@@ -111,6 +111,7 @@ public:
         for (int i = 0; i < recvbuflen; i++) {
             out.push_back(recvbuf[i]);
         }
+        return out;
     }
 
     void sendToClient(const char* message) {
