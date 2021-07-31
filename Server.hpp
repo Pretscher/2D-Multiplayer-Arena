@@ -83,6 +83,8 @@ public:
             return;
         }
 
+        std::cout << "Server successfully connected, waiting for client.";
+
         waitForClient();
     }
 
@@ -98,6 +100,8 @@ public:
 
         // No longer need server socket
         closesocket(ListenSocket);
+
+        std::cout << "Server successfully connected to client. Ready to receive messages";
 
         this->receive();
     }

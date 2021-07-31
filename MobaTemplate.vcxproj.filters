@@ -101,5 +101,8 @@
     <ClInclude Include="PathfindingHandler.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
+    <ClInclude Include="Menu.hpp">
+      <Filter>Eventhandling</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

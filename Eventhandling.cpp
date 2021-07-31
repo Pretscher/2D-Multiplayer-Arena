@@ -5,6 +5,9 @@
 #include "Projectile.hpp"
 #include "PathfindingHandler.hpp"
 #include "Utils.hpp"
+#include "Server.hpp"
+#include "Client.hpp"
+#include "Menu.hpp"
 
 static Player** players;//all players
 static int myPlayerI;
@@ -22,6 +25,7 @@ static Pathfinding* pathfinding;
 static std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
 static int uiHeight;
+static Menu* menu;
 
 //forward declarations
 static void hardCodeTerrain();
@@ -38,7 +42,13 @@ static void initPlayers() {
 	myPlayerI = 0;
 }
 
+static void initServer();
+static void initClient();
+static bool isServer;
+static std::thread* networkThread;
 void eventhandling::init() {
+	menu = new Menu();
+
 	viewSpaceLimits = new int[4];
 	viewSpaceLimits[0] = 0;//left
 	viewSpaceLimits[1] = 2000;//right
@@ -70,25 +80,44 @@ void eventhandling::init() {
 }
 
 bool direction = false;
+bool menuActive = true;
 void eventhandling::eventloop() {
-	Renderer::updateViewSpace();//move view space if mouse on edge of window
-	pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
-	pathfinding->moveObjects();
-	projectileManagement();
-	
-	if (pathfinding->isPlayerUseable() == true) {
-		if (players[1]->hasPath() == false && players[1]->isFindingPath() == false) {
-			if (direction == false) {
-				pathfinding->findPath(1000, 1000, 1);
-				direction = true;
-			}
-			else {
-				pathfinding->findPath(100, 100, 1);
-				direction = false;
-			}
+	if (menuActive == true) {
+		menu->update();
+		if (menu->hostServer() == true) {
+			networkThread = new std::thread(&initServer);
+			isServer = true;
+			menuActive = false;
+		}
+		if (menu->connectAsClient() == true) {
+			networkThread = new std::thread(&initClient);
+			isServer = false;
+			menuActive = false;
 		}
 	}
 
+
+
+
+	if (menuActive == false) {
+		Renderer::updateViewSpace();//move view space if mouse on edge of window
+		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
+		pathfinding->moveObjects();
+		projectileManagement();
+
+		if (pathfinding->isPlayerUseable() == true) {
+			if (players[1]->hasPath() == false && players[1]->isFindingPath() == false) {
+				if (direction == false) {
+					pathfinding->findPath(1000, 1000, 1);
+					direction = true;
+				}
+				else {
+					pathfinding->findPath(100, 100, 1);
+					direction = false;
+				}
+			}
+		}
+	}
 }
 
 static void drawUI() {
@@ -103,16 +132,21 @@ static void drawUI() {
 }
 
 void eventhandling::drawingloop() {
-	terrain->draw();
-	for (int i = 0; i < playerCount; i++) {
-		if (players[i]->getHp() > 0) {
-			players[i]->draw();//if he has a path, he moves on this path
+	if (menuActive == true) {
+		menu->drawMenu();
+	}
+	else {
+		terrain->draw();
+		for (int i = 0; i < playerCount; i++) {
+			if (players[i]->getHp() > 0) {
+				players[i]->draw();//if he has a path, he moves on this path
+			}
 		}
+		for (int i = 0; i < projectiles->size(); i++) {
+			projectiles->at(i)->draw();
+		}
+		drawUI();
 	}
-	for (int i = 0; i < projectiles->size(); i++) {
-		projectiles->at(i)->draw();
-	}
-	drawUI();
 }
 
 
@@ -189,3 +223,17 @@ static void projectileManagement() {
 		}
 	}
 }
+
+
+
+
+static void initServer() {
+	Server* server = new Server();
+}
+
+static void initClient() {
+	std::string s = "192.168.178.28";
+	const char* c = s.c_str();
+	Client* client = new Client(c);
+}
+

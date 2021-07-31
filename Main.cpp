@@ -36,30 +36,11 @@ void initDrawing() {
 
     std::exit(0);
 }
-
-std::thread* serverThread;
-
-
-void initServer() {
-    Server* server = new Server();
-}
-
 int main() {
-    serverThread = new std::thread(&initServer);
-    std::string s = "192.168.178.28";
-    const char* c = s.c_str();
-    Client* client = new Client(c);
-    client->sendToServer();
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-
-
-
-    /*
     cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
     Renderer::init(cWindow);
 
     eventhandling::init();
     initDrawing();
-    */
     return 0;
 }

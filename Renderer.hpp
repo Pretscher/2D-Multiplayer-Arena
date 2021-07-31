@@ -23,3 +23,53 @@ public:
     static sf::Texture loadTexture(std::string path);
 
 };
+
+
+//help button class
+class Button {
+public:
+    Button(int row, int col, int width, int height, sf::Color color) {
+        this->row = row;
+        this->col = col;
+        this->width = width;
+        this->height = height;
+        this->color = color;
+    }
+    bool sameClick = false;
+    bool isPressed() {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && sameClick == false) {
+            sameClick = true;
+            int mRow;
+            int mCol;
+            Renderer::getMousePos(&mCol, &mRow, false);
+            if (mRow > this->row && mRow < this->row + this->height) {
+                if (mCol > this->col && mCol < this->col + this->width) {
+                    return true;
+                }
+            }
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == false) {
+            sameClick = false;
+        }
+        return false;
+    }
+
+    void draw() {
+        if (this->isPressed() == true) {
+            sf::Color newColor = color;
+            newColor.r += 50;
+            newColor.g += 50;
+            newColor.b += 50;
+            Renderer::drawRect(row, col, width, height, color, true);
+            Renderer::drawRectOutline(row, col, width, height, color, 10, true);
+        }
+        else {
+            Renderer::drawRect(row, col, width, height, color, true);
+            Renderer::drawRectOutline(row, col, width, height, color, 3, true);
+        }
+    }
+private:
+    int row, col, width, height;
+    sf::Color color;
+};
