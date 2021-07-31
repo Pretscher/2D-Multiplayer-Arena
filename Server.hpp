@@ -123,7 +123,7 @@ public:
 
     void receive() {
         // Receive until the peer shuts down the connection
-        do {
+        while(true) {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
             //save message
             for (int i = 0; i < iResult; i++) {
@@ -132,17 +132,17 @@ public:
             }
 
             if (iResult > 0) {
-            /*
-                std::cout << "\nServer Bytes received: " << iResult;
-                // Echo the buffer back to the sender
-                iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-                if (iSendResult == SOCKET_ERROR) {
-                    std::cout << "\nServer send failed with error:" << WSAGetLastError();
-                    closesocket(ClientSocket);
-                    WSACleanup();
-                    return;
-                }
-                std::cout << "\nServer Bytes sent:" << iSendResult;*/
+                /*
+                    std::cout << "\nServer Bytes received: " << iResult;
+                    // Echo the buffer back to the sender
+                    iSendResult = send(ClientSocket, recvbuf, iResult, 0);
+                    if (iSendResult == SOCKET_ERROR) {
+                        std::cout << "\nServer send failed with error:" << WSAGetLastError();
+                        closesocket(ClientSocket);
+                        WSACleanup();
+                        return;
+                    }
+                    std::cout << "\nServer Bytes sent:" << iSendResult;*/
             }
             else if (iResult == 0) {
                 //std::cout << "Server Connection closing...\n";
@@ -153,8 +153,7 @@ public:
                 WSACleanup();
                 return;
             }
-
-        } while (iResult > 0);
+        }
 
         // shutdown the connection since we're done
         iResult = shutdown(ClientSocket, SD_SEND);

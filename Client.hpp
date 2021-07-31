@@ -94,7 +94,7 @@ public:
     }
 
     void receive() {
-        do {
+        while(true) {
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
             //save message
             for (int i = 0; i < iResult; i++) {
@@ -105,8 +105,9 @@ public:
             if (iResult > 0) {
                 std::cout << "\nServer Bytes received: " << iResult;
             }
-            else if (iResult == 0)
-                std::cout << "Server Connection closing...\n";
+            else if (iResult == 0) {
+                //std::cout << "Server Connection closing...\n";
+            }
             else {
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();
                 closesocket(ConnectSocket);
@@ -114,7 +115,7 @@ public:
                 return;
             }
 
-        } while (iResult > 0);
+        }
 
         // shutdown the connection since we're done
         iResult = shutdown(ConnectSocket, SD_SEND);
