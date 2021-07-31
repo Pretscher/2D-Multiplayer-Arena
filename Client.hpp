@@ -24,9 +24,9 @@ public:
         struct addrinfo* result = NULL,
             * ptr = NULL,
             hints;
-        char recvbuf[DEFAULT_BUFLEN];
+        recvbuf = new char[DEFAULT_BUFLEN];
         
-        int recvbuflen = DEFAULT_BUFLEN;
+        recvbuflen = DEFAULT_BUFLEN;
 
 
         // Initialize Winsock
