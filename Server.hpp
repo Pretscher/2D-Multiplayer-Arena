@@ -21,6 +21,7 @@
 class Server {
 public:
     Server() {
+        lastMessage = nullptr;
         WSADATA wsaData;
 
         ListenSocket = INVALID_SOCKET;
@@ -104,13 +105,8 @@ public:
         this->receive();
     }
 
-    std::string getLastMessage() {
-        std::string out = nullptr;
-        for (int i = 0; i < recvbuflen; i++) {
-            out.push_back(recvbuf[i]);
-        }
-        
-        return out;
+    std::string* getLastMessage() {
+        return lastMessage;
     }
 
     void sendToClient(const char* message) {
@@ -129,6 +125,12 @@ public:
         // Receive until the peer shuts down the connection
         do {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+            //save message
+            for (int i = 0; i < iResult; i++) {
+                lastMessage = new std::string();
+                lastMessage->push_back(recvbuf[i]);
+            }
+
             if (iResult > 0) {
             
                 std::cout << "\nServer Bytes received: " << iResult;
@@ -173,4 +175,5 @@ private:
     int recvbuflen;
     SOCKET ClientSocket;
     SOCKET ListenSocket;
+    std::string* lastMessage;
 };

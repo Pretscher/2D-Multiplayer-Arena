@@ -105,10 +105,10 @@ void eventhandling::eventloop() {
 	if (menuActive == false) {
 
 		if (server != nullptr) {
-			std::string msg = server->getLastMessage();
-			if (msg.length() > 0) {
-				std::cout << "efwhffohefwoihefwoief";
+			std::string* msg = server->getLastMessage();
+			if (msg != nullptr) {
 				server->sendToClient("who are you to challenge me in my right to exist in peace");
+				delete msg;
 			}
 		}
 
@@ -245,8 +245,8 @@ static void initServer() {
 
 static void initClient() {
 	std::string s = "192.168.178.28";
-	const char* c = s.c_str();
-	Client* client = new Client(c);
+	Client* client = new Client(s.c_str());
 	client->sendToServer("hi there");
+	client->receive();
 }
 

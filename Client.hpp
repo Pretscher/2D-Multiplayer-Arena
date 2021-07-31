@@ -18,6 +18,7 @@
 class Client {
 public:
     Client(const char* serverIP) {
+        lastMessage = nullptr;
         WSADATA wsaData;
         ConnectSocket = INVALID_SOCKET;
         struct addrinfo* result = NULL,
@@ -92,6 +93,21 @@ public:
         std::cout << "Client Bytes Sent: \n" << iResult;
     }
 
+    void receive() {
+        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+        //save message
+        for (int i = 0; i < iResult; i++) {
+            lastMessage = new std::string();
+            lastMessage->push_back(recvbuf[i]);
+        }
+        if (iResult > 0)
+            std::cout << "Client Bytes received: \n" << iResult;
+        else if (iResult == 0)
+            std::cout << "Client Connection closed\n";
+        else
+            std::cout << "Client recv failed with error: \n" << WSAGetLastError();
+    }
+
     void disconnect() {
         iResult = shutdown(ConnectSocket, SD_SEND);
         if (iResult == SOCKET_ERROR) {
@@ -125,4 +141,5 @@ private:
     char* recvbuf;
 
     int recvbuflen;
+    std::string* lastMessage;
 };
