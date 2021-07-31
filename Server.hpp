@@ -130,7 +130,7 @@ public:
                 lastMessage = new std::string();
                 lastMessage->push_back(recvbuf[i]);
             }
-
+            std::cout << "Server received message: " << lastMessage;
             if (iResult < 0) {
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();
                 closesocket(ClientSocket);
