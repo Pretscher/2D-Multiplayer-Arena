@@ -138,7 +138,7 @@ public:
                 return;
             }
             wait = true;
-            std::cout << "Server Message Sent: \n" << std::string(message);
+        //    std::cout << "Server Message Sent: \n" << std::string(message);
         }
     }
 
@@ -165,7 +165,7 @@ public:
                 return;
             }
             wait = false;
-            std::cout << "Server received message: " << *lastMessage;
+         //   std::cout << "Server received message: " << *lastMessage;
         }
 
         std::exit(0);

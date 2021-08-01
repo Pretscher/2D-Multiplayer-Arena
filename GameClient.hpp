@@ -107,7 +107,7 @@ public:
                 return;
             }
             wait = true;
-            std::cout << "Client Message Sent: \n" << message;
+          //  std::cout << "Client Message Sent: \n" << message;
         }
     }
 
@@ -124,7 +124,7 @@ public:
             }
             mutex->unlock();
 
-            std::cout << "Client received message: " << *lastMessage;
+           // std::cout << "Client received message: " << *lastMessage;
             if (iResult < 0) {
                 std::cout << "Client recv failed with error: \n" << WSAGetLastError();
                 closesocket(ConnectSocket);
