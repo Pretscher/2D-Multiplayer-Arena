@@ -85,6 +85,7 @@ void eventhandling::init() {
 bool direction = false;
 bool menuActive = true;
 static void passPositions();
+static void implementPositions();
 void eventhandling::eventloop() {
 	if (menuActive == true) {
 		menu->update();
@@ -251,8 +252,8 @@ std::vector<int>* extractInts(std::string* str) {
 	int lastSplit = 0;
 	for (int i = 0; i < str->length(); i++) {
 		if (str->at(i) == ',') {
-			int i = std::stoi(str->substr(lastSplit, i));
-			out->push_back(i);
+			int temp = std::stoi(str->substr(lastSplit, i));
+			out->push_back(temp);
 			lastSplit = i;
 		}
 	}
