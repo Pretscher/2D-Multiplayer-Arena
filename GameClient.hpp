@@ -126,9 +126,10 @@ public:
 
             std::cout << "Client received message: " << *lastMessage;
             if (iResult < 0) {
-                std::cout << "Server recv failed with error: \n" << WSAGetLastError();
+                std::cout << "Client recv failed with error: \n" << WSAGetLastError();
                 closesocket(ConnectSocket);
                 WSACleanup();
+                std::exit(0);
                 return;
             }
             wait = false;
