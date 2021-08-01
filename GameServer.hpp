@@ -11,10 +11,11 @@ public:
     void sendToClient(const char* message) {
         iResult = send(ClientSocket, message, (int)strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
+            std::cout << "Server Message Sending Error: \n" << message;
             WSACleanup();
             return;
         }
-        std::cout << "Server Message Sent: \n" << message;
+        std::cout << "Server Message Sent: \n" << std::string(message);
     }
 
     void receive() {

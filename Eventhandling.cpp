@@ -195,9 +195,10 @@ bool connectionSetUp = false;
 
 static void passPositions() {
 	std::string* positions = new std::string();
-	positions->push_back(players[myPlayerI]->getRow());
+
+	positions->append(std::to_string(players[myPlayerI]->getRow()).c_str());
 	positions->push_back(',');
-	positions->push_back(players[myPlayerI]->getCol());
+	positions->append(std::to_string(players[myPlayerI]->getCol()).c_str());
 
 	if (myPlayerI == 0) {
 		server->sendToClient(positions->c_str());
