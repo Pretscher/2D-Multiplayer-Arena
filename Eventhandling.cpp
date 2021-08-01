@@ -227,16 +227,16 @@ static void implementPositions() {
 		positions = server->getLastMessage();
 		if (positions != nullptr) {
 			std::vector<int>* intPositions = extractInts(positions);
-			players[1]->setRow(positions->at(0));
-			players[1]->setCol(positions->at(1));
+			players[1]->setRow(intPositions->at(0));
+			players[1]->setCol(intPositions->at(1));
 		}
 	}
 	if (myPlayerI == 1) {
 		positions = client->getLastMessage();
 		if (positions != nullptr) {
 			std::vector<int>* intPositions = extractInts(positions);
-			players[0]->setRow(positions->at(0));
-			players[0]->setCol(positions->at(1));
+			players[0]->setRow(intPositions->at(0));
+			players[0]->setCol(intPositions->at(1));
 		}
 	}
 }
