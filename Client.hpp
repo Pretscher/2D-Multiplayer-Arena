@@ -152,6 +152,11 @@ public:
         WSACleanup();
 
     }
+
+    std::string* getLastMessage() {
+        return lastMessage;
+    }
+
 protected:
     int iResult;
     SOCKET ConnectSocket;

@@ -38,7 +38,7 @@ public:
     inline void setRow(int row) { this->row = row; }
 
     inline int getCol() { return col; }
-    inline void setY(int col) { this->col = col; }
+    inline void setCol(int col) { this->col = col; }
 
     inline float getVelocity() { return velocity; }
     inline void setVelocity(float velocity) { this->velocity = velocity; }

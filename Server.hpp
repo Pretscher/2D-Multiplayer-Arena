@@ -105,9 +105,6 @@ public:
         this->receive();
     }
 
-    std::string* getLastMessage() {
-        return lastMessage;
-    }
 
     void sendToClient(const char* message) {
         // Send an initial buffer
@@ -163,6 +160,12 @@ public:
         closesocket(ClientSocket);
         WSACleanup();
     }
+
+
+    std::string* getLastMessage() {
+        return lastMessage;
+    }
+
 protected:
     int iResult;
     int iSendResult;

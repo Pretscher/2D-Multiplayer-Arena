@@ -4,7 +4,6 @@
 class GameClient: public Client {
     using Client::Client;
 public:
-    
 
     void sendToServer(const char* message) {
         // Send an initial buffer

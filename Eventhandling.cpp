@@ -84,6 +84,7 @@ void eventhandling::init() {
 
 bool direction = false;
 bool menuActive = true;
+static void passPositions();
 void eventhandling::eventloop() {
 	if (menuActive == true) {
 		menu->update();
@@ -104,13 +105,6 @@ void eventhandling::eventloop() {
 
 	if (menuActive == false) {
 
-		if (server != nullptr) {
-			std::string* msg = server->getLastMessage();
-			if (msg != nullptr) {
-				server->sendToClient("who are you to challenge me in my right to exist in peace");
-			}
-		}
-
 		Renderer::updateViewSpace();//move view space if mouse on edge of window
 		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
 		pathfinding->moveObjects();
@@ -129,6 +123,8 @@ void eventhandling::eventloop() {
 			}
 		}
 	}
+	passPositions();
+	implementPositions();
 }
 
 static void drawUI() {
@@ -235,11 +231,54 @@ static void projectileManagement() {
 	}
 }
 
+static void passPositions() {
+	std::string* positions = new std::string();
+	positions->push_back(players[myPlayerI]->getRow());
+	positions->push_back(',');
+	positions->push_back(players[myPlayerI]->getCol());
 
+	if (myPlayerI == 0) {
+		server->sendToClient(positions->c_str());
+	}
+	if (myPlayerI == 1) {
+		client->sendToServer(positions->c_str());
+	}
+	delete positions;
+}
+
+std::vector<int>* extractInts(std::string* str) {
+	std::vector<int>* out = new std::vector<int>();
+	int lastSplit = 0;
+	for (int i = 0; i < str->length(); i++) {
+		if (str->at(i) == ',') {
+			int i = std::stoi(str->substr(lastSplit, i));
+			out->push_back(i);
+			lastSplit = i;
+		}
+	}
+	return out;
+}
+
+static void implementPositions() {
+	std::string* positions;
+	if (myPlayerI == 0) {
+		positions = server->getLastMessage();
+		std::vector<int>* intPositions = extractInts(positions);
+		players[1]->setRow(positions->at(0));
+		players[1]->setCol(positions->at(1));
+	}
+	if (myPlayerI == 1) {
+		positions = client->getLastMessage();
+		std::vector<int>* intPositions = extractInts(positions);
+		players[0]->setRow(positions->at(0));
+		players[0]->setCol(positions->at(1));
+	}
+}
 
 static void initServer() {
 	server = new GameServer();
 	server->waitForClient();
+	myPlayerI = 0;
 }
 
 static void initClient() {
@@ -247,5 +286,6 @@ static void initClient() {
 	client = new GameClient(s.c_str());
 	client->sendToServer("hi there");
 	client->receive();
+	myPlayerI = 1;
 }
 
