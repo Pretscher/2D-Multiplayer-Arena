@@ -30,7 +30,7 @@ protected:
     SOCKET ListenSocket;
     std::string* lastMessage;
     bool connected = false;
-
+    bool wait = false;
 public:
 
     GameServer() {
@@ -122,13 +122,16 @@ public:
 
 
     void sendToClient(const char* message) {
-        iResult = send(ClientSocket, message, (int)strlen(message), 0);
-        if (iResult == SOCKET_ERROR) {
-            std::cout << "Server Message Sending Error: \n" << message;
-            WSACleanup();
-            return;
+        if (wait == false) {
+            iResult = send(ClientSocket, message, (int)strlen(message), 0);
+            if (iResult == SOCKET_ERROR) {
+                std::cout << "Server Message Sending Error: \n" << message;
+                WSACleanup();
+                return;
+            }
+            wait = true;
+            std::cout << "Server Message Sent: \n" << std::string(message);
         }
-        std::cout << "Server Message Sent: \n" << std::string(message);
     }
 
     void receive() {
@@ -149,7 +152,7 @@ public:
                 WSACleanup();
                 return;
             }
-
+            wait = false;
             std::cout << "Server received message: " << *lastMessage;
         }
 

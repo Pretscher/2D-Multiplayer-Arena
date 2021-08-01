@@ -21,6 +21,7 @@ protected:
     int recvbuflen;
     std::string* lastMessage;
     bool connected = false;
+    bool wait = false;
 
 public:
     GameClient(const char* serverIP) {
@@ -93,15 +94,18 @@ public:
     }
 
     void sendToServer(const char* message) {
-        // Send an initial buffer
-        iResult = send(ConnectSocket, message, (int)strlen(message), 0);
-        if (iResult == SOCKET_ERROR) {
-            std::cout << "Client send failed with error: \n" << WSAGetLastError();
-            //closesocket(ConnectSocket);
-            WSACleanup();
-            return;
+        if (wait == false) {
+            // Send an initial buffer
+            iResult = send(ConnectSocket, message, (int)strlen(message), 0);
+            if (iResult == SOCKET_ERROR) {
+                std::cout << "Client send failed with error: \n" << WSAGetLastError();
+                //closesocket(ConnectSocket);
+                WSACleanup();
+                return;
+            }
+            wait = true;
+            std::cout << "Client Message Sent: \n" << message;
         }
-        std::cout << "Client Message Sent: \n" << message;
     }
 
     void receive() {
@@ -121,7 +125,7 @@ public:
                 WSACleanup();
                 return;
             }
-
+            wait = false;
         }
 
         // shutdown the connection since we're done
