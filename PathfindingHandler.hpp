@@ -23,12 +23,13 @@ private:
 	std::vector<int>* goalColToFind;
 	std::vector<int>* goalRowToFind;
 	std::vector<int>* indicesToFind;
-	void disableArea(int row, int col, int width, int height);
-	void enableArea(int row, int col, int width, int height);
+
 
 	void playerInteraction(int movedPlayerIndex);
 	void workThroughPathfindingQueue();
 public:
+	void disableArea(int row, int col, int width, int height);
+	void enableArea(int row, int col, int width, int height);
 	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount);
 	void pathFindingOnClick(int playerIndex);
 	void moveObjects();

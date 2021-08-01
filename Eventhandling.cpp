@@ -252,8 +252,14 @@ static void implementPositions() {
 		msg = new std::string(msg->c_str());
 		nMutex->unlock();
 		std::vector<int>* intPositions = extractInts(msg);
+
+		int tempRow = players[otherPlayer]->getRow();
+		int tempCol = players[otherPlayer]->getCol();
 		players[otherPlayer]->setRow(intPositions->at(0));
 		players[otherPlayer]->setCol(intPositions->at(1));
+
+		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
+		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 		delete msg;
 	}
 	else {//the earlier you unlock the better
