@@ -192,7 +192,7 @@ static void projectileManagement() {
 
 
 bool connectionSetUp = false;
-
+std::mutex* nMutex = new std::mutex();
 static void passPositions() {
 	std::string* positions = new std::string();
 
@@ -227,19 +227,32 @@ std::vector<int>* extractInts(std::string* str) {
 }
 
 static void implementPositions() {
-	std::string* positions;
+	std::string* msgCopy;
 	if (myPlayerI == 0) {
-		positions = server->getLastMessage();
-		if (positions != nullptr && positions->size() > 0) {
-			std::vector<int>* intPositions = extractInts(positions);
+		nMutex->lock();//gets locked before writing message
+		std::string* msg = server->getLastMessage();
+		nMutex->unlock();
+
+		char* temp = new char[msg->size()];
+		msg->copy(temp, 0, msg->length());
+		msgCopy = new std::string(temp);
+
+		if (msgCopy != nullptr && msgCopy->size() > 0) {
+			std::vector<int>* intPositions = extractInts(msgCopy);
 			players[1]->setRow(intPositions->at(0));
 			players[1]->setCol(intPositions->at(1));
 		}
 	}
 	if (myPlayerI == 1) {
-		positions = client->getLastMessage();
-		if (positions != nullptr && positions->size() > 0) {
-			std::vector<int>* intPositions = extractInts(positions);
+		nMutex->lock();//gets locked before writing message
+		std::string* msg = client->getLastMessage();
+		nMutex->unlock();
+
+		char* temp = new char[msg->size()];
+		msg->copy(temp, 0, msg->length());
+		msgCopy = new std::string(temp);
+		if (msgCopy != nullptr && msgCopy->size() > 0) {
+			std::vector<int>* intPositions = extractInts(msgCopy);
 			players[0]->setRow(intPositions->at(0));
 			players[0]->setCol(intPositions->at(1));
 		}
@@ -248,12 +261,14 @@ static void implementPositions() {
 
 static void initServer() {
 	server = new GameServer();
+	server->bindMutex(nMutex);
 	server->waitForClient();
 }
 
 static void initClient() {
 	std::string s = "192.168.178.28";
 	client = new GameClient(s.c_str());
+	client->bindMutex(nMutex);
 	client->receive();
 }
 
