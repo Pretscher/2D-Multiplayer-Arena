@@ -9,6 +9,7 @@
 #include "GameClient.hpp"
 #include "Menu.hpp"
 
+
 static Player** players;//all players
 static int myPlayerI;
 static int playerCount;//number of players
@@ -226,35 +227,27 @@ std::vector<int>* extractInts(std::string* str) {
 	return out;
 }
 
+
 static void implementPositions() {
-	std::string* msgCopy;
+	std::string* msg;
+	int otherPlayer;
+	nMutex->lock();//gets locked before writing message
 	if (myPlayerI == 0) {
-		nMutex->lock();//gets locked before writing message
-		std::string* msg = server->getLastMessage();
-		nMutex->unlock();
-		if (msg != nullptr && msg->size() > 0) {
-			char* temp = new char[msg->size()];
-			msg->copy(temp, 0, msg->length());
-			msgCopy = new std::string(temp);
-			//convert string to ints, parsed into tokens if there is a ',' in there
-			std::vector<int>* intPositions = extractInts(msgCopy);
-			players[1]->setRow(intPositions->at(0));
-			players[1]->setCol(intPositions->at(1));
-		}
+		msg = new std::string(server->getLastMessage()->c_str());
+		otherPlayer = 1;
 	}
-	if (myPlayerI == 1) {
-		nMutex->lock();//gets locked before writing message
-		std::string* msg = client->getLastMessage();
-		nMutex->unlock();
-		if (msg != nullptr && msg->size() > 0) {
-			char* temp = new char[msg->size()];
-			msg->copy(temp, 0, msg->length());
-			msgCopy = new std::string(temp);
-			//convert string to ints, parsed into tokens if there is a ',' in there
-			std::vector<int>* intPositions = extractInts(msgCopy);
-			players[0]->setRow(intPositions->at(0));
-			players[0]->setCol(intPositions->at(1));
-		}
+	else {
+		msg = new std::string(client->getLastMessage()->c_str());
+		otherPlayer = 0;
+	}
+	nMutex->unlock();
+
+	if (msg != nullptr && msg->size() > 0) {
+		//convert string to ints, parsed into tokens if there is a ',' in there
+		std::vector<int>* intPositions = extractInts(msg);
+		players[otherPlayer]->setRow(intPositions->at(0));
+		players[otherPlayer]->setCol(intPositions->at(1));
+		delete msg;
 	}
 }
 
