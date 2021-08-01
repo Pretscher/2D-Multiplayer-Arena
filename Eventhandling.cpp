@@ -123,9 +123,12 @@ void eventhandling::eventloop() {
 				}
 			}
 		}
+		if (server != nullptr || client != nullptr) {
+			passPositions();
+			implementPositions();
+		}
 	}
-	passPositions();
-	implementPositions();
+
 }
 
 static void drawUI() {
