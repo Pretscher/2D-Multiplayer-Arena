@@ -136,20 +136,21 @@ public:
         while (true) {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
+            if (lastMessage != nullptr) delete lastMessage;
+            lastMessage = new std::string();
             //save message
             for (int i = 0; i < iResult; i++) {
-                lastMessage = new std::string();
-                char c = recvbuf[i];
                 lastMessage->push_back(recvbuf[i]);
             }
 
-            std::cout << "Server received message: " << lastMessage->c_str();
             if (iResult < 0) {
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();
                 closesocket(ClientSocket);
                 WSACleanup();
                 return;
             }
+
+            std::cout << "Server received message: " << *lastMessage;
         }
 
         // shutdown the connection since we're done

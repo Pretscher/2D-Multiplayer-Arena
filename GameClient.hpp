@@ -107,9 +107,11 @@ public:
     void receive() {
         while (true) {
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+
+            if (lastMessage != nullptr) delete lastMessage;
+            lastMessage = new std::string();
             //save message
             for (int i = 0; i < iResult; i++) {
-                lastMessage = new std::string();
                 lastMessage->push_back(recvbuf[i]);
             }
             std::cout << "Client received message: " << *lastMessage;
