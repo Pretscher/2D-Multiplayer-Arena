@@ -152,7 +152,7 @@ public:
         WSACleanup();
 
     }
-private:
+protected:
     int iResult;
     SOCKET ConnectSocket;
     char* recvbuf;

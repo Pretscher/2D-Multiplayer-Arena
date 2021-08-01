@@ -104,5 +104,11 @@
     <ClInclude Include="Menu.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
+    <ClInclude Include="GameServer.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClient.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

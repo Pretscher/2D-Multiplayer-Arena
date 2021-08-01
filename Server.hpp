@@ -163,7 +163,7 @@ public:
         closesocket(ClientSocket);
         WSACleanup();
     }
-private:
+protected:
     int iResult;
     int iSendResult;
     char* recvbuf;

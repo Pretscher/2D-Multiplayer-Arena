@@ -169,6 +169,8 @@
     <ClInclude Include="aStarAlgorithm\GraphNode.hpp" />
     <ClInclude Include="aStarAlgorithm\HeapNode.hpp" />
     <ClInclude Include="Eventhandling.hpp" />
+    <ClInclude Include="GameClient.hpp" />
+    <ClInclude Include="GameServer.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="PathfindingHandler.hpp" />
     <ClInclude Include="Projectile.hpp" />

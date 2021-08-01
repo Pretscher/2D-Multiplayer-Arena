@@ -5,8 +5,8 @@
 #include "Projectile.hpp"
 #include "PathfindingHandler.hpp"
 #include "Utils.hpp"
-#include "Server.hpp"
-#include "Client.hpp"
+#include "GameServer.hpp"
+#include "GameClient.hpp"
 #include "Menu.hpp"
 
 static Player** players;//all players
@@ -27,8 +27,8 @@ static std::vector<Projectile*>* projectiles;//stores all projectiles for creati
 static int uiHeight;
 static Menu* menu;
 
-static Server* server;
-static Client* client;
+static GameServer* server;
+static GameClient* client;
 
 //forward declarations
 static void hardCodeTerrain();
@@ -238,13 +238,13 @@ static void projectileManagement() {
 
 
 static void initServer() {
-	server = new Server();
+	server = new GameServer();
 	server->waitForClient();
 }
 
 static void initClient() {
 	std::string s = "192.168.178.28";
-	Client* client = new Client(s.c_str());
+	client = new GameClient(s.c_str());
 	client->sendToServer("hi there");
 	client->receive();
 }
