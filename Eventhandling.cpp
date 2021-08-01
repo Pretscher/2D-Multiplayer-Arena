@@ -218,6 +218,10 @@ std::vector<int>* extractInts(std::string* str) {
 			out->push_back(temp);
 			lastSplit = i;
 		}
+		if (i == str->length()) {
+			int temp = std::stoi(str->substr(lastSplit, i));
+			out->push_back(temp);
+		}
 	}
 	return out;
 }
