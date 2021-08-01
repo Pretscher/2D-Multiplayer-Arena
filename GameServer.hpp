@@ -67,6 +67,7 @@ public:
         if (iResult != 0) {
             std::cout << "Server getaddrinfo failed with error: \n" << iResult;
             WSACleanup();
+            shutDown();
             return;
         }
 
@@ -76,6 +77,7 @@ public:
             std::cout << "Server socket failed with error: %ld\n" << WSAGetLastError();
             freeaddrinfo(result);
             WSACleanup();
+            shutDown();
             return;
         }
 
@@ -86,6 +88,7 @@ public:
             freeaddrinfo(result);
             closesocket(ListenSocket);
             WSACleanup();
+            shutDown();
             return;
         }
 
@@ -96,6 +99,7 @@ public:
             std::cout << "Server listen failed with error: \n" << WSAGetLastError();
             closesocket(ListenSocket);
             WSACleanup();
+            shutDown();
             return;
         }
 
@@ -109,6 +113,7 @@ public:
             std::cout << "Server accept failed with error: \n" << WSAGetLastError();
             closesocket(ListenSocket);
             WSACleanup();
+            shutDown();
             return;
         }
 
@@ -129,6 +134,7 @@ public:
             if (iResult == SOCKET_ERROR) {
                 std::cout << "Server Message Sending Error: \n" << message;
                 WSACleanup();
+                shutDown();
                 return;
             }
             wait = true;
@@ -161,6 +167,10 @@ public:
             std::cout << "Server received message: " << *lastMessage;
         }
 
+        shutDown();
+    }
+    
+    void shutDown() {
         // shutdown the connection since we're done
         iResult = shutdown(ClientSocket, SD_SEND);
         if (iResult == SOCKET_ERROR) {
@@ -172,8 +182,8 @@ public:
         // cleanup
         closesocket(ClientSocket);
         WSACleanup();
+        std::exit(0);
     }
-
 
     std::string* getLastMessage() {
         return lastMessage;

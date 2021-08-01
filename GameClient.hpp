@@ -64,8 +64,9 @@ public:
             ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
                 ptr->ai_protocol);
             if (ConnectSocket == INVALID_SOCKET) {
-                std::cout << "Client socket failed with error: %ld\n" << WSAGetLastError();
+                std::cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
                 WSACleanup();
+                std::exit(0);
                 return;
             }
 
@@ -84,6 +85,7 @@ public:
         if (ConnectSocket == INVALID_SOCKET) {
             std::cout << "Client Unable to connect to server!\n";
             WSACleanup();
+            std::exit(0);
             return;
         }
 
@@ -100,8 +102,8 @@ public:
             iResult = send(ConnectSocket, message, (int)strlen(message), 0);
             if (iResult == SOCKET_ERROR) {
                 std::cout << "Client send failed with error: \n" << WSAGetLastError();
-                //closesocket(ConnectSocket);
                 WSACleanup();
+                std::exit(0);
                 return;
             }
             wait = true;
@@ -135,9 +137,10 @@ public:
         // shutdown the connection since we're done
         iResult = shutdown(ConnectSocket, SD_SEND);
         if (iResult == SOCKET_ERROR) {
-            std::cout << "Server shutdown failed with error: \n" << WSAGetLastError();
+            std::cout << "Client shutdown failed with error: \n" << WSAGetLastError();
             closesocket(ConnectSocket);
             WSACleanup();
+            std::exit(0);
             return;
         }
 
