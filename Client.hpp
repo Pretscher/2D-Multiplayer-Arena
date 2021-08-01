@@ -78,6 +78,8 @@ public:
             WSACleanup();
             return;
         }
+
+        connected = true;
     }
 
     void sendToServer(const char* message) {
@@ -157,6 +159,10 @@ public:
         return lastMessage;
     }
 
+    bool isConnected() {
+        return connected;
+    }
+
 protected:
     int iResult;
     SOCKET ConnectSocket;
@@ -164,4 +170,5 @@ protected:
 
     int recvbuflen;
     std::string* lastMessage;
+    bool connected = false;
 };

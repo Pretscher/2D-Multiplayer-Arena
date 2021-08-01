@@ -97,6 +97,7 @@ public:
             return;
         }
 
+        connected = true;
         // No longer need server socket
         closesocket(ListenSocket);
 
@@ -166,6 +167,10 @@ public:
         return lastMessage;
     }
 
+    bool isConnected() {
+        return connected;
+    }
+
 protected:
     int iResult;
     int iSendResult;
@@ -174,4 +179,5 @@ protected:
     SOCKET ClientSocket;
     SOCKET ListenSocket;
     std::string* lastMessage;
+    bool connected = false;
 };

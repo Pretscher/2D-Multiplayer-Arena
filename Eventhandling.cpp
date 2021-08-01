@@ -191,6 +191,9 @@ static void projectileManagement() {
 	}
 }
 
+
+bool connectionSetUp = false;
+
 static void passPositions() {
 	std::string* positions = new std::string();
 	positions->push_back(players[myPlayerI]->getRow());
@@ -248,7 +251,6 @@ static void initServer() {
 static void initClient() {
 	std::string s = "192.168.178.28";
 	client = new GameClient(s.c_str());
-	client->sendToServer("hi there");
 	client->receive();
 	myPlayerI = 1;
 }
@@ -291,7 +293,7 @@ void eventhandling::eventloop() {
 				}
 			}
 		}
-		if (server != nullptr || client != nullptr) {
+		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
 			passPositions();
 			implementPositions();
 		}
