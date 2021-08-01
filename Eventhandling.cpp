@@ -232,12 +232,11 @@ static void implementPositions() {
 		nMutex->lock();//gets locked before writing message
 		std::string* msg = server->getLastMessage();
 		nMutex->unlock();
-
-		char* temp = new char[msg->size()];
-		msg->copy(temp, 0, msg->length());
-		msgCopy = new std::string(temp);
-
-		if (msgCopy != nullptr && msgCopy->size() > 0) {
+		if (msg != nullptr && msg->size() > 0) {
+			char* temp = new char[msg->size()];
+			msg->copy(temp, 0, msg->length());
+			msgCopy = new std::string(temp);
+			//convert string to ints, parsed into tokens if there is a ',' in there
 			std::vector<int>* intPositions = extractInts(msgCopy);
 			players[1]->setRow(intPositions->at(0));
 			players[1]->setCol(intPositions->at(1));
@@ -247,11 +246,11 @@ static void implementPositions() {
 		nMutex->lock();//gets locked before writing message
 		std::string* msg = client->getLastMessage();
 		nMutex->unlock();
-
-		char* temp = new char[msg->size()];
-		msg->copy(temp, 0, msg->length());
-		msgCopy = new std::string(temp);
-		if (msgCopy != nullptr && msgCopy->size() > 0) {
+		if (msg != nullptr && msg->size() > 0) {
+			char* temp = new char[msg->size()];
+			msg->copy(temp, 0, msg->length());
+			msgCopy = new std::string(temp);
+			//convert string to ints, parsed into tokens if there is a ',' in there
 			std::vector<int>* intPositions = extractInts(msgCopy);
 			players[0]->setRow(intPositions->at(0));
 			players[0]->setCol(intPositions->at(1));
