@@ -47,7 +47,6 @@ static void initPlayers() {
 
 static void initServer();
 static void initClient();
-static bool isServer;
 static std::thread* networkThread;
 void eventhandling::init() {
 	menu = new Menu();
@@ -245,14 +244,12 @@ static void implementPositions() {
 static void initServer() {
 	server = new GameServer();
 	server->waitForClient();
-	myPlayerI = 0;
 }
 
 static void initClient() {
 	std::string s = "192.168.178.28";
 	client = new GameClient(s.c_str());
 	client->receive();
-	myPlayerI = 1;
 }
 
 
@@ -260,13 +257,13 @@ void eventhandling::eventloop() {
 	if (menuActive == true) {
 		menu->update();
 		if (menu->hostServer() == true) {
+			myPlayerI = 0;
 			networkThread = new std::thread(&initServer);
-			isServer = true;
 			menuActive = false;
 		}
 		if (menu->connectAsClient() == true) {
+			myPlayerI = 1;
 			networkThread = new std::thread(&initClient);
-			isServer = false;
 			menuActive = false;
 		}
 	}
