@@ -299,19 +299,6 @@ void eventhandling::eventloop() {
 		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
 		pathfinding->moveObjects();
 		projectileManagement();
-
-		if (pathfinding->isPlayerUseable() == true) {
-			if (players[1]->hasPath() == false && players[1]->isFindingPath() == false) {
-				if (direction == false) {
-					pathfinding->findPath(1000, 1000, 1);
-					direction = true;
-				}
-				else {
-					pathfinding->findPath(100, 100, 1);
-					direction = false;
-				}
-			}
-		}
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
 			passPositions();
 			implementPositions();
