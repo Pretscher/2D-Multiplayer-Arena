@@ -216,9 +216,9 @@ std::vector<int>* extractInts(std::string* str) {
 		if (str->at(i) == ',') {
 			int temp = std::stoi(str->substr(lastSplit, i));
 			out->push_back(temp);
-			lastSplit = i;
+			lastSplit = i + 1;
 		}
-		if (i == str->length()) {
+		if (i == str->length() - 1) {
 			int temp = std::stoi(str->substr(lastSplit, i));
 			out->push_back(temp);
 		}
@@ -230,7 +230,7 @@ static void implementPositions() {
 	std::string* positions;
 	if (myPlayerI == 0) {
 		positions = server->getLastMessage();
-		if (positions != nullptr) {
+		if (positions != nullptr && positions->size() > 0) {
 			std::vector<int>* intPositions = extractInts(positions);
 			players[1]->setRow(intPositions->at(0));
 			players[1]->setCol(intPositions->at(1));
@@ -238,7 +238,7 @@ static void implementPositions() {
 	}
 	if (myPlayerI == 1) {
 		positions = client->getLastMessage();
-		if (positions != nullptr) {
+		if (positions != nullptr && positions->size() > 0) {
 			std::vector<int>* intPositions = extractInts(positions);
 			players[0]->setRow(intPositions->at(0));
 			players[0]->setCol(intPositions->at(1));
