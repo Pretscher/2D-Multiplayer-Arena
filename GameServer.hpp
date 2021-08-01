@@ -161,6 +161,7 @@ public:
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();
                 closesocket(ClientSocket);
                 WSACleanup();
+                shutDown();
                 return;
             }
             wait = false;
