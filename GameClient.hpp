@@ -14,8 +14,7 @@ public:
             WSACleanup();
             return;
         }
-
-        std::cout << "Client Bytes Sent: \n" << iResult;
+        std::cout << "Client Message Sent: \n" << message;
     }
 
     void receive() {
@@ -26,7 +25,7 @@ public:
                 lastMessage = new std::string();
                 lastMessage->push_back(recvbuf[i]);
             }
-            std::cout << "Client received message: " << lastMessage;
+            std::cout << "Client received message: " << *lastMessage;
             if (iResult < 0) {
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();
                 closesocket(ConnectSocket);

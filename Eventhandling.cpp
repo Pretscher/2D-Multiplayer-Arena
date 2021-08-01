@@ -86,50 +86,6 @@ bool direction = false;
 bool menuActive = true;
 static void passPositions();
 static void implementPositions();
-void eventhandling::eventloop() {
-	if (menuActive == true) {
-		menu->update();
-		if (menu->hostServer() == true) {
-			networkThread = new std::thread(&initServer);
-			isServer = true;
-			menuActive = false;
-		}
-		if (menu->connectAsClient() == true) {
-			networkThread = new std::thread(&initClient);
-			isServer = false;
-			menuActive = false;
-		}
-	}
-
-
-
-
-	if (menuActive == false) {
-
-		Renderer::updateViewSpace();//move view space if mouse on edge of window
-		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
-		pathfinding->moveObjects();
-		projectileManagement();
-
-		if (pathfinding->isPlayerUseable() == true) {
-			if (players[1]->hasPath() == false && players[1]->isFindingPath() == false) {
-				if (direction == false) {
-					pathfinding->findPath(1000, 1000, 1);
-					direction = true;
-				}
-				else {
-					pathfinding->findPath(100, 100, 1);
-					direction = false;
-				}
-			}
-		}
-		if (server != nullptr || client != nullptr) {
-			passPositions();
-			implementPositions();
-		}
-	}
-
-}
 
 static void drawUI() {
 
@@ -295,5 +251,50 @@ static void initClient() {
 	client->sendToServer("hi there");
 	client->receive();
 	myPlayerI = 1;
+}
+
+
+void eventhandling::eventloop() {
+	if (menuActive == true) {
+		menu->update();
+		if (menu->hostServer() == true) {
+			networkThread = new std::thread(&initServer);
+			isServer = true;
+			menuActive = false;
+		}
+		if (menu->connectAsClient() == true) {
+			networkThread = new std::thread(&initClient);
+			isServer = false;
+			menuActive = false;
+		}
+	}
+
+
+
+
+	if (menuActive == false) {
+
+		Renderer::updateViewSpace();//move view space if mouse on edge of window
+		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
+		pathfinding->moveObjects();
+		projectileManagement();
+
+		if (pathfinding->isPlayerUseable() == true) {
+			if (players[1]->hasPath() == false && players[1]->isFindingPath() == false) {
+				if (direction == false) {
+					pathfinding->findPath(1000, 1000, 1);
+					direction = true;
+				}
+				else {
+					pathfinding->findPath(100, 100, 1);
+					direction = false;
+				}
+			}
+		}
+		if (server != nullptr || client != nullptr) {
+			passPositions();
+			implementPositions();
+		}
+	}
 }
 
