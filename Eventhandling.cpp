@@ -231,23 +231,33 @@ std::vector<int>* extractInts(std::string* str) {
 static void implementPositions() {
 	std::string* msg;
 	int otherPlayer;
+	bool copyAndParse = false;
 	nMutex->lock();//gets locked before writing message
 	if (myPlayerI == 0) {
-		msg = new std::string(server->getLastMessage()->c_str());
 		otherPlayer = 1;
+		msg = server->getLastMessage();
+		if (msg != nullptr && msg->size() > 0) {
+			copyAndParse = true;
+		}
 	}
 	else {
-		msg = new std::string(client->getLastMessage()->c_str());
 		otherPlayer = 0;
+		msg = client->getLastMessage();
+		if (msg != nullptr && msg->size() > 0) {
+			copyAndParse = true;
+		}
 	}
-	nMutex->unlock();
-
-	if (msg != nullptr && msg->size() > 0) {
-		//convert string to ints, parsed into tokens if there is a ',' in there
+	if (copyAndParse == true) {
+		//we dont want to bother the network anymore, copy it and dont use the pointer from now on
+		msg = new std::string(msg->c_str());
+		nMutex->unlock();
 		std::vector<int>* intPositions = extractInts(msg);
 		players[otherPlayer]->setRow(intPositions->at(0));
 		players[otherPlayer]->setCol(intPositions->at(1));
 		delete msg;
+	}
+	else {//the earlier you unlock the better
+		nMutex->unlock();
 	}
 }
 
