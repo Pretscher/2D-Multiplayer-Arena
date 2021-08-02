@@ -211,6 +211,7 @@ static void passPositions() {
 	positions->append(std::to_string(players[myPlayerI]->getHp()));
 
 	for (int i = 0; i < newProjectiles->size(); i++) {
+		positions->push_back(',');
 		positions->push_back((int)newProjectiles->at(i)->getRow());
 		positions->push_back(',');
 		positions->push_back((int)newProjectiles->at(i)->getCol());
@@ -218,7 +219,6 @@ static void passPositions() {
 		positions->push_back(newProjectiles->at(i)->getGoalRow());
 		positions->push_back(',');
 		positions->push_back(newProjectiles->at(i)->getGoalCol());
-		positions->push_back(',');
 	}
 	newProjectiles->clear();
 
