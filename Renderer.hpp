@@ -22,21 +22,18 @@ public:
 
     static sf::Texture loadTexture(std::string path);
 
-    static void drawText(std::string text, int row, int col, int width, int height, sf::Color color);
 };
 
 
 //help button class
 class Button {
 public:
-    Button(int row, int col, int width, int height, sf::Color color, std::string text, sf::Color textColor) {
+    Button(int row, int col, int width, int height, sf::Color color) {
         this->row = row;
         this->col = col;
         this->width = width;
         this->height = height;
-        this->text = text;
         this->color = color;
-        this->textColor = textColor;
     }
     bool sameClick = false;
     bool isPressed() {
@@ -59,22 +56,20 @@ public:
     }
 
     void draw() {
-        sf::Color newColor = color;
         if (this->isPressed() == true) {
+            sf::Color newColor = color;
             newColor.r += 50;
             newColor.g += 50;
             newColor.b += 50;
-            Renderer::drawRectOutline(row, col, width, height, newColor, 10, true);
+            Renderer::drawRect(row, col, width, height, color, true);
+            Renderer::drawRectOutline(row, col, width, height, color, 10, true);
         }
         else {
-            Renderer::drawRectOutline(row, col, width, height, newColor, 3, true);
+            Renderer::drawRect(row, col, width, height, color, true);
+            Renderer::drawRectOutline(row, col, width, height, color, 3, true);
         }
-        Renderer::drawRect(row, col, width, height, newColor, true);
-
-        Renderer::drawText(text, row, col, width, height, textColor);
     }
 private:
     int row, col, width, height;
-    sf::Color color, textColor;
-    std::string text;
+    sf::Color color;
 };

@@ -308,7 +308,7 @@ static void implementPositions() {
 				goalRow = intPositions->at(i);//keep important decimal places through */ 10000
 			case 3:
 				goalCol = intPositions->at(i);
-			default:;//do nothing on default, either all 4 cases are given or none, nothing else can happen
+			default:;
 			}
 			counter++;
 			if (counter > 3) {
