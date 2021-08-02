@@ -227,9 +227,9 @@ static void passPositions() {
 
 	for (int i = 0; i < pathfinding->newGoalRows->size(); i++) {
 		positions->push_back(',');
-		positions->push_back(pathfinding->newGoalRows->at(i));
+		positions->append(std::to_string(pathfinding->newGoalRows->at(i)));
 		positions->push_back(',');
-		positions->push_back(pathfinding->newGoalCols->at(i));
+		positions->append(std::to_string(pathfinding->newGoalCols->at(i)));
 	}
 	newProjectiles->clear();
 	pathfinding->newGoalRows->clear();
