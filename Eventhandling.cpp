@@ -126,6 +126,7 @@ static void hardCodeTerrain() {
 	terrain->addRect(1000, 1000, 500, 200);
 }
 
+std::vector<Projectile*>* newProjectiles;
 static bool samePress = false;
 static void projectileManagement() {
 	//dont shoot a projectile for the same space-press
@@ -200,6 +201,12 @@ static void passPositions() {
 	positions->append(std::to_string(players[myPlayerI]->getRow()).c_str());
 	positions->push_back(',');
 	positions->append(std::to_string(players[myPlayerI]->getCol()).c_str());
+	positions->push_back(',');
+	positions->append(std::to_string(players[myPlayerI]->getTextureIndex()));
+	//if (newProjectiles != nullptr) delete newProjectiles;
+	newProjectiles = new std::vector<Projectile*>();
+	
+
 
 	if (myPlayerI == 0) {
 		server->sendToClient(positions->c_str());
@@ -257,6 +264,7 @@ static void implementPositions() {
 		int tempCol = players[otherPlayer]->getCol();
 		players[otherPlayer]->setRow(intPositions->at(0));
 		players[otherPlayer]->setCol(intPositions->at(1));
+		players[otherPlayer]->setTexture(intPositions->at(2));
 
 		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position

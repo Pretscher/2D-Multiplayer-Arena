@@ -21,7 +21,7 @@ private:
     
     int width;
     int height;
-    sf::Texture currentTexture;
+    int cTextureI;
     sf::Texture* textures;
 
     void initTextures();
@@ -78,4 +78,9 @@ public:
     inline int getPathGoalY() {
         return pathYpositions[pathLenght - 1];
     }
+
+    inline int getTextureIndex() {
+        return cTextureI;
+    }
+
 };

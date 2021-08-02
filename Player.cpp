@@ -18,7 +18,7 @@ Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, int
 	pathLenght = -1;
 
 	this->initTextures();
-	currentTexture = textures[3];
+	cTextureI = 3;//lookin down
 	findingPath = false;
 }
 
@@ -45,17 +45,17 @@ void Player::move() {
 
 
 		if (nextRow > row) {
-			currentTexture = textures[3];
+			cTextureI = 3;
 		}
 		if (nextRow < row) {
-			currentTexture = textures[2];
+			cTextureI = 2;
 		}
 		if (nextCol < col) {
-			currentTexture = textures[0];
+			cTextureI = 0;
 		}
 
 		if (nextCol > col) {
-			currentTexture = textures[1];
+			cTextureI = 1;
 		}
 
 		//go one step in path
@@ -83,7 +83,7 @@ void Player::deletePath() {
 }
 
 void Player::draw() {
-	Renderer::drawRectWithTexture(row, col, width, height, currentTexture, false);
+	Renderer::drawRectWithTexture(row, col, width, height, textures[cTextureI], false);
 	
 	int barWidth = width * 1.5;
 	Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);
@@ -102,5 +102,5 @@ void Player::initTextures() {
 }
 
 void Player::setTexture(int index) {
-	currentTexture = textures[index];
+	cTextureI = index;
 }
