@@ -126,7 +126,10 @@ static void hardCodeTerrain() {
 	terrain->addRect(1000, 1000, 500, 200);
 }
 
-std::vector<Projectile*>* newProjectiles;
+float projectileVel = 10.0f;
+int projectileRadius = 20;
+
+std::vector<Projectile*>* newProjectiles = new std::vector<Projectile*>();;
 static bool samePress = false;
 static void projectileManagement() {
 	//dont shoot a projectile for the same space-press
@@ -136,7 +139,7 @@ static void projectileManagement() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == true && samePress == false) {
   		samePress = true;
 
-		float velocity = 10.0f;
+		
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
@@ -163,8 +166,9 @@ static void projectileManagement() {
 
 
 
-		Projectile* p = new Projectile(row, col, velocity, mouseY, mouseX, 20, myPlayer);
+		Projectile* p = new Projectile(row, col, projectileVel, mouseY, mouseX, projectileRadius, myPlayer);
 		projectiles->push_back(p);
+		newProjectiles->push_back(p);
 	}
 
 	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
@@ -203,10 +207,20 @@ static void passPositions() {
 	positions->append(std::to_string(players[myPlayerI]->getCol()).c_str());
 	positions->push_back(',');
 	positions->append(std::to_string(players[myPlayerI]->getTextureIndex()));
-	//if (newProjectiles != nullptr) delete newProjectiles;
-	newProjectiles = new std::vector<Projectile*>();
-	
+	positions->push_back(',');
+	positions->append(std::to_string(players[myPlayerI]->getHp()));
 
+	for (int i = 0; i < newProjectiles->size(); i++) {
+		positions->push_back((int)newProjectiles->at(i)->getRow());
+		positions->push_back(',');
+		positions->push_back((int)newProjectiles->at(i)->getCol());
+		positions->push_back(',');
+		positions->push_back(newProjectiles->at(i)->getGoalRow());
+		positions->push_back(',');
+		positions->push_back(newProjectiles->at(i)->getGoalCol());
+		positions->push_back(',');
+	}
+	newProjectiles->clear();
 
 	if (myPlayerI == 0) {
 		server->sendToClient(positions->c_str());
@@ -265,9 +279,37 @@ static void implementPositions() {
 		players[otherPlayer]->setRow(intPositions->at(0));
 		players[otherPlayer]->setCol(intPositions->at(1));
 		players[otherPlayer]->setTexture(intPositions->at(2));
+		players[otherPlayer]->setHp(intPositions->at(3));
 
+		int counter = 0;
+		int row = 0;
+		int col = 0;
+		int goalRow = 0;
+		int goalCol = 0;
+		for (int i = 4; i < intPositions->size(); i++) {
+			switch (counter) {
+			case 0:
+				row = intPositions->at(i);
+			case 1:
+				col = intPositions->at(i);
+			case 2:
+				goalRow = intPositions->at(i);//keep important decimal places through */ 10000
+			case 3:
+				goalCol = intPositions->at(i);
+			default:
+				//shouldnt reach this
+				std::exit(0);
+			}
+			counter++;
+			if (counter > 3) {
+				projectiles->push_back(new Projectile(row, col, projectileVel, goalRow, goalCol, 
+					projectileRadius, players[otherPlayer]));
+				counter = 0;
+			}
+		}
 		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
-		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(), 
+			players[0]->getWidth(), players[0]->getHeight());//disable new position
 		delete msg;
 	}
 	else {//the earlier you unlock the better

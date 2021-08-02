@@ -20,6 +20,8 @@ public:
 	}
 
 private:
+	int goalRow;
+	int goalCol;
 	float row;
 	float col;
 	bool dead;
@@ -40,6 +42,13 @@ public:
 
 	inline float getCol() { return col; }
 	inline void setCol(float col) { this->col = col; }
+
+	inline int getGoalRow() { return row; }
+	inline void setGoalRow(int row) { this->row = row; }
+
+	inline int getGoalCol() { return col; }
+	inline void setGoalCol(int col) { this->col = col; }
+
 
 	inline bool getDead() { return dead; }
 	inline void setDead(bool dead) { this->dead = dead; }

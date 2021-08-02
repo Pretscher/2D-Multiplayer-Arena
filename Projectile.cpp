@@ -4,30 +4,33 @@
 #include "Utils.hpp"
 #include "Player.hpp"
 
-Projectile::Projectile(int row, int col, float velocity, int goalRow, int goalCol, int radius, Player* shootingPlayer) {
+Projectile::Projectile(int i_row, int i_col, float velocity, int i_goalRow, int i_goalCol, int radius, Player* shootingPlayer) {
 	this->player = shootingPlayer;
-	this->row = row - radius;//not same as player position, changes with direction because player rotates
-	this->col = col - radius;
+	this->row = i_row - radius;//not same as player position, changes with direction because player rotates
+	this->col = i_col - radius;
 	this->vel = velocity;
 	this->radius = radius;
+	this->goalRow = i_goalRow;
+	this->goalCol = i_goalCol;
 
-	goalRow -= radius;
-	goalCol -= radius;
+	//we want to push those projectiles through network with the same goalrow and goalcol so dont change them here. 
+	i_goalRow -= radius;
+	i_goalCol -= radius;
 
 
 	this->dead = false;
 	//calculate function for line
 	this->slope = 0;
 	this->yOffset = 0;
-	if (goalCol > col) {
-		this->slope = (float)(goalRow - this->row) / (float)(goalCol - this->col);
+	if (i_goalCol > col) {
+		this->slope = (float)(i_goalRow - this->row) / (float)(i_goalCol - this->col);
 	}
 	else {
-		this->slope = (float)(this->row - goalRow) / (float)(this->col - goalCol);
+		this->slope = (float)(this->row - i_goalRow) / (float)(this->col - i_goalCol);
 	}
 	//f(x1) = slope * x1 + yOffset <=> f(x1) - slope * x1 = yOffset (where f(x1) is obviously y1)
 	this->yOffset = (float)this->row - (this->slope * (float)this->col);
-	if (goalCol > this->col) this->up = true;
+	if (i_goalCol > this->col) this->up = true;
 	else this->up = false;
 }
 
