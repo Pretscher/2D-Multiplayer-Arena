@@ -308,6 +308,8 @@ static void implementPositions() {
 		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(),
 			players[0]->getWidth(), players[0]->getHeight());//disable new position
+		//could have enabled other players position aswell
+		pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 		delete msg;
 	}
 	else {//the earlier you unlock the better
