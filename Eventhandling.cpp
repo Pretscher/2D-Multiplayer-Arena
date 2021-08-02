@@ -309,6 +309,7 @@ static void implementPositions() {
 		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(), 
 			players[0]->getWidth(), players[0]->getHeight());//disable new position
 		delete msg;
+		//yes
 	}
 	else {//the earlier you unlock the better
 		nMutex->unlock();
