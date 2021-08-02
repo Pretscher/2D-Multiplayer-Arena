@@ -6,8 +6,8 @@ public:
 	Button* host;
 	Button* connect;
 	Menu() {
-		host = new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255));
-		connect = new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255));
+		host = new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", sf::Color(255, 0, 0, 255));
+		connect = new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", sf::Color(255, 0, 0, 255));
 		bHostServer = false;
 		bConnectAsClient = false;
 	}
@@ -22,8 +22,10 @@ public:
 	}
 
 	void drawMenu() {
+
 		host->draw();
 		connect->draw();
+
 	}
 
 	bool hostServer() {
