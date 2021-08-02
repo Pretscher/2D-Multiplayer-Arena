@@ -224,3 +224,57 @@ void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::
     delete square;
 }
 
+void Renderer::drawText(std::string i_text, int row, int col, int width, int height, sf::Color color) {
+    sf::Text text;
+
+    sf::Font font;
+    if (!font.loadFromFile("C:/Windows/Fonts/Calibri.ttf"))
+    {
+        std::cout << "error loading font.";
+    }
+
+    // select the font
+    text.setFont(font); // font is a sf::Font
+    text.setString(i_text);
+
+
+
+    text.setFillColor(color);
+
+    fromRowColBounds(&width, &height);
+    fromRowCol(&row, &col);
+
+    text.setCharacterSize(width / 4);//TODO window size reliants
+
+    size_t CharacterSize = text.getCharacterSize();
+
+    std::string String = text.getString().toAnsiString();
+    bool bold = (text.getStyle() == sf::Text::Bold);
+    size_t MaxHeight = 0;
+
+    for (size_t x = 0; x < text.getString().getSize(); x++)
+    {
+        sf::Uint32 Character = String.at(x);
+
+        const sf::Glyph& CurrentGlyph = font.getGlyph(Character, CharacterSize, bold);
+
+        size_t Height = CurrentGlyph.bounds.height;
+
+        if (MaxHeight < Height)
+            MaxHeight = Height;
+    }
+
+    sf::FloatRect rect = text.getGlobalBounds();
+
+    rect.left = ((float)width / 2.0f) - (rect.width / 2.0f);
+    rect.top = ((float)height / 2.0f) - ((float)MaxHeight / 2.0f) - (rect.height - MaxHeight) + ((rect.height - CharacterSize) / 2.0f);
+
+    int l = rect.left - 5;
+    int t = rect.top - 15;
+    fromRowCol(&l, &t);
+
+    text.setPosition(l + col, t + row);
+
+   // text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    currentWindow->draw(text);
+}
