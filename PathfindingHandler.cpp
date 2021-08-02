@@ -13,8 +13,7 @@
 
 	int wRows;
 	int wCols;
-	Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount, int cPlayerIndex) {
-		this->cPlayerIndex = cPlayerIndex;
+	Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount) {
 		wRows = worldRows;
 		wCols = worldCols;
 
@@ -118,9 +117,8 @@
 
 
 	void Pathfinding::moveObjects() {
-		//g->debugDrawing();
+		g->debugDrawing();
 		workThroughPathfindingQueue();
-		//this->enableArea(0, 0, wCols - 1, wRows - 1);//enable all
 		for (int i = 0; i < playerCount; i++) {
 			if (players[i]->getHp() > 0) {
 				finishedPathfinding->lock();

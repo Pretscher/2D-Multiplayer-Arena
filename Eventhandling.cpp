@@ -375,6 +375,7 @@ void eventhandling::eventloop() {
 			networkThread = new std::thread(&initClient);
 			menuActive = false;
 		}
+		pathfinding->setPlayerIndex(myPlayerI);
 	}
 
 

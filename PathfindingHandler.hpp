@@ -33,7 +33,7 @@ public:
 
 	void disableArea(int row, int col, int width, int height);
 	void enableArea(int row, int col, int width, int height);
-	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount, int cPlayerIndex);
+	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount);
 	void pathFindingOnClick(int playerIndex);
 	void moveObjects();
 
@@ -48,5 +48,9 @@ public:
 	}
 	bool isPlayerUseable() {
 		return !findingPath;
+	}
+
+	void setPlayerIndex(int playerIndex) {
+		cPlayerIndex = playerIndex;
 	}
 };
