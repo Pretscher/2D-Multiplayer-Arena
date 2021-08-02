@@ -13,7 +13,8 @@
 
 	int wRows;
 	int wCols;
-	Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount) {
+	Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount, int cPlayerIndex) {
+		this->cPlayerIndex = cPlayerIndex;
 		wRows = worldRows;
 		wCols = worldCols;
 

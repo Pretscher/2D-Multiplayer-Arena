@@ -28,9 +28,6 @@ private:
 	void playerInteraction(int movedPlayerIndex);
 	void workThroughPathfindingQueue();
 public:
-	Pathfinding(int playerIndex) {
-		cPlayerIndex = playerIndex;
-	}
 	std::vector<int>* newGoalRows = new std::vector<int>();
 	std::vector<int>* newGoalCols = new std::vector<int>();
 

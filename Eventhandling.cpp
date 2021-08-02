@@ -77,7 +77,7 @@ void eventhandling::init() {
 	terrain = new Terrain();
 	hardCodeTerrain();
 
-	pathfinding = new Pathfinding(worldRows, worldCols, terrain, players, playerCount);
+	pathfinding = new Pathfinding(worldRows, worldCols, terrain, players, playerCount, myPlayerI);
 
 	projectiles = new std::vector<Projectile*>();
 }
