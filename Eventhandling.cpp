@@ -296,9 +296,7 @@ static void implementPositions() {
 				goalRow = intPositions->at(i);//keep important decimal places through */ 10000
 			case 3:
 				goalCol = intPositions->at(i);
-			default:
-				//shouldnt reach this
-				std::exit(0);
+			default:;
 			}
 			counter++;
 			if (counter > 3) {
