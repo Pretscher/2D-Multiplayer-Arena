@@ -202,25 +202,39 @@ std::mutex* nMutex = new std::mutex();
 static void passPositions() {
 	std::string* positions = new std::string();
 
-	positions->append(std::to_string(players[myPlayerI]->getRow()).c_str());
+	positions->append(std::to_string(players[myPlayerI]->getRow()));
 	positions->push_back(',');
-	positions->append(std::to_string(players[myPlayerI]->getCol()).c_str());
+	positions->append(std::to_string(players[myPlayerI]->getCol()));
 	positions->push_back(',');
 	positions->append(std::to_string(players[myPlayerI]->getTextureIndex()));
 	positions->push_back(',');
 	positions->append(std::to_string(players[myPlayerI]->getHp()));
+	positions->push_back(',');
+	positions->append(std::to_string(newProjectiles->size() * 4));//projectile size in string (4 values per proj)
+	positions->push_back(',');
+	positions->append(std::to_string(pathfinding->newGoalRows->size() * 2));//algorithm goal size in string (2 values per path)
 
 	for (int i = 0; i < newProjectiles->size(); i++) {
 		positions->push_back(',');
-		positions->append(std::to_string((int)newProjectiles->at(i)->getRow()).c_str());
+		positions->append(std::to_string((int)newProjectiles->at(i)->getRow()));
 		positions->push_back(',');
-		positions->append(std::to_string((int)newProjectiles->at(i)->getCol()).c_str());
+		positions->append(std::to_string((int)newProjectiles->at(i)->getCol()));
 		positions->push_back(',');
-		positions->append(std::to_string(newProjectiles->at(i)->getGoalRow()).c_str());
+		positions->append(std::to_string(newProjectiles->at(i)->getGoalRow()));
 		positions->push_back(',');
-		positions->append(std::to_string(newProjectiles->at(i)->getGoalCol()).c_str());
+		positions->append(std::to_string(newProjectiles->at(i)->getGoalCol()));
+	}
+	positions->push_back(',');
+
+	for (int i = 0; i < pathfinding->newGoalRows->size(); i++) {
+		positions->push_back(',');
+		positions->push_back(pathfinding->newGoalRows->at(i));
+		positions->push_back(',');
+		positions->push_back(pathfinding->newGoalCols->at(i));
 	}
 	newProjectiles->clear();
+	pathfinding->newGoalRows->clear();
+	pathfinding->newGoalCols->clear();
 
 	if (myPlayerI == 0) {
 		server->sendToClient(positions->c_str());
@@ -286,7 +300,8 @@ static void implementPositions() {
 		int col = 0;
 		int goalRow = 0;
 		int goalCol = 0;
-		for (int i = 4; i < intPositions->size(); i++) {
+		int projectileLenghtInString = intPositions->at(4);
+		for (int i = 6; i < projectileLenghtInString; i++) {
 			switch (counter) {
 			case 0:
 				row = intPositions->at(i);
@@ -305,9 +320,28 @@ static void implementPositions() {
 				counter = 0;
 			}
 		}
-		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
-		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(), 
-			players[0]->getWidth(), players[0]->getHeight());//disable new position
+		
+		int startIndex = 6 + projectileLenghtInString;
+
+		int pfCounter = 0;
+		int pfRow = 0;
+		int pfCol = 0;
+		for (int i = startIndex; i < startIndex + intPositions->at(5); i++) {
+			switch (counter) {
+			case 0:
+				pfRow = intPositions->at(i);
+			case 1:
+				pfCol = intPositions->at(i);
+			default:;//do nothing on default, either all 4 cases are given or none, nothing else can happen
+			}
+
+			counter++;
+			if (counter > 1) {
+				pathfinding->findPath(pfCol, pfRow, otherPlayer);
+				counter = 0;
+			}
+		}
+
 		delete msg;
 	}
 	else {//the earlier you unlock the better

@@ -72,8 +72,13 @@
 			}
 		}
 	}
-
 	void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
+		//if this is a path for my player, let connected pc know that is has to find path to this coords
+		if (playerIndex == cPlayerIndex) {
+			newGoalRows->push_back(goalY);
+			newGoalCols->push_back(goalX);
+		}
+
 		finishedPathfinding->try_lock();
 
 		if (findingPath == false) {
