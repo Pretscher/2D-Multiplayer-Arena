@@ -209,6 +209,8 @@ static void passPositions() {
 	positions->append(std::to_string(players[myPlayerI]->getTextureIndex()));
 	positions->push_back(',');
 	positions->append(std::to_string(players[myPlayerI]->getHp()));
+	positions->push_back(',');
+	positions->append(std::to_string((int)players[myPlayerI]->hasPath()));
 
 	for (int i = 0; i < newProjectiles->size(); i++) {
 		positions->push_back(',');
@@ -284,13 +286,14 @@ static void implementPositions() {
 
 		players[otherPlayer]->setTexture(intPositions->at(2));
 		players[otherPlayer]->setHp(intPositions->at(3));
+		players[otherPlayer]->setHasPath((bool)intPositions->at(4));
 
 		int counter = 0;
 		int row = 0;
 		int col = 0;
 		int goalRow = 0;
 		int goalCol = 0;
-		for (int i = 4; i < intPositions->size(); i++) {
+		for (int i = 5; i < intPositions->size(); i++) {
 			switch (counter) {
 			case 0:
 				row = intPositions->at(i);

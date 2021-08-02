@@ -112,7 +112,7 @@
 
 
 	void Pathfinding::moveObjects(int otherPlayerRow, int otherPlayerCol, int otherPlayerIndex) {
-		//g->debugDrawing();
+		g->debugDrawing();
 		workThroughPathfindingQueue();
 		//this->enableArea(0, 0, wCols - 1, wRows - 1);//enable all
 		for (int i = 0; i < playerCount; i++) {
