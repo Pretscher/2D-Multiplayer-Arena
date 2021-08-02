@@ -32,7 +32,7 @@ public:
 	void enableArea(int row, int col, int width, int height);
 	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount);
 	void pathFindingOnClick(int playerIndex);
-	void moveObjects(int otherPlayerRow, int otherPlayerCol, int otherPlayerIndex);
+	void moveObjects();
 
 	void startPathFinding(int goalX, int goalY, int playerIndex);
 	void findPath(int goalX, int goalY, int playerIndex);

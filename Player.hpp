@@ -83,13 +83,4 @@ public:
         return cTextureI;
     }
 
-    inline void setHasPath(bool i_hasPath) {
-        if (i_hasPath == true) {
-            pathLenght = 0;
-        }
-        else {
-            pathLenght = -1;
-        }
-    }
-
 };

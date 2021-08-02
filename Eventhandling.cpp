@@ -209,8 +209,6 @@ static void passPositions() {
 	positions->append(std::to_string(players[myPlayerI]->getTextureIndex()));
 	positions->push_back(',');
 	positions->append(std::to_string(players[myPlayerI]->getHp()));
-	positions->push_back(',');
-	positions->append(std::to_string((int)players[myPlayerI]->hasPath()));
 
 	for (int i = 0; i < newProjectiles->size(); i++) {
 		positions->push_back(',');
@@ -250,9 +248,7 @@ std::vector<int>* extractInts(std::string* str) {
 	return out;
 }
 
-bool newCoords;
-int newRow; 
-int newCol;
+
 static void implementPositions() {
 	std::string* msg;
 	int otherPlayer;
@@ -280,20 +276,17 @@ static void implementPositions() {
 
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
-		newRow = intPositions->at(0);
-		newCol = intPositions->at(1);
-		newCoords = true;
-
+		players[otherPlayer]->setRow(intPositions->at(0));
+		players[otherPlayer]->setCol(intPositions->at(1));
 		players[otherPlayer]->setTexture(intPositions->at(2));
 		players[otherPlayer]->setHp(intPositions->at(3));
-		players[otherPlayer]->setHasPath((bool)intPositions->at(4));
 
 		int counter = 0;
 		int row = 0;
 		int col = 0;
 		int goalRow = 0;
 		int goalCol = 0;
-		for (int i = 5; i < intPositions->size(); i++) {
+		for (int i = 4; i < intPositions->size(); i++) {
 			switch (counter) {
 			case 0:
 				row = intPositions->at(i);
@@ -358,16 +351,7 @@ void eventhandling::eventloop() {
 
 		Renderer::updateViewSpace();//move view space if mouse on edge of window
 		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
-
-		int otherPlayerI = 0;
-		if (myPlayerI == 0) {
-			otherPlayerI = 1;
-		}
-
-		if (players[otherPlayerI]->hasPath() == false || newCoords == true) {
-			newCoords = false;
-			pathfinding->moveObjects(newRow, newCol, otherPlayerI);
-		}
+		pathfinding->moveObjects();
 		projectileManagement();
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
 			passPositions();
