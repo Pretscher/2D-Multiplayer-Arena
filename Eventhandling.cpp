@@ -289,8 +289,6 @@ static void implementPositions() {
 
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
-		players[otherPlayer]->setRow(intPositions->at(0));
-		players[otherPlayer]->setCol(intPositions->at(1));
 		players[otherPlayer]->setTexture(intPositions->at(2));
 		players[otherPlayer]->setHp(intPositions->at(3));
 

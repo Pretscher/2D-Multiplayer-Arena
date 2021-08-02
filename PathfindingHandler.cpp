@@ -79,7 +79,7 @@
 			newGoalCols->push_back(goalX);
 		}
 
-		finishedPathfinding->try_lock();
+		bool unlock = finishedPathfinding->try_lock();
 
 		if (findingPath == false) {
 			findingPath = true;
@@ -87,14 +87,14 @@
 			if (players[playerIndex]->hasPath() == true) {
 				players[playerIndex]->deletePath();
 			}
-			finishedPathfinding->unlock();
+			if(unlock == true) finishedPathfinding->unlock();
 			pathFindingThread = new std::thread(&startPathfindingThread, goalX, goalY, playerIndex, this);
 		}
 		else {
 			goalColToFind->push_back(goalX);
 			goalRowToFind->push_back(goalY);
 			indicesToFind->push_back(playerIndex);
-			finishedPathfinding->unlock();
+			if (unlock == true) finishedPathfinding->unlock();
 		}
 	}
 
