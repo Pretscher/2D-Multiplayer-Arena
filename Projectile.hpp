@@ -43,11 +43,11 @@ public:
 	inline float getCol() { return col; }
 	inline void setCol(float col) { this->col = col; }
 
-	inline int getGoalRow() { return row; }
-	inline void setGoalRow(int row) { this->row = row; }
+	inline int getGoalRow() { return goalRow; }
+	inline void setGoalRow(int goalRow) { this->goalRow = goalRow; }
 
-	inline int getGoalCol() { return col; }
-	inline void setGoalCol(int col) { this->col = col; }
+	inline int getGoalCol() { return goalCol; }
+	inline void setGoalCol(int goalCol) { this->goalCol = goalCol; }
 
 
 	inline bool getDead() { return dead; }

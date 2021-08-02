@@ -212,13 +212,13 @@ static void passPositions() {
 
 	for (int i = 0; i < newProjectiles->size(); i++) {
 		positions->push_back(',');
-		positions->push_back((int)newProjectiles->at(i)->getRow());
+		positions->append(std::to_string((int)newProjectiles->at(i)->getRow()).c_str());
 		positions->push_back(',');
-		positions->push_back((int)newProjectiles->at(i)->getCol());
+		positions->append(std::to_string((int)newProjectiles->at(i)->getCol()).c_str());
 		positions->push_back(',');
-		positions->push_back(newProjectiles->at(i)->getGoalRow());
+		positions->append(std::to_string(newProjectiles->at(i)->getGoalRow()).c_str());
 		positions->push_back(',');
-		positions->push_back(newProjectiles->at(i)->getGoalCol());
+		positions->append(std::to_string(newProjectiles->at(i)->getGoalCol()).c_str());
 	}
 	newProjectiles->clear();
 
