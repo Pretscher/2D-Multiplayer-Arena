@@ -35,12 +35,14 @@ public:
 		server->sendToClient(rawData->c_str());
 		delete rawData;
 		rawData = new std::string();
+		tokenCount = 0;
 	}
 
 	static void sendTokensToClient(GameClient* client) {
 		client->sendToServer(rawData->c_str());
 		delete rawData;
 		rawData = new std::string();
+		tokenCount = 0;
 	}
 
 	static std::vector<int>* receiveTonkensFromServer(GameServer* server) {
