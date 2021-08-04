@@ -52,7 +52,6 @@ public:
 	}
 
 	static void receiveTonkensFromServer(GameServer* server) {
-		parseToIntsData = nullptr;
 		std::string* data;
 		int otherPlayer;
 		bool copyAndParse = false;
@@ -71,7 +70,6 @@ public:
 	}
 
 	static void receiveTonkensFromClient(GameClient* client) {
-		parseToIntsData = nullptr;
 		std::string* data;
 		int otherPlayer;
 		bool copyAndParse = false;
