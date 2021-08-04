@@ -7,42 +7,37 @@
 
 class NetworkCommunication {
 public:
-	
+	static void init() {
+		rawData = new std::string();
+	}
+
 	static void addToken(char* token) {
-		if (rawData == nullptr) {
-			rawData = new std::string();
-		}
-		else {
-			rawData->push_back(',');
-		}
 		if (token == nullptr) {
 			std::cout << "networkCommunication received nullptr as outgoing token";
 			std::exit(0);
 		}
-		tokenCount++;
+
+		rawData->push_back(',');
 		rawData->append(token);
+		tokenCount++;
 	}
 
 	static void addToken(int token) {
-		if (rawData == nullptr) {
-			rawData = new std::string();
-		}
-		else {
-			rawData->push_back(',');
-		}
-
-		tokenCount++;
+		rawData->push_back(',');
 		rawData->append(std::to_string(token).c_str());
+		tokenCount++;
 	}
 
 	static void sendTokensToServer(GameServer* server) {
 		server->sendToClient(rawData->c_str());
 		delete rawData;
+		rawData = new std::string();
 	}
 
 	static void sendTokensToClient(GameClient* client) {
 		client->sendToServer(rawData->c_str());
 		delete rawData;
+		rawData = new std::string();
 	}
 
 	static std::vector<int>* receiveTonkensFromServer(GameServer* server) {
