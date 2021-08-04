@@ -31,7 +31,7 @@ protected:
     std::string* lastMessage;
     bool connected = false;
     bool wait = false;
-
+    bool gotNewMessage = false;
     std::mutex* mutex;
 public:
 
@@ -153,6 +153,7 @@ public:
             //save message
             for (int i = 0; i < iResult; i++) {
                 lastMessage->push_back(recvbuf[i]);
+                gotNewMessage = true;
             }
             mutex->unlock();
 
@@ -185,5 +186,12 @@ public:
 
     std::mutex* getMutex() {
         return this->mutex;
+    }
+
+
+    bool newMessage() {
+        bool temp = gotNewMessage;
+        gotNewMessage = false;
+        return temp;
     }
 };

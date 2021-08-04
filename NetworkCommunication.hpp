@@ -51,10 +51,6 @@ public:
 		return out;
 	}
 
-	static bool receivedSomething() {
-		return !(parseToIntsData == nullptr);
-	}
-
 	static void receiveTonkensFromServer(GameServer* server) {
 		parseToIntsData = nullptr;
 		std::string* data;

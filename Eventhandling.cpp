@@ -114,19 +114,26 @@ static void passPositions() {
 
 
 static void implementPositions() {
-	if (myPlayerI == 0) {
-		NetworkCommunication::receiveTonkensFromServer(server);
-	}
-	else {
-		NetworkCommunication::receiveTonkensFromClient(client);
-	}
-
+	
 	int otherPlayer = 0;
 	if (myPlayerI == 0) {
 		otherPlayer = 1;
 	}
-
-	if(NetworkCommunication::receivedSomething() == true) {
+	
+	bool receivedSth = false;
+	if (myPlayerI == 0) {
+		if (server->newMessage() == true) {
+			receivedSth = true;
+			NetworkCommunication::receiveTonkensFromServer(server);
+		}
+	}
+	else {
+		if (client->newMessage() == true) {
+			receivedSth = true;
+			NetworkCommunication::receiveTonkensFromClient(client);
+		}
+	}
+	if(receivedSth == true) {
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
 		players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());

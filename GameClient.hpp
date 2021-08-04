@@ -23,7 +23,7 @@ protected:
     bool connected = false;
     bool wait = false;
     std::mutex* mutex;
-
+    bool gotNewMessage = false;
 public:
     GameClient(const char* serverIP) {
         lastMessage = nullptr;
@@ -121,6 +121,7 @@ public:
             //save message
             for (int i = 0; i < iResult; i++) {
                 lastMessage->push_back(recvbuf[i]);
+                gotNewMessage = true;
             }
             mutex->unlock();
 
@@ -160,5 +161,11 @@ public:
 
     std::mutex* getMutex() {
         return this->mutex;
+    }
+
+    bool newMessage() {
+        bool temp = gotNewMessage;
+        gotNewMessage = false;
+        return temp;
     }
 };
