@@ -150,9 +150,6 @@ static void implementPositions() {
 		pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 		
 	}
-	else {//the earlier you unlock the better
-		nMutex->unlock();
-	}
 }
 
 static void initServer() {
