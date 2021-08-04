@@ -100,6 +100,7 @@ public:
 		int networkingStart = NetworkCommunication::getTokenCount();
 		NetworkCommunication::addToken(networkingStart);
 		int networkingEnd = networkingStart + (4 * newProjectiles->size());
+		if (newProjectiles->size() > 0) networkingEnd--;
 		NetworkCommunication::addToken(networkingEnd);
 		
 		for (int i = 0; i < newProjectiles->size(); i++) {
