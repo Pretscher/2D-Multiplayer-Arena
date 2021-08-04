@@ -12,11 +12,10 @@ void startPathfindingThread(int goalX, int goalY, int playerIndex, Pathfinding* 
 }
 
 
-Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount, int myPlayer) {
+Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount) {
 	wRows = worldRows;
 	wCols = worldCols;
 
-	cPlayerIndex = myPlayer;
 	players = i_players;
 	playerCount = i_playerCount;
 	findingPath = false;

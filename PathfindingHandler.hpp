@@ -10,7 +10,7 @@ class Graph;
 class Pathfinding {
 
 public:
-	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount, int myPlayer);
+	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount);
 	std::vector<int>* newGoalRows = new std::vector<int>();
 	std::vector<int>* newGoalCols = new std::vector<int>();
 
@@ -20,7 +20,9 @@ public:
 	void findPath(int goalX, int goalY, int playerIndex);
 
 	void update();
-
+	void setPlayerIndex(int playerI) {
+		cPlayerIndex = playerI;
+	}
 
 private:
 	bool** collisionGrid;
@@ -37,7 +39,7 @@ private:
 	std::vector<int>* goalColToFind;
 	std::vector<int>* goalRowToFind;
 	std::vector<int>* indicesToFind;
-	int cPlayerIndex;
+	int cPlayerIndex = 0;
 
 	void playerInteraction(int movedPlayerIndex);
 	void workThroughPathfindingQueue();

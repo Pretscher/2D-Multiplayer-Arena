@@ -53,7 +53,7 @@ void eventhandling::init() {
 	initPlayers();
 	worldHandling = new WorldHandling();
 	uiHandling = new UiHandling(worldHandling->frameRows, worldHandling->frameCols);
-	pathfinding = new Pathfinding(worldHandling->worldRows, worldHandling->worldCols, worldHandling->terrain, players, playerCount, myPlayerI);
+	pathfinding = new Pathfinding(worldHandling->worldRows, worldHandling->worldCols, worldHandling->terrain, players, playerCount);
 	projectileHandling = new ProjectileHandling(worldHandling->worldRows, worldHandling->worldCols, players, myPlayerI, playerCount);
 	NetworkCommunication::init();
 
@@ -129,7 +129,8 @@ static void implementPositions() {
 	if(NetworkCommunication::receivedSomething() == true) {
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
-		players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
+		int r = NetworkCommunication::receiveNextToken();
+		players[otherPlayer]->setRow(r);
 		players[otherPlayer]->setCol(NetworkCommunication::receiveNextToken());
 		players[otherPlayer]->setTexture(NetworkCommunication::receiveNextToken());
 		players[otherPlayer]->setHp(NetworkCommunication::receiveNextToken());
@@ -168,11 +169,13 @@ void eventhandling::eventloop() {
 		menu->update();
 		if (menu->hostServer() == true) {
 			myPlayerI = 0;//server has player index 0
+			pathfinding->setPlayerIndex(myPlayerI);
 			networkThread = new std::thread(&initServer);
 			menuActive = false;//go to game
 		}
 		if (menu->connectAsClient() == true) {
 			myPlayerI = 1;//right now there are only two players so the client just has index 1
+			pathfinding->setPlayerIndex(myPlayerI);
 			networkThread = new std::thread(&initClient);
 			menuActive = false;//go to game
 		}
