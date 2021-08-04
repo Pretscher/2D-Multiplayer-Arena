@@ -175,6 +175,7 @@
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="PathfindingHandler.hpp" />
     <ClInclude Include="Projectile.hpp" />
+    <ClInclude Include="ProjectileHandling.hpp" />
     <ClInclude Include="Rect.hpp" />
     <ClInclude Include="Terrain.hpp" />
     <ClInclude Include="Player.hpp" />
