@@ -97,12 +97,11 @@ public:
 
 	
 	void sendProjectiles() {
-		if (newProjectiles->size() > 0) {
-			int networkingStart = NetworkCommunication::getTokenCount();
-			NetworkCommunication::addToken(networkingStart);
-			int networkingEnd = networkingStart + (4 * newProjectiles->size()) - 1;
-			NetworkCommunication::addToken(networkingEnd);
-		}
+		int networkingStart = NetworkCommunication::getTokenCount();
+		NetworkCommunication::addToken(networkingStart);
+		int networkingEnd = networkingStart + (4 * newProjectiles->size()) - 1;
+		NetworkCommunication::addToken(networkingEnd);
+		
 		for (int i = 0; i < newProjectiles->size(); i++) {
 			Projectile* current = newProjectiles->at(i);
 
