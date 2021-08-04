@@ -131,7 +131,7 @@ public:
 
 		int networkingStart = NetworkCommunication::receiveNextToken();
 		int networkingEnd = NetworkCommunication::receiveNextToken();
-		for (int i = networkingStart; i < networkingEnd; i++) {
+		for (int i = networkingStart; i <= networkingEnd; i++) {
 			switch (counter) {
 			case 0:
 				row = NetworkCommunication::receiveNextToken();
