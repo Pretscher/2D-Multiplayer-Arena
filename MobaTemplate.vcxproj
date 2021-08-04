@@ -172,6 +172,7 @@
     <ClInclude Include="Eventhandling.hpp" />
     <ClInclude Include="GameClient.hpp" />
     <ClInclude Include="GameServer.hpp" />
+    <ClInclude Include="NetworkCommunication.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="PathfindingHandler.hpp" />
     <ClInclude Include="Projectile.hpp" />

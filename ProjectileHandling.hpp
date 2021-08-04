@@ -5,6 +5,7 @@
 #include "Projectile.hpp"
 #include "Rect.hpp"
 #include "Utils.hpp"
+#include "NetworkCommunication.hpp"
 
 class ProjectileHandling {
 public:
@@ -97,21 +98,18 @@ public:
 	
 	void sendProjectiles(std::string* data) {
 		if (newProjectiles->size() > 0) {
-			networkingStart = data->size() + 1;
+			networkingStart = NetworkCommunication::getTokenCount() + 1;
 		}
 		for (int i = 0; i < newProjectiles->size(); i++) {
-			data->push_back(',');
+			Projectile* current = newProjectiles->at(i);
 
-			data->append(std::to_string((int)newProjectiles->at(i)->getRow()));
-			data->push_back(',');
-			data->append(std::to_string((int)newProjectiles->at(i)->getCol()));
-			data->push_back(',');
-			data->append(std::to_string(newProjectiles->at(i)->getGoalRow()));
-			data->push_back(',');
-			data->append(std::to_string(newProjectiles->at(i)->getGoalCol()));
+			NetworkCommunication::addToken((int)current->getRow());//natively floats for half movements smaller than a row/col
+			NetworkCommunication::addToken((int)current->getCol());
+			NetworkCommunication::addToken(current->getGoalRow());
+			NetworkCommunication::addToken(current->getGoalCol());
 		}
 		if (newProjectiles->size() > 0) {
-			networkingEnd = data->size() - 1;
+			networkingEnd = NetworkCommunication::getTokenCount() - 1;
 		}
 		newProjectiles->clear();
 	}

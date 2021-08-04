@@ -11,7 +11,7 @@
 #include "WorldHandling.hpp"
 #include "UiHandling.hpp"
 #include "ProjectileHandling.hpp"
-
+#include "NetworkCommunication.hpp"
 
 static Player** players;//all players
 static int myPlayerI;
@@ -30,6 +30,8 @@ static UiHandling* uiHandling;
 static WorldHandling* worldHandling;
 static ProjectileHandling* projectileHandling;
 
+int NetworkCommunication::tokenCount;
+std::string* NetworkCommunication::rawData;
 
 static void initPlayers() {
 	playerCount = 2;
@@ -93,67 +95,39 @@ std::mutex* nMutex = new std::mutex();
 static void passPositions() {
 	std::string* data = new std::string();
 
-	data->append(std::to_string(players[myPlayerI]->getRow()).c_str());
-	data->push_back(',');
-	data->append(std::to_string(players[myPlayerI]->getCol()).c_str());
-	data->push_back(',');
-	data->append(std::to_string(players[myPlayerI]->getTextureIndex()));
-	data->push_back(',');
-	data->append(std::to_string(players[myPlayerI]->getHp()));
-
+	NetworkCommunication::addToken(players[myPlayerI]->getRow());
+	NetworkCommunication::addToken(players[myPlayerI]->getCol());
+	NetworkCommunication::addToken(players[myPlayerI]->getTextureIndex());
+	NetworkCommunication::addToken(players[myPlayerI]->getHp());
 	projectileHandling->sendProjectiles(data);
 
 	if (myPlayerI == 0) {
-		server->sendToClient(data->c_str());
+		NetworkCommunication::sendTokensToServer(server);
 	}
 	if (myPlayerI == 1) {
-		client->sendToServer(data->c_str());
+		NetworkCommunication::sendTokensToClient(client);
 	}
 	delete data;
 }
 
-std::vector<int>* extractInts(std::string* str) {
-	std::vector<int>* out = new std::vector<int>();
-	int lastSplit = 0;
-	for (int i = 0; i < str->length(); i++) {
-		if (str->at(i) == ',') {
-			int temp = std::stoi(str->substr(lastSplit, i));
-			out->push_back(temp);
-			lastSplit = i + 1;
-		}
-		if (i == str->length() - 1) {
-			int temp = std::stoi(str->substr(lastSplit, i));
-			out->push_back(temp);
-		}
-	}
-	return out;
-}
+
 
 
 static void implementPositions() {
-	std::string* data;
-	int otherPlayer;
-	bool copyAndParse = false;
-	nMutex->lock();//gets locked before writing message
+	std::vector<int>* parseToIntsData;
 	if (myPlayerI == 0) {
-		otherPlayer = 1;
-		data = server->getLastMessage();
-		if (data != nullptr && data->size() > 0) {
-			copyAndParse = true;
-		}
+		parseToIntsData = NetworkCommunication::receiveTonkensFromServer(server);
 	}
 	else {
-		otherPlayer = 0;
-		data = client->getLastMessage();
-		if (data != nullptr && data->size() > 0) {
-			copyAndParse = true;
-		}
+		parseToIntsData = NetworkCommunication::receiveTonkensFromClient(client);
 	}
-	if (copyAndParse == true) {
-		data = new std::string(data->c_str());//copy so network can overwrite
-		nMutex->unlock();
-		std::vector<int>* parseToIntsData = extractInts(data);
 
+	int otherPlayer = 0;
+	if (myPlayerI == 0) {
+		otherPlayer = 1;
+	}
+
+	if(parseToIntsData != nullptr) {
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
 		players[otherPlayer]->setRow(parseToIntsData->at(0));
@@ -169,7 +143,6 @@ static void implementPositions() {
 		//could have enabled other players position aswell
 		pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 		
-		delete data;
 		delete parseToIntsData;
 	}
 	else {//the earlier you unlock the better

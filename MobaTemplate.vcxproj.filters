@@ -122,5 +122,8 @@
     <ClInclude Include="ProjectileHandling.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkCommunication.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

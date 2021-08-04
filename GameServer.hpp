@@ -182,4 +182,8 @@ public:
     void bindMutex(std::mutex* i_mutex) {
         this->mutex = i_mutex;
     }
+
+    std::mutex* getMutex() {
+        return this->mutex;
+    }
 };
