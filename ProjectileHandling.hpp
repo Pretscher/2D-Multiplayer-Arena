@@ -11,12 +11,11 @@ class ProjectileHandling {
 public:
 	/**		int worldRows, int worldCols, Player** players, int myPlayerI, int playerCount
 	**/
-	ProjectileHandling(int worldRows, int worldCols, Player** players, int myPlayerI, int playerCount) {
+	ProjectileHandling(int worldRows, int worldCols, Player** players, int playerCount) {
 		projectileVel = 10.0f;
 		projectileRadius = 20;
 
 		this->players = players;
-		this->myPlayerI = myPlayerI;
 		this->worldRows = worldRows;
 		this->worldCols = worldCols;
 		this->playerCount = playerCount;
@@ -134,12 +133,16 @@ public:
 			switch (counter) {
 			case 0:
 				row = NetworkCommunication::receiveNextToken();
+				break;
 			case 1:
 				col = NetworkCommunication::receiveNextToken();
+				break;
 			case 2:
 				goalRow = NetworkCommunication::receiveNextToken();//keep important decimal places through */ 10000
+				break;
 			case 3:
 				goalCol = NetworkCommunication::receiveNextToken();
+				break;
 			default:;//do nothing on default, either all 4 cases are given or none, nothing else can happen
 			}
 			counter++;
@@ -149,6 +152,10 @@ public:
 				counter = 0;
 			}
 		}
+	}
+
+	void setPlayerIndex(int playerIndex) {
+		myPlayerI = playerIndex;
 	}
 
 private:

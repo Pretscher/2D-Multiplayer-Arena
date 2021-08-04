@@ -129,8 +129,7 @@ static void implementPositions() {
 	if(NetworkCommunication::receivedSomething() == true) {
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
-		int r = NetworkCommunication::receiveNextToken();
-		players[otherPlayer]->setRow(r);
+		players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
 		players[otherPlayer]->setCol(NetworkCommunication::receiveNextToken());
 		players[otherPlayer]->setTexture(NetworkCommunication::receiveNextToken());
 		players[otherPlayer]->setHp(NetworkCommunication::receiveNextToken());
@@ -170,12 +169,14 @@ void eventhandling::eventloop() {
 		if (menu->hostServer() == true) {
 			myPlayerI = 0;//server has player index 0
 			pathfinding->setPlayerIndex(myPlayerI);
+			projectileHandling->setPlayerIndex(myPlayerI);
 			networkThread = new std::thread(&initServer);
 			menuActive = false;//go to game
 		}
 		if (menu->connectAsClient() == true) {
 			myPlayerI = 1;//right now there are only two players so the client just has index 1
 			pathfinding->setPlayerIndex(myPlayerI);
+			projectileHandling->setPlayerIndex(myPlayerI);
 			networkThread = new std::thread(&initClient);
 			menuActive = false;//go to game
 		}
