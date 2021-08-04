@@ -53,7 +53,7 @@ void eventhandling::init() {
 	uiHandling = new UiHandling(worldHandling->frameRows, worldHandling->frameCols);
 	pathfinding = new Pathfinding(worldHandling->worldRows, worldHandling->worldCols, worldHandling->terrain, players, playerCount, myPlayerI);
 	projectileHandling = new ProjectileHandling(worldHandling->worldRows, worldHandling->worldCols, players, myPlayerI, playerCount);
-
+	NetworkCommunication::init();
 
 	menu = new Menu();
 }
