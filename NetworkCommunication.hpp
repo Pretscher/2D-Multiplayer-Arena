@@ -52,18 +52,19 @@ public:
 	}
 
 	static void receiveTonkensFromServer(GameServer* server) {
+		std::string* data;
 		int otherPlayer;
 		bool copyAndParse = false;
 		server->getMutex()->lock();//gets locked before writing message
-		rawData = server->getLastMessage();
-		if (rawData != nullptr && rawData->size() > 0) {
+		data = server->getLastMessage();
+		if (data != nullptr && data->size() > 0) {
 			copyAndParse = true;
 		}
 		
 		if (copyAndParse == true) {
-			rawData = new std::string(rawData->c_str());//copy so network can overwrite
+			data = new std::string(data->c_str());//copy so network can overwrite
 			server->getMutex()->unlock();
-			parseToIntsData = extractInts(rawData);
+			parseToIntsData = extractInts(data);
 		}
 		else {
 			server->getMutex()->unlock();
@@ -72,18 +73,19 @@ public:
 	}
 
 	static void receiveTonkensFromClient(GameClient* client) {
+		std::string* data;
 		int otherPlayer;
 		bool copyAndParse = false;
 		client->getMutex()->lock();//gets locked before writing message
-		rawData = client->getLastMessage();
-		if (rawData != nullptr && rawData->size() > 0) {
+		data = client->getLastMessage();
+		if (data != nullptr && data->size() > 0) {
 			copyAndParse = true;
 		}
 
 		if (copyAndParse == true) {
-			rawData = new std::string(rawData->c_str());//copy so network can overwrite
+			data = new std::string(data->c_str());//copy so network can overwrite
 			client->getMutex()->unlock();
-			parseToIntsData = extractInts(rawData);
+			parseToIntsData = extractInts(data);
 		}
 		else {
 			client->getMutex()->unlock();
