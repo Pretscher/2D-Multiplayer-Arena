@@ -16,14 +16,17 @@ public:
 			std::cout << "networkCommunication received nullptr as outgoing token";
 			std::exit(0);
 		}
-
-		rawData->push_back(',');
+		if (rawData->size() > 0) {//dont start with a comma
+			rawData->push_back(',');
+		}
 		rawData->append(token);
 		tokenCount++;
 	}
 
 	static void addToken(int token) {
-		rawData->push_back(',');
+		if (rawData->size() > 0) {//dont start with a comma
+			rawData->push_back(',');
+		}
 		rawData->append(std::to_string(token).c_str());
 		tokenCount++;
 	}
@@ -86,7 +89,6 @@ public:
 private:
 	static int tokenCount;
 	static std::string* rawData;
-
 	static std::vector<int>* extractInts(std::string* str) {
 		std::vector<int>* out = new std::vector<int>();
 		int lastSplit = 0;
