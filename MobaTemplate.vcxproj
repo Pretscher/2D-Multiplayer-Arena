@@ -163,6 +163,7 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AbilityEffects.hpp" />
     <ClInclude Include="aStarAlgorithm\Algorithm.hpp" />
     <ClInclude Include="aStarAlgorithm\BinaryHeap.hpp" />
     <ClInclude Include="aStarAlgorithm\Graph.hpp" />
@@ -178,7 +179,9 @@
     <ClInclude Include="Terrain.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="UiHandling.hpp" />
     <ClInclude Include="Utils.hpp" />
+    <ClInclude Include="WorldHandling.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

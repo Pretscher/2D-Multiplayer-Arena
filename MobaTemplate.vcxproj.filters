@@ -110,5 +110,14 @@
     <ClInclude Include="GameClient.hpp">
       <Filter>Networking</Filter>
     </ClInclude>
+    <ClInclude Include="AbilityEffects.hpp">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldHandling.hpp">
+      <Filter>Eventhandling</Filter>
+    </ClInclude>
+    <ClInclude Include="UiHandling.hpp">
+      <Filter>Eventhandling</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

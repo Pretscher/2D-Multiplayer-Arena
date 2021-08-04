@@ -8,20 +8,13 @@
 #include "GameServer.hpp"
 #include "GameClient.hpp"
 #include "Menu.hpp"
-
+#include "WorldHandling.hpp"
+#include "UiHandling.hpp"
 
 static Player** players;//all players
 static int myPlayerI;
 static int playerCount;//number of players
-static int worldRows;
-static int worldCols;
-static Terrain* terrain;//contains every non-moving object with collision
 
-//Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
-static int* cViewSpace;//current viewspace position. [0] is row (bot to top), [1] is col (left to right) 
-static int* viewSpaceLimits;//maximum viewspace.  [0] = left, [1] = right, [2] = top, [3] = bottom
-
-static int rows, cols;//rows and cols you can see at a time, viewspace limits need to be added for worldSize
 static Pathfinding* pathfinding;
 static std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
@@ -31,8 +24,9 @@ static Menu* menu;
 static GameServer* server;
 static GameClient* client;
 
+static UiHandling* uiHandling;
+static WorldHandling* worldHandling;
 //forward declarations
-static void hardCodeTerrain();
 static void projectileManagement();
 
 static void initPlayers() {
@@ -50,35 +44,14 @@ static void initServer();
 static void initClient();
 static std::thread* networkThread;
 void eventhandling::init() {
-	menu = new Menu();
-
-	viewSpaceLimits = new int[4];
-	viewSpaceLimits[0] = 0;//left
-	viewSpaceLimits[1] = 2000;//right
-	viewSpaceLimits[2] = 0;//top
-	viewSpaceLimits[3] = 2000;//bot
-	cViewSpace = new int[2];
-	cViewSpace[0] = 0;//row (top to bot)
-	cViewSpace[1] = 0;//col (left to right)
-
-	uiHeight = 900;
-
-	//hardcoded rows and cols
-	rows = 1080;
-	cols = 1920;
-	worldRows = rows + viewSpaceLimits[3];
-	worldCols = cols + viewSpaceLimits[1];
-
-	Renderer::limitMouse(uiHeight, cols);
-	Renderer::initGrid(rows, cols);
-	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
-
 	initPlayers();
-	terrain = new Terrain();
-	hardCodeTerrain();
+	worldHandling = new WorldHandling();
+	uiHandling = new UiHandling(worldHandling->frameRows, worldHandling->frameCols);
+	pathfinding = new Pathfinding(worldHandling->worldRows, worldHandling->worldCols, worldHandling->terrain, players, playerCount, myPlayerI);
 
-	pathfinding = new Pathfinding(worldRows, worldCols, terrain, players, playerCount);
 
+
+	menu = new Menu();
 	projectiles = new std::vector<Projectile*>();
 }
 
@@ -87,23 +60,13 @@ bool menuActive = true;
 static void passPositions();
 static void implementPositions();
 
-static void drawUI() {
-
-	Renderer::drawRect(uiHeight, 0, cols, rows - uiHeight, sf::Color(50, 50, 50, 255), true);
-	Renderer::drawRect(uiHeight + 50, 50, (cols - 100), 50, sf::Color(10, 10, 10, 255), true);
-	if (players[myPlayerI]->getHp() > 0) {
-		float widthMult = (float)players[myPlayerI]->getHp() / players[myPlayerI]->getMaxHp();
-		float width = ((float)cols - 100.0f) * widthMult;
-		Renderer::drawRect(uiHeight + 50, 50, width, 50, sf::Color(0, 150, 0, 255), true);
-	}
-}
 
 void eventhandling::drawingloop() {
 	if (menuActive == true) {
 		menu->drawMenu();
 	}
 	else {
-		terrain->draw();
+		worldHandling->draw();//draw first, lifebars and stuff should be drawn over it
 		for (int i = 0; i < playerCount; i++) {
 			if (players[i]->getHp() > 0) {
 				players[i]->draw();//if he has a path, he moves on this path
@@ -112,7 +75,7 @@ void eventhandling::drawingloop() {
 		for (int i = 0; i < projectiles->size(); i++) {
 			projectiles->at(i)->draw();
 		}
-		drawUI();
+		uiHandling->draw();//draw last, should be over every item ingame
 	}
 }
 
@@ -120,11 +83,7 @@ void eventhandling::drawingloop() {
 
 //Game Object initialization
 
-static void hardCodeTerrain() {
-	terrain->addRect(1000, 1000, 500, 200);
-	terrain->addRect(200, 200, 500, 200);
-	terrain->addRect(1000, 1000, 500, 200);
-}
+
 
 float projectileVel = 10.0f;
 int projectileRadius = 20;
@@ -174,7 +133,8 @@ static void projectileManagement() {
 	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
 	for (int i = 0; i < projectiles->size(); i++) {
 		Projectile* p = projectiles->at(i);
-		p->move(worldRows, worldCols, terrain->getCollidables()->data(), terrain->getCollidables()->size());//give it the maximum rows so it know when it can stop moving
+		p->move(worldHandling->worldRows, worldHandling->worldCols, worldHandling->terrain->getCollidables()->data(),
+			worldHandling->terrain->getCollidables()->size());//give it the maximum rows so it know when it can stop moving
 
 		for (int j = 0; j < playerCount; j++) {
 			Player* cPlayer = players[j];
@@ -350,10 +310,10 @@ void eventhandling::eventloop() {
 
 
 	if (menuActive == false) {
+		worldHandling->update();
+		uiHandling->updateLifeBar(players[myPlayerI]->getHp(), players[myPlayerI]->getMaxHp());
+		pathfinding->update();
 
-		Renderer::updateViewSpace();//move view space if mouse on edge of window
-		pathfinding->pathFindingOnClick(myPlayerI);//right click => find path to right clicked spot and give it to player
-		pathfinding->moveObjects();
 		projectileManagement();
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
 			passPositions();

@@ -11,12 +11,12 @@ void startPathfindingThread(int goalX, int goalY, int playerIndex, Pathfinding* 
 	pathfinding->startPathFinding(goalX, goalY, playerIndex);
 }
 
-int wRows;
-int wCols;
-Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount) {
+
+Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount, int myPlayer) {
 	wRows = worldRows;
 	wCols = worldCols;
 
+	cPlayerIndex = myPlayer;
 	players = i_players;
 	playerCount = i_playerCount;
 	findingPath = false;
@@ -56,7 +56,7 @@ Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player*
 	}
 }
 
-void Pathfinding::pathFindingOnClick(int playerIndex) {
+void Pathfinding::pathFindingOnClick() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == false) {
 		sameClick = false;
 	}
@@ -68,9 +68,14 @@ void Pathfinding::pathFindingOnClick(int playerIndex) {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			findPath(mouseX, mouseY, playerIndex);
+			findPath(mouseX, mouseY, cPlayerIndex);
 		}
 	}
+}
+
+void Pathfinding::update() {
+	pathFindingOnClick();
+	moveObjects();
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
