@@ -32,6 +32,8 @@ static ProjectileHandling* projectileHandling;
 
 int NetworkCommunication::tokenCount;
 std::string* NetworkCommunication::rawData;
+std::vector<int>* NetworkCommunication::parseToIntsData;
+int NetworkCommunication::tokenIndex;
 
 static void initPlayers() {
 	playerCount = 2;
@@ -93,13 +95,12 @@ void eventhandling::drawingloop() {
 bool connectionSetUp = false;
 std::mutex* nMutex = new std::mutex();
 static void passPositions() {
-	std::string* data = new std::string();
 
 	NetworkCommunication::addToken(players[myPlayerI]->getRow());
 	NetworkCommunication::addToken(players[myPlayerI]->getCol());
 	NetworkCommunication::addToken(players[myPlayerI]->getTextureIndex());
 	NetworkCommunication::addToken(players[myPlayerI]->getHp());
-	projectileHandling->sendProjectiles(data);
+	projectileHandling->sendProjectiles();
 
 	if (myPlayerI == 0) {
 		NetworkCommunication::sendTokensToServer(server);
@@ -107,19 +108,17 @@ static void passPositions() {
 	if (myPlayerI == 1) {
 		NetworkCommunication::sendTokensToClient(client);
 	}
-	delete data;
 }
 
 
 
 
 static void implementPositions() {
-	std::vector<int>* parseToIntsData;
 	if (myPlayerI == 0) {
-		parseToIntsData = NetworkCommunication::receiveTonkensFromServer(server);
+		NetworkCommunication::receiveTonkensFromServer(server);
 	}
 	else {
-		parseToIntsData = NetworkCommunication::receiveTonkensFromClient(client);
+		NetworkCommunication::receiveTonkensFromClient(client);
 	}
 
 	int otherPlayer = 0;
@@ -127,15 +126,15 @@ static void implementPositions() {
 		otherPlayer = 1;
 	}
 
-	if(parseToIntsData != nullptr) {
+	if(NetworkCommunication::receivedSomething() == true) {
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
-		players[otherPlayer]->setRow(parseToIntsData->at(0));
-		players[otherPlayer]->setCol(parseToIntsData->at(1));
-		players[otherPlayer]->setTexture(parseToIntsData->at(2));
-		players[otherPlayer]->setHp(parseToIntsData->at(3));
+		players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
+		players[otherPlayer]->setCol(NetworkCommunication::receiveNextToken());
+		players[otherPlayer]->setTexture(NetworkCommunication::receiveNextToken());
+		players[otherPlayer]->setHp(NetworkCommunication::receiveNextToken());
 
-		projectileHandling->receiveProjectiles(parseToIntsData);
+		projectileHandling->receiveProjectiles();
 		
 		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(),
@@ -143,7 +142,6 @@ static void implementPositions() {
 		//could have enabled other players position aswell
 		pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 		
-		delete parseToIntsData;
 	}
 	else {//the earlier you unlock the better
 		nMutex->unlock();

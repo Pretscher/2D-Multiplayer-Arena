@@ -45,8 +45,18 @@ public:
 		tokenCount = 0;
 	}
 
-	static std::vector<int>* receiveTonkensFromServer(GameServer* server) {
-		std::vector<int>* parseToIntsData = nullptr;
+	static int receiveNextToken() {
+		int out = parseToIntsData->at(tokenIndex);
+		tokenIndex++;
+		return out;
+	}
+
+	static bool receivedSomething() {
+		return !(parseToIntsData == nullptr);
+	}
+
+	static void receiveTonkensFromServer(GameServer* server) {
+		parseToIntsData = nullptr;
 		std::string* data;
 		int otherPlayer;
 		bool copyAndParse = false;
@@ -61,11 +71,11 @@ public:
 			server->getMutex()->unlock();
 			parseToIntsData = extractInts(data);
 		}
-		return parseToIntsData;
+		tokenIndex = 0;
 	}
 
-	static std::vector<int>* receiveTonkensFromClient(GameClient* client) {
-		std::vector<int>* parseToIntsData = nullptr;
+	static void receiveTonkensFromClient(GameClient* client) {
+		parseToIntsData = nullptr;
 		std::string* data;
 		int otherPlayer;
 		bool copyAndParse = false;
@@ -80,8 +90,7 @@ public:
 			client->getMutex()->unlock();
 			parseToIntsData = extractInts(data);
 		}
-
-		return parseToIntsData;
+		tokenIndex = 0;
 	}
 
 	static int getTokenCount() {
@@ -91,6 +100,9 @@ public:
 private:
 	static int tokenCount;
 	static std::string* rawData;
+	static std::vector<int>* parseToIntsData;
+	static int tokenIndex;
+
 	static std::vector<int>* extractInts(std::string* str) {
 		std::vector<int>* out = new std::vector<int>();
 		int lastSplit = 0;

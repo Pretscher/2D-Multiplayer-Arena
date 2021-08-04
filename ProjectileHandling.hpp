@@ -96,9 +96,12 @@ public:
 	}
 
 	
-	void sendProjectiles(std::string* data) {
+	void sendProjectiles() {
 		if (newProjectiles->size() > 0) {
-			networkingStart = NetworkCommunication::getTokenCount() + 1;
+			int networkingStart = NetworkCommunication::getTokenCount();
+			NetworkCommunication::addToken(networkingStart);
+			int networkingEnd = networkingStart + (4 * newProjectiles->size()) - 1;
+			NetworkCommunication::addToken(networkingEnd);
 		}
 		for (int i = 0; i < newProjectiles->size(); i++) {
 			Projectile* current = newProjectiles->at(i);
@@ -109,12 +112,13 @@ public:
 			NetworkCommunication::addToken(current->getGoalCol());
 		}
 		if (newProjectiles->size() > 0) {
-			networkingEnd = NetworkCommunication::getTokenCount() - 1;
+			int networkingEnd = NetworkCommunication::getTokenCount() - 1;
+			NetworkCommunication::addToken(networkingEnd);
 		}
 		newProjectiles->clear();
 	}
 
-	void receiveProjectiles(std::vector<int>* parseToIntsData) {
+	void receiveProjectiles() {
 		int otherPlayerI = 0;
 		if(myPlayerI == 0) {
 			otherPlayerI = 1;
@@ -124,16 +128,19 @@ public:
 		int col = 0;
 		int goalRow = 0;
 		int goalCol = 0;
+
+		int networkingStart = NetworkCommunication::receiveNextToken();
+		int networkingEnd = NetworkCommunication::receiveNextToken();
 		for (int i = networkingStart; i < networkingEnd; i++) {
 			switch (counter) {
 			case 0:
-				row = parseToIntsData->at(i);
+				row = NetworkCommunication::receiveNextToken();
 			case 1:
-				col = parseToIntsData->at(i);
+				col = NetworkCommunication::receiveNextToken();
 			case 2:
-				goalRow = parseToIntsData->at(i);//keep important decimal places through */ 10000
+				goalRow = NetworkCommunication::receiveNextToken();//keep important decimal places through */ 10000
 			case 3:
-				goalCol = parseToIntsData->at(i);
+				goalCol = NetworkCommunication::receiveNextToken();
 			default:;//do nothing on default, either all 4 cases are given or none, nothing else can happen
 			}
 			counter++;
@@ -156,7 +163,4 @@ private:
 	Player** players;
 	int myPlayerI;
 	int playerCount;
-
-	int networkingStart;
-	int networkingEnd;
 };
