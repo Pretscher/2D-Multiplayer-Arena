@@ -110,7 +110,7 @@ public:
 			NetworkCommunication::addToken(current->getGoalCol());
 		}
 		if (newProjectiles->size() > 0) {
-			int networkingEnd = NetworkCommunication::getTokenCount() - 1;
+ 			int networkingEnd = NetworkCommunication::getTokenCount() - 1;
 			NetworkCommunication::addToken(networkingEnd);
 		}
 		newProjectiles->clear();

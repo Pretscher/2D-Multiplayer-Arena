@@ -147,19 +147,19 @@ public:
         while (true) {
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
-            mutex->lock();//lock caus writing and reading message at the same time is not thread safe
+
             //save message
             if (iResult > 0) {
+                mutex->lock();//lock caus writing and reading message at the same time is not thread safe
                 if (lastMessage != nullptr) delete lastMessage;
                 lastMessage = new std::string();
                 gotNewMessage = true;
+                //save message
+                for (int i = 0; i < iResult; i++) {
+                    lastMessage->push_back(recvbuf[i]);
+                }
+                mutex->unlock();
             }
-            for (int i = 0; i < iResult; i++) {
-                lastMessage->push_back(recvbuf[i]);
-
-            }
-            mutex->unlock();
-
 
             if (iResult < 0) {
                 std::cout << "Server recv failed with error: \n" << WSAGetLastError();

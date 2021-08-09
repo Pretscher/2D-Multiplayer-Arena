@@ -35,20 +35,17 @@ public:
 		server->sendToClient(rawData->c_str());
 		delete rawData;
 		rawData = new std::string();
-		tokenCount = 0;
 	}
 
 	static void sendTokensToClient(GameClient* client) {
 		client->sendToServer(rawData->c_str());
 		delete rawData;
-		rawData = new std::string();
-		tokenCount = 0;
+		rawData = new std::string(); 
 	}
 
 	static int receiveNextToken() {
 		int out = parseToIntsData->at(tokenIndex);
 		tokenIndex++;
-		if (tokenIndex >= tokenCount) tokenIndex = 0;
 		return out;
 	}
 
@@ -90,6 +87,10 @@ public:
 			client->getMutex()->unlock();
 		}
 		tokenIndex = 0;
+	}
+
+	static void initNewCommunication() {
+		tokenCount = 0;
 	}
 
 	static int getTokenCount() {

@@ -90,12 +90,12 @@ void eventhandling::drawingloop() {
 
 
 
-
+bool received = true;
 
 bool connectionSetUp = false;
 std::mutex* nMutex = new std::mutex();
 static void passPositions() {
-
+	NetworkCommunication::initNewCommunication();
 	NetworkCommunication::addToken(players[myPlayerI]->getRow());
 	NetworkCommunication::addToken(players[myPlayerI]->getCol());
 	NetworkCommunication::addToken(players[myPlayerI]->getTextureIndex());
@@ -133,6 +133,8 @@ static void implementPositions() {
 			NetworkCommunication::receiveTonkensFromClient(client);
 		}
 	}
+	if (receivedSth == true) {
+
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
 		players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
@@ -141,12 +143,15 @@ static void implementPositions() {
 		players[otherPlayer]->setHp(NetworkCommunication::receiveNextToken());
 
 		projectileHandling->receiveProjectiles();
-		
+
 		pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 		pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(),
 			players[0]->getWidth(), players[0]->getHeight());//disable new position
 		//could have enabled other players position aswell
 		pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+		
+		received = true;
+	}
 }
 
 static void initServer() {
@@ -197,7 +202,10 @@ void eventhandling::eventloop() {
 		
 		//pass game information back and forth through tcp sockets
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
-			passPositions();
+			if (received == true) {
+				passPositions();
+				received = false;
+			}
 			implementPositions();
 		}
 	}
