@@ -175,6 +175,7 @@
     <ClInclude Include="NetworkCommunication.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="PathfindingHandler.hpp" />
+    <ClInclude Include="Playerhandling.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="ProjectileHandling.hpp" />
     <ClInclude Include="Rect.hpp" />

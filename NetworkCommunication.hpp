@@ -24,7 +24,7 @@ public:
 	}
 
 	static void addToken(int token) {
-		if (rawData->size() > 0) {//dont start with a comma
+		if (rawData->size() > 0) {//dont start  or end with a comma
 			rawData->push_back(',');
 		}
 		rawData->append(std::to_string(token).c_str());

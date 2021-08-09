@@ -125,5 +125,8 @@
     <ClInclude Include="NetworkCommunication.hpp">
       <Filter>Networking</Filter>
     </ClInclude>
+    <ClInclude Include="Playerhandling.hpp">
+      <Filter>Eventhandling</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
