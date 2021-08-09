@@ -22,7 +22,6 @@ public:
 	}
 
 	void drawMenu() {
-
 		host->draw();
 		connect->draw();
 

@@ -146,6 +146,7 @@ public:
     void receive() {
         // Receive until the peer shuts down the connection
         while (true) {
+            //std::this_thread::sleep_for(std::chrono::milliseconds(16));
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
 

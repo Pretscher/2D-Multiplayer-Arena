@@ -7,12 +7,16 @@
 #include "aStarAlgorithm/Graph.hpp"
 #include "aStarAlgorithm/Algorithm.hpp"
 
-void startPathfindingThread(int goalX, int goalY, int playerIndex, Pathfinding* pathfinding) {
-	pathfinding->startPathFinding(goalX, goalY, playerIndex);
+void startPathfindingThread(Pathfinding* pathfinding) {
+	pathfinding->startPathFinding();
 }
 
-
 Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount) {
+	cGoalX = -1;
+	cGoalY = -1;
+	cPlayerIndex = -1;
+	newPathFinding = false;
+	
 	wRows = worldRows;
 	wCols = worldCols;
 
@@ -23,7 +27,7 @@ Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player*
 	this->goalRowToFind = new std::vector<int>();
 	this->indicesToFind = new std::vector<int>();
 
-	pathFindingThread = nullptr;
+	pathFindingThread = new std::thread(&startPathfindingThread, this);
 	finishedPathfinding = new std::mutex();
 
 	pathfindingAccuracy = 0.025f;
@@ -67,7 +71,7 @@ void Pathfinding::pathFindingOnClick() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			findPath(mouseX, mouseY, cPlayerIndex);
+			findPath(mouseX, mouseY, myPlayerIndex);
 		}
 	}
 }
@@ -78,7 +82,7 @@ void Pathfinding::update() {
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
-	finishedPathfinding->try_lock();
+	finishedPathfinding->lock();
 
 	if (findingPath == false) {
 		findingPath = true;
@@ -86,8 +90,11 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 		if (players[playerIndex]->hasPath() == true) {
 			players[playerIndex]->deletePath();
 		}
+		newPathFinding = true;
+		cGoalX = goalX;
+		cGoalY = goalY;
+		cPlayerIndex = playerIndex;
 		finishedPathfinding->unlock();
-		pathFindingThread = new std::thread(&startPathfindingThread, goalX, goalY, playerIndex, this);
 	}
 	else {
 		goalColToFind->push_back(goalX);
@@ -207,51 +214,56 @@ void Pathfinding::enableArea(int row, int col, int width, int height) {
 
 
 
-void Pathfinding::startPathFinding(int goalX, int goalY, int playerIndex) {
+void Pathfinding::startPathFinding() {
+	while (true) {
+		finishedPathfinding->lock();
+		if (newPathFinding == true) {
+			int* xPath = nullptr;
+			int* yPath = nullptr;
+			int pathlenght = 0;
 
-	int* xPath = nullptr;
-	int* yPath = nullptr;
-	int pathlenght = 0;
+			int mouseRow = cGoalY;
+			int mouseCol = cGoalX;
 
-	int mouseRow = goalY;
-	int mouseCol = goalX;
-
-	Player* player = players[playerIndex];
-
-
-	//Cant do that in the other thread while pathfinding so we needa do it here
-	finishedPathfinding->lock();
+			Player* player = players[cPlayerIndex];
 
 
-	g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
+			//Cant do that in the other thread while pathfinding so we needa do it here
 
-	for (int i = 0; i < playerCount; i++) {
-		if (players[i]->getHp() > 0) {
-			if (i != playerIndex) {
-				Player* cPlayer = players[i];
-				g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
+
+			g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
+
+			for (int i = 0; i < playerCount; i++) {
+				if (players[i]->getHp() > 0) {
+					if (i != cPlayerIndex) {
+						Player* cPlayer = players[i];
+						g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
+					}
+				}
 			}
+
+			finishedPathfinding->unlock();
+			bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow(), player->getCol(), mouseRow, mouseCol);
+
+			//reverse accuracy simplification
+			for (int i = 0; i < pathlenght; i++) {
+				xPath[i] /= pathfindingAccuracy;
+				yPath[i] /= pathfindingAccuracy;
+			}
+
+			finishedPathfinding->lock();
+
+			if (found == true) {
+				player->givePath(xPath, yPath, pathlenght);
+			}
+			findingPath = false;
+			player->setFindingPath(false);
+			newPathFinding = false;
+			finishedPathfinding->unlock();
+		}
+		else {
+			std::this_thread::yield();
+			finishedPathfinding->unlock();
 		}
 	}
-
-	finishedPathfinding->unlock();
-	bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow(), player->getCol(), mouseRow, mouseCol);
-
-	//reverse accuracy simplification
-	for (int i = 0; i < pathlenght; i++) {
-		xPath[i] /= pathfindingAccuracy;
-		yPath[i] /= pathfindingAccuracy;
-	}
-
-	finishedPathfinding->lock();
-
-	if (found == true) {
-		player->givePath(xPath, yPath, pathlenght);
-	}
-	findingPath = false;
-	player->setFindingPath(false);
-	finishedPathfinding->unlock();
-
-	pathFindingThread->detach();
-	delete pathFindingThread;
 }

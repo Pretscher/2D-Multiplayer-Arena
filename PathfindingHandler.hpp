@@ -16,15 +16,21 @@ public:
 
 	void disableArea(int row, int col, int width, int height);
 	void enableArea(int row, int col, int width, int height);
-	void startPathFinding(int goalX, int goalY, int playerIndex);
+	void startPathFinding();
 	void findPath(int goalX, int goalY, int playerIndex);
 
 	void update();
 	void setPlayerIndex(int playerI) {
-		cPlayerIndex = playerI;
+		myPlayerIndex = playerI;
 	}
 
 private:
+
+	int cGoalX;
+	int cGoalY;
+	int cPlayerIndex;
+	bool newPathFinding;
+
 	bool** collisionGrid;
 
 	std::thread* pathFindingThread;
@@ -39,7 +45,7 @@ private:
 	std::vector<int>* goalColToFind;
 	std::vector<int>* goalRowToFind;
 	std::vector<int>* indicesToFind;
-	int cPlayerIndex = 0;
+	int myPlayerIndex = 0;
 
 	void playerInteraction(int movedPlayerIndex);
 	void workThroughPathfindingQueue();
