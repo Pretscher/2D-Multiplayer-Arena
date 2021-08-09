@@ -114,7 +114,7 @@ public:
 
     void receive() {
         while (true) {
-           
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 
 
