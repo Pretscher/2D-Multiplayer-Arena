@@ -148,12 +148,15 @@ public:
             iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
             mutex->lock();//lock caus writing and reading message at the same time is not thread safe
-            if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new std::string();
             //save message
+            if (iResult > 0) {
+                if (lastMessage != nullptr) delete lastMessage;
+                lastMessage = new std::string();
+                gotNewMessage = true;
+            }
             for (int i = 0; i < iResult; i++) {
                 lastMessage->push_back(recvbuf[i]);
-                gotNewMessage = true;
+
             }
             mutex->unlock();
 
@@ -172,24 +175,24 @@ public:
         std::exit(0);
     }
 
-    std::string* getLastMessage() {
+    inline std::string* getLastMessage() {
         return lastMessage;
     }
 
-    bool isConnected() {
+    inline bool isConnected() {
         return connected;
     }
 
-    void bindMutex(std::mutex* i_mutex) {
+    inline void bindMutex(std::mutex* i_mutex) {
         this->mutex = i_mutex;
     }
 
-    std::mutex* getMutex() {
+    inline std::mutex* getMutex() {
         return this->mutex;
     }
 
 
-    bool newMessage() {
+    inline bool newMessage() {
         bool temp = gotNewMessage;
         gotNewMessage = false;
         return temp;

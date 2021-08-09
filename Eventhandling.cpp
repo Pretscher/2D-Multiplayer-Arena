@@ -133,7 +133,6 @@ static void implementPositions() {
 			NetworkCommunication::receiveTonkensFromClient(client);
 		}
 	}
-	if(receivedSth == true) {
 		int tempRow = players[otherPlayer]->getRow();
 		int tempCol = players[otherPlayer]->getCol();
 		players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
@@ -148,8 +147,6 @@ static void implementPositions() {
 			players[0]->getWidth(), players[0]->getHeight());//disable new position
 		//could have enabled other players position aswell
 		pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
-		
-	}
 }
 
 static void initServer() {

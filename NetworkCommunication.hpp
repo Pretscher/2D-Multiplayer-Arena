@@ -48,12 +48,12 @@ public:
 	static int receiveNextToken() {
 		int out = parseToIntsData->at(tokenIndex);
 		tokenIndex++;
+		if (tokenIndex >= tokenCount) tokenIndex = 0;
 		return out;
 	}
 
 	static void receiveTonkensFromServer(GameServer* server) {
 		std::string* data;
-		int otherPlayer;
 		bool copyAndParse = false;
 		server->getMutex()->lock();//gets locked before writing message
 		data = server->getLastMessage();
@@ -74,7 +74,6 @@ public:
 
 	static void receiveTonkensFromClient(GameClient* client) {
 		std::string* data;
-		int otherPlayer;
 		bool copyAndParse = false;
 		client->getMutex()->lock();//gets locked before writing message
 		data = client->getLastMessage();
