@@ -216,6 +216,7 @@ void Pathfinding::enableArea(int row, int col, int width, int height) {
 
 void Pathfinding::startPathFinding() {
 	while (true) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		finishedPathfinding->lock();
 		if (newPathFinding == true) {
 			int* xPath = nullptr;
@@ -262,7 +263,6 @@ void Pathfinding::startPathFinding() {
 			finishedPathfinding->unlock();
 		}
 		else {
-			std::this_thread::yield();
 			finishedPathfinding->unlock();
 		}
 	}
