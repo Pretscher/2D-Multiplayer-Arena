@@ -1,49 +1,30 @@
-#include "Renderer.hpp"
-#include "Terrain.hpp"
+#pragma once
 
+class Terrain;
 class WorldHandling {
 public:
-	WorldHandling() {
-		viewSpaceLimits = new int[4];
-		viewSpaceLimits[0] = 0;//left
-		viewSpaceLimits[1] = 2000;//right
-		viewSpaceLimits[2] = 0;//top
-		viewSpaceLimits[3] = 2000;//bot
-		cViewSpace = new int[2];
-		cViewSpace[0] = 0;//row (top to bot)
-		cViewSpace[1] = 0;//col (left to right)
+	WorldHandling();
+	void update();
+	void draw();
+	void hardCodeTerrain();
 
-
-
-		//hardcoded rows and cols
-		frameRows = 1080;
-		frameCols = 1920;
-		worldRows = frameRows + viewSpaceLimits[3];
-		worldCols = frameCols + viewSpaceLimits[1];
-
-
-		Renderer::initGrid(frameRows, frameCols);
-		Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
-		terrain = new Terrain();
-		hardCodeTerrain();
+	inline int getWorldRows() {
+		return worldRows;
+	}
+	inline int getWorldCols() {
+		return worldCols;
+	}
+	inline int getFrameRows() {
+		return frameRows;
+	}
+	inline int getFrameCols() {
+		return frameCols;
+	}
+	inline Terrain* getTerrain() {
+		return terrain;
 	}
 
-	void update() {
-		Renderer::updateViewSpace();//move view space if mouse on edge of window
-	}
-
-	void draw() {
-		terrain->draw();
-	}
-
-	void hardCodeTerrain() {
-		terrain->addRect(1000, 1000, 500, 200);
-		terrain->addRect(200, 200, 500, 200);
-		terrain->addRect(1000, 1000, 500, 200);
-	}
-
-
-
+private:
 	int worldRows;
 	int worldCols;
 	Terrain* terrain;//contains every non-moving object with collision

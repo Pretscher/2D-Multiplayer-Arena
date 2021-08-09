@@ -46,11 +46,14 @@ void eventhandling::init() {
 	//be sure to not change the order, they depend on each other heavily
 	playerHandling = new PlayerHandling();
 	worldHandling = new WorldHandling();
-	uiHandling = new UiHandling(worldHandling->frameRows, worldHandling->frameCols);
-	pathfinding = new Pathfinding(worldHandling->worldRows, worldHandling->worldCols, worldHandling->terrain,
-		playerHandling->getPlayers(), playerHandling->getPlayerCount());
-	projectileHandling = new ProjectileHandling(worldHandling->worldRows, worldHandling->worldCols,
-		playerHandling->getPlayers(), playerHandling->getPlayerCount());
+
+	int worldRows = worldHandling->getWorldRows();
+	int worldCols = worldHandling->getWorldCols();
+	uiHandling = new UiHandling(worldHandling->getFrameRows(), worldHandling->getFrameCols());
+	pathfinding = new Pathfinding(worldRows, worldCols, worldHandling->getTerrain(), playerHandling->getPlayers(),
+		playerHandling->getPlayerCount());
+	projectileHandling = new ProjectileHandling(worldRows, worldCols, playerHandling->getPlayers(), playerHandling->getPlayerCount());
+	
 	NetworkCommunication::init();
 
 	menu = new Menu();
@@ -85,7 +88,7 @@ void eventhandling::eventloop() {
 		pathfinding->update();
 
 		//pass collidbales to projectile management every update so that projectiles can even be stopped by moving terrain
-		auto collidables = worldHandling->terrain->getCollidables();
+		auto collidables = worldHandling->getTerrain()->getCollidables();
 		projectileHandling->update(collidables->data(), collidables->size());
 
 		//pass game information back and forth through tcp sockets

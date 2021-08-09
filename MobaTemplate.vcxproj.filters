@@ -60,6 +60,18 @@
     <ClCompile Include="Server.hpp">
       <Filter>Networking</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerHandling.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileHandling.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="UiHandling.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldHandling.cpp">
+      <Filter>Eventhandling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aStarAlgorithm\Algorithm.hpp">
@@ -125,7 +137,7 @@
     <ClInclude Include="NetworkCommunication.hpp">
       <Filter>Networking</Filter>
     </ClInclude>
-    <ClInclude Include="Playerhandling.hpp">
+    <ClInclude Include="PlayerHandling.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
   </ItemGroup>

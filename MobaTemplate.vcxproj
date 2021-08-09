@@ -154,13 +154,17 @@
     <ClCompile Include="Eventhandling.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PathfindingHandler.cpp" />
+    <ClCompile Include="PlayerHandling.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectileHandling.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Server.hpp" />
     <ClCompile Include="Client.hpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="UiHandling.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="WorldHandling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbilityEffects.hpp" />
@@ -175,7 +179,7 @@
     <ClInclude Include="NetworkCommunication.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="PathfindingHandler.hpp" />
-    <ClInclude Include="Playerhandling.hpp" />
+    <ClInclude Include="PlayerHandling.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="ProjectileHandling.hpp" />
     <ClInclude Include="Rect.hpp" />
