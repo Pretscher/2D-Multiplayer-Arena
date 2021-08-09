@@ -31,6 +31,8 @@ int NetworkCommunication::tokenCount;
 std::string* NetworkCommunication::rawData;
 std::vector<int>* NetworkCommunication::parseToIntsData;
 int NetworkCommunication::tokenIndex;
+bool received = true;
+std::mutex* nMutex = new std::mutex();
 
 void initServer();
 void initClient();
@@ -126,8 +128,7 @@ void initClient() {
 	client->receive();
 }
 
-bool received = true;
-std::mutex* nMutex = new std::mutex();
+
 void sendData() {
 	NetworkCommunication::initNewCommunication();
 
