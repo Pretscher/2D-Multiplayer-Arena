@@ -54,12 +54,6 @@
     <ClCompile Include="PathfindingHandler.cpp">
       <Filter>Eventhandling</Filter>
     </ClCompile>
-    <ClCompile Include="Client.hpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="Server.hpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerHandling.cpp">
       <Filter>Eventhandling</Filter>
     </ClCompile>
@@ -71,6 +65,15 @@
     </ClCompile>
     <ClCompile Include="WorldHandling.cpp">
       <Filter>Eventhandling</Filter>
+    </ClCompile>
+    <ClCompile Include="PortableServer.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="PortableClient.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkCommunication.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,12 +119,6 @@
     <ClInclude Include="Menu.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
-    <ClInclude Include="GameServer.hpp">
-      <Filter>Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="GameClient.hpp">
-      <Filter>Networking</Filter>
-    </ClInclude>
     <ClInclude Include="AbilityEffects.hpp">
       <Filter>GameObjects</Filter>
     </ClInclude>
@@ -139,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="PlayerHandling.hpp">
       <Filter>Eventhandling</Filter>
+    </ClInclude>
+    <ClInclude Include="PortableClient.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="PortableServer.hpp">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
