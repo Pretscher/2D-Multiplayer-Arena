@@ -242,10 +242,7 @@ void PortableServer::waitForClient() {
     connected = true;
     // No longer need server socket
     closesocket(ListenSocket);
-
     std::cout << "Server successfully connected to client. Ready to receive messages.\n";
-
-    receiveMultithreaded();
 }
 
 
