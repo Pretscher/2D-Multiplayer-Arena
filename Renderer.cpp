@@ -228,7 +228,7 @@ void Renderer::drawText(std::string i_text, int row, int col, int width, int hei
     sf::Text text;
 
     sf::Font font;
-    if (!font.loadFromFile("C:/Windows/Fonts/Calibri.ttf"))
+    if (!font.loadFromFile("Calibri Regular.ttf"))
     {
         std::cout << "error loading font.";
     }
