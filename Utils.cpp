@@ -12,6 +12,7 @@ bool Utils::collisionCoordsRect(float rX, float rY, float rW, float rH, float pX
 			return true;
 		}
 	}
+	return false;
 }
 /**
 * @param top left coords of and circle

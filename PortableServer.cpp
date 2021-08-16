@@ -31,7 +31,6 @@ PortableServer::PortableServer() {
 
     int opt = 1;
     addrlen = sizeof(address);
-    char* hello = "Hello from server";
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)

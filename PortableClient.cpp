@@ -29,7 +29,6 @@ static bool waitHandShaking = false;
 
 PortableClient::PortableClient(const char* serverIP) {
 
-    char* hello = "Hello from client";
     if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -99,7 +98,11 @@ std::mutex* PortableClient::getMutex() {
     return writingMessage;
 }
 
-
+bool PortableClient::newMessage() {
+    bool temp = gotNewMessage;
+    gotNewMessage = false;
+    return temp;
+}
 
 
 #elif _WIN32

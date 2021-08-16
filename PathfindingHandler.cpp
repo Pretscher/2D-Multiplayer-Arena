@@ -4,8 +4,8 @@
 #include "Renderer.hpp"
 #include "Terrain.hpp"
 #include "Player.hpp"
-#include "aStarAlgorithm/Graph.hpp"
-#include "aStarAlgorithm/Algorithm.hpp"
+#include "Graph.hpp"
+#include "Algorithm.hpp"
 
 void startPathfindingThread(Pathfinding* pathfinding) {
 	pathfinding->startPathFinding();

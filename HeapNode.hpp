@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <limits>
+
 class HeapNode {
 public:
     HeapNode(float key, int indexInGraph) {

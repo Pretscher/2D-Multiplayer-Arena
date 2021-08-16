@@ -2,6 +2,7 @@
 #include <cmath>
 #include <chrono>
 #include "Algorithm.hpp"
+#include <limits>
 
 int Algorithm::currentIteration = -1;
 bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
