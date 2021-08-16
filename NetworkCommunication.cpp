@@ -35,15 +35,19 @@ void NetworkCommunication::addToken(int token) {
 }
 
 void NetworkCommunication::sendTokensToServer(PortableServer* server) {
-	server->sendToClient(rawData->c_str());
-	delete rawData;
-	rawData = new std::string();
+	if(server->isConnected() == true) {
+		server->sendToClient(rawData->c_str());
+		delete rawData;
+		rawData = new std::string();
+	}
 }
 
 void NetworkCommunication::sendTokensToClient(PortableClient* client) {
-	client->sendToServer(rawData->c_str());
-	delete rawData;
-	rawData = new std::string();
+	if(client->isConnected() == true) {
+		client->sendToServer(rawData->c_str());
+		delete rawData;
+		rawData = new std::string();
+	}
 }
 
 int NetworkCommunication::receiveNextToken() {
@@ -53,43 +57,47 @@ int NetworkCommunication::receiveNextToken() {
 }
 
 void NetworkCommunication::receiveTonkensFromServer(PortableServer* server) {
-	std::string* data;
-	bool copyAndParse = false;
-	server->getMutex()->lock();//gets locked before writing message
-	data = server->getLastMessage();
-	if (data != nullptr && data->size() > 0) {
-		copyAndParse = true;
-	}
+	if(server->isConnected() == true) {
+		std::string* data;
+		bool copyAndParse = false;
+		server->getMutex()->lock();//gets locked before writing message
+		data = server->getLastMessage();
+		if (data != nullptr && data->size() > 0) {
+			copyAndParse = true;
+		}
 
-	if (copyAndParse == true) {
-		data = new std::string(data->c_str());//copy so network can overwrite
-		server->getMutex()->unlock();
-		parseToIntsData = extractInts(data);
+		if (copyAndParse == true) {
+			data = new std::string(data->c_str());//copy so network can overwrite
+			server->getMutex()->unlock();
+			parseToIntsData = extractInts(data);
+		}
+		else {
+			server->getMutex()->unlock();
+		}
+		tokenIndex = 0;
 	}
-	else {
-		server->getMutex()->unlock();
-	}
-	tokenIndex = 0;
 }
 
 void NetworkCommunication::receiveTonkensFromClient(PortableClient* client) {
-	std::string* data;
-	bool copyAndParse = false;
-	client->getMutex()->lock();//gets locked before writing message
-	data = client->getLastMessage();
-	if (data != nullptr && data->size() > 0) {
-		copyAndParse = true;
-	}
+	if(client->isConnected() == true) {
+		std::string* data;
+		bool copyAndParse = false;
+		client->getMutex()->lock();//gets locked before writing message
+		data = client->getLastMessage();
+		if (data != nullptr && data->size() > 0) {
+			copyAndParse = true;
+		}
 
-	if (copyAndParse == true) {
-		data = new std::string(data->c_str());//copy so network can overwrite
-		client->getMutex()->unlock();
-		parseToIntsData = extractInts(data);
+		if (copyAndParse == true) {
+			data = new std::string(data->c_str());//copy so network can overwrite
+			client->getMutex()->unlock();
+			parseToIntsData = extractInts(data);
+		}
+		else {
+			client->getMutex()->unlock();
+		}
+		tokenIndex = 0;
 	}
-	else {
-		client->getMutex()->unlock();
-	}
-	tokenIndex = 0;
 }
 
 void NetworkCommunication::initNewCommunication() {
