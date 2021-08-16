@@ -6,11 +6,7 @@
 
 Graph::Graph(int i_rows, int i_cols, float i_accuracy) {
     accuracy = i_accuracy;
-    if(this->currentGraph != nullptr){
-        delete[] this->currentGraph;
-    }
     this->graphNodeCount = 0;
-
     this->cols = i_cols * accuracy;
     this->rows = i_rows * accuracy;
     int lenght = this->rows * cols;
