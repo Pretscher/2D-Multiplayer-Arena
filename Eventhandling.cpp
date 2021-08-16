@@ -116,11 +116,13 @@ void eventhandling::drawingloop() {
 void initServer() {
 	server = new PortableServer();
 	server->waitForClient();
+	server->receiveMultithreaded();
 }
 
 void initClient() {
 	std::string s = "192.168.178.28";//TODO: typeable ip
 	client = new PortableClient(s.c_str());
+	client->waitForServer();
 	client->receiveMultithreaded();
 }
 

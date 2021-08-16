@@ -73,7 +73,7 @@ void PortableClient::receiveMultithreaded() {
         }
 
         if (inputLenght < 0) {
-            std::cout << "error, server received message with negative lenght";
+            std::cout << "error, client received message with negative lenght";
             std::exit(0);
         }
     }
