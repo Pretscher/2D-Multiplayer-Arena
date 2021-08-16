@@ -5,8 +5,8 @@
 #include "Projectile.hpp"
 #include "PathfindingHandler.hpp"
 #include "Utils.hpp"
-#include "GameServer.hpp"
-#include "GameClient.hpp"
+#include "PortableClient.hpp"
+#include "PortableServer.hpp"
 #include "Menu.hpp"
 #include "WorldHandling.hpp"
 #include "UiHandling.hpp"
@@ -19,20 +19,15 @@ Pathfinding* pathfinding;
 Menu* menu;
 bool menuActive = true;
 
-GameServer* server;
-GameClient* client;
+PortableServer* server;
+PortableClient* client;
 
 UiHandling* uiHandling;
 WorldHandling* worldHandling;
 ProjectileHandling* projectileHandling;
 PlayerHandling* playerHandling;
 
-int NetworkCommunication::tokenCount;
-std::string* NetworkCommunication::rawData;
-std::vector<int>* NetworkCommunication::parseToIntsData;
-int NetworkCommunication::tokenIndex;
 bool received = true;
-std::mutex* nMutex = new std::mutex();
 
 void initServer();
 void initClient();
@@ -119,16 +114,14 @@ void eventhandling::drawingloop() {
 
 
 void initServer() {
-	server = new GameServer();
-	server->bindMutex(nMutex);
+	server = new PortableServer();
 	server->waitForClient();
 }
 
 void initClient() {
 	std::string s = "192.168.178.28";//TODO: typeable ip
-	client = new GameClient(s.c_str());
-	client->bindMutex(nMutex);
-	client->receive();
+	client = new PortableClient(s.c_str());
+	client->receiveMultithreaded();
 }
 
 

@@ -3,8 +3,6 @@
 #include <thread>
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
-#include "Server.hpp"
-#include "Client.hpp"
 
 sf::RenderWindow* cWindow;
 
