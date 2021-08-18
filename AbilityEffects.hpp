@@ -11,11 +11,6 @@ public:
 
 	void update() {
 
-		checkForCreation();
-	}
-
-	void checkForCreation() {
-
 	}
 	
 	void drawAll() {
@@ -25,13 +20,4 @@ public:
 private:
 	Player** players;
 	int playerCount;
-};
-
-class ProjectileAbility {
-public:
-	ProjectileAbility() {
-
-	}
-private:
-	int row, col;
 };

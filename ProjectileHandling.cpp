@@ -36,7 +36,7 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 		int halfH = myPlayer->getHeight() / 2;
 
 
-		//if projectile distination is above player
+		//if projectile destination is above player
 		if (mouseY < myPlayer->getRow()) {
 			col = myPlayer->getCol() + halfW;
 			row = myPlayer->getRow();
