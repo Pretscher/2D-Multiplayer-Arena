@@ -143,7 +143,7 @@ bool PortableServer::newMessage() {
 // #pragma comment (lib, "Mswsock.lib")
 
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "8080"
 
 static int iResult;
 static int iSendResult;

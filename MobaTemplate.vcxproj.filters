@@ -18,18 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="aStarAlgorithm\Algorithm.cpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClCompile>
-    <ClCompile Include="aStarAlgorithm\BinaryHeap.cpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClCompile>
-    <ClCompile Include="aStarAlgorithm\Graph.cpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClCompile>
-    <ClCompile Include="aStarAlgorithm\HeapNode.cpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Eventhandling</Filter>
     </ClCompile>
@@ -75,23 +63,20 @@
     <ClCompile Include="NetworkCommunication.cpp">
       <Filter>Networking</Filter>
     </ClCompile>
+    <ClCompile Include="Algorithm.cpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryHeap.cpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="HeapNode.cpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aStarAlgorithm\Algorithm.hpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClInclude>
-    <ClInclude Include="aStarAlgorithm\BinaryHeap.hpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClInclude>
-    <ClInclude Include="aStarAlgorithm\Graph.hpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClInclude>
-    <ClInclude Include="aStarAlgorithm\GraphNode.hpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClInclude>
-    <ClInclude Include="aStarAlgorithm\HeapNode.hpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClInclude>
     <ClInclude Include="Eventhandling.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
@@ -142,6 +127,24 @@
     </ClInclude>
     <ClInclude Include="PortableServer.hpp">
       <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm.hpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryHeap.hpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.hpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphNode.hpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="HeapNode.hpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClInclude>
+    <ClInclude Include="Abilities.hpp">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
