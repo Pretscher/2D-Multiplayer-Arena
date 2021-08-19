@@ -5,6 +5,8 @@
 #include "Abilities.hpp"
 #include <vector>
 #include <chrono>
+using namespace std::chrono;
+
 class AbilityHandling {
 public:
     AbilityHandling(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, int i_myPlayerIndex) {
@@ -14,7 +16,7 @@ public:
     }
 
     
-    clock_t cooldownStart;
+
 	void update() {
         if (qOnCooldown == false) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) == false) {
@@ -26,13 +28,16 @@ public:
                 hasNewFireball = true;
                 newFireball = new Fireball(myPlayerI);
                 fireballs->push_back(newFireball);
-                cooldownStart = clock();
+                cooldownStart = duration_cast<milliseconds>(
+                    system_clock::now().time_since_epoch()
+                    );
                 qOnCooldown = true;
             }
         }
         else {
-            timeSinceCdStart = clock() - cooldownStart;
-            if (timeSinceCdStart >= qCooldown) {
+            timeSinceCdStart = duration_cast<milliseconds>(
+                system_clock::now().time_since_epoch()) - cooldownStart;
+            if (timeSinceCdStart.count() >= qCooldown) {
                 qOnCooldown = false;
             }
         }
@@ -54,7 +59,7 @@ public:
 	}
 
     float getQCooldownPercentLeft() {
-        return ((float)qCooldown - (float)timeSinceCdStart) / (float)qCooldown;
+        return ((float)qCooldown - (float)timeSinceCdStart.count()) / (float)qCooldown;
     }
 
 
@@ -95,7 +100,8 @@ private:
 
     int qCooldown = 5000;
     bool qOnCooldown = false; 
-    clock_t timeSinceCdStart;
+    milliseconds cooldownStart;
+    milliseconds timeSinceCdStart;
     std::vector<Fireball*>* fireballs;
     Fireball* newFireball;
     bool hasNewFireball = false;
