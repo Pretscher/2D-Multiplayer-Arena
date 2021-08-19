@@ -22,18 +22,10 @@ using namespace abilityRecources;
 
 class Fireball {
 public:
-    bool dead = false;
     Fireball(int i_myPlayerIndex) {
         this->myPlayerI = i_myPlayerIndex;
 
-        //hardcoded stuff 
-        float velocity = 10.0f;
-        radius = 50;
-        range = 500;
-
-        explosionRange = 100;
-        explosionDmg = 50;
-        burnDmg = 0.5f;
+        this->hardCodedInits();
         //Turn player to mouse coords and set mouse coords as goal coords
         goalRow = 0;
         goalCol = 0;
@@ -105,6 +97,26 @@ public:
         }
     }
 
+
+    //create from network input(row is just current row so even with lag the start is always synced)
+    Fireball(int i_startRow, int i_startCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex) {
+        startRow = i_startRow;
+        startCol = i_startCol;
+        goalRow = i_goalRow;
+        goalCol = i_goalCol;
+
+        this->hardCodedInits();
+
+        helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [i_myPlayerIndex]);
+    }
+
+public:
+    int startRow;
+    int startCol;
+    int goalRow;
+    int goalCol;
+    bool dead = false;
+    int myPlayerI;
 private:
     bool dealtDamage = false;
     bool exploding = false;
@@ -116,12 +128,17 @@ private:
     float burnDmg;
 
     int radius;
-
     int range;
-    int startRow;
-    int startCol;
-    int goalRow;
-    int goalCol;
+    float velocity;
+
     Projectile* helpProjectile;
-    int myPlayerI;
+
+    void hardCodedInits() {
+        velocity = 10.0f;
+        radius = 50;
+        range = 500;
+        explosionRange = 100;
+        explosionDmg = 50;
+        burnDmg = 0.5f;
+    }
 };

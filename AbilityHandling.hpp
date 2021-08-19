@@ -23,7 +23,9 @@ public:
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) == true && samePress == false) {
                 samePress = true;
 
-                fireballs->push_back(new Fireball(myPlayerI));
+                hasNewFireball = true;
+                newFireball = new Fireball(myPlayerI);
+                fireballs->push_back(newFireball);
                 cooldownStart = clock();
                 qOnCooldown = true;
             }
@@ -55,6 +57,38 @@ public:
         return ((float)qCooldown - (float)timeSinceCdStart) / (float)qCooldown;
     }
 
+
+
+    void sendData() {
+        if (hasNewFireball == true) {
+            NetworkCommunication::addToken(1);//check if new fireball is to be added
+            NetworkCommunication::addToken(newFireball->startRow);
+            NetworkCommunication::addToken(newFireball->startCol);
+            NetworkCommunication::addToken(newFireball->goalRow);
+            NetworkCommunication::addToken(newFireball->goalCol);
+            NetworkCommunication::addToken(newFireball->myPlayerI);
+            hasNewFireball = false;
+        }
+        else {
+            NetworkCommunication::addToken(0);
+        }
+    }
+
+    /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
+    **/
+    void receiveData() {
+        int otherPlayer = 0;
+        if (myPlayerI == 0) {
+            otherPlayer = 1;
+        }
+        if (NetworkCommunication::receiveNextToken() == 1) {
+            //theyre already in the right order
+            fireballs->push_back(new Fireball(NetworkCommunication::receiveNextToken(),
+                NetworkCommunication::receiveNextToken(), NetworkCommunication::receiveNextToken(), 
+                NetworkCommunication::receiveNextToken(), NetworkCommunication::receiveNextToken()));
+        }
+    }
+
 private:
     bool samePress = false;
     int myPlayerI;
@@ -63,4 +97,6 @@ private:
     bool qOnCooldown = false; 
     clock_t timeSinceCdStart;
     std::vector<Fireball*>* fireballs;
+    Fireball* newFireball;
+    bool hasNewFireball = false;
 };

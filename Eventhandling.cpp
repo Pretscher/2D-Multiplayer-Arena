@@ -140,6 +140,7 @@ void sendData() {
 
 	playerHandling->sendPlayerData();
 	projectileHandling->sendProjectiles();
+	abilityHandling->sendData();
 
 	if (playerHandling->getPlayerIndex() == 0) {
 		NetworkCommunication::sendTokensToServer(server);
@@ -167,6 +168,7 @@ void recvAndImplementData() {
 	if (receivedSth == true) {
 		playerHandling->receivePlayerData(pathfinding);
 		projectileHandling->receiveProjectiles();
+		abilityHandling->receiveData();
 		received = true;
 	}
 }
