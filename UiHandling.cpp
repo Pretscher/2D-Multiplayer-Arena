@@ -21,6 +21,17 @@ void UiHandling::updateLifeBar(int playerHP, int playerMaxHP) {
 
 void UiHandling::draw() {
 	Renderer::drawRect(uiHeight, 0, frameCols, frameRows - uiHeight, sf::Color(50, 50, 50, 255), true);
-	Renderer::drawRect(uiHeight + 50, 50, (frameCols - 100), 50, sf::Color(10, 10, 10, 255), true);
-	Renderer::drawRect(uiHeight + 50, 50, lifeBarWidth, 50, sf::Color(0, 150, 0, 255), true);
+	Renderer::drawRect(uiHeight + 10, 50, (frameCols - 100), 40, sf::Color(10, 10, 10, 255), true);
+	Renderer::drawRect(uiHeight + 10, 50, lifeBarWidth, 40, sf::Color(0, 150, 0, 255), true);
+}
+
+void UiHandling::drawAbilityUI(float qCooldownPercent) {
+	Renderer::drawRect(uiHeight + 60, 100, 100, 100, sf::Color(255, 100, 0, 255), true);
+	
+	int abilityRectHeight = 0;
+	if (qCooldownPercent > 0.01f) {
+		abilityRectHeight = 100 * qCooldownPercent;
+	}
+	
+	Renderer::drawRect(uiHeight + 60, 100, 100, abilityRectHeight, sf::Color(0, 0, 255, 100), true);
 }

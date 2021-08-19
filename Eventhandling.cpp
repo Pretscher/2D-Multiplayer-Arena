@@ -113,6 +113,7 @@ void eventhandling::drawingloop() {
 		playerHandling->draw();
 		projectileHandling->draw();//draw after players
 		uiHandling->draw();//draw last, should be over every item ingame
+		uiHandling->drawAbilityUI(abilityHandling->getQCooldownPercentLeft());
 	}
 }
 
