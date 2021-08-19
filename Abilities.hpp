@@ -3,6 +3,7 @@
 #include "Projectile.hpp"
 #include "Terrain.hpp"
 #include "Utils.hpp"
+using namespace std::chrono;
 
 namespace abilityRecources {
 
@@ -56,14 +57,15 @@ public:
                 + abs(startCol - helpProjectile->getCol()) * abs(startCol - helpProjectile->getCol())
                 > range * range || helpProjectile->isDead() == true) {
                 exploding = true;
-                fadingTimer = 255;
+                fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
                 explosionRow = helpProjectile->getRow() + helpProjectile->getRadius() - explosionRange;
                 explosionCol = helpProjectile->getCol() + helpProjectile->getRadius() - explosionRange;
             }
         } 
         else {
-            fadingTimer--;
-            if (fadingTimer > 0) {
+            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            timeDiff = cTime - fireStartTime.count();
+            if (timeDiff < 2000) {
                 for (int i = 0; i < playerCount; i++) {
                     if (i != myPlayerI) {
                         Player* c = players [i];
@@ -93,7 +95,7 @@ public:
         else {
             Renderer::drawCircle(helpProjectile->getRow() + helpProjectile->getRadius() - explosionRange, 
                 helpProjectile->getCol() + helpProjectile->getRadius() - explosionRange, explosionRange,
-                sf::Color(255, 150, 0, fadingTimer), true, false);
+                sf::Color(255, 150, 0, 150), true, false);
         }
     }
 
@@ -108,6 +110,7 @@ public:
         this->hardCodedInits();
 
         helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [i_myPlayerIndex]);
+        int a = 0;
     }
 
 public:
@@ -121,7 +124,9 @@ private:
     bool dealtDamage = false;
     bool exploding = false;
     int explosionRange;
-    int fadingTimer;
+
+    milliseconds fireStartTime;
+    long timeDiff;
     int explosionRow, explosionCol;
 
     int explosionDmg;

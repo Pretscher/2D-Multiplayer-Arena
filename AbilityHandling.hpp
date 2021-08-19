@@ -88,9 +88,13 @@ public:
         }
         if (NetworkCommunication::receiveNextToken() == 1) {
             //theyre already in the right order
-            fireballs->push_back(new Fireball(NetworkCommunication::receiveNextToken(),
-                NetworkCommunication::receiveNextToken(), NetworkCommunication::receiveNextToken(), 
-                NetworkCommunication::receiveNextToken(), NetworkCommunication::receiveNextToken()));
+
+            int startRow = NetworkCommunication::receiveNextToken();
+            int startCol = NetworkCommunication::receiveNextToken();
+            int goalRow = NetworkCommunication::receiveNextToken();
+            int goalCol = NetworkCommunication::receiveNextToken();
+            int firingPlayerIndex = NetworkCommunication::receiveNextToken();
+            fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex));
         }
     }
 
