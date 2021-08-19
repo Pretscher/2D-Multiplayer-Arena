@@ -106,7 +106,7 @@ public:
         startCol = i_startCol;
         goalRow = i_goalRow;
         goalCol = i_goalCol;
-
+        myPlayerI = i_myPlayerIndex;
         this->hardCodedInits();
 
         helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [i_myPlayerIndex]);
