@@ -104,7 +104,7 @@
     <ClInclude Include="Menu.hpp">
       <Filter>Eventhandling</Filter>
     </ClInclude>
-    <ClInclude Include="AbilityEffects.hpp">
+    <ClInclude Include="AbilityHandling.hpp">
       <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="WorldHandling.hpp">

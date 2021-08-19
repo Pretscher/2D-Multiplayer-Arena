@@ -169,7 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Abilities.hpp" />
-    <ClInclude Include="AbilityEffects.hpp" />
+    <ClInclude Include="AbilityHandling.hpp" />
     <ClInclude Include="Algorithm.hpp" />
     <ClInclude Include="BinaryHeap.hpp" />
     <ClInclude Include="Eventhandling.hpp" />

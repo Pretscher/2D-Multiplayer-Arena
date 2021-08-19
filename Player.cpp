@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, int i_maxHp, int i_dmg) {
+Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg) {
 	this->col = i_col;
 	this->row = i_row;
 	this->velocity = i_vel;

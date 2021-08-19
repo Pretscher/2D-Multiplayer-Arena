@@ -13,7 +13,7 @@
 #include "ProjectileHandling.hpp"
 #include "NetworkCommunication.hpp"
 #include "Playerhandling.hpp"
-
+#include "AbilityHandling.hpp"
 Pathfinding* pathfinding;
 
 Menu* menu;
@@ -26,7 +26,7 @@ UiHandling* uiHandling;
 WorldHandling* worldHandling;
 ProjectileHandling* projectileHandling;
 PlayerHandling* playerHandling;
-
+AbilityHandling* abilityHandling;
 bool received = true;
 
 void initServer();
@@ -48,7 +48,6 @@ void eventhandling::init() {
 	pathfinding = new Pathfinding(worldRows, worldCols, worldHandling->getTerrain(), playerHandling->getPlayers(),
 		playerHandling->getPlayerCount());
 	projectileHandling = new ProjectileHandling(worldRows, worldCols, playerHandling->getPlayers(), playerHandling->getPlayerCount());
-	
 	NetworkCommunication::init();
 
 	menu = new Menu();
@@ -62,6 +61,9 @@ void eventhandling::eventloop() {
 			playerHandling->setPlayerIndex(0);//server has player index 0
 			pathfinding->setPlayerIndex(0);
 			projectileHandling->setPlayerIndex(0);
+			abilityHandling = new AbilityHandling(playerHandling->getPlayers(), playerHandling->getPlayerCount(),
+				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 0);
+
 			networkThread = new std::thread(&initServer);
 			menuActive = false;//go to game
 		}
@@ -69,6 +71,8 @@ void eventhandling::eventloop() {
 			playerHandling->setPlayerIndex(1);//right now there are only two players so the client just has index 1
 			pathfinding->setPlayerIndex(1);
 			projectileHandling->setPlayerIndex(1);
+			abilityHandling = new AbilityHandling(playerHandling->getPlayers(), playerHandling->getPlayerCount(),
+				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 1);
 			networkThread = new std::thread(&initClient);
 			menuActive = false;//go to game
 		}
@@ -81,6 +85,8 @@ void eventhandling::eventloop() {
 		uiHandling->updateLifeBar(playerHandling->getMyPlayer()->getHp(), playerHandling->getMyPlayer()->getMaxHp());
 		//does pathfinding on click and player collision
 		pathfinding->update();
+		//moves all abilities and ticks through their states (example projectile->explosion->buring etc.)
+		abilityHandling->update();
 
 		//pass collidbales to projectile management every update so that projectiles can even be stopped by moving terrain
 		auto collidables = worldHandling->getTerrain()->getCollidables();
@@ -102,6 +108,7 @@ void eventhandling::drawingloop() {
 		menu->drawMenu();
 	}
 	else {
+		abilityHandling->drawAll();
 		worldHandling->draw();//draw first, lifebars and stuff should be drawn over it
 		playerHandling->draw();
 		projectileHandling->draw();//draw after players
