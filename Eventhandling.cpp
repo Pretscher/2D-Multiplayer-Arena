@@ -138,9 +138,10 @@ void initClient() {
 void sendData() {
 	NetworkCommunication::initNewCommunication();
 
+	abilityHandling->sendData();
 	playerHandling->sendPlayerData();
 	projectileHandling->sendProjectiles();
-	abilityHandling->sendData();
+
 
 	if (playerHandling->getPlayerIndex() == 0) {
 		NetworkCommunication::sendTokensToServer(server);
@@ -166,9 +167,10 @@ void recvAndImplementData() {
 		}
 	}
 	if (receivedSth == true) {
+		abilityHandling->receiveData();
 		playerHandling->receivePlayerData(pathfinding);
 		projectileHandling->receiveProjectiles();
-		abilityHandling->receiveData();
+
 		received = true;
 	}
 }
