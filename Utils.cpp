@@ -30,7 +30,7 @@ bool Utils::collisionRectCircle(int aCol, int aRow, int aW, int aH, int cCol, in
 	//check points of second rect for intersection with circle with given accuracy
 	for (float x = aCol; x <= aCol + aW; x += colPointDist) {
 		for (float y = aRow; y <= aRow + aH; y += colPointDist) {
-			//Renderer::drawRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
+			Renderer::drawRect(y, x, 2, 2, sf::Color(255, 255, 0, 255), false);
 			if (Utils::collisionCoordsCircle(cCol, cRow, cR, x, y) == true) {
 				return true;
 			}

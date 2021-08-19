@@ -67,10 +67,10 @@ public:
             timeDiff = cTime - fireStartTime.count();
             if (timeDiff < 2000) {
                 for (int i = 0; i < playerCount; i++) {
-                    if (i != myPlayerI) {
                         Player* c = players [i];
-                        if (Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
-                            explosionRow, explosionCol, explosionRange, 5) == true) {
+                        bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
+                            explosionCol, explosionRow, explosionRange, 10);
+                        if (collision == true) {
                             if (dealtDamage == false) {
                                 c->setHp(c->getHp() - explosionDmg);
                             }
@@ -78,7 +78,7 @@ public:
                                 c->setHp(c->getHp() - burnDmg);
                             }
                         }
-                    }
+                    
                 }
                 dealtDamage = true;
             }
@@ -93,8 +93,7 @@ public:
             helpProjectile->draw();
         }
         else {
-            Renderer::drawCircle(helpProjectile->getRow() + helpProjectile->getRadius() - explosionRange, 
-                helpProjectile->getCol() + helpProjectile->getRadius() - explosionRange, explosionRange,
+            Renderer::drawCircle(explosionRow, explosionCol, explosionRange,
                 sf::Color(255, 150, 0, 150), true, false);
         }
     }
@@ -109,8 +108,7 @@ public:
         myPlayerI = i_myPlayerIndex;
         this->hardCodedInits();
 
-        helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [i_myPlayerIndex]);
-        int a = 0;
+        helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [myPlayerI]);
     }
 
 public:
