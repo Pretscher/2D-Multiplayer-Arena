@@ -268,8 +268,8 @@ public:
                 tempGoalRow = target->getRow();
                 tempGoalCol = target->getCol();
                 int halfW = me->getWidth() / 2;
-                bloodBall = new Projectile(me->getRow() + halfW, me->getCol() + halfW, 1.0f, 
-                        tempGoalRow + halfW, tempGoalCol + halfW, 10, me);
+                bloodBall = new Projectile(me->getRow() + halfW, me->getCol() + halfW, velocity, 
+                        tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
             }
 
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
@@ -291,14 +291,14 @@ public:
                     delete bloodBall;//definitly exists at this point so we can delete it
 
                     int halfW = me->getWidth() / 2;
-                    bloodBall = new Projectile(tempBBrow, tempBBcol, 1.0f,
-                            tempGoalRow + halfW, tempGoalCol + halfW, 10, me);
+                    bloodBall = new Projectile(tempBBrow + radius, tempBBcol + radius, velocity,
+                            tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
                 }
             } 
             else {
                 //blood ball got back to player with hp
                 if (Utils::collisionRectCircle(me->getRow(), me->getCol(), me->getWidth(), me->getHeight(),
-                            bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), 10) == true) {
+                            bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), radius) == true) {
                     if(me->getHp() + heal <= me->getMaxHp()){
                         me->setHp(me->getHp() + heal);
                     }
@@ -314,8 +314,8 @@ public:
                     delete bloodBall;//definitly exists at this point so we can delete it
 
                     int halfW = me->getWidth() / 2;
-                    bloodBall = new Projectile(tempBBrow, tempBBcol, 1.0f,
-                            tempGoalRow + halfW, tempGoalCol + halfW, 10, me);
+                    bloodBall = new Projectile(tempBBrow + radius, tempBBcol + radius, velocity,
+                            tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
                 }
             }
             bloodBall->move(worldRows, worldCols, nullptr, 0);//should go through walls so we just dont pass them
@@ -381,4 +381,6 @@ private:
 
     int dmg = 30;
     int heal = 15;
+    int radius = 10;
+    int velocity = 10.0f;
 };
