@@ -33,7 +33,9 @@ private:
 
     float cPathIndex;
     bool findingPath;
+    
 public:
+    int pathsFound = 0;
     inline int getRow() { return row; }
     inline void setRow(int row) { this->row = row; }
 

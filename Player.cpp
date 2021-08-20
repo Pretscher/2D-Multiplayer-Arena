@@ -33,6 +33,7 @@ void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 	pathYpositions = i_pathY;
 	cPathIndex = 0;
 	pathLenght = i_pathLenght;
+	pathsFound++;
 }
 
 void Player::move() {
@@ -80,6 +81,7 @@ void Player::deletePath() {
 		delete[] pathXpositions;
 		delete[] pathYpositions;
 	}
+	findingPath = false;
 }
 
 void Player::draw() {

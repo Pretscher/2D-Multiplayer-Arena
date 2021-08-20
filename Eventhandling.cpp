@@ -14,26 +14,26 @@
 #include "NetworkCommunication.hpp"
 #include "Playerhandling.hpp"
 #include "AbilityHandling.hpp"
-Pathfinding* pathfinding;
+static Pathfinding* pathfinding;
 
-Menu* menu;
-bool menuActive = true;
+static Menu* menu;
+static bool menuActive = true;
 
-PortableServer* server;
-PortableClient* client;
+static PortableServer* server;
+static PortableClient* client;
 
-UiHandling* uiHandling;
-WorldHandling* worldHandling;
-ProjectileHandling* projectileHandling;
-PlayerHandling* playerHandling;
-AbilityHandling* abilityHandling;
-bool received = true;
+static UiHandling* uiHandling;
+static WorldHandling* worldHandling;
+static ProjectileHandling* projectileHandling;
+static PlayerHandling* playerHandling;
+static AbilityHandling* abilityHandling;
+static bool received = true;
 
-void initServer();
-void initClient();
-void sendData();
-void recvAndImplementData();
-std::thread* networkThread;
+static void initServer();
+static void initClient();
+static void sendData();
+static void recvAndImplementData();
+static std::thread* networkThread;
 
 
 
@@ -62,7 +62,7 @@ void eventhandling::eventloop() {
 			pathfinding->setPlayerIndex(0);
 			projectileHandling->setPlayerIndex(0);
 			abilityHandling = new AbilityHandling(playerHandling->getPlayers(), playerHandling->getPlayerCount(),
-				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 0);
+				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 0, pathfinding);
 
 			networkThread = new std::thread(&initServer);
 			menuActive = false;//go to game
@@ -72,7 +72,7 @@ void eventhandling::eventloop() {
 			pathfinding->setPlayerIndex(1);
 			projectileHandling->setPlayerIndex(1);
 			abilityHandling = new AbilityHandling(playerHandling->getPlayers(), playerHandling->getPlayerCount(),
-				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 1);
+				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 1, pathfinding);
 			networkThread = new std::thread(&initClient);
 			menuActive = false;//go to game
 		}
@@ -120,13 +120,13 @@ void eventhandling::drawingloop() {
 //Neworking part-----------------------------------------------------------------------------------------------------------------
 
 
-void initServer() {
+static void initServer() {
 	server = new PortableServer();
 	server->waitForClient();
 	server->receiveMultithreaded();
 }
 
-void initClient() {
+static void initClient() {
 	std::string s = "192.168.178.28";//TODO: typeable ip
 	client = new PortableClient(s.c_str());
 	client->waitForServer();
@@ -134,7 +134,7 @@ void initClient() {
 }
 
 
-void sendData() {
+static void sendData() {
 	NetworkCommunication::initNewCommunication();
 
 	abilityHandling->sendData();
@@ -150,7 +150,7 @@ void sendData() {
 	}
 }
 
-void recvAndImplementData() {
+static void recvAndImplementData() {
 
 	bool receivedSth = false;
 	if (playerHandling->getPlayerIndex() == 0) {

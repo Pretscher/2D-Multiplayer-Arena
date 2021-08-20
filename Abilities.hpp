@@ -3,7 +3,7 @@
 #include "Projectile.hpp"
 #include "Terrain.hpp"
 #include "Utils.hpp"
-#include <bits/stdc++.h> 
+#include "PathfindingHandler.hpp"
 
 using namespace std::chrono;
 
@@ -13,12 +13,14 @@ namespace abilityRecources {
     Terrain* terrain;
     Player** players;
     int playerCount;
-    void init(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols) {
+    Pathfinding* pFinding; 
+    void init(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, Pathfinding* i_pathfinding) {
         players = i_players;
         playerCount = i_playerCount;
         terrain = i_terrain;
         worldRows = i_worldRows;
         worldCols = i_worldCols;
+        pFinding = i_pathfinding;
     }
 }
 using namespace abilityRecources;
@@ -158,7 +160,6 @@ public:
         }
 
         //if true, end next tick (if no player was selected just do nothing and end indicator)
-        endWOaction = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
         for(int i = 0; i < playerCount; i++){
             if(i != this->myPlayerIndex) {
@@ -169,12 +170,17 @@ public:
                 if(Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
                         c->getHeight(), mouseCol, mouseRow) == true) {
                     //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
-                    if(endWOaction == true){
+                    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
                         this->targetIndex = i;
                     }
                     //draw an outline around the hovered over player
                     Renderer::drawRectOutline(c->getRow(), c->getCol(), c->getWidth(),c->getHeight(),
                         sf::Color(75, 165, 180, 150), 5, false);
+                } 
+                else {
+                    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+                        endWOaction = true;
+                    }
                 }
             }
         }
@@ -214,17 +220,78 @@ public:
     }
 
     void update() {
-        if(indicator->getTargetIndex() == -1) {
-            indicator->update();
-            if(indicator->endWithoutAction() == true){
-                finishedWithoutCasting = true;
+        if(casting == false){
+            if(indicator->getTargetIndex() == -1) {
+                indicator->update();
+                if(indicator->endWithoutAction() == true) {
+                    finishedWithoutCasting = true;
+                }
+            } 
+            else {
+                if(initializedEvents == false){
+                    initializedEvents = true;
+                    initEvents();
+                }
+                if(casting == false) {//if you still have to walk
+                    bool stop = false;
+                    //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
+                    //to stop going on the path the ability wants to find. But because of multithreading we cant say
+                    //when the pathfinding is finished with this particular path, so we just count the paths up in the
+                    //player obj and if the index is equal to abiltyPathIndex its still finding the path (same index
+                    //as when it was saved) and if its one higher the path was found. if its 2 higher a new path
+                    //was found and we interrupt.
+                    if(players[myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
+                        stop = true;
+                    }
+                    if(stop == false) {
+                        Player* me = players[myPlayerIndex];
+                        Player* target = players[targetPlayer];
+                        int halfW = me->getWidth() / 2;
+                        int halfH = me->getHeight() / 2;
+                        if(Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
+                                    me->getRow() + halfH, target->getRow() + halfH) < range) {
+                            //got into range, stop going on path an cast ability
+                            players[myPlayerIndex]->deletePath();
+                            casting = true;
+                        }
+                    } 
+                    else {
+                        //clicked somewhere else while finding path to target player to get in range => abort cast
+                        finishedWithoutCasting = true;
+                    }
+                }
             }
+        }
+        else {
+            if(castingInitialized == false) {
+                castingInitialized = true;
+                castStart = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            }
+            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            timeDiff = cTime - castStart;
+            if(timeDiff < 250) {
+                
+            }
+        }
+    }
+
+    void initEvents(){
+        finishedSelectingTarget = true;
+        targetPlayer = indicator->getTargetIndex();
+        //if player out of range, run into range
+        Player* me = players[myPlayerIndex];
+        Player* target = players[targetPlayer];
+        int halfW = me->getWidth() / 2;
+        int halfH = me->getHeight() / 2;
+
+        float dist = Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
+                me->getRow() + halfH, target->getRow() + halfH);
+        if(dist > range) {
+            pFinding->findPath(target->getCol(), target->getRow(), myPlayerIndex);
+            abilityPathIndex = players[myPlayerIndex]->pathsFound;
         } 
         else {
-            //this will be called multiple times, but more efficient than if-statement
-            finishedSelectingTarget = true;
-            
-
+            casting = true;
         }
     }
 
@@ -233,17 +300,7 @@ public:
             indicator->draw();
         } 
         else {
-            targetPlayer = indicator->getTargetIndex();
-            //if player out of range, run into range
-            Player* me = players[myPlayerIndex];
-            Player* target = players[targetPlayer];
-            int halfW = me->getWidth() / 2;
-            int halfH = me->getHeight() / 2;
-            if(Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
-                    me->getRow() + halfH, target->getRow() + halfH) > range){
-                
-                
-            }
+
         }
     }
 
@@ -251,9 +308,16 @@ public:
     bool finishedCompletely = false;
     bool finishedSelectingTarget = false;
 private:
+    bool castingInitialized = false;
+    long castStart;
+    long timeDiff;
 
     PointAndClickIndicator* indicator;
     int range = 300;
     int myPlayerIndex;
     int targetPlayer;
+    bool casting = false;
+    bool initializedEvents = false;
+
+    int abilityPathIndex;
 };
