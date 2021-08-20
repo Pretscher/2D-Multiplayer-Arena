@@ -36,6 +36,16 @@ public:
         maxCDs[index] = cooldown;
     }
 
+    void resetCooldown(int index){
+        onCD[index] = false;
+    }
+
+    void manuallyStartCooldown(int index){
+        onCD[index] = true;
+        cooldownStarts[index] = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+    }
+
+
     bool startAbility(int index) {
         bool temp = createNewAbility[index];
         //set to false after abilityHandler catches that a new abilty should be created
@@ -53,9 +63,7 @@ public:
                     samePress[i] = true;
                     createNewAbility[i] = true;
 
-                    cooldownStarts[i] = duration_cast<milliseconds>(
-                        system_clock::now().time_since_epoch()
-                        );
+                    cooldownStarts[i] = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
                     onCD[i] = true;
                 }
             }
@@ -113,17 +121,27 @@ public:
         if(abilityTriggering->startAbility(transfusionIndex) == true){
             newTransfusion = new Transfusion(myPlayerI);
             transfusions->push_back(newTransfusion);
+            //start cooldown later when target has been selected
+            abilityTriggering->resetCooldown(transfusionIndex);
         }
 
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->update();
-            if (fireballs->at(i)->dead == true) {
+            if (fireballs->at(i)->finished == true) {
                 fireballs->erase(fireballs->begin() + i);
             }
         }
 
         for (int i = 0; i < transfusions->size(); i++) {
-            transfusions->at(i)->update();
+            Transfusion* c = transfusions->at(i);
+            c->update();
+            if (c->finishedWithoutCasting == true) {
+                transfusions->erase(transfusions->begin() + i);
+            }
+            //start cooldown only after target has been selected
+            if(c->finishedSelectingTarget){
+                abilityTriggering->manuallyStartCooldown(transfusionIndex);
+            }
         }
 	}
 	
@@ -147,9 +165,6 @@ public:
             }
             Renderer::drawRect(960, col, 100, abilityRectHeight, sf::Color(0, 0, 255, 100), true);
         }
-
-        
-
 	}
 
 

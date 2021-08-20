@@ -10,7 +10,7 @@ public:
 
     static void drawRect(int row, int col, int width, int height, sf::Color c, bool solidWithViewspace);
     static void drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness, bool solidWithViewspace);
-    static void drawCircle(int row, int col, int radius, sf::Color c, bool fill, bool solidWithViewspace);
+    static void drawCircle(int row, int col, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace);
     static void drawLine(int row1, int col1, int row2, int col2, sf::Color c);
   
     static void limitMouse(int row, int col);

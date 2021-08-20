@@ -8,7 +8,7 @@
 
 bool Utils::collisionCoordsRect(float rX, float rY, float rW, float rH, float pX, float pY) {
 	if (rX < pX && rX + rW > pX) {
-		if (rY > pY && rY - rH < pY) {
+		if (rY < pY && rY + rH > pY) {
 			return true;
 		}
 	}
@@ -63,7 +63,7 @@ bool Utils::collisionRectCircleOnlyOutline(int aCol, int aRow, int aW, int aH, i
 bool Utils::collisionRects(float aX, float aY, float aW, float aH, float bX, float bY, float bW, float bH, float colPointDist) {
 	//check points of second rect for intersection with first rect with given accuracy
 	for (float x = bX; x < bX + bW; x += colPointDist) {
-		for (float y = bY; y > bY - bH; y -= colPointDist) {
+		for (float y = bY; y < bY + bH; y += colPointDist) {
 			if (Utils::collisionCoordsRect(aX, aY, aW, aH, x, y) == true) {
 				return true;
 			}

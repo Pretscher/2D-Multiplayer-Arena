@@ -91,5 +91,5 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 }
 
 void Projectile::draw() {
-	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, sf::Color(255, 0, 255, 255), true, false);
+	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, sf::Color(255, 0, 255, 255), true, 0, false);
 }

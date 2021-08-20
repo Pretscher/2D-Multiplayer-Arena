@@ -95,15 +95,17 @@ void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Colo
     delete square;
 }
 
-void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, bool solidWithViewspace) {
+void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace) {
     int unusedHelp = 0;
     fromRowColBounds(&radius, &unusedHelp);
     sf::CircleShape* circle = new sf::CircleShape(radius);
-    circle->setOutlineColor(c);
+
     if (fill == true) {
         circle->setFillColor(c);
     }
     else {
+        circle->setOutlineColor(c);
+        circle->setOutlineThickness(outlineThickness);
         circle->setFillColor(sf::Color(0, 0, 0, 0));
     }
     fromRowCol(&row, &col);

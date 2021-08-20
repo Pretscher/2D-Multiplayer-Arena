@@ -87,7 +87,7 @@ public:
                 this->dealtDamage = true;
             }
             else {
-                this->dead = true;
+                this->finished = true;
             }
         }
     }
@@ -98,7 +98,7 @@ public:
         }
         else {
             Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange,
-                sf::Color(255, 150, 0, 150), true, false);
+                sf::Color(255, 150, 0, 150), true, 0, false);
         }
     }
 
@@ -119,7 +119,7 @@ public:
     int startCol;
     int goalRow;
     int goalCol;
-    bool dead = false;
+    bool finished = false;
     int myPlayerI;
 private:
     bool dealtDamage = false;
@@ -152,38 +152,61 @@ public:
     }
 
     void update() {
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            for(int i = 0; i < playerCount; i++){
-                if(i != this->myPlayerIndex) {
-                    Player* c = players [i];
-                    int mouseRow = 0;
-                    int mouseCol = 0;
-                    Renderer::getMousePos(&mouseCol, &mouseRow, true);
-                    if(Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
-                        c->getHeight(), mouseCol, mouseRow) == true){
+        sf::Cursor cursor;
+        if (cursor.loadFromSystem(sf::Cursor::Cross)){
+            Renderer::currentWindow->setMouseCursor(cursor);
+        }
+
+        //if true, end next tick (if no player was selected just do nothing and end indicator)
+        endWOaction = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+        for(int i = 0; i < playerCount; i++){
+            if(i != this->myPlayerIndex) {
+                Player* c = players [i];
+                int mouseRow = 0;
+                int mouseCol = 0;
+                Renderer::getMousePos(&mouseCol, &mouseRow, true);
+                if(Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
+                        c->getHeight(), mouseCol, mouseRow) == true) {
+                    //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
+                    if(endWOaction == true){
                         this->targetIndex = i;
                     }
+                    //draw an outline around the hovered over player
+                    Renderer::drawRectOutline(c->getRow(), c->getCol(), c->getWidth(),c->getHeight(),
+                        sf::Color(75, 165, 180, 150), 5, false);
                 }
             }
+        }
+        
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            
+            endWOaction = true;
         }
     }
 
     void draw() {
         //draw range indicator
-        int indicatorRow = players[this->myPlayerIndex]->getRow() - this->range;//range = radius of circle
-        int indicatorCol = players[this->myPlayerIndex]->getCol() - this->range;
-        Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 50, 100, 255), false, false);
+        int indicatorRow = players[this->myPlayerIndex]->getRow() + 
+            players[this->myPlayerIndex]->getHeight()/ 2 - this->range;//range = radius of circle
+        int indicatorCol = players[this->myPlayerIndex]->getCol() + 
+            players[this->myPlayerIndex]->getWidth() / 2 - this->range;
+        Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 100, 100, 200), false, 10, false);
     }
 
     int getTargetIndex(){
         return this->targetIndex;
+    }
+
+    bool endWithoutAction(){
+        return endWOaction;
     }
 private:
     int myPlayerIndex;
     int range;
 
     int targetIndex = -1;
-
+    bool endWOaction = false;
 };
 
 
@@ -196,10 +219,16 @@ public:
     }
 
     void update() {
-        if(indicator->getTargetIndex() == -1){
+        if(indicator->getTargetIndex() == -1) {
             indicator->update();
+            if(indicator->endWithoutAction() == true){
+                finishedWithoutCasting = true;
+            }
         } 
         else {
+            //this will be called multiple times, but more efficient than if-statement
+            finishedSelectingTarget = true;
+            
 
         }
     }
@@ -209,10 +238,13 @@ public:
             indicator->draw();
         } 
         else {
-
+            
         }
     }
 
+    bool finishedWithoutCasting = false;
+    bool finishedCompletely = false;
+    bool finishedSelectingTarget = false;
 private:
 
     PointAndClickIndicator* indicator;
