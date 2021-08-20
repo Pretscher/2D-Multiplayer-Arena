@@ -135,7 +135,7 @@ public:
         for (int i = 0; i < transfusions->size(); i++) {
             Transfusion* c = transfusions->at(i);
             c->update();
-            if (c->finishedWithoutCasting == true) {
+            if (c->finishedWithoutCasting == true || c->finishedCompletely == true) {
                 transfusions->erase(transfusions->begin() + i);
             }
             //start cooldown only after target has been selected

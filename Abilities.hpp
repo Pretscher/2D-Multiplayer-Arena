@@ -244,8 +244,6 @@ public:
                         stop = true;
                     }
                     if(stop == false) {
-                        Player* me = players[myPlayerIndex];
-                        Player* target = players[targetPlayer];
                         int halfW = me->getWidth() / 2;
                         int halfH = me->getHeight() / 2;
                         if(Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
@@ -266,21 +264,72 @@ public:
             if(castingInitialized == false) {
                 castingInitialized = true;
                 castStart = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                
+                tempGoalRow = target->getRow();
+                tempGoalCol = target->getCol();
+                int halfW = me->getWidth() / 2;
+                bloodBall = new Projectile(me->getRow() + halfW, me->getCol() + halfW, 1.0f, 
+                        tempGoalRow + halfW, tempGoalCol + halfW, 10, me);
             }
+
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
             timeDiff = cTime - castStart;
-            if(timeDiff < 250) {
-                
+            
+            if(flyBack == false){
+                //blood ball got to enemy and should fly back
+                if (Utils::collisionRectCircle(target->getRow(), target->getCol(), target->getWidth(), target->getHeight(),
+                            bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), 10) == true) {
+                    flyBack = true;
+                    target->setHp(target->getHp() - dmg);
+                }
+
+                if(tempGoalRow != target->getRow() || tempGoalCol != target->getCol()){
+                    tempGoalRow = target->getRow();
+                    tempGoalCol = target->getCol();
+                    int tempBBrow = bloodBall->getRow();
+                    int tempBBcol = bloodBall->getCol();
+                    delete bloodBall;//definitly exists at this point so we can delete it
+
+                    int halfW = me->getWidth() / 2;
+                    bloodBall = new Projectile(tempBBrow, tempBBcol, 1.0f,
+                            tempGoalRow + halfW, tempGoalCol + halfW, 10, me);
+                }
+            } 
+            else {
+                //blood ball got back to player with hp
+                if (Utils::collisionRectCircle(me->getRow(), me->getCol(), me->getWidth(), me->getHeight(),
+                            bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), 10) == true) {
+                    if(me->getHp() + heal <= me->getMaxHp()){
+                        me->setHp(me->getHp() + heal);
+                    }
+
+                    finishedCompletely = true;
+                }
+
+                if(tempGoalRow != me->getRow() || tempGoalCol != me->getCol()){
+                    tempGoalRow = me->getRow();
+                    tempGoalCol = me->getCol();
+                    int tempBBrow = bloodBall->getRow();
+                    int tempBBcol = bloodBall->getCol();
+                    delete bloodBall;//definitly exists at this point so we can delete it
+
+                    int halfW = me->getWidth() / 2;
+                    bloodBall = new Projectile(tempBBrow, tempBBcol, 1.0f,
+                            tempGoalRow + halfW, tempGoalCol + halfW, 10, me);
+                }
             }
+            bloodBall->move(worldRows, worldCols, nullptr, 0);//should go through walls so we just dont pass them
         }
     }
 
     void initEvents(){
-        finishedSelectingTarget = true;
         targetPlayer = indicator->getTargetIndex();
+        me = players[myPlayerIndex];
+        target = players[targetPlayer];
+
+        finishedSelectingTarget = true;
+
         //if player out of range, run into range
-        Player* me = players[myPlayerIndex];
-        Player* target = players[targetPlayer];
         int halfW = me->getWidth() / 2;
         int halfH = me->getHeight() / 2;
 
@@ -300,7 +349,9 @@ public:
             indicator->draw();
         } 
         else {
-
+            if(bloodBall != nullptr){
+                bloodBall->draw();
+            }
         }
     }
 
@@ -311,6 +362,10 @@ private:
     bool castingInitialized = false;
     long castStart;
     long timeDiff;
+    float pathPercent;
+    Projectile* bloodBall;
+    int tempGoalRow, tempGoalCol;
+    bool flyBack = false;
 
     PointAndClickIndicator* indicator;
     int range = 300;
@@ -320,4 +375,10 @@ private:
     bool initializedEvents = false;
 
     int abilityPathIndex;
+
+    Player* me;
+    Player* target;
+
+    int dmg = 30;
+    int heal = 15;
 };
