@@ -178,11 +178,6 @@ public:
                 }
             }
         }
-        
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            
-            endWOaction = true;
-        }
     }
 
     void draw() {
@@ -238,7 +233,17 @@ public:
             indicator->draw();
         } 
         else {
-            
+            targetPlayer = indicator->getTargetIndex();
+            //if player out of range, run into range
+            Player* me = players[myPlayerIndex];
+            Player* target = players[targetPlayer];
+            int halfW = me->getWidth() / 2;
+            int halfH = me->getHeight() / 2;
+            if(Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
+                    me->getRow() + halfH, target->getRow() + halfH) > range){
+                
+                
+            }
         }
     }
 
@@ -250,4 +255,5 @@ private:
     PointAndClickIndicator* indicator;
     int range = 300;
     int myPlayerIndex;
+    int targetPlayer;
 };

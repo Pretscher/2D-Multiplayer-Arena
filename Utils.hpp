@@ -14,6 +14,6 @@ namespace Utils {
 	float RandomNumber(float Min, float Max);
 	bool compareFloats(float a, float b, float accuracy);
 	float calcDist1D(float y1, float y2);
-
+	float calcDist2D(float x1, float x2, float y1, float y2);
 	bool collisionRectCircleOnlyOutline(int aCol, int aRow, int aW, int aH, int cCol, int cRow, int cR);
 };
