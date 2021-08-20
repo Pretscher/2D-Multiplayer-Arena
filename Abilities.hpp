@@ -3,6 +3,8 @@
 #include "Projectile.hpp"
 #include "Terrain.hpp"
 #include "Utils.hpp"
+#include <bits/stdc++.h> 
+
 using namespace std::chrono;
 
 namespace abilityRecources {
@@ -26,74 +28,76 @@ public:
     Fireball(int i_myPlayerIndex) {
         this->myPlayerI = i_myPlayerIndex;
 
-        this->hardCodedInits();
         //Turn player to mouse coords and set mouse coords as goal coords
-        goalRow = 0;
-        goalCol = 0;
+        this->goalRow = 0;
+        this->goalCol = 0;
         Renderer::getMousePos(&goalCol, &goalRow, true);
         Player* myPlayer = players [myPlayerI];
         //if projectile destination is above player
-        if (goalRow < myPlayer->getRow()) {
-            startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
-            startRow = myPlayer->getRow();
+        if (this->goalRow < myPlayer->getRow()) {
+            this->startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
+            this->startRow = myPlayer->getRow();
             myPlayer->setTexture(2);
         }
         //below
-        if (goalRow > myPlayer->getRow()) {
-            startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
-            startRow = myPlayer->getRow() + myPlayer->getHeight();
+        if (this->goalRow > myPlayer->getRow()) {
+            this->startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
+            this->startRow = myPlayer->getRow() + myPlayer->getHeight();
             myPlayer->setTexture(3);
         }
 
-        helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, myPlayer);
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, myPlayer);
     }
 
     void update() {
-        if (exploding == false) {
+        if (this->exploding == false) {
             auto collidables = terrain->getCollidables();
-            helpProjectile->move(worldRows, worldCols, collidables->data(), collidables->size());
+           this-> helpProjectile->move(worldRows, worldCols, collidables->data(), collidables->size());
             //if the projectile reaches its max range or collides with anything, it should explode
-            if (abs(startRow - helpProjectile->getRow()) * abs(startRow - helpProjectile->getRow())
-                + abs(startCol - helpProjectile->getCol()) * abs(startCol - helpProjectile->getCol())
-                > range * range || helpProjectile->isDead() == true) {
-                exploding = true;
-                fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-                explosionRow = helpProjectile->getRow() + helpProjectile->getRadius() - explosionRange;
-                explosionCol = helpProjectile->getCol() + helpProjectile->getRadius() - explosionRange;
+            if (abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
+                + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
+                > this->range * this->range || this->helpProjectile->isDead() == true) {
+                this->exploding = true;
+                this->fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+                
+                this->explosionRow = this->helpProjectile->getRow() 
+                + this->helpProjectile->getRadius() - this->explosionRange;
+                this->explosionCol = this->helpProjectile->getCol() 
+                + this->helpProjectile->getRadius() - this->explosionRange;
             }
         } 
         else {
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            timeDiff = cTime - fireStartTime.count();
-            if (timeDiff < 2000) {
+            this->timeDiff = cTime - this->fireStartTime.count();
+            if (this->timeDiff < 2000) {
                 for (int i = 0; i < playerCount; i++) {
                         Player* c = players [i];
                         bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
-                            explosionCol, explosionRow, explosionRange, 10);
+                            this->explosionCol, this->explosionRow, this->explosionRange, 10);
                         if (collision == true) {
-                            if (dealtDamage == false) {
-                                c->setHp(c->getHp() - explosionDmg);
+                            if (this->dealtDamage == false) {
+                                c->setHp(c->getHp() - this->explosionDmg);
                             }
                             else {
-                                c->setHp(c->getHp() - burnDmg);
+                                c->setHp(c->getHp() - this->burnDmg);
                             }
                         }
                     
                 }
-                dealtDamage = true;
+                this->dealtDamage = true;
             }
             else {
-                dead = true;
+                this->dead = true;
             }
         }
     }
 
     void draw() {
-        if (exploding == false) {
-            helpProjectile->draw();
+        if (this->exploding == false) {
+            this->helpProjectile->draw();
         }
         else {
-            Renderer::drawCircle(explosionRow, explosionCol, explosionRange,
+            Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange,
                 sf::Color(255, 150, 0, 150), true, false);
         }
     }
@@ -101,14 +105,13 @@ public:
 
     //create from network input(row is just current row so even with lag the start is always synced)
     Fireball(int i_startRow, int i_startCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex) {
-        startRow = i_startRow;
-        startCol = i_startCol;
-        goalRow = i_goalRow;
-        goalCol = i_goalCol;
-        myPlayerI = i_myPlayerIndex;
-        this->hardCodedInits();
+        this->startRow = i_startRow;
+        this->startCol = i_startCol;
+        this->goalRow = i_goalRow;
+        this->goalCol = i_goalCol;
+        this-> myPlayerI = i_myPlayerIndex;
 
-        helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [myPlayerI]);
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [myPlayerI]);
     }
 
 public:
@@ -121,27 +124,98 @@ public:
 private:
     bool dealtDamage = false;
     bool exploding = false;
-    int explosionRange;
+    int explosionRange = 100;
 
     milliseconds fireStartTime;
     long timeDiff;
     int explosionRow, explosionCol;
 
-    int explosionDmg;
-    float burnDmg;
+    int explosionDmg = 50;
+    float burnDmg = 0.5f;
 
-    int radius;
-    int range;
-    float velocity;
+    int radius = 50;
+    int range = 500;
+    float velocity = 10.0f;
 
     Projectile* helpProjectile;
+};
 
-    void hardCodedInits() {
-        velocity = 10.0f;
-        radius = 50;
-        range = 500;
-        explosionRange = 100;
-        explosionDmg = 50;
-        burnDmg = 0.5f;
+
+
+//Point and click indicator class-------------------------------------------------------------------
+
+class PointAndClickIndicator {
+public:
+    PointAndClickIndicator(int i_playerIndex, int i_range){
+        this->myPlayerIndex = i_playerIndex;
+        this->range = i_range;
     }
+
+    void update() {
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            for(int i = 0; i < playerCount; i++){
+                if(i != this->myPlayerIndex) {
+                    Player* c = players [i];
+                    int mouseRow = 0;
+                    int mouseCol = 0;
+                    Renderer::getMousePos(&mouseCol, &mouseRow, true);
+                    if(Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
+                        c->getHeight(), mouseCol, mouseRow) == true){
+                        this->targetIndex = i;
+                    }
+                }
+            }
+        }
+    }
+
+    void draw() {
+        //draw range indicator
+        int indicatorRow = players[this->myPlayerIndex]->getRow() - this->range;//range = radius of circle
+        int indicatorCol = players[this->myPlayerIndex]->getCol() - this->range;
+        Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 50, 100, 255), false, false);
+    }
+
+    int getTargetIndex(){
+        return this->targetIndex;
+    }
+private:
+    int myPlayerIndex;
+    int range;
+
+    int targetIndex = -1;
+
+};
+
+
+
+class Transfusion {
+public:
+    Transfusion(int i_myPlayerIndex) {
+        this->myPlayerIndex = i_myPlayerIndex;
+        indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range);
+    }
+
+    void update() {
+        if(indicator->getTargetIndex() == -1){
+            indicator->update();
+        } 
+        else {
+
+        }
+    }
+
+    void draw() {
+        if(indicator->getTargetIndex() == -1){
+            indicator->draw();
+        } 
+        else {
+
+        }
+    }
+
+private:
+
+    PointAndClickIndicator* indicator;
+    int range = 300;
+    int myPlayerIndex;
 };

@@ -7,42 +7,113 @@
 #include <chrono>
 using namespace std::chrono;
 
+class AbilityTriggering {
+public:
+    AbilityTriggering(int i_abilityCount) {
+        this->abilityCount = i_abilityCount;//too lazy for doing this in a vector tbh
+        abilities = new sf::Keyboard::Key[abilityCount];
+        maxCDs = new int[abilityCount];
+
+        cooldownStarts = new milliseconds[abilityCount];
+        timeSinceCDStarts = new milliseconds[abilityCount];;
+
+        samePress = new bool[abilityCount];
+        onCD = new bool[abilityCount];
+        createNewAbility = new bool[abilityCount];
+        for(int i = 0; i < abilityCount; i++) {
+            onCD[i] = false;
+            samePress[i] = false;
+            createNewAbility[i] = false;
+        }
+    }
+
+    float getCooldownPercent(int index) {
+        return ((float)maxCDs[index] - (float)timeSinceCDStarts[index].count()) / (float)maxCDs[index];
+    }
+
+    bool addAbility(int index, sf::Keyboard::Key key, int cooldown) {
+        abilities[index] = key;
+        maxCDs[index] = cooldown;
+    }
+
+    bool startAbility(int index) {
+        bool temp = createNewAbility[index];
+        //set to false after abilityHandler catches that a new abilty should be created
+        createNewAbility[index] = false;
+        return temp;
+    }
+
+    void update(){
+        for(int i = 0; i < abilityCount; i++){
+            if (onCD[i] == false) {
+                if (sf::Keyboard::isKeyPressed(abilities[i]) == false) {
+                    samePress[i] = false;
+                }
+                if (sf::Keyboard::isKeyPressed(abilities[i]) == true && samePress[i] == false) {
+                    samePress[i] = true;
+                    createNewAbility[i] = true;
+
+                    cooldownStarts[i] = duration_cast<milliseconds>(
+                        system_clock::now().time_since_epoch()
+                        );
+                    onCD[i] = true;
+                }
+            }
+            else {
+                timeSinceCDStarts[i] = duration_cast<milliseconds>(
+                    system_clock::now().time_since_epoch()) - cooldownStarts[i];
+                if (timeSinceCDStarts[i].count() >= maxCDs[i]) {
+                    onCD[i] = false;
+                }
+            }
+        }
+    }
+
+private:
+    int abilityCount = 2;
+    sf::Keyboard::Key* abilities;
+    int* maxCDs;
+    bool* onCD;
+    milliseconds* cooldownStarts;
+    milliseconds* timeSinceCDStarts;
+
+    bool* samePress;
+
+    bool* createNewAbility;
+};
+
 class AbilityHandling {
 public:
     AbilityHandling(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, int i_myPlayerIndex) {
         abilityRecources::init(i_players, i_playerCount, i_terrain, i_worldRows, i_worldCols);
         fireballs = new std::vector<Fireball*>();
+        transfusions = new std::vector<Transfusion*>();
         this->myPlayerI = i_myPlayerIndex;
+        
+        abilityCount = 2;
+        abilityTriggering = new AbilityTriggering(abilityCount);
+
+        //ability declerations
+        fireballIndex = 0;
+        abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::Q, 5000);//right now Fireball
+        transfusionIndex = 1;
+        abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::W, 2000);//right now Transfusion
     }
 
     
 
 	void update() {
-        if (qOnCooldown == false) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) == false) {
-                samePress = false;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) == true && samePress == false) {
-                samePress = true;
-
-                hasNewFireball = true;
-                newFireball = new Fireball(myPlayerI);
-                fireballs->push_back(newFireball);
-                cooldownStart = duration_cast<milliseconds>(
-                    system_clock::now().time_since_epoch()
-                    );
-                qOnCooldown = true;
-            }
+        abilityTriggering->update();
+        
+        if(abilityTriggering->startAbility(fireballIndex) == true){
+            hasNewFireball = true;
+            newFireball = new Fireball(myPlayerI);
+            fireballs->push_back(newFireball);
         }
-        else {
-            timeSinceCdStart = duration_cast<milliseconds>(
-                system_clock::now().time_since_epoch()) - cooldownStart;
-            if (timeSinceCdStart.count() >= qCooldown) {
-                qOnCooldown = false;
-            }
+        if(abilityTriggering->startAbility(transfusionIndex) == true){
+            newTransfusion = new Transfusion(myPlayerI);
+            transfusions->push_back(newTransfusion);
         }
-
-
 
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->update();
@@ -50,17 +121,36 @@ public:
                 fireballs->erase(fireballs->begin() + i);
             }
         }
+
+        for (int i = 0; i < transfusions->size(); i++) {
+            transfusions->at(i)->update();
+        }
 	}
 	
 	void drawAll() {
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->draw();
         }
-	}
+        for (int i = 0; i < transfusions->size(); i++) {
+            transfusions->at(i)->draw();
+        }
 
-    float getQCooldownPercentLeft() {
-        return ((float)qCooldown - (float)timeSinceCdStart.count()) / (float)qCooldown;
-    }
+        int col = 0;
+        for(int i = 0; i < abilityCount; i++) {
+            col += 100;
+            Renderer::drawRect(960, col, 100, 100, sf::Color(255, 100, 0, 255), true);
+            int abilityRectHeight = 0;
+
+            float cdPercent = abilityTriggering->getCooldownPercent(i);
+            if (cdPercent > 0.01f) {
+                abilityRectHeight = 100 * cdPercent;
+            }
+            Renderer::drawRect(960, col, 100, abilityRectHeight, sf::Color(0, 0, 255, 100), true);
+        }
+
+        
+
+	}
 
 
 
@@ -102,11 +192,16 @@ private:
     bool samePress = false;
     int myPlayerI;
 
-    int qCooldown = 5000;
-    bool qOnCooldown = false; 
-    milliseconds cooldownStart;
-    milliseconds timeSinceCdStart;
     std::vector<Fireball*>* fireballs;
+    std::vector<Transfusion*>* transfusions;
+    Transfusion* newTransfusion;
     Fireball* newFireball;
     bool hasNewFireball = false;
+
+    AbilityTriggering* abilityTriggering;
+
+    int fireballIndex;
+    int transfusionIndex;
+
+    int abilityCount;
 };
