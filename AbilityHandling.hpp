@@ -31,7 +31,7 @@ public:
         return ((float)maxCDs[index] - (float)timeSinceCDStarts[index].count()) / (float)maxCDs[index];
     }
 
-    bool addAbility(int index, sf::Keyboard::Key key, int cooldown) {
+    void addAbility(int index, sf::Keyboard::Key key, int cooldown) {
         abilities[index] = key;
         maxCDs[index] = cooldown;
     }
