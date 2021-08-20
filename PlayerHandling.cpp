@@ -34,6 +34,7 @@ void PlayerHandling::sendPlayerData() {
 
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
 **/
+int hpSyncDelay = 0;
 void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 	int otherPlayer = 0;
 	if (myPlayerI == 0) {
@@ -46,7 +47,13 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 	players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
 	players[otherPlayer]->setCol(NetworkCommunication::receiveNextToken());
 	players[otherPlayer]->setTexture(NetworkCommunication::receiveNextToken());
-	players[otherPlayer]->setHp(NetworkCommunication::receiveNextToken());
+
+	int hp = NetworkCommunication::receiveNextToken();
+	hpSyncDelay ++;
+	if(hpSyncDelay > 10) {
+		players[otherPlayer]->setHp(hp);
+		hpSyncDelay = 0;
+	}
 
 	pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 	pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(),
