@@ -354,13 +354,14 @@ public:
     }
 
     void draw() {
-        if(indicator->getTargetIndex() == -1){
-            indicator->draw();
-        } 
-        else {
-            if(bloodBall != nullptr){
-                bloodBall->draw();
+        
+        if(indicator != nullptr){
+            if(indicator->getTargetIndex() == -1) {
+                indicator->draw();
             }
+        } 
+        if(bloodBall != nullptr){
+            bloodBall->draw();
         }
     }
 
@@ -369,6 +370,7 @@ public:
     bool finishedSelectingTarget = false;
     int myPlayerIndex;
     int targetPlayerIndex;
+    bool casting = false;
 private:
     bool castingInitialized = false;
     long castStart;
@@ -378,10 +380,9 @@ private:
     int tempGoalRow, tempGoalCol;
     bool flyBack = false;
 
-    PointAndClickIndicator* indicator;
+    PointAndClickIndicator* indicator = nullptr;
     int range = 300;
 
-    bool casting = false;
     bool initializedEvents = false;
 
     int abilityPathIndex;
