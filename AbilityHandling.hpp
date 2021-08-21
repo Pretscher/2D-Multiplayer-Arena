@@ -119,6 +119,7 @@ public:
             fireballs->push_back(newFireball);
         }
         if(abilityTriggering->startAbility(transfusionIndex) == true){
+            hasNewTransfusion = true;
             newTransfusion = new Transfusion(myPlayerI);
             transfusions->push_back(newTransfusion);
             //start cooldown later when target has been selected
