@@ -144,6 +144,7 @@ public:
             }
             if(c->casting == true){
                 hasNewTransfusion = true;
+                newTransfusion = c;
             }
         }
 	}
