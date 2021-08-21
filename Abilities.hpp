@@ -216,7 +216,16 @@ class Transfusion {
 public:
     Transfusion(int i_myPlayerIndex) {
         this->myPlayerIndex = i_myPlayerIndex;
-        indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range);
+        this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range);
+    }
+    //constructor through networking
+    Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) {
+        this->myPlayerIndex = i_myPlayerIndex;
+        this->targetPlayerIndex = i_targetPlayerIndex;
+
+        me = players[myPlayerIndex];
+        target = players[targetPlayerIndex];
+        casting = true;
     }
 
     void update() {
@@ -323,9 +332,9 @@ public:
     }
 
     void initEvents(){
-        targetPlayer = indicator->getTargetIndex();
+        targetPlayerIndex = indicator->getTargetIndex();
         me = players[myPlayerIndex];
-        target = players[targetPlayer];
+        target = players[targetPlayerIndex];
 
         finishedSelectingTarget = true;
 
@@ -358,6 +367,8 @@ public:
     bool finishedWithoutCasting = false;
     bool finishedCompletely = false;
     bool finishedSelectingTarget = false;
+    int myPlayerIndex;
+    int targetPlayerIndex;
 private:
     bool castingInitialized = false;
     long castStart;
@@ -369,8 +380,7 @@ private:
 
     PointAndClickIndicator* indicator;
     int range = 300;
-    int myPlayerIndex;
-    int targetPlayer;
+
     bool casting = false;
     bool initializedEvents = false;
 

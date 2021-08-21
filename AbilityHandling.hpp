@@ -171,17 +171,29 @@ public:
 
     void sendData() {
         if (hasNewFireball == true) {
+            hasNewFireball = false;
             NetworkCommunication::addToken(1);//check if new fireball is to be added
             NetworkCommunication::addToken(newFireball->startRow);
             NetworkCommunication::addToken(newFireball->startCol);
             NetworkCommunication::addToken(newFireball->goalRow);
             NetworkCommunication::addToken(newFireball->goalCol);
             NetworkCommunication::addToken(newFireball->myPlayerI);
-            hasNewFireball = false;
+
         }
         else {
             NetworkCommunication::addToken(0);
         }
+
+        if (hasNewTransfusion == true) {
+            hasNewTransfusion = false;
+            NetworkCommunication::addToken(1);//check if new transfusion is to be added
+            NetworkCommunication::addToken(newTransfusion->myPlayerIndex);
+            NetworkCommunication::addToken(newTransfusion->targetPlayerIndex);
+        }
+        else {
+            NetworkCommunication::addToken(0);
+        }
+
     }
 
     /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -201,6 +213,14 @@ public:
             int firingPlayerIndex = NetworkCommunication::receiveNextToken();
             fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex));
         }
+
+        if (NetworkCommunication::receiveNextToken() == 1) {
+            //theyre already in the right order
+
+            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
+            int tTargetPlayerIndex = NetworkCommunication::receiveNextToken();
+            transfusions->push_back(new Transfusion(tMyPlayerIndex, tTargetPlayerIndex));
+        }
     }
 
 private:
@@ -211,7 +231,9 @@ private:
     std::vector<Transfusion*>* transfusions;
     Transfusion* newTransfusion;
     Fireball* newFireball;
+
     bool hasNewFireball = false;
+    bool hasNewTransfusion = false;
 
     AbilityTriggering* abilityTriggering;
 
