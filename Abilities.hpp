@@ -242,6 +242,13 @@ public:
                     initEvents();
                 }
                 if(casting == false) {//if you still have to walk
+                    int halfW = me->getWidth() / 2;
+                    if(tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
+                        tempGoalRow = target->getRow() + halfW;
+                        tempGoalCol = target->getCol() + halfW;
+                        pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
+                        abilityPathIndex = players[myPlayerIndex]->pathsFound;
+                    }
                     bool stop = false;
                     //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
                     //to stop going on the path the ability wants to find. But because of multithreading we cant say
@@ -345,7 +352,9 @@ public:
         float dist = Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
                 me->getRow() + halfH, target->getRow() + halfH);
         if(dist > range) {
-            pFinding->findPath(target->getCol(), target->getRow(), myPlayerIndex);
+            tempGoalRow = target->getRow() + halfW;
+            tempGoalCol = target->getCol() + halfH;
+            pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
             abilityPathIndex = players[myPlayerIndex]->pathsFound;
         } 
         else {
