@@ -142,7 +142,7 @@ public:
             if(c->finishedSelectingTarget){
                 abilityTriggering->manuallyStartCooldown(transfusionIndex);
             }
-            if(c->casting == true){
+            if(c->casting == true && c->myPlayerIndex == myPlayerI){
                 hasNewTransfusion = true;
                 newTransfusion = c;
             }
