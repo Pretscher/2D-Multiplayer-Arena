@@ -371,6 +371,7 @@ public:
     int myPlayerIndex;
     int targetPlayerIndex;
     bool casting = false;
+    bool addedToNetwork = false;
 private:
     bool castingInitialized = false;
     long castStart;
