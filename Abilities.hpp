@@ -374,7 +374,7 @@ private:
     long castStart;
     long timeDiff;
     float pathPercent;
-    Projectile* bloodBall;
+    Projectile* bloodBall = nullptr;
     int tempGoalRow, tempGoalCol;
     bool flyBack = false;
 
