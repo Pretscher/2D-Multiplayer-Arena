@@ -24,6 +24,9 @@ public:
             onCD[i] = false;
             samePress[i] = false;
             createNewAbility[i] = false;
+
+            cooldownStarts [i] = milliseconds(0);
+            timeSinceCDStarts [i] = milliseconds(0);
         }
     }
 
@@ -150,7 +153,7 @@ public:
         }
 	}
 	
-	void drawAll() {
+	void drawAbilities() {
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->draw();
         }
@@ -158,20 +161,23 @@ public:
             transfusions->at(i)->draw();
         }
 
+        
+	}
+
+    void drawCDs() {
         int col = 0;
-        for(int i = 0; i < abilityCount; i++) {
-            col += 100;
+        for (int i = 0; i < abilityCount; i++) {
+            col += 150;
             Renderer::drawRect(960, col, 100, 100, sf::Color(255, 100, 0, 255), true);
             int abilityRectHeight = 0;
 
             float cdPercent = abilityTriggering->getCooldownPercent(i);
-            if (cdPercent > 0.01f) {
+            if (cdPercent > 0.01f && cdPercent < 0.99f) {
                 abilityRectHeight = 100 * cdPercent;
             }
             Renderer::drawRect(960, col, 100, abilityRectHeight, sf::Color(0, 0, 255, 100), true);
         }
-	}
-
+    }
 
 
     void sendData() {

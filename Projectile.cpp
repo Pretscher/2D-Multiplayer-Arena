@@ -90,6 +90,6 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 	this->col = nextCol;
 }
 
-void Projectile::draw() {
-	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, sf::Color(255, 0, 255, 255), true, 0, false);
+void Projectile::draw(sf::Color c) {
+	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, c, true, 0, false);
 }

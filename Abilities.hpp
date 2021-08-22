@@ -96,11 +96,11 @@ public:
 
     void draw() {
         if (this->exploding == false) {
-            this->helpProjectile->draw();
+            this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
         }
         else {
             Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange,
-                sf::Color(255, 150, 0, 150), true, 0, false);
+                sf::Color(255, 120, 0, 255), true, 0, false);
         }
     }
 
@@ -140,6 +140,7 @@ private:
     float velocity = 10.0f;
 
     Projectile* helpProjectile;
+
 };
 
 
@@ -217,6 +218,13 @@ public:
     Transfusion(int i_myPlayerIndex) {
         this->myPlayerIndex = i_myPlayerIndex;
         this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range);
+
+        lastRows = new int [positionsSavedCount];
+        lastCols = new int [positionsSavedCount];
+        for (int i = 0; i < positionsSavedCount; i++) {
+            lastRows [i] = -1;
+            lastCols [i] = -1;
+        }
     }
     //constructor through networking
     Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) {
@@ -226,6 +234,13 @@ public:
         me = players[myPlayerIndex];
         target = players[targetPlayerIndex];
         casting = true;
+
+        lastRows = new int [positionsSavedCount];
+        lastCols = new int [positionsSavedCount];
+        for (int i = 0; i < positionsSavedCount; i++) {
+            lastRows [i] = -1;
+            lastCols [i] = -1;
+        }
     }
 
     void update() {
@@ -286,6 +301,11 @@ public:
                 int halfW = me->getWidth() / 2;
                 bloodBall = new Projectile(me->getRow() + halfW, me->getCol() + halfW, velocity, 
                         tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
+
+                for (int i = 0; i < positionsSavedCount; i++) {
+                    lastRows [i] = -1;
+                    lastCols [i] = -1;
+                }
             }
 
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
@@ -364,13 +384,24 @@ public:
 
     void draw() {
         
-        if(indicator != nullptr){
+        if(indicator != nullptr) {
             if(indicator->getTargetIndex() == -1) {
                 indicator->draw();
             }
         } 
-        if(bloodBall != nullptr){
-            bloodBall->draw();
+        if(bloodBall != nullptr) {
+            lastRows [cPositionSaveIndex] = bloodBall->getRow();
+            lastCols [cPositionSaveIndex] = bloodBall->getCol();
+            cPositionSaveIndex ++;
+            if (cPositionSaveIndex >= positionsSavedCount) {
+                cPositionSaveIndex = 0;
+            }
+            bloodBall->draw(sf::Color(255, 0, 0, 255));
+            for (int i = 0; i < positionsSavedCount; i++) {
+                if (lastRows [i] != -1) {
+                    Renderer::drawCircle(lastRows [i], lastCols [i], bloodBall->getRadius(), sf::Color(255, 0, 0, 255), true, 0, false);
+                }
+            }
         }
     }
 
@@ -403,5 +434,11 @@ private:
     int dmg = 30;
     int heal = 15;
     int radius = 10;
-    int velocity = 10.0f;
+    int velocity = 15.0f;
+
+
+    int positionsSavedCount = 10;
+    int* lastRows;
+    int* lastCols;
+    int cPositionSaveIndex = 0;
 };

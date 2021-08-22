@@ -108,11 +108,12 @@ void eventhandling::drawingloop() {
 		menu->drawMenu();
 	}
 	else {
-		abilityHandling->drawAll();
 		worldHandling->draw();//draw first, lifebars and stuff should be drawn over it
+		abilityHandling->drawAbilities();
+		projectileHandling->draw();
 		playerHandling->draw();
-		projectileHandling->draw();//draw after players
 		uiHandling->draw();//draw last, should be over every item ingame
+		abilityHandling->drawCDs();
 	}
 }
 

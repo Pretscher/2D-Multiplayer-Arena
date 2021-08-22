@@ -1,5 +1,6 @@
 #pragma once
 #include "Rect.hpp"
+#include "SFML/Graphics.hpp"
 
 class Player;
 class Projectile {
@@ -12,7 +13,7 @@ public:
 	* @param maximum rows/cols where movement is allowed, array of Rect* and its lenght which cannot be passed through by the projectile
 	**/
 	void move(int maxRow, int maxCol, Rect** collisionRects, int rectCount);
-	void draw();
+	void draw(sf::Color c);
 
 
 	bool isDead() {

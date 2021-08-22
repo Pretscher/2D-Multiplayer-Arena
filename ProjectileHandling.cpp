@@ -83,7 +83,7 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 
 void ProjectileHandling::draw() {
 	for (int i = 0; i < projectiles->size(); i++) {
-		projectiles->at(i)->draw();
+		projectiles->at(i)->draw(sf::Color(100, 100, 100, 255));
 	}
 }
 
