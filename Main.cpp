@@ -9,9 +9,9 @@ sf::RenderWindow* cWindow;
 void initDrawing() {
 
     sf::Event* event = new sf::Event();
+    cWindow->setVerticalSyncEnabled(true);
     while (cWindow->isOpen()) {
         //everytime a variable you use in here is changed, please log the mutex in the thread that changes the variable.
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
         while (cWindow->pollEvent(*event)) {
             if (event->type == sf::Event::Closed) {
                 cWindow->close();

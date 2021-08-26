@@ -226,8 +226,8 @@ int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
 }
 
 int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
-    row = row * accuracy;
-    col = col * accuracy;
+    row = ((float)row * accuracy);
+    col = ((float)col * accuracy);
 
     if (row < rows && col < cols) {
         if (moveableRelevant == true) {
@@ -269,8 +269,18 @@ void Graph::disableObjectBounds(int row, int col, int width, int height) {
     if (minX < 0) {
         minX = 0;
     }
-    for (int y = minY; y <= row + height; y++) {
-        for (int x = minX; x <= col + width; x++) {
+
+    int maxX = col + width;
+    if (maxX >= cols) {
+        maxX = cols - 2;
+    }
+    int maxY = row + height;
+    if (maxY >= rows) {
+        maxY = rows - 2;
+    }
+
+    for (int y = minY; y <= maxY; y++) {
+        for (int x = minX; x <= maxX; x++) {
           // if (Renderer::currentWindow != nullptr) {
              //  Renderer::drawRect(y / accuracy, x / accuracy, 2, 2, sf::Color(255, 255, 0, 255));
          //  }
@@ -297,9 +307,19 @@ void Graph::enableObjectBounds(int row, int col, int width, int height) {
     int minX = col - width + 1;
     if (minX < 0) {
         minX = 0;
+    }   
+
+    int maxX = col + width;
+    if (maxX >= cols) {
+        maxX = cols - 2;
     }
-    for (int y = minY; y <= row + height; y++) {
-        for (int x = minX; x <= col + width; x++) {
+    int maxY = row + height;
+    if (maxY >= rows) {
+        maxY = rows - 2;
+    }
+
+    for (int y = minY; y <= maxY; y ++) {
+        for (int x = minX; x <= maxX; x ++) {
             int index = getIndexFromCoords(y / accuracy, x / accuracy, false);
             usedByMoveable[index] = false;
 
