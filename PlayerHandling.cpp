@@ -5,15 +5,16 @@
 
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	playerCount = 2;
-	float stepsPerIteration = 0.5f;//velocity on path if path is given
+	float vel = 50;//velocity on path if path is given
 	int startCol = 700;
 	int rectSize = 100;
 	int defaultMaxHp = 200;
 	int defaultDmg = 10;
+
 	players = new Player * [playerCount];
 	for (int i = 0; i < playerCount; i++) {
 		int startRow = i * 1000 / playerCount + 200;//move players away from each other in row
-		players[i] = new Player(startCol, startRow, rectSize, rectSize, stepsPerIteration, defaultMaxHp, defaultDmg);//places players on map, col dist depends on playercount
+		players[i] = new Player(startCol, startRow, rectSize, rectSize, vel, defaultMaxHp, defaultDmg);//places players on map, col dist depends on playercount
 	}
 }
 

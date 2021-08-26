@@ -1,7 +1,7 @@
 #include "Player.hpp"
 #include "Renderer.hpp"
 #include <iostream>
-
+#include <chrono>
 
 Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg) {
 	this->col = i_col;
@@ -29,6 +29,8 @@ void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 		delete[] pathXpositions;
 		delete[] pathYpositions;
 	}
+	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
+	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 	pathXpositions = i_pathX;
 	pathYpositions = i_pathY;
 	cPathIndex = 0;
@@ -36,41 +38,77 @@ void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 	pathsFound++;
 }
 
+
 void Player::move() {
-	if (pathLenght != -1) {//too lazy for booleans as you can see
-		//has to be a float so that it can be modified by non-int velocities properly
+	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
+	long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	long diff = now - lastMoveTime;
+	float dueSteps = diff / velocity;
+	
+	//move gradually between path steps
+	if (dueSteps < 1) {
 		int roundPathIndex = int(cPathIndex);
+		int nextCol = pathXpositions [roundPathIndex];
+		int nextRow = pathYpositions [roundPathIndex];
 
-		int nextCol = pathXpositions[roundPathIndex];
-		int nextRow = pathYpositions[roundPathIndex];
-
-
-		if (nextRow > row) {
-			cTextureI = 3;
-		}
-		if (nextRow < row) {
-			cTextureI = 2;
-		}
-		if (nextCol < col) {
-			cTextureI = 0;
-		}
-
-		if (nextCol > col) {
-			cTextureI = 1;
-		}
-
-		//go one step in path
-		this->col = nextCol;
-		this->row = nextRow;
-
-		if (cPathIndex + velocity < pathLenght) {
-			cPathIndex += velocity;
+		float colDiff = (sqrt(((float) col - nextCol) * ((float) col - nextCol)) * dueSteps);
+		float rowDiff = (sqrt(((float) row - nextRow) * ((float) row - nextRow)) * dueSteps);
+		if (col < nextCol) {
+			col = (float) col + colDiff;
 		}
 		else {
-			//go to state of not having a path
-			pathLenght = -1;
-			delete[] pathXpositions;
-			delete[] pathYpositions;
+			col = (float) col - colDiff;
+		}
+		if (row < nextRow) {
+			row = (float) row + rowDiff;
+		}
+		else {
+			row = (float) row - rowDiff;
+		}
+	}
+
+	if (dueSteps >= 1) {
+		auto timePoint = std::chrono::system_clock::now().time_since_epoch();
+		lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+		if (pathLenght != -1) {//too lazy for booleans as you can see
+			//has to be a float so that it can be modified by non-int velocities properly
+			int roundPathIndex = int(cPathIndex);
+
+			int nextCol;
+			int nextRow;
+			for (int i = 0; i <= dueSteps; i++) {
+				if (pathLenght == -1) return;
+				nextCol = pathXpositions [roundPathIndex];
+				nextRow = pathYpositions [roundPathIndex];
+
+				if (cPathIndex + 1 < pathLenght) {
+					cPathIndex ++;
+				}
+				else {
+					//go to state of not having a path
+					pathLenght = -1;
+					delete [] pathXpositions;
+					delete [] pathYpositions;
+				}
+			}
+
+			if (nextRow > row) {
+				cTextureI = 3;
+			}
+			if (nextRow < row) {
+				cTextureI = 2;
+			}
+			if (nextCol < col) {
+				cTextureI = 0;
+			}
+
+			if (nextCol > col) {
+				cTextureI = 1;
+			}
+
+			//go one step in path
+			this->col = nextCol;
+			this->row = nextRow;
 		}
 	}
 }

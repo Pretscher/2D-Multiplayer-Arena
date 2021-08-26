@@ -338,6 +338,9 @@ public:
                     if(me->getHp() + heal <= me->getMaxHp()){
                         me->setHp(me->getHp() + heal);
                     }
+                    else {
+                        me->setHp(me->getMaxHp());
+                    }
 
                     finishedCompletely = true;
                 }
