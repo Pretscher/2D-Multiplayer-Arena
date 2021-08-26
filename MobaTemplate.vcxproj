@@ -163,7 +163,6 @@
     <ClCompile Include="ProjectileHandling.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="TimeThread.cpp" />
     <ClCompile Include="UiHandling.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WorldHandling.cpp" />
@@ -189,7 +188,6 @@
     <ClInclude Include="Terrain.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Renderer.hpp" />
-    <ClInclude Include="TimeThread.hpp" />
     <ClInclude Include="UiHandling.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="WorldHandling.hpp" />

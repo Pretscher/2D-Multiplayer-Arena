@@ -75,9 +75,6 @@
     <ClCompile Include="HeapNode.cpp">
       <Filter>A%2a-Algorithmus</Filter>
     </ClCompile>
-    <ClCompile Include="TimeThread.cpp">
-      <Filter>Eventhandling</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Eventhandling.hpp">
@@ -148,9 +145,6 @@
     </ClInclude>
     <ClInclude Include="Abilities.hpp">
       <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeThread.hpp">
-      <Filter>Eventhandling</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
