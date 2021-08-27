@@ -5,7 +5,9 @@
 #include "Player.hpp"
 #include <chrono>
 
-Projectile::Projectile(int i_row, int i_col, float velocity, int i_goalRow, int i_goalCol, int radius, Player* shootingPlayer) {
+Projectile::Projectile(int i_row, int i_col, float velocity, int i_goalRow, int i_goalCol, 
+		bool i_moveThroughGoal, int radius, Player* shootingPlayer) {
+	
 	this->player = shootingPlayer;
 	this->row = i_row - radius;//not same as player position, changes with direction because player rotates
 	this->col = i_col - radius;
@@ -13,11 +15,11 @@ Projectile::Projectile(int i_row, int i_col, float velocity, int i_goalRow, int 
 	this->radius = radius;
 	this->goalRow = i_goalRow;
 	this->goalCol = i_goalCol;
+	this->moveThroughGoal = i_moveThroughGoal;
 
 	//we want to push those projectiles through network with the same goalrow and goalcol so dont change them here. 
 	i_goalRow -= radius;
 	i_goalCol -= radius;
-
 
 	this->dead = false;
 	//calculate function for line
@@ -99,10 +101,16 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 					return;
 				}
 			}
-
 			//no collisiom => move on function
 			this->row = nextRow;
 			this->col = nextCol;
+
+			if (moveThroughGoal == false) {
+				if (Utils::calcDist2D(goalCol - radius, col, goalRow - radius, row) < 50) {
+					dead = true;
+					return;
+				}
+			}
 		}
 }
 

@@ -49,17 +49,18 @@ public:
             myPlayer->setTexture(3);
         }
 
-        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, myPlayer);
+        limitGoalPosToRange();
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
     }
 
     void update() {
         if (this->exploding == false) {
             auto collidables = terrain->getCollidables();
-           this-> helpProjectile->move(worldRows, worldCols, collidables->data(), collidables->size());
+            this->helpProjectile->move(worldRows, worldCols, collidables->data(), collidables->size());
             //if the projectile reaches its max range or collides with anything, it should explode
-            if (abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
+            if ((abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
                 + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
-                > this->range * this->range || this->helpProjectile->isDead() == true) {
+                > this->range * this->range) || this->helpProjectile->isDead() == true) {
                 this->exploding = true;
                 this->fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
                 
@@ -114,7 +115,27 @@ public:
         this->goalCol = i_goalCol;
         this-> myPlayerI = i_myPlayerIndex;
 
-        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, radius, players [myPlayerI]);
+        limitGoalPosToRange();
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, players [myPlayerI]);
+    }
+
+    void limitGoalPosToRange() {
+        float* vecToGoal = new float [2];
+        vecToGoal [0] = goalCol - startCol;
+        vecToGoal [1] = goalRow - startRow;
+        //calculate vector lenght
+        float lenght = sqrt((vecToGoal [0] * vecToGoal [0]) + (vecToGoal [1] * vecToGoal [1]));
+        if (lenght > range) {
+            //normalize vector lenght
+            vecToGoal [0] /= lenght;
+            vecToGoal [1] /= lenght;
+            //stretch vector to range
+            vecToGoal [0] *= range;
+            vecToGoal [1] *= range;
+            //place at starting point
+            goalCol = startCol + vecToGoal [0];
+            goalRow = startRow + vecToGoal [1];
+        }
     }
 
 public:
@@ -127,17 +148,17 @@ public:
 private:
     bool dealtDamage = false;
     bool exploding = false;
-    int explosionRange = 100;
+    int explosionRange = 80;
 
     milliseconds fireStartTime;
     long timeDiff;
     int explosionRow, explosionCol;
 
-    int explosionDmg = 50;
-    float burnDmg = 0.5f;
+    int explosionDmg = 30;
+    float burnDmg = 0.25f;
 
     int radius = 50;
-    int range = 500;
+    int range = 700;
     float velocity = 15.0f;
 
     Projectile* helpProjectile;
@@ -234,7 +255,7 @@ public:
                 tempGoalCol = target->getCol();
                 int halfW = me->getWidth() / 2;
                 bloodBall = new Projectile(me->getRow() + halfW, me->getCol() + halfW, velocity, 
-                        tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
+                        tempGoalRow + halfW, tempGoalCol + halfW, false, radius, me);
 
                 for (int i = 0; i < positionsSavedCount; i++) {
                     lastRows [i] = -1;
@@ -262,7 +283,7 @@ public:
 
                     int halfW = me->getWidth() / 2;
                     bloodBall = new Projectile(tempBBrow + radius, tempBBcol + radius, velocity,
-                            tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
+                            tempGoalRow + halfW, tempGoalCol + halfW, false, radius, me);
                 }
             } 
             else {
@@ -288,7 +309,7 @@ public:
 
                     int halfW = me->getWidth() / 2;
                     bloodBall = new Projectile(tempBBrow + radius, tempBBcol + radius, velocity,
-                            tempGoalRow + halfW, tempGoalCol + halfW, radius, me);
+                            tempGoalRow + halfW, tempGoalCol + halfW, false, radius, me);
                 }
             }
             bloodBall->move(worldRows, worldCols, nullptr, 0);//should go through walls so we just dont pass them

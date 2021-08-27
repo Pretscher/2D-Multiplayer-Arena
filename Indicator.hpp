@@ -37,7 +37,7 @@ public:
                         }
                         //draw an outline around the hovered over player
                         Renderer::drawRectOutline(c->getRow(), c->getCol(), c->getWidth(), c->getHeight(),
-                            sf::Color(75, 165, 180, 150), 5, false);
+                            sf::Color(75, 165, 180, 150), 2, false);
                     }
                     else {
                         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {

@@ -51,7 +51,7 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 
 
 
-		Projectile* p = new Projectile(row, col, projectileVel, mouseY, mouseX, projectileRadius, myPlayer);
+		Projectile* p = new Projectile(row, col, projectileVel, mouseY, mouseX, true, projectileRadius, myPlayer);
 		projectiles->push_back(p);
 		newProjectiles->push_back(p);
 	}
@@ -140,7 +140,7 @@ void ProjectileHandling::receiveProjectiles() {
 		}
 		counter++;
 		if (counter > 3) {
-			projectiles->push_back(new Projectile(row, col, projectileVel, goalRow, goalCol,
+			projectiles->push_back(new Projectile(row, col, projectileVel, goalRow, goalCol, true,
 				projectileRadius, players[otherPlayerI]));
 			counter = 0;
 		}
