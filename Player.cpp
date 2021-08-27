@@ -2,7 +2,7 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include <chrono>
-
+#include <math.h>
 Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg) {
 	this->col = i_col;
 	this->row = i_row;
