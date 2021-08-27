@@ -145,19 +145,19 @@ public:
         for (int i = 0; i < transfusions->size(); i++) {
             Transfusion* c = transfusions->at(i);
             c->update();
-            if (c->finishedWithoutCasting == true || c->finishedCompletely == true) {
+            if (c->hasEndedNoCast() == true || c->hasFinishedCast() == true) {
                 transfusions->erase(transfusions->begin() + i);
                 transfusionIndicatorActive = false;
             }
             //start cooldown only after target has been selected
-            if(c->finishedSelectingTarget){
-                if (c->targetPlayerIndex != -1) {
+            if(c->hasSelectedTarget()) {
+                if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
                     abilityTriggering->manuallyStartCooldown(transfusionIndex);
                 }
                 transfusionIndicatorActive = false;
             }
-            if(c->casting == true && c->myPlayerIndex == myPlayerI && c->addedToNetwork == false){
-                c->addedToNetwork = true;
+            if (c->isCasting() == true && c->getCastingPlayer() == myPlayerI && c->wasAddedToNetwork() == false) {
+                c->setAddedToNetwork();
                 hasNewTransfusion = true;
                 newTransfusion = c;
             }
@@ -207,8 +207,8 @@ public:
         if (hasNewTransfusion == true) {
             hasNewTransfusion = false;
             NetworkCommunication::addToken(1);//check if new transfusion is to be added
-            NetworkCommunication::addToken(newTransfusion->myPlayerIndex);
-            NetworkCommunication::addToken(newTransfusion->targetPlayerIndex);
+            NetworkCommunication::addToken(newTransfusion->getCastingPlayer());
+            NetworkCommunication::addToken(newTransfusion->getTargetPlayer());
         }
         else {
             NetworkCommunication::addToken(0);
