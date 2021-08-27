@@ -21,6 +21,7 @@ public:
 	}
 
 private:
+	long lastMoveTime;
 	int goalRow;
 	int goalCol;
 	float row;

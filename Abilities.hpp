@@ -4,6 +4,7 @@
 #include "Terrain.hpp"
 #include "Utils.hpp"
 #include "PathfindingHandler.hpp"
+#include "Indicator.hpp"
 
 using namespace std::chrono;
 
@@ -137,7 +138,7 @@ private:
 
     int radius = 50;
     int range = 500;
-    float velocity = 10.0f;
+    float velocity = 15.0f;
 
     Projectile* helpProjectile;
 
@@ -145,79 +146,12 @@ private:
 
 
 
-//Point and click indicator class-------------------------------------------------------------------
-
-class PointAndClickIndicator {
-public:
-    PointAndClickIndicator(int i_playerIndex, int i_range){
-        this->myPlayerIndex = i_playerIndex;
-        this->range = i_range;
-    }
-
-    void update() {
-        sf::Cursor cursor;
-        if (cursor.loadFromSystem(sf::Cursor::Cross)){
-            Renderer::currentWindow->setMouseCursor(cursor);
-        }
-
-        //if true, end next tick (if no player was selected just do nothing and end indicator)
-
-        for(int i = 0; i < playerCount; i++){
-            if(i != this->myPlayerIndex) {
-                Player* c = players [i];
-                int mouseRow = 0;
-                int mouseCol = 0;
-                Renderer::getMousePos(&mouseCol, &mouseRow, true);
-                if(Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
-                        c->getHeight(), mouseCol, mouseRow) == true) {
-                    //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
-                    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-                        this->targetIndex = i;
-                    }
-                    //draw an outline around the hovered over player
-                    Renderer::drawRectOutline(c->getRow(), c->getCol(), c->getWidth(),c->getHeight(),
-                        sf::Color(75, 165, 180, 150), 5, false);
-                } 
-                else {
-                    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-                        endWOaction = true;
-                    }
-                }
-            }
-        }
-    }
-
-    void draw() {
-        //draw range indicator
-        int indicatorRow = players[this->myPlayerIndex]->getRow() + 
-            players[this->myPlayerIndex]->getHeight()/ 2 - this->range;//range = radius of circle
-        int indicatorCol = players[this->myPlayerIndex]->getCol() + 
-            players[this->myPlayerIndex]->getWidth() / 2 - this->range;
-        Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 100, 100, 200), false, 10, false);
-    }
-
-    int getTargetIndex(){
-        return this->targetIndex;
-    }
-
-    bool endWithoutAction(){
-        return endWOaction;
-    }
-private:
-    int myPlayerIndex;
-    int range;
-
-    int targetIndex = -1;
-    bool endWOaction = false;
-};
-
-
 
 class Transfusion {
 public:
     Transfusion(int i_myPlayerIndex) {
         this->myPlayerIndex = i_myPlayerIndex;
-        this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range);
+        this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range, playerCount, players, i_myPlayerIndex);
 
         lastRows = new int [positionsSavedCount];
         lastCols = new int [positionsSavedCount];
@@ -244,7 +178,7 @@ public:
     }
 
     void update() {
-        if(casting == false){
+        if(casting == false) {
             if(indicator->getTargetIndex() == -1) {
                 indicator->update();
                 if(indicator->endWithoutAction() == true) {
@@ -361,7 +295,7 @@ public:
         }
     }
 
-    void initEvents(){
+    void initEvents() {
         targetPlayerIndex = indicator->getTargetIndex();
         me = players[myPlayerIndex];
         target = players[targetPlayerIndex];
@@ -382,6 +316,11 @@ public:
         } 
         else {
             casting = true;
+        }
+
+        sf::Cursor cursor;
+        if (cursor.loadFromSystem(sf::Cursor::Arrow)) {
+            Renderer::currentWindow->setMouseCursor(cursor);
         }
     }
 
@@ -437,7 +376,7 @@ private:
     int dmg = 30;
     int heal = 15;
     int radius = 10;
-    int velocity = 15.0f;
+    int velocity = 5.0f;
 
 
     int positionsSavedCount = 10;

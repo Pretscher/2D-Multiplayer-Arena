@@ -9,7 +9,7 @@ sf::RenderWindow* cWindow;
 void initDrawing() {
 
     sf::Event* event = new sf::Event();
-    cWindow->setVerticalSyncEnabled(true);//main thread sleeping basically, other threads dont need to be very precise
+    cWindow->setFramerateLimit(60);
     while (cWindow->isOpen()) {
         //everytime a variable you use in here is changed, please log the mutex in the thread that changes the variable.
         while (cWindow->pollEvent(*event)) {

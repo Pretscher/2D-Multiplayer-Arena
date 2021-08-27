@@ -176,6 +176,7 @@
     <ClInclude Include="Graph.hpp" />
     <ClInclude Include="GraphNode.hpp" />
     <ClInclude Include="HeapNode.hpp" />
+    <ClInclude Include="Indicator.hpp" />
     <ClInclude Include="PortableClient.hpp" />
     <ClInclude Include="PortableServer.hpp" />
     <ClInclude Include="NetworkCommunication.hpp" />

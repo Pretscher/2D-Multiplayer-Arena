@@ -146,5 +146,8 @@
     <ClInclude Include="Abilities.hpp">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Indicator.hpp">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

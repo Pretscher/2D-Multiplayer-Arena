@@ -121,10 +121,17 @@ public:
             newFireball = new Fireball(myPlayerI);
             fireballs->push_back(newFireball);
         }
-        if(abilityTriggering->startAbility(transfusionIndex) == true){
-            newTransfusion = new Transfusion(myPlayerI);
-            transfusions->push_back(newTransfusion);
-            //start cooldown later when target has been selected
+
+        if (transfusionIndicatorActive == false) {
+            if (abilityTriggering->startAbility(transfusionIndex) == true) {
+                transfusionIndicatorActive = true;
+                newTransfusion = new Transfusion(myPlayerI);
+                transfusions->push_back(newTransfusion);
+                //start cooldown later when target has been selected
+                abilityTriggering->resetCooldown(transfusionIndex);
+            }
+        }
+        else {
             abilityTriggering->resetCooldown(transfusionIndex);
         }
 
@@ -140,10 +147,14 @@ public:
             c->update();
             if (c->finishedWithoutCasting == true || c->finishedCompletely == true) {
                 transfusions->erase(transfusions->begin() + i);
+                transfusionIndicatorActive = false;
             }
             //start cooldown only after target has been selected
             if(c->finishedSelectingTarget){
-                abilityTriggering->manuallyStartCooldown(transfusionIndex);
+                if (c->targetPlayerIndex != -1) {
+                    abilityTriggering->manuallyStartCooldown(transfusionIndex);
+                }
+                transfusionIndicatorActive = false;
             }
             if(c->casting == true && c->myPlayerIndex == myPlayerI && c->addedToNetwork == false){
                 c->addedToNetwork = true;
@@ -160,8 +171,6 @@ public:
         for (int i = 0; i < transfusions->size(); i++) {
             transfusions->at(i)->draw();
         }
-
-        
 	}
 
     void drawCDs() {
@@ -204,7 +213,6 @@ public:
         else {
             NetworkCommunication::addToken(0);
         }
-
     }
 
     /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -252,4 +260,5 @@ private:
     int transfusionIndex;
 
     int abilityCount;
+    bool transfusionIndicatorActive = false;
 };
