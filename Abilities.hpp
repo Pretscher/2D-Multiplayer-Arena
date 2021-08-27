@@ -5,7 +5,7 @@
 #include "Utils.hpp"
 #include "PathfindingHandler.hpp"
 #include "Indicator.hpp"
-
+#include <math.h>
 using namespace std::chrono;
 
 namespace abilityRecources {
