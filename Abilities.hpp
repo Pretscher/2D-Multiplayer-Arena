@@ -80,7 +80,7 @@ public:
                 + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
                 > this->range * this->range) || this->helpProjectile->isDead() == true) {
                 this->exploding = true;
-                this->fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+                this->fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
                 
                 this->explosionRow = this->helpProjectile->getRow() 
                 + this->helpProjectile->getRadius() - this->explosionRange;
@@ -90,8 +90,8 @@ public:
         } 
         else {
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            this->timeDiff = cTime - this->fireStartTime.count();
-            if (this->timeDiff < 2000) {
+            this->timeDiff = cTime - this->fireStartTime;
+            if (this->timeDiff < explosionTime) {
                 for (int i = 0; i < abilityRecources::playerCount; i++) {
                         Player* c = abilityRecources::players [i];
                         bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
@@ -131,15 +131,20 @@ public:
 
 
     //create from network input(row is just current row so even with lag the start is always synced)
-    Fireball(int i_startRow, int i_startCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex) {
+    Fireball(int i_startRow, int i_startCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex, bool i_exploding, int i_timeSinceExplosionStart) {
         this->startRow = i_startRow;
         this->startCol = i_startCol;
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
         this->myPlayerI = i_myPlayerIndex;
         
-        limitGoalPosToRange();
-        initCast();
+        exploding = i_exploding;
+        long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+        fireStartTime = cTime - i_timeSinceExplosionStart;
+        if (exploding == false) {
+            limitGoalPosToRange();
+            initCast();
+        }
     }
 
     void limitGoalPosToRange() {
@@ -172,14 +177,16 @@ public:
     bool finishedWithoutCasting = false;
     bool castingInitialized = false;
     bool addedToNetwork = false;
+    bool exploding = false;
+    long fireStartTime;
 private:
     bool dealtDamage = false;
-    bool exploding = false;
     int explosionRange = 80;
 
-    milliseconds fireStartTime;
+
     long timeDiff;
     int explosionRow, explosionCol;
+    int explosionTime = 5000;
 
     int explosionDmg = 30;
     float burnDmg = 0.25f;
@@ -191,8 +198,6 @@ private:
     Projectile* helpProjectile;
 
     ProjectileIndicator* indicator;
-
-
 };
 
 

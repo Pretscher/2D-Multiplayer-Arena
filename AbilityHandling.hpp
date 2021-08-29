@@ -219,7 +219,11 @@ public:
             NetworkCommunication::addToken(newFireball->goalRow);
             NetworkCommunication::addToken(newFireball->goalCol);
             NetworkCommunication::addToken(newFireball->myPlayerI);
+            NetworkCommunication::addToken(newFireball->exploding);
 
+            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            int timeSinceExplosionStart = cTime - newFireball->fireStartTime;
+            NetworkCommunication::addToken(timeSinceExplosionStart);
         }
         else {
             NetworkCommunication::addToken(0);
@@ -251,7 +255,9 @@ public:
             int goalRow = NetworkCommunication::receiveNextToken();
             int goalCol = NetworkCommunication::receiveNextToken();
             int firingPlayerIndex = NetworkCommunication::receiveNextToken();
-            fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex));
+            bool exploding = NetworkCommunication::receiveNextToken();
+            int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
+            fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, exploding, timeSinceExplosionStart));
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
