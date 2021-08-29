@@ -30,7 +30,12 @@ void PlayerHandling::sendPlayerData() {
 	NetworkCommunication::addToken(players[myPlayerI]->getRow());
 	NetworkCommunication::addToken(players[myPlayerI]->getCol());
 	NetworkCommunication::addToken(players[myPlayerI]->getTextureIndex());
-	NetworkCommunication::addToken(players[myPlayerI]->getHp());
+	
+	int otherPlayer = 0;
+	if (myPlayerI == 0) {
+		otherPlayer = 1;
+	}
+	NetworkCommunication::addToken(players[otherPlayer]->getHp());
 }
 
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -48,13 +53,7 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 	players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
 	players[otherPlayer]->setCol(NetworkCommunication::receiveNextToken());
 	players[otherPlayer]->setTexture(NetworkCommunication::receiveNextToken());
-
-	int hp = NetworkCommunication::receiveNextToken();
-	hpSyncDelay ++;
-	if(hpSyncDelay > 10) {
-		players[otherPlayer]->setHp(hp);
-		hpSyncDelay = 0;
-	}
+	players[myPlayerI]->setHp(NetworkCommunication::receiveNextToken());
 
 	pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 	pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(),
