@@ -164,20 +164,21 @@ public:
                     newTransfusion = nullptr;
                     hasNewTransfusion = false;
                 }
-
                 transfusionIndicatorActive = false;
             }
-            //start cooldown only after target has been selected
-            if(c->hasSelectedTarget()) {
-                if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
-                    abilityTriggering->manuallyStartCooldown(transfusionIndex);
+            if (c != nullptr) {
+                //start cooldown only after target has been selected
+                if (c->hasSelectedTarget() == true) {
+                    if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
+                        abilityTriggering->manuallyStartCooldown(transfusionIndex);
+                    }
+                    transfusionIndicatorActive = false;
                 }
-                transfusionIndicatorActive = false;
-            }
-            if (c->isCasting() == true && c->getCastingPlayer() == myPlayerI && c->wasAddedToNetwork() == false) {
-                c->setAddedToNetwork();
-                hasNewTransfusion = true;
-                newTransfusion = c;
+                if (c->isCasting() == true && c->getCastingPlayer() == myPlayerI && c->wasAddedToNetwork() == false) {
+                    c->setAddedToNetwork();
+                    hasNewTransfusion = true;
+                    newTransfusion = c;
+                }
             }
         }
 	}
