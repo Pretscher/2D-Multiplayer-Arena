@@ -281,8 +281,8 @@ private:
 
     std::vector<Fireball*>* fireballs;
     std::vector<Transfusion*>* transfusions;
-    Transfusion* newTransfusion;
-    Fireball* newFireball;
+    Transfusion* newTransfusion = nullptr;
+    Fireball* newFireball = nullptr;
 
     bool hasNewFireball = false;
     bool hasNewTransfusion = false;
