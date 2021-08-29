@@ -136,7 +136,7 @@ public:
         this->startCol = i_startCol;
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
-        this-> myPlayerI = i_myPlayerIndex;
+        this->myPlayerI = i_myPlayerIndex;
         
         limitGoalPosToRange();
         initCast();

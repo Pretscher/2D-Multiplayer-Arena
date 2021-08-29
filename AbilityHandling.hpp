@@ -65,9 +65,6 @@ public:
                 if (sf::Keyboard::isKeyPressed(abilities[i]) == true && samePress[i] == false) {
                     samePress[i] = true;
                     createNewAbility[i] = true;
-
-                    cooldownStarts[i] = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-                    onCD[i] = true;
                 }
             }
             else {
@@ -120,7 +117,6 @@ public:
             if (abilityTriggering->startAbility(fireballIndex) == true) {
                 newFireball = new Fireball(myPlayerI);
                 fireballs->push_back(newFireball);
-                abilityTriggering->resetCooldown(fireballIndex);
                 fireballIndicatorActive = true;
             }
         }
@@ -139,11 +135,7 @@ public:
                 newTransfusion = new Transfusion(myPlayerI);
                 transfusions->push_back(newTransfusion);
                 //start cooldown later when target has been selected
-                abilityTriggering->resetCooldown(transfusionIndex);
             }
-        }
-        else {
-            abilityTriggering->resetCooldown(transfusionIndex);
         }
 
         for (int i = 0; i < fireballs->size(); i++) {
