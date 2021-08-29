@@ -12,7 +12,6 @@ int NetworkCommunication::tokenIndex;
 
 void NetworkCommunication::init() {
 	rawData = new std::string();
-	connectionSetup = false;
 }
 
 void NetworkCommunication::addToken(char* token) {
