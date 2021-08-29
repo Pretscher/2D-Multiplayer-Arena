@@ -159,7 +159,7 @@ public:
             if (c->hasEndedNoCast() == true || c->hasFinishedCast() == true) {
                 transfusions->erase(transfusions->begin() + i);
                 //dont pass through network anymore
-                if (newFireball != nullptr) {
+                if (newTransfusion != nullptr) {
                     delete newTransfusion;
                     newTransfusion = nullptr;
                     hasNewTransfusion = false;
