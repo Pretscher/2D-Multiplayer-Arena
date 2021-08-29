@@ -142,6 +142,10 @@ public:
             fireballs->at(i)->update();
             if (fireballs->at(i)->finished == true || fireballs->at(i)->finishedWithoutCasting == true) {
                 fireballs->erase(fireballs->begin() + i);
+                
+                delete newFireball;
+                hasNewFireball = false;
+
                 fireballIndicatorActive = false;
             }
         }
@@ -151,6 +155,10 @@ public:
             c->update();
             if (c->hasEndedNoCast() == true || c->hasFinishedCast() == true) {
                 transfusions->erase(transfusions->begin() + i);
+                //dont pass through network anymore
+                delete newTransfusion;
+                hasNewTransfusion = false;
+
                 transfusionIndicatorActive = false;
             }
             //start cooldown only after target has been selected
@@ -167,7 +175,7 @@ public:
             }
         }
 	}
-	
+
 	void drawAbilities() {
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->draw();

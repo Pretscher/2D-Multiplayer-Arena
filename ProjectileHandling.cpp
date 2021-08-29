@@ -76,12 +76,12 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 		}
 
 		if (p->isDead() == true) {
-			projectiles->erase(projectiles->begin() + i);//delete projecile if dead
 			for (int k = 0; k < newProjectiles->size(); k++) {
 				if (newProjectiles->at(k) == projectiles->at(i)) {
 					newProjectiles->erase(newProjectiles->begin() + k);//delete projecile if dead
 				}
 			}
+			projectiles->erase(projectiles->begin() + i);//delete projecile if dead
 		}
 	}
 }
