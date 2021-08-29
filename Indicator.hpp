@@ -112,13 +112,15 @@ public:
     }
 
     void update() {
-        Renderer::getMousePos(&cGoalCol, &cGoalRow, true, false);
-        limitGoalPosToRange();
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            fire = true;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            endWOaction = true;
+        if (endWOaction == false) {
+            Renderer::getMousePos(&cGoalCol, &cGoalRow, true, false);
+            limitGoalPosToRange();
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                fire = true;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                endWOaction = true;
+            }
         }
     }
 
@@ -150,9 +152,15 @@ public:
         int indicatorRow = playerCenterRow - this->range;//range = radius of circle
         int indicatorCol = playerCenterCol - this->range;
         Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
-        Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
 
-        Renderer::drawLine(playerCenterRow, playerCenterCol, cGoalRow, cGoalCol, sf::Color(0, 255, 255, 100), projectileRadius * 2);
+
+        Renderer::drawLine(playerCenterRow, playerCenterCol, cGoalRow, cGoalCol,
+            sf::Color(0, 255, 255, 100), projectileRadius * 2);
+
+        int innerCircleRadius = 50;
+        Renderer::drawCircle(playerCenterRow - innerCircleRadius, playerCenterCol - innerCircleRadius,
+                innerCircleRadius,sf::Color(0, 0, 0, 255), true, 0, false);
+        Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
     }
 
     inline bool endWithoutAction() {

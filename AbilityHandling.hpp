@@ -116,12 +116,23 @@ public:
 	void update() {
         abilityTriggering->update();
         
-        if(abilityTriggering->startAbility(fireballIndex) == true){
-            hasNewFireball = true;
-            newFireball = new Fireball(myPlayerI);
-            fireballs->push_back(newFireball);
+        if (fireballIndicatorActive == false) {
+            if (abilityTriggering->startAbility(fireballIndex) == true) {
+                newFireball = new Fireball(myPlayerI);
+                fireballs->push_back(newFireball);
+                abilityTriggering->resetCooldown(fireballIndex);
+                fireballIndicatorActive = true;
+            }
+        }
+        else {
+            if (newFireball->castingInitialized == true && newFireball->addedToNetwork == false) {
+                newFireball->addedToNetwork = true;
+                hasNewFireball = true;
+                abilityTriggering->manuallyStartCooldown(fireballIndex);
+            }
         }
 
+        //transfusion cooldown handling
         if (transfusionIndicatorActive == false) {
             if (abilityTriggering->startAbility(transfusionIndex) == true) {
                 transfusionIndicatorActive = true;
@@ -137,8 +148,9 @@ public:
 
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->update();
-            if (fireballs->at(i)->finished == true) {
+            if (fireballs->at(i)->finished == true || fireballs->at(i)->finishedWithoutCasting == true) {
                 fireballs->erase(fireballs->begin() + i);
+                fireballIndicatorActive = false;
             }
         }
 
@@ -185,6 +197,15 @@ public:
                 abilityRectHeight = 100 * cdPercent;
             }
             Renderer::drawRect(960, col, 100, abilityRectHeight, sf::Color(0, 0, 255, 100), true);
+
+            std::string abilityLetter;
+            if (i == 0) {
+                abilityLetter = std::string("Q");
+            }
+            if (i == 1) {
+                abilityLetter = std::string("W");
+            }
+            Renderer::drawText(abilityLetter, 910, col - 45, 200, 200, sf::Color(0, 0, 0, 255));
         }
     }
 
@@ -261,4 +282,5 @@ private:
 
     int abilityCount;
     bool transfusionIndicatorActive = false;
+    bool fireballIndicatorActive = false;
 };

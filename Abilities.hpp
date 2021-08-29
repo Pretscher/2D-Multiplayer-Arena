@@ -57,16 +57,18 @@ public:
 
     void update() {
         if (castingInitialized == false) {
-            indicator->update();
             if (indicator->endWithoutAction() == true) {
                 delete indicator;
                 finishedWithoutCasting = true;
             }
-            if (indicator->destinationSelected() == true) {
+            else if (indicator->destinationSelected() == true) {
                 goalRow = indicator->getDestinationRow();
                 goalCol = indicator->getDestinationCol();
                 delete indicator;
                 initCast();
+            }
+            else {
+                indicator->update();
             }
         }
         else if (this->exploding == false) {
@@ -112,15 +114,17 @@ public:
     }
 
     void draw() {
-        if (castingInitialized == false) {
-            indicator->draw();
-        }
-        else if (this->exploding == false) {
-            this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
-        }
-        else {
-            Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange,
-                sf::Color(255, 120, 0, 255), true, 0, false);
+        if (finishedWithoutCasting == false) {//if the object is not waiting to be deleted
+            if (castingInitialized == false) {
+                indicator->draw();
+            }
+            else if (this->exploding == false) {
+                this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
+            }
+            else {
+                Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange,
+                    sf::Color(255, 120, 0, 255), true, 0, false);
+            }
         }
     }
 
@@ -165,6 +169,8 @@ public:
     int myPlayerI;
 
     bool finishedWithoutCasting = false;
+    bool castingInitialized = false;
+    bool addedToNetwork = false;
 private:
     bool dealtDamage = false;
     bool exploding = false;
@@ -184,7 +190,7 @@ private:
     Projectile* helpProjectile;
 
     ProjectileIndicator* indicator;
-    bool castingInitialized = false;
+
 
 };
 
