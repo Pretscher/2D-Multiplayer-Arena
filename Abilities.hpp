@@ -131,13 +131,15 @@ public:
 
 
     //create from network input(row is just current row so even with lag the start is always synced)
-    Fireball(int i_startRow, int i_startCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex, bool i_exploding, int i_timeSinceExplosionStart) {
-        this->startRow = i_startRow;
-        this->startCol = i_startCol;
+    Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex, bool i_exploding, int i_timeSinceExplosionStart) {
+        this->startRow = i_currentRow;
+        this->startCol = i_currentCol;
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
         this->myPlayerI = i_myPlayerIndex;
         
+        this->explosionRow = i_currentRow + this->radius - this->explosionRange;
+        this->explosionCol = i_currentCol + this->radius - this->explosionRange;
         //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
         //after exploding or you connect after explosion
         exploding = i_exploding;
@@ -148,6 +150,7 @@ public:
         }
         //start cast
         else {
+
             limitGoalPosToRange();
             initCast();
         }
