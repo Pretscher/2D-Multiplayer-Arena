@@ -125,11 +125,3 @@ std::vector<int>* NetworkCommunication::extractInts(std::string* str) {
 	}
 	return out;
 }
-
-void  NetworkCommunication::setConnectionSetup(bool setup) {
-	connectionSetup = setup;
-}
-
-bool NetworkCommunication::isConnectionSetup() {
-	return connectionSetup;
-}
