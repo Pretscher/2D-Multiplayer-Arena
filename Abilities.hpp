@@ -33,6 +33,7 @@ public:
         indicator = new ProjectileIndicator(myPlayerI, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
     }
 
+
     void initCast() {
         castingInitialized = true;
 
@@ -136,9 +137,9 @@ public:
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
         this-> myPlayerI = i_myPlayerIndex;
-
+        
         limitGoalPosToRange();
-        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, abilityRecources::players [myPlayerI]);
+        initCast();
     }
 
     void limitGoalPosToRange() {
