@@ -312,7 +312,10 @@ public:
 
 
             checkBloodballCollision();
-            followPlayer();
+            findNewPathToPlayerTimer ++;
+            if (findNewPathToPlayerTimer % 10 == true) {
+                followPlayer();
+            }
 
             bloodBall->move(abilityRecources::worldRows, abilityRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
         }
@@ -491,4 +494,6 @@ private:
     int targetPlayerIndex;
     bool casting = false;
     bool addedToNetwork = false;
+
+    int findNewPathToPlayerTimer = 0;
 };
