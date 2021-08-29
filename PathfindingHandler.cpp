@@ -69,7 +69,7 @@ void Pathfinding::pathFindingOnClick() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && findingPath == false) {
 		sameClick = true;
 		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
 			findPath(mouseX, mouseY, myPlayerIndex);
 		}

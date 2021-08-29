@@ -119,17 +119,22 @@ void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, 
     delete circle;
 }
 
-void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c) {
+void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int thickness) {
     fromRowCol(&row1, &col1);
     fromRowCol(&row2, &col2);
-    sf::Vertex line[] =
-    {
-        sf::Vertex(sf::Vector2f(col1 - viewSpace[1], row1 - viewSpace[0])),
-        sf::Vertex(sf::Vector2f(col2 - viewSpace[1], row2 - viewSpace[0]))
-    };
 
-    line->color = c;
-    Renderer::currentWindow->draw(line, 2, sf::Lines);
+    float dx = col2 - col1;
+    float dy = row2 - row1;
+    int ht = thickness / 2;
+    float rot = atan2(dy, dx) * 57.2958f;
+    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dx) * std::abs(dx) + std::abs(dy) * std::abs(dy)), ht * 2));
+
+    line.setOrigin(0, ht);
+    line.setPosition(col1 - viewSpace [1], row1 - viewSpace [0]);
+    line.setRotation(rot);
+    line.setFillColor(c);
+
+    Renderer::currentWindow->draw(line);
 }
 
 int mouseLimitRow, mouseLimitCol;
@@ -138,7 +143,7 @@ void Renderer::limitMouse(int row, int col) {
     mouseLimitCol = col;
 }
 
-void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace) {
+void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders) {
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
     auto offset = currentWindow->getPosition();
@@ -146,16 +151,28 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace) {
     int y = pos.y - offset.y - 60;
     toRowCol(&x, &y);
 
-    int limitRow = maxRows;
-    int limitCol = maxCols;
-    if (factorInViewspace == true) {
-        limitRow = mouseLimitRow;
-        limitCol = mouseLimitCol;
-    }
-    if (x < limitCol && y < limitRow) {
+    if (factorInBorders == true) {
+        int limitRow = maxRows;
+        int limitCol = maxCols;
         if (factorInViewspace == true) {
-            *o_x = x + viewSpace[1];
-            *o_y = y + viewSpace[0];
+            limitRow = mouseLimitRow;
+            limitCol = mouseLimitCol;
+        }
+        if (x < limitCol && y < limitRow) {
+            if (factorInViewspace == true) {
+                *o_x = x + viewSpace [1];
+                *o_y = y + viewSpace [0];
+            }
+            else {
+                *o_x = x;
+                *o_y = y;
+            }
+        }
+    }
+    else {
+        if (factorInViewspace == true) {
+            *o_x = x + viewSpace [1];
+            *o_y = y + viewSpace [0];
         }
         else {
             *o_x = x;
@@ -169,7 +186,7 @@ void Renderer::updateViewSpace() {
     
     int mouseX = -1;
     int mouseY = -1;
-    getMousePos(&mouseX, &mouseY, false);
+    getMousePos(&mouseX, &mouseY, false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];

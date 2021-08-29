@@ -14,7 +14,7 @@ namespace abilityRecources {
     Terrain* terrain;
     Player** players;
     int playerCount;
-    Pathfinding* pFinding; 
+    Pathfinding* pFinding;
     void init(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, Pathfinding* i_pathfinding) {
         players = i_players;
         playerCount = i_playerCount;
@@ -24,18 +24,20 @@ namespace abilityRecources {
         pFinding = i_pathfinding;
     }
 }
-using namespace abilityRecources;
+
 
 class Fireball {
 public:
     Fireball(int i_myPlayerIndex) {
         this->myPlayerI = i_myPlayerIndex;
+        indicator = new ProjectileIndicator(myPlayerI, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
+    }
 
+    void initCast() {
+        castingInitialized = true;
+
+        Player* myPlayer = abilityRecources::players[myPlayerI];
         //Turn player to mouse coords and set mouse coords as goal coords
-        this->goalRow = 0;
-        this->goalCol = 0;
-        Renderer::getMousePos(&goalCol, &goalRow, true);
-        Player* myPlayer = players [myPlayerI];
         //if projectile destination is above player
         if (this->goalRow < myPlayer->getRow()) {
             this->startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
@@ -54,9 +56,22 @@ public:
     }
 
     void update() {
-        if (this->exploding == false) {
-            auto collidables = terrain->getCollidables();
-            this->helpProjectile->move(worldRows, worldCols, collidables->data(), collidables->size());
+        if (castingInitialized == false) {
+            indicator->update();
+            if (indicator->endWithoutAction() == true) {
+                delete indicator;
+                finishedWithoutCasting = true;
+            }
+            if (indicator->destinationSelected() == true) {
+                goalRow = indicator->getDestinationRow();
+                goalCol = indicator->getDestinationCol();
+                delete indicator;
+                initCast();
+            }
+        }
+        else if (this->exploding == false) {
+            auto collidables = abilityRecources::terrain->getCollidables();
+            this->helpProjectile->move(abilityRecources::worldRows, abilityRecources::worldCols, collidables->data(), collidables->size());
             //if the projectile reaches its max range or collides with anything, it should explode
             if ((abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
                 + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
@@ -74,8 +89,8 @@ public:
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
             this->timeDiff = cTime - this->fireStartTime.count();
             if (this->timeDiff < 2000) {
-                for (int i = 0; i < playerCount; i++) {
-                        Player* c = players [i];
+                for (int i = 0; i < abilityRecources::playerCount; i++) {
+                        Player* c = abilityRecources::players [i];
                         bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
                             this->explosionCol, this->explosionRow, this->explosionRange, 10);
                         if (collision == true) {
@@ -97,7 +112,10 @@ public:
     }
 
     void draw() {
-        if (this->exploding == false) {
+        if (castingInitialized == false) {
+            indicator->draw();
+        }
+        else if (this->exploding == false) {
             this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
         }
         else {
@@ -116,7 +134,7 @@ public:
         this-> myPlayerI = i_myPlayerIndex;
 
         limitGoalPosToRange();
-        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, players [myPlayerI]);
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, abilityRecources::players [myPlayerI]);
     }
 
     void limitGoalPosToRange() {
@@ -145,6 +163,8 @@ public:
     int goalCol;
     bool finished = false;
     int myPlayerI;
+
+    bool finishedWithoutCasting = false;
 private:
     bool dealtDamage = false;
     bool exploding = false;
@@ -163,6 +183,9 @@ private:
 
     Projectile* helpProjectile;
 
+    ProjectileIndicator* indicator;
+    bool castingInitialized = false;
+
 };
 
 
@@ -172,7 +195,8 @@ class Transfusion {
 public:
     Transfusion(int i_myPlayerIndex) {
         this->myPlayerIndex = i_myPlayerIndex;
-        this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range, playerCount, players, i_myPlayerIndex);
+        this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range, 
+                abilityRecources::playerCount, abilityRecources::players);
 
         lastRows = new int [positionsSavedCount];
         lastCols = new int [positionsSavedCount];
@@ -186,8 +210,8 @@ public:
         this->myPlayerIndex = i_myPlayerIndex;
         this->targetPlayerIndex = i_targetPlayerIndex;
 
-        me = players[myPlayerIndex];
-        target = players[targetPlayerIndex];
+        me = abilityRecources::players[myPlayerIndex];
+        target = abilityRecources::players[targetPlayerIndex];
         casting = true;
 
         lastRows = new int [positionsSavedCount];
@@ -204,6 +228,7 @@ public:
                 indicator->update();
                 if(indicator->endWithoutAction() == true) {
                     finishedWithoutCasting = true;
+                    delete indicator;// we dont need this anymore
                 }
             } 
             else {
@@ -216,8 +241,8 @@ public:
                     if(tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
                         tempGoalRow = target->getRow() + halfW;
                         tempGoalCol = target->getCol() + halfW;
-                        pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
-                        abilityPathIndex = players[myPlayerIndex]->pathsFound;
+                        abilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
+                        abilityPathIndex = abilityRecources::players[myPlayerIndex]->pathsFound;
                     }
                     bool stop = false;
                     //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
@@ -226,7 +251,7 @@ public:
                     //player obj and if the index is equal to abiltyPathIndex its still finding the path (same index
                     //as when it was saved) and if its one higher the path was found. if its 2 higher a new path
                     //was found and we interrupt.
-                    if(players[myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
+                    if(abilityRecources::players[myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
                         stop = true;
                     }
                     if(stop == false) {
@@ -235,13 +260,14 @@ public:
                         if(Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
                                     me->getRow() + halfH, target->getRow() + halfH) < range) {
                             //got into range, stop going on path an cast ability
-                            players[myPlayerIndex]->deletePath();
+                            abilityRecources::players[myPlayerIndex]->deletePath();
                             casting = true;
                         }
                     } 
                     else {
                         //clicked somewhere else while finding path to target player to get in range => abort cast
                         finishedWithoutCasting = true;
+                        delete indicator;// we dont need this anymore
                     }
                 }
             }
@@ -259,7 +285,7 @@ public:
             checkBloodballCollision();
             followPlayer();
 
-            bloodBall->move(worldRows, worldCols, nullptr, 0);//should go through walls so we just dont pass them
+            bloodBall->move(abilityRecources::worldRows, abilityRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
         }
     }
 
@@ -330,8 +356,8 @@ public:
     void initCastAndRunInRange() {
         //save target player and unbind indicator from ability entirely
         targetPlayerIndex = indicator->getTargetIndex();
-        me = players[myPlayerIndex];
-        target = players[targetPlayerIndex];
+        me = abilityRecources::players[myPlayerIndex];
+        target = abilityRecources::players[targetPlayerIndex];
         delete indicator;// we dont need this anymore
         indicator = nullptr;//we check this in drawing caus bools are for noobs
         finishedSelectingTarget = true;
@@ -344,16 +370,11 @@ public:
         if(dist > range) {//if player is too far away
             tempGoalRow = target->getRow() + halfW;//find a path to his center because thats better than left top coords
             tempGoalCol = target->getCol() + halfH;
-            pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
-            abilityPathIndex = players[myPlayerIndex]->pathsFound;
+            abilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
+            abilityPathIndex = abilityRecources::players[myPlayerIndex]->pathsFound;
         } 
         else {
             casting = true;//if already in range, just start casting without moving
-        }
-        //change back cursor from point-and-click cross
-        sf::Cursor cursor;
-        if (cursor.loadFromSystem(sf::Cursor::Arrow)) {
-            Renderer::currentWindow->setMouseCursor(cursor);
         }
     }
 

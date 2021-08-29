@@ -26,7 +26,7 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 
 
 		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY, true);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
 		Player* myPlayer = players[myPlayerI];
