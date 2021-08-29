@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 #include "Player.hpp"
 #include "Utils.hpp"
-
+#include <math.h>
 //Point and click indicator class-------------------------------------------------------------------
 
 class PointAndClickIndicator {

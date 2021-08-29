@@ -1,5 +1,6 @@
 #include "Renderer.hpp"
 #include <iostream>
+#include <math.h>
 
 //Call this-----------------------------------------------------------------------------------------------------------
 static int* viewSpace;
