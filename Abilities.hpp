@@ -138,10 +138,16 @@ public:
         this->goalCol = i_goalCol;
         this->myPlayerI = i_myPlayerIndex;
         
+        //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
+        //after exploding or you connect after explosion
         exploding = i_exploding;
-        long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-        fireStartTime = cTime - i_timeSinceExplosionStart;
-        if (exploding == false) {
+        if (exploding == true) {
+            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            fireStartTime = cTime - i_timeSinceExplosionStart;
+            castingInitialized = true;
+        }
+        //start cast
+        else {
             limitGoalPosToRange();
             initCast();
         }
