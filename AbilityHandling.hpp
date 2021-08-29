@@ -214,8 +214,8 @@ public:
         if (hasNewFireball == true) {
             hasNewFireball = false;
             NetworkCommunication::addToken(1);//check if new fireball is to be added
-            NetworkCommunication::addToken(newFireball->startRow);
-            NetworkCommunication::addToken(newFireball->startCol);
+            NetworkCommunication::addToken(newFireball->getProjectileRow());
+            NetworkCommunication::addToken(newFireball->getProjectileCol());
             NetworkCommunication::addToken(newFireball->goalRow);
             NetworkCommunication::addToken(newFireball->goalCol);
             NetworkCommunication::addToken(newFireball->myPlayerI);

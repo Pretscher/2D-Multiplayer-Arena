@@ -188,6 +188,14 @@ public:
     bool addedToNetwork = false;
     bool exploding = false;
     long fireStartTime;
+
+    int getProjectileRow() {
+        return helpProjectile->getRow();
+    }
+
+    int getProjectileCol() {
+        return helpProjectile->getCol();
+    }
 private:
     bool dealtDamage = false;
     int explosionRange = 80;
