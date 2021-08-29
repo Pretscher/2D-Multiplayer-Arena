@@ -203,7 +203,7 @@ private:
 
     long timeDiff;
     int explosionRow, explosionCol;
-    int explosionTime = 5000;
+    int explosionTime = 2000;
 
     int explosionDmg = 30;
     float burnDmg = 0.25f;
@@ -472,8 +472,8 @@ private:
     Player* me;
     Player* target;
     //hardcoded stuff
-    int dmg = 30;
-    int heal = 15;
+    int dmg = 25;
+    int heal = 25;
     int radius = 10;
     int velocity = 5.0f;
     int range = 300;
