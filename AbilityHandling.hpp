@@ -143,8 +143,11 @@ public:
             if (fireballs->at(i)->finished == true || fireballs->at(i)->finishedWithoutCasting == true) {
                 fireballs->erase(fireballs->begin() + i);
                 
-                delete newFireball;
-                hasNewFireball = false;
+                if (newFireball != nullptr) {
+                    delete newFireball;
+                    newFireball = nullptr;
+                    hasNewFireball = false;
+                }
 
                 fireballIndicatorActive = false;
             }
@@ -156,8 +159,11 @@ public:
             if (c->hasEndedNoCast() == true || c->hasFinishedCast() == true) {
                 transfusions->erase(transfusions->begin() + i);
                 //dont pass through network anymore
-                delete newTransfusion;
-                hasNewTransfusion = false;
+                if (newFireball != nullptr) {
+                    delete newTransfusion;
+                    newTransfusion = nullptr;
+                    hasNewTransfusion = false;
+                }
 
                 transfusionIndicatorActive = false;
             }
