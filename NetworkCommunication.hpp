@@ -20,7 +20,9 @@ public:
 	static void receiveTonkensFromClient(PortableClient* client);
 
 	static int getTokenCount();
+
 private:
+	static bool connectionSetup;
 	static int tokenCount;
 	static std::string* rawData;
 	static std::vector<int>* parseToIntsData;
