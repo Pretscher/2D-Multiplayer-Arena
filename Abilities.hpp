@@ -176,26 +176,51 @@ public:
     }
 
 public:
-    int startRow;
-    int startCol;
-    int goalRow;
-    int goalCol;
-    bool finished = false;
-    int myPlayerI;
 
-    bool finishedWithoutCasting = false;
-    bool castingInitialized = false;
-    bool addedToNetwork = false;
-    bool exploding = false;
-    long fireStartTime;
+    inline int getStartRow() {
+        return startRow;
+    }
+    inline int getStartCol() {
+        return startCol;
+    }
+    inline int getGoalRow() {
+        return goalRow;
+    }
+    inline int getGoalCol() {
+        return goalCol;
+    }
+    inline bool finishedEverything() {
+        return finished;
+    }
+    inline int getCastingPlayer() {
+        return myPlayerI;
+    }
 
-    int getProjectileRow() {
+    inline bool finishedNoCast() {
+        return finishedWithoutCasting;
+    }
+    inline bool castingStarted() {
+        return castingInitialized;
+    }
+    inline bool isExploding() {
+        return exploding;
+    }
+    inline bool wasAddedToNetwork() {
+        return addedToNetwork;
+    }
+    inline void addToNetwork() {
+        addedToNetwork = true;
+    }
+    inline long getFireStartTime() {
+        return fireStartTime;
+    }
+    inline int getProjectileRow() {
         return helpProjectile->getRow();
     }
-
-    int getProjectileCol() {
+    inline int getProjectileCol() {
         return helpProjectile->getCol();
     }
+
 private:
     bool dealtDamage = false;
     int explosionRange = 80;
@@ -215,6 +240,21 @@ private:
     Projectile* helpProjectile;
 
     ProjectileIndicator* indicator;
+
+    //they have getters
+    int startRow;
+    int startCol;
+    int goalRow;
+    int goalCol;
+    int myPlayerI;
+
+    bool finished = false;
+    bool finishedWithoutCasting = false;
+    bool castingInitialized = false;
+    bool addedToNetwork = false;
+    bool exploding = false;
+    long fireStartTime;
+
 };
 
 

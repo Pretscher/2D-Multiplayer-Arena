@@ -121,8 +121,8 @@ public:
             }
         }
         else {
-            if (newFireball->castingInitialized == true && newFireball->addedToNetwork == false) {
-                newFireball->addedToNetwork = true;
+            if (newFireball->castingStarted() == true && newFireball->wasAddedToNetwork() == false) {
+                newFireball->addToNetwork();
                 hasNewFireball = true;
                 abilityTriggering->manuallyStartCooldown(fireballIndex);
             }
@@ -140,7 +140,7 @@ public:
 
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->update();
-            if (fireballs->at(i)->finished == true || fireballs->at(i)->finishedWithoutCasting == true) {
+            if (fireballs->at(i)->finishedEverything() == true || fireballs->at(i)->finishedNoCast() == true) {
                 fireballs->erase(fireballs->begin() + i);
                 
                 if (newFireball != nullptr) {
@@ -223,13 +223,13 @@ public:
             NetworkCommunication::addToken(1);//check if new fireball is to be added
             NetworkCommunication::addToken(newFireball->getProjectileRow());
             NetworkCommunication::addToken(newFireball->getProjectileCol());
-            NetworkCommunication::addToken(newFireball->goalRow);
-            NetworkCommunication::addToken(newFireball->goalCol);
-            NetworkCommunication::addToken(newFireball->myPlayerI);
-            NetworkCommunication::addToken(newFireball->exploding);
+            NetworkCommunication::addToken(newFireball->getGoalRow());
+            NetworkCommunication::addToken(newFireball->getGoalCol());
+            NetworkCommunication::addToken(newFireball->getCastingPlayer());
+            NetworkCommunication::addToken(newFireball->isExploding());
 
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            int timeSinceExplosionStart = cTime - newFireball->fireStartTime;
+            int timeSinceExplosionStart = cTime - newFireball->getFireStartTime();
             NetworkCommunication::addToken(timeSinceExplosionStart);
         }
         else {
