@@ -8,6 +8,120 @@
 #include <math.h>
 using namespace std::chrono;
 
+
+class Ability {
+public:
+    Ability(int i_myPlayerIndex) {
+        myPlayerIndex = i_myPlayerIndex;
+
+        phaseCount = 5;
+        currentPhase = 0;
+
+        phaseInitialized = new bool[phaseCount];
+        phaseStart = new long[phaseCount];
+        phaseDuration = new int[phaseCount];
+        for (int i = 0; i < phaseCount; i++) {
+            phaseInitialized [i] = false;
+        }
+    }
+
+    void update() {
+        if (finished == false) {
+            if (currentPhase == 0) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init0();
+                    phaseInitialized [currentPhase] = true;
+                }
+                execute0();
+            }
+            if (currentPhase == 1) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init1();
+                    phaseInitialized [currentPhase] = true;
+                }
+                execute1();
+            }
+            if (currentPhase == 2) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init2();
+                    phaseInitialized [currentPhase] = true;
+                }
+                execute2();
+            }
+            if (currentPhase == 3) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init3();
+                    phaseInitialized [currentPhase] = true;
+                }
+                execute3();
+            }
+            if (currentPhase == 4) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init4();
+                    phaseInitialized [currentPhase] = true;
+                }
+                execute4();
+            }
+        }
+    }
+
+    void nextPhase() {
+        currentPhase ++;
+    }
+
+    bool finishedPhase(int index) {
+        return index < currentPhase;//if current Phase is higher than index, phase with index was finished
+    }
+
+    inline bool wasAddedToNetwork() {
+        return addedToNetwork;
+    }
+    inline void addToNetwork() {
+        addedToNetwork = true;
+    }
+
+public:
+    bool finished;
+protected:
+    int myPlayerIndex;
+
+    bool* phaseInitialized;
+    long* phaseStart;
+    int* phaseDuration;
+
+
+    virtual void init0() {}
+    virtual void init1() {}
+    virtual void init2() {}
+    virtual void init3() {}
+    virtual void init4() {}
+    virtual void execute0() {}
+    virtual void execute1() {}
+    virtual void execute2() {}
+    virtual void execute3() {}
+    virtual void execute4() {}
+private:
+    int currentPhase;
+    int phaseCount;
+    bool addedToNetwork;
+};
+
+class AbilityImp : public Ability {
+public:
+    AbilityImp(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {//both constructors are used
+        std::cout << "constructor complete";
+    }
+
+    void init0() {
+        std::cout << "init complete";
+    }
+    void execute0() {
+        std::cout << "execution complete";
+        finished = true;
+    }
+
+};
+
 namespace abilityRecources {
 
     int worldRows, worldCols;
@@ -22,8 +136,11 @@ namespace abilityRecources {
         worldRows = i_worldRows;
         worldCols = i_worldCols;
         pFinding = i_pathfinding;
+        AbilityImp* a = new AbilityImp(0);
+        a->update();
     }
 }
+
 
 
 class Fireball {
