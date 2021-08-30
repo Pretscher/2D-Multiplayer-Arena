@@ -20,8 +20,10 @@ public:
         phaseInitialized = new bool[phaseCount];
         phaseStart = new long[phaseCount];
         phaseDuration = new int[phaseCount];
+        timeBoundPhase = new bool [phaseCount];
         for (int i = 0; i < phaseCount; i++) {
             phaseInitialized [i] = false;
+            timeBoundPhase [i] = false;
         }
     }
 
@@ -33,6 +35,14 @@ public:
                     phaseInitialized [currentPhase] = true;
                 }
                 execute0();
+                if (timeBoundPhase [currentPhase] == true) {
+                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                    int diff = cTime - phaseStart [currentPhase];
+                    if (diff > phaseDuration [currentPhase]) {
+                        nextPhase();
+                    }
+                }
+                return;
             }
             if (currentPhase == 1) {
                 if (phaseInitialized [currentPhase] == false) {
@@ -40,6 +50,14 @@ public:
                     phaseInitialized [currentPhase] = true;
                 }
                 execute1();
+                if (timeBoundPhase [currentPhase] == true) {
+                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                    int diff = cTime - phaseStart [currentPhase];
+                    if (diff > phaseDuration [currentPhase]) {
+                        nextPhase();
+                    }
+                }
+                return;
             }
             if (currentPhase == 2) {
                 if (phaseInitialized [currentPhase] == false) {
@@ -47,6 +65,14 @@ public:
                     phaseInitialized [currentPhase] = true;
                 }
                 execute2();
+                if (timeBoundPhase [currentPhase] == true) {
+                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                    int diff = cTime - phaseStart [currentPhase];
+                    if (diff > phaseDuration [currentPhase]) {
+                        nextPhase();
+                    }
+                }
+                return;
             }
             if (currentPhase == 3) {
                 if (phaseInitialized [currentPhase] == false) {
@@ -54,6 +80,14 @@ public:
                     phaseInitialized [currentPhase] = true;
                 }
                 execute3();
+                if (timeBoundPhase [currentPhase] == true) {
+                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                    int diff = cTime - phaseStart [currentPhase];
+                    if (diff > phaseDuration [currentPhase]) {
+                        nextPhase();
+                    }
+                }
+                return;
             }
             if (currentPhase == 4) {
                 if (phaseInitialized [currentPhase] == false) {
@@ -61,65 +95,121 @@ public:
                     phaseInitialized [currentPhase] = true;
                 }
                 execute4();
+                if (timeBoundPhase [currentPhase] == true) {
+                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                    int diff = cTime - phaseStart [currentPhase];
+                    if (diff > phaseDuration [currentPhase]) {
+                        nextPhase();
+                    }
+                }
+                return;
+            }
+            if (currentPhase == 5) {
+                finished = true;
             }
         }
     }
 
-    void nextPhase() {
+    void draw() {
+        if (currentPhase == 0) {
+            if (phaseInitialized [currentPhase] == true) {
+                draw0();
+            }
+        }
+        if (currentPhase == 1) {
+            if (phaseInitialized [currentPhase] == true) {
+                draw1();
+            }
+        }
+        if (currentPhase == 2) {
+            if (phaseInitialized [currentPhase] == true) {
+                draw2();
+            }
+        }
+        if (currentPhase == 3) {
+            if (phaseInitialized [currentPhase] == true) {
+                draw3();
+            }
+        }
+        if (currentPhase == 4) {
+            if (phaseInitialized [currentPhase] == true) {
+                draw4();
+            }
+        }
+    }
+
+    inline int getPhase() {
+        return currentPhase;
+    }
+
+    inline void nextPhase() {
         currentPhase ++;
     }
 
-    bool finishedPhase(int index) {
+    inline bool finishedPhase(int index) {
         return index < currentPhase;//if current Phase is higher than index, phase with index was finished
+    }
+    
+    inline bool finishedCompletely() {
+        return finished;
     }
 
     inline bool wasAddedToNetwork() {
         return addedToNetwork;
     }
+
     inline void addToNetwork() {
         addedToNetwork = true;
     }
 
+    inline long getStartTime(int index) {
+        return phaseStart [index];
+    }
+
+    //call this from the init-function of the to-be-time-limited phase
+    inline void endPhaseAfterMS(int ms) {
+        timeBoundPhase [currentPhase] = true;
+        phaseDuration [currentPhase] = ms;
+        phaseStart [currentPhase] = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    }
+
+    inline int getCastingPlayer() {
+        return myPlayerIndex;
+    }
 public:
     bool finished;
 protected:
     int myPlayerIndex;
 
     bool* phaseInitialized;
+
+    bool* timeBoundPhase;
     long* phaseStart;
     int* phaseDuration;
 
 
-    virtual void init0() {}
-    virtual void init1() {}
-    virtual void init2() {}
-    virtual void init3() {}
-    virtual void init4() {}
-    virtual void execute0() {}
-    virtual void execute1() {}
-    virtual void execute2() {}
-    virtual void execute3() {}
-    virtual void execute4() {}
+    virtual void init0() { finished = true; }//if any of this is reached, finish. 
+    virtual void init1() { finished = true; }
+    virtual void init2() { finished = true; }
+    virtual void init3() { finished = true; }
+    virtual void init4() { finished = true; }
+
+    virtual void execute0() { finished = true; }
+    virtual void execute1() { finished = true; }
+    virtual void execute2() { finished = true; }
+    virtual void execute3() { finished = true; }
+    virtual void execute4() { finished = true; }
+
+    virtual void draw0() { finished = true; }
+    virtual void draw1() { finished = true; }
+    virtual void draw2() { finished = true; }
+    virtual void draw3() { finished = true; }
+    virtual void draw4() { finished = true; }
+
 private:
     int currentPhase;
     int phaseCount;
     bool addedToNetwork;
-};
-
-class AbilityImp : public Ability {
-public:
-    AbilityImp(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {//both constructors are used
-        std::cout << "constructor complete";
-    }
-
-    void init0() {
-        std::cout << "init complete";
-    }
-    void execute0() {
-        std::cout << "execution complete";
-        finished = true;
-    }
-
 };
 
 namespace abilityRecources {
@@ -136,25 +226,41 @@ namespace abilityRecources {
         worldRows = i_worldRows;
         worldCols = i_worldCols;
         pFinding = i_pathfinding;
-        AbilityImp* a = new AbilityImp(0);
-        a->update();
     }
 }
 
 
 
-class Fireball {
+class Fireball : public Ability {
 public:
-    Fireball(int i_myPlayerIndex) {
-        this->myPlayerI = i_myPlayerIndex;
+    Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {//both constructors are used
         indicator = new ProjectileIndicator(myPlayerI, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
     }
 
+    void init0() {
 
-    void initCast() {
-        castingInitialized = true;
+    }
 
-        Player* myPlayer = abilityRecources::players[myPlayerI];
+    void execute0() {
+        if (finishedNoCast == false) {
+            if (indicator->endWithoutAction() == true) {
+                delete indicator;
+                finishedNoCast = true;
+            }
+            else if (indicator->destinationSelected() == true) {
+                goalRow = indicator->getDestinationRow();
+                goalCol = indicator->getDestinationCol();
+                delete indicator;
+                this->nextPhase();//init casting
+            }
+            else {
+                indicator->update();
+            }
+        }
+    }
+
+    void init1() {
+        Player* myPlayer = abilityRecources::players [myPlayerI];
         //Turn player to mouse coords and set mouse coords as goal coords
         //if projectile destination is above player
         if (this->goalRow < myPlayer->getRow()) {
@@ -173,104 +279,84 @@ public:
         this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
     }
 
-    void update() {
-        if (castingInitialized == false) {
-            if (indicator->endWithoutAction() == true) {
-                delete indicator;
-                finishedWithoutCasting = true;
-            }
-            else if (indicator->destinationSelected() == true) {
-                goalRow = indicator->getDestinationRow();
-                goalCol = indicator->getDestinationCol();
-                delete indicator;
-                initCast();
-            }
-            else {
-                indicator->update();
-            }
-        }
-        else if (this->exploding == false) {
-            auto collidables = abilityRecources::terrain->getCollidables();
-            this->helpProjectile->move(abilityRecources::worldRows, abilityRecources::worldCols, collidables->data(), collidables->size());
-            //if the projectile reaches its max range or collides with anything, it should explode
-            if ((abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
-                + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
+    void execute1() {
+        auto collidables = abilityRecources::terrain->getCollidables();
+        this->helpProjectile->move(abilityRecources::worldRows, abilityRecources::worldCols, collidables->data(), collidables->size());
+        //if the projectile reaches its max range or collides with anything, it should explode
+        if ((abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
+            + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
                 > this->range * this->range) || this->helpProjectile->isDead() == true) {
-                this->exploding = true;
-                this->fireStartTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                
-                this->explosionRow = this->helpProjectile->getRow() 
-                + this->helpProjectile->getRadius() - this->explosionRange;
-                this->explosionCol = this->helpProjectile->getCol() 
-                + this->helpProjectile->getRadius() - this->explosionRange;
-            }
-        } 
-        else {
-            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            this->timeDiff = cTime - this->fireStartTime;
-            if (this->timeDiff < explosionTime) {
-                for (int i = 0; i < abilityRecources::playerCount; i++) {
-                        Player* c = abilityRecources::players [i];
-                        bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
-                            this->explosionCol, this->explosionRow, this->explosionRange, 10);
-                        if (collision == true) {
-                            if (this->dealtDamage == false) {
-                                c->setHp(c->getHp() - this->explosionDmg);
-                            }
-                            else {
-                                c->setHp(c->getHp() - this->burnDmg);
-                            }
-                        }
-                    
+
+            this->nextPhase(); //init explosion
+        }
+    }
+
+    void init2() {
+        explosionDmg = 30;
+        burnDmg = 0.25f;
+        explosionDuration = 2000;
+        dealtDamage = false;
+        explosionRange = 80;
+
+        if (connectedFireball == false) {//else time has to be synced with already ran out time
+            endPhaseAfterMS(explosionDuration);
+        }
+
+        this->explosionRow = this->helpProjectile->getRow() + this->helpProjectile->getRadius() - this->explosionRange;
+        this->explosionCol = this->helpProjectile->getCol() + this->helpProjectile->getRadius() - this->explosionRange;
+    }
+
+    void execute2() {
+        for (int i = 0; i < abilityRecources::playerCount; i++) {
+            Player* c = abilityRecources::players [i];
+            bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
+                                              this->explosionCol, this->explosionRow, this->explosionRange, 10);
+            if (collision == true) {
+                if (this->dealtDamage == false) {
+                    c->setHp(c->getHp() - this->explosionDmg);
                 }
-                this->dealtDamage = true;
+                else {
+                    c->setHp(c->getHp() - this->burnDmg);
+                }
             }
-            else {
-                this->finished = true;
-            }
+
         }
+        this->dealtDamage = true;
     }
 
-    void draw() {
-        if (finishedWithoutCasting == false) {//if the object is not waiting to be deleted
-            if (castingInitialized == false) {
-                indicator->draw();
-            }
-            else if (this->exploding == false) {
-                this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
-            }
-            else {
-                Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange,
-                    sf::Color(255, 120, 0, 255), true, 0, false);
-            }
-        }
+    void draw0() {
+        indicator->draw();
     }
 
+    void draw1() {
+        this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
+    }
+
+    void draw2() {
+        Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
+    }
 
     //create from network input(row is just current row so even with lag the start is always synced)
-    Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex, bool i_exploding, int i_timeSinceExplosionStart) {
+    Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex, 
+                           int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex) {
+
         this->startRow = i_currentRow;
         this->startCol = i_currentCol;
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
         this->myPlayerI = i_myPlayerIndex;
-        
-        this->explosionRow = i_currentRow + this->radius - this->explosionRange;
-        this->explosionCol = i_currentCol + this->radius - this->explosionRange;
         //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
         //after exploding or you connect after explosion
-        exploding = i_exploding;
-        if (exploding == true) {
-            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            fireStartTime = cTime - i_timeSinceExplosionStart;
-            castingInitialized = true;
+        
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
+                                                                      abilityRecources::players[myPlayerI]);
+        for (int i = 0; i < i_phase; i++) {
+            nextPhase();
         }
-        //start cast
-        else {
 
-            limitGoalPosToRange();
-            initCast();
-        }
+        auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+        endPhaseAfterMS(cTime - i_timeSinceExplosionStart);
+        connectedFireball = true;
     }
 
     void limitGoalPosToRange() {
@@ -306,56 +392,29 @@ public:
     inline int getGoalCol() {
         return goalCol;
     }
-    inline bool finishedEverything() {
-        return finished;
-    }
-    inline int getCastingPlayer() {
-        return myPlayerI;
-    }
-
-    inline bool finishedNoCast() {
-        return finishedWithoutCasting;
-    }
-    inline bool castingStarted() {
-        return castingInitialized;
-    }
-    inline bool isExploding() {
-        return exploding;
-    }
-    inline bool wasAddedToNetwork() {
-        return addedToNetwork;
-    }
-    inline void addToNetwork() {
-        addedToNetwork = true;
-    }
-    inline long getFireStartTime() {
-        return fireStartTime;
-    }
     inline int getProjectileRow() {
         return helpProjectile->getRow();
     }
     inline int getProjectileCol() {
         return helpProjectile->getCol();
     }
+    inline bool hasFinishedNoCast() {
+        return finishedNoCast;
+    }
 
 private:
     bool dealtDamage = false;
     int explosionRange = 80;
-
-
-    long timeDiff;
     int explosionRow, explosionCol;
-    int explosionTime = 2000;
-
-    int explosionDmg = 30;
-    float burnDmg = 0.25f;
+    int explosionDuration;
+    int explosionDmg;
+    float burnDmg;
 
     int radius = 50;
     int range = 700;
     float velocity = 15.0f;
 
     Projectile* helpProjectile;
-
     ProjectileIndicator* indicator;
 
     //they have getters
@@ -365,13 +424,8 @@ private:
     int goalCol;
     int myPlayerI;
 
-    bool finished = false;
-    bool finishedWithoutCasting = false;
-    bool castingInitialized = false;
-    bool addedToNetwork = false;
-    bool exploding = false;
-    long fireStartTime;
-
+    bool connectedFireball = false;
+    bool finishedNoCast = false;
 };
 
 

@@ -121,7 +121,8 @@ public:
             }
         }
         else {
-            if (newFireball->castingStarted() == true && newFireball->wasAddedToNetwork() == false) {
+            //If fireball finished selecting destination, transmit through network asap
+            if (newFireball->finishedPhase(0) == true && newFireball->wasAddedToNetwork() == false) {
                 newFireball->addToNetwork();
                 hasNewFireball = true;
                 abilityTriggering->manuallyStartCooldown(fireballIndex);
@@ -140,7 +141,7 @@ public:
 
         for (int i = 0; i < fireballs->size(); i++) {
             fireballs->at(i)->update();
-            if (fireballs->at(i)->finishedEverything() == true || fireballs->at(i)->finishedNoCast() == true) {
+            if (fireballs->at(i)->finishedCompletely() == true || fireballs->at(i)->hasFinishedNoCast() == true) {
                 fireballs->erase(fireballs->begin() + i);
                 
                 if (newFireball != nullptr) {
@@ -226,10 +227,10 @@ public:
             NetworkCommunication::addToken(newFireball->getGoalRow());
             NetworkCommunication::addToken(newFireball->getGoalCol());
             NetworkCommunication::addToken(newFireball->getCastingPlayer());
-            NetworkCommunication::addToken(newFireball->isExploding());
+            NetworkCommunication::addToken(newFireball->getPhase());
 
             long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            int timeSinceExplosionStart = cTime - newFireball->getFireStartTime();
+            int timeSinceExplosionStart = cTime - newFireball->getStartTime(2);//2 is explosion phase index
             NetworkCommunication::addToken(timeSinceExplosionStart);
         }
         else {
@@ -262,7 +263,7 @@ public:
             int goalRow = NetworkCommunication::receiveNextToken();
             int goalCol = NetworkCommunication::receiveNextToken();
             int firingPlayerIndex = NetworkCommunication::receiveNextToken();
-            bool exploding = NetworkCommunication::receiveNextToken();
+            int exploding = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
             fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, exploding, timeSinceExplosionStart));
         }
