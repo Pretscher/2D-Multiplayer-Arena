@@ -126,7 +126,6 @@ public:
                 newFireball->addToNetwork();
                 hasNewFireball = true;
                 abilityTriggering->manuallyStartCooldown(fireballIndex);
-                newFireball->initCurrentPhase();
             }
         }
 

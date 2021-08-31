@@ -13,7 +13,7 @@ class Ability {
 public:
     Ability(int i_myPlayerIndex) {
         myPlayerIndex = i_myPlayerIndex;
-
+        addedToNetwork = false;
         phaseCount = 5;
         currentPhase = 0;
 
