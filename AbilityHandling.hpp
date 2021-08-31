@@ -140,13 +140,14 @@ public:
                     c->addToNetwork();
                     hasNewFireball = true;
                     abilityTriggering->manuallyStartCooldown(fireballIndex);
-                    fireballIndicatorActive = false;
+
                 }
             }
 
             if (c->finishedCompletely() == true || c->hasFinishedNoCast() == true) {
                 delete c;
                 fireballs->erase(fireballs->begin() + i);
+                fireballIndicatorActive = false;
             }
         }
 
