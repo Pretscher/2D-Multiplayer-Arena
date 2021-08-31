@@ -228,10 +228,7 @@ public:
             NetworkCommunication::addToken(newFireball->getGoalCol());
             NetworkCommunication::addToken(newFireball->getCastingPlayer());
             NetworkCommunication::addToken(newFireball->getPhase());
-
-            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            int timeSinceExplosionStart = cTime - newFireball->getStartTime(2);//2 is explosion phase index
-            NetworkCommunication::addToken(timeSinceExplosionStart);
+            NetworkCommunication::addToken(newFireball->getStartTime(2));
         }
         else {
             NetworkCommunication::addToken(0);

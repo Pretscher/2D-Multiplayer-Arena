@@ -30,82 +30,62 @@ public:
     void update() {
         if (finished == false) {
             if (currentPhase == 0) {
+                checkTime();
                 if (phaseInitialized [currentPhase] == false) {
                     init0();
                     phaseInitialized [currentPhase] = true;
                 }
                 execute0();
-                if (timeBoundPhase [currentPhase] == true) {
-                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                    int diff = cTime - phaseStart [currentPhase];
-                    if (diff > phaseDuration [currentPhase]) {
-                        nextPhase();
-                    }
-                }
                 return;
             }
             if (currentPhase == 1) {
+                checkTime();
                 if (phaseInitialized [currentPhase] == false) {
                     init1();
                     phaseInitialized [currentPhase] = true;
                 }
                 execute1();
-                if (timeBoundPhase [currentPhase] == true) {
-                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                    int diff = cTime - phaseStart [currentPhase];
-                    if (diff > phaseDuration [currentPhase]) {
-                        nextPhase();
-                    }
-                }
                 return;
             }
             if (currentPhase == 2) {
+                checkTime();
                 if (phaseInitialized [currentPhase] == false) {
                     init2();
                     phaseInitialized [currentPhase] = true;
                 }
                 execute2();
-                if (timeBoundPhase [currentPhase] == true) {
-                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                    int diff = cTime - phaseStart [currentPhase];
-                    if (diff > phaseDuration [currentPhase]) {
-                        nextPhase();
-                    }
-                }
                 return;
             }
             if (currentPhase == 3) {
+                
                 if (phaseInitialized [currentPhase] == false) {
                     init3();
                     phaseInitialized [currentPhase] = true;
                 }
                 execute3();
-                if (timeBoundPhase [currentPhase] == true) {
-                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                    int diff = cTime - phaseStart [currentPhase];
-                    if (diff > phaseDuration [currentPhase]) {
-                        nextPhase();
-                    }
-                }
                 return;
             }
             if (currentPhase == 4) {
+                checkTime();
                 if (phaseInitialized [currentPhase] == false) {
                     init4();
                     phaseInitialized [currentPhase] = true;
                 }
                 execute4();
-                if (timeBoundPhase [currentPhase] == true) {
-                    auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                    int diff = cTime - phaseStart [currentPhase];
-                    if (diff > phaseDuration [currentPhase]) {
-                        nextPhase();
-                    }
-                }
                 return;
             }
             if (currentPhase == 5) {
                 finished = true;
+            }
+        }
+    }
+
+    void checkTime() {
+        if (timeBoundPhase [currentPhase] == true) {
+            auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            int diff = cTime - phaseStart [currentPhase];
+            if (diff > phaseDuration [currentPhase]) {
+                nextPhase();
             }
         }
     }
@@ -301,6 +281,10 @@ public:
         if (connectedFireball == false) {//else time has to be synced with already ran out time
             endPhaseAfterMS(explosionDuration);
         }
+        else {
+            auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            endPhaseAfterMS(explosionDuration - (cTime - tempTimeSinceExplosionStart));
+        }
 
         this->explosionRow = this->helpProjectile->getRow() + this->helpProjectile->getRadius() - this->explosionRange;
         this->explosionCol = this->helpProjectile->getCol() + this->helpProjectile->getRadius() - this->explosionRange;
@@ -345,6 +329,7 @@ public:
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
         this->myPlayerI = i_myPlayerIndex;
+        this->tempTimeSinceExplosionStart = i_timeSinceExplosionStart;
         //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
         //after exploding or you connect after explosion
         
@@ -353,9 +338,6 @@ public:
         for (int i = 0; i < i_phase; i++) {
             nextPhase();
         }
-
-        auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-        endPhaseAfterMS(cTime - i_timeSinceExplosionStart);
         connectedFireball = true;
     }
 
@@ -426,6 +408,8 @@ private:
 
     bool connectedFireball = false;
     bool finishedNoCast = false;
+
+    int tempTimeSinceExplosionStart;
 };
 
 
