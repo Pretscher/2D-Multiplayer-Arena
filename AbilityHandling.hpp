@@ -116,7 +116,6 @@ public:
         if (fireballIndicatorActive == false) {
             if (abilityTriggering->startAbility(fireballIndex) == true) {
                 newFireball = new Fireball(myPlayerI);
-                hasNewFireball = true;
                 fireballs->push_back(newFireball);
                 fireballIndicatorActive = true;
             }
