@@ -121,6 +121,24 @@ public:
             }
         }
 
+        if (newFireball->finishedCompletely() == true || newFireball->hasFinishedNoCast() == true) {
+            for (int i = 0; i < fireballs->size(); i++) {
+                if (fireballs->at(i) == newFireball) {
+                    fireballs->erase(fireballs->begin() + i);
+                }
+            }
+            delete newFireball;
+            newFireball = nullptr;
+            fireballIndicatorActive = false;
+        }
+
+        if (fireballIndicatorActive == true) {
+            if (newFireball->finishedPhase(0) == true && newFireball->wasAddedToNetwork() == false) {
+                newFireball->addToNetwork();
+                hasNewFireball = true;
+                abilityTriggering->manuallyStartCooldown(fireballIndex);
+            }
+        }
         //transfusion cooldown handling
         if (transfusionIndicatorActive == false) {
             if (abilityTriggering->startAbility(transfusionIndex) == true) {
@@ -132,24 +150,7 @@ public:
         }
 
         for (int i = 0; i < fireballs->size(); i++) {
-            Fireball* c = fireballs->at(i);
-            if (fireballIndicatorActive == true) {
-                if (c->finishedPhase(0) == true && c->wasAddedToNetwork() == false) {
-                    newFireball = c;
-                    c->addToNetwork();
-                    hasNewFireball = true;
-                    abilityTriggering->manuallyStartCooldown(fireballIndex);
-                }
-            }
-
-            if (c->finishedCompletely() == true || c->hasFinishedNoCast() == true) {
-                delete c;
-                fireballs->erase(fireballs->begin() + i);
-                fireballIndicatorActive = false;
-            }
-            else {
-                c->update(); 
-            }
+            fireballs->at(i)->update();
         }
 
         for (int i = 0; i < transfusions->size(); i++) {
