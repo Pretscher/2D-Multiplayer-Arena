@@ -214,7 +214,7 @@ namespace abilityRecources {
 class Fireball : public Ability {
 public:
     Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {//both constructors are used
-        indicator = new ProjectileIndicator(myPlayerI, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
+        indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
     }
 
     void init0() {
@@ -240,7 +240,7 @@ public:
     }
 
     void init1() {
-        Player* myPlayer = abilityRecources::players [myPlayerI];
+        Player* myPlayer = abilityRecources::players [myPlayerIndex];
         //Turn player to mouse coords and set mouse coords as goal coords
         //if projectile destination is above player
         if (this->goalRow < myPlayer->getRow()) {
@@ -328,13 +328,12 @@ public:
         this->startCol = i_currentCol;
         this->goalRow = i_goalRow;
         this->goalCol = i_goalCol;
-        this->myPlayerI = i_myPlayerIndex;
         this->tempTimeSinceExplosionStart = i_timeSinceExplosionStart;
         //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
         //after exploding or you connect after explosion
         
         this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
-                                                                      abilityRecources::players[myPlayerI]);
+                                                                      abilityRecources::players[myPlayerIndex]);
         for (int i = 0; i < i_phase; i++) {
             nextPhase();
         }
@@ -404,7 +403,6 @@ private:
     int startCol;
     int goalRow;
     int goalCol;
-    int myPlayerI;
 
     bool connectedFireball = false;
     bool finishedNoCast = false;
