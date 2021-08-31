@@ -141,6 +141,10 @@ public:
         return index < currentPhase;//if current Phase is higher than index, phase with index was finished
     }
     
+    inline bool wasPhaseInitialized(int index) {
+        return phaseInitialized [index];
+    }
+
     inline bool finishedCompletely() {
         return finished;
     }
@@ -289,7 +293,7 @@ public:
         dealtDamage = false;
         explosionRange = 80;
 
-        if (tempTimeSinceExplosionStart > 0) {//if sent after explosion
+        if (tempTimeSinceExplosionStart < 0) {//if sent after explosion
             endPhaseAfterMS(explosionDuration);
         }
         else {
