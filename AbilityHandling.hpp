@@ -116,22 +116,24 @@ public:
         if (fireballIndicatorActive == false) {
             if (abilityTriggering->startAbility(fireballIndex) == true) {
                 newFireball = new Fireball(myPlayerI);
+                hasNewFireball = true;
                 fireballs->push_back(newFireball);
                 fireballIndicatorActive = true;
             }
         }
-
-        if (newFireball->finishedCompletely() == true || newFireball->hasFinishedNoCast() == true) {
-            for (int i = 0; i < fireballs->size(); i++) {
-                if (fireballs->at(i) == newFireball) {
-                    fireballs->erase(fireballs->begin() + i);
+        if (newFireball != nullptr) {
+            if (newFireball->finishedCompletely() == true || newFireball->hasFinishedNoCast() == true) {
+                for (int i = 0; i < fireballs->size(); i++) {
+                    if (fireballs->at(i) == newFireball) {
+                        fireballs->erase(fireballs->begin() + i);
+                    }
                 }
+                delete newFireball;
+                newFireball = nullptr;
+                fireballIndicatorActive = false;
             }
-            delete newFireball;
-            newFireball = nullptr;
-            fireballIndicatorActive = false;
-        }
 
+        }
         if (fireballIndicatorActive == true) {
             if (newFireball->finishedPhase(0) == true && newFireball->wasAddedToNetwork() == false) {
                 newFireball->addToNetwork();
