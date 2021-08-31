@@ -12,6 +12,7 @@ using namespace std::chrono;
 class Ability {
 public:
     Ability(int i_myPlayerIndex) {
+        finished = false;
         myPlayerIndex = i_myPlayerIndex;
         addedToNetwork = false;
         phaseCount = 5;
