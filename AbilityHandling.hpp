@@ -147,8 +147,9 @@ public:
                 fireballs->erase(fireballs->begin() + i);
                 fireballIndicatorActive = false;
             }
-
-            c->update();
+            else {
+                c->update(); 
+            }
         }
 
         for (int i = 0; i < transfusions->size(); i++) {
