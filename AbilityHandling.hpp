@@ -220,15 +220,19 @@ public:
 
     void sendData() {
         if (hasNewFireball == true) {
-            hasNewFireball = false;
-            NetworkCommunication::addToken(1);//check if new fireball is to be added
-            NetworkCommunication::addToken(newFireball->getProjectileRow());
-            NetworkCommunication::addToken(newFireball->getProjectileCol());
-            NetworkCommunication::addToken(newFireball->getGoalRow());
-            NetworkCommunication::addToken(newFireball->getGoalCol());
-            NetworkCommunication::addToken(newFireball->getCastingPlayer());
-            NetworkCommunication::addToken(newFireball->getStartTime(2));
-
+            if (newFireball->wasPhaseInitialized(1) == true) {
+                hasNewFireball = false;
+                NetworkCommunication::addToken(1);//check if new fireball is to be added
+                NetworkCommunication::addToken(newFireball->getProjectileRow());
+                NetworkCommunication::addToken(newFireball->getProjectileCol());
+                NetworkCommunication::addToken(newFireball->getGoalRow());
+                NetworkCommunication::addToken(newFireball->getGoalCol());
+                NetworkCommunication::addToken(newFireball->getCastingPlayer());
+                NetworkCommunication::addToken(newFireball->getStartTime(2));
+            }
+            else {
+                NetworkCommunication::addToken(0);
+            }
         }
         else {
             NetworkCommunication::addToken(0);
