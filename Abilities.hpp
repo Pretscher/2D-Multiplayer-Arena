@@ -29,53 +29,62 @@ public:
 
     void update() {
         if (finished == false) {
-            if (currentPhase == 0) {
-                checkTime();
-                if (phaseInitialized [currentPhase] == false) {
-                    init0();
-                    phaseInitialized [currentPhase] = true;
-                }
-                execute0();
-                return;
-            }
-            if (currentPhase == 1) {
-                checkTime();
-                if (phaseInitialized [currentPhase] == false) {
-                    init1();
-                    phaseInitialized [currentPhase] = true;
-                }
-                execute1();
-                return;
-            }
-            if (currentPhase == 2) {
-                checkTime();
-                if (phaseInitialized [currentPhase] == false) {
-                    init2();
-                    phaseInitialized [currentPhase] = true;
-                }
-                execute2();
-                return;
-            }
-            if (currentPhase == 3) {
-                
-                if (phaseInitialized [currentPhase] == false) {
-                    init3();
-                    phaseInitialized [currentPhase] = true;
-                }
-                execute3();
-                return;
-            }
-            if (currentPhase == 4) {
-                checkTime();
-                if (phaseInitialized [currentPhase] == false) {
-                    init4();
-                    phaseInitialized [currentPhase] = true;
-                }
-                execute4();
-                return;
-            }
+            checkTime();
+            initCurrentPhase();
+            executeCurrentPhase();
             if (currentPhase == 5) {
                 finished = true;
+            }
+        }
+    }
+    
+    void executeCurrentPhase() {
+        if (currentPhase == 0) {
+            execute0();
+        }
+        else if (currentPhase == 1) {
+            execute1();
+        }
+        else if (currentPhase == 2) {
+            execute2();
+        }
+        else if (currentPhase == 3) {
+            execute3();
+        }
+        else if (currentPhase == 4) {
+            execute4();
+        }
+    }
+
+    void initCurrentPhase() {
+        if (currentPhase == 0) {
+            if (phaseInitialized [currentPhase] == false) {
+                init0();
+                phaseInitialized [currentPhase] = true;
+            }
+        }
+        else if (currentPhase == 1) {
+            if (phaseInitialized [currentPhase] == false) {
+                init1();
+                phaseInitialized [currentPhase] = true;
+            }
+        }
+        else if (currentPhase == 2) {
+            if (phaseInitialized [currentPhase] == false) {
+                init2();
+                phaseInitialized [currentPhase] = true;
+            }
+        }
+        if (currentPhase == 3) {
+            if (phaseInitialized [currentPhase] == false) {
+                init3();
+                phaseInitialized [currentPhase] = true;
+            }
+        }
+        else if (currentPhase == 4) {
+            if (phaseInitialized [currentPhase] == false) {
+                init4();
+                phaseInitialized [currentPhase] = true;
             }
         }
     }

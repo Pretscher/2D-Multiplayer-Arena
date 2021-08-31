@@ -126,6 +126,7 @@ public:
                 newFireball->addToNetwork();
                 hasNewFireball = true;
                 abilityTriggering->manuallyStartCooldown(fireballIndex);
+                newFireball->initCurrentPhase();
             }
         }
 
@@ -230,6 +231,7 @@ public:
             NetworkCommunication::addToken(newFireball->getPhase());
             auto a = newFireball->getStartTime(2);
             NetworkCommunication::addToken(newFireball->getStartTime(2));
+
         }
         else {
             NetworkCommunication::addToken(0);
@@ -255,7 +257,6 @@ public:
         }
         if (NetworkCommunication::receiveNextToken() == 1) {
             //theyre already in the right order
-
             int startRow = NetworkCommunication::receiveNextToken();
             int startCol = NetworkCommunication::receiveNextToken();
             int goalRow = NetworkCommunication::receiveNextToken();
