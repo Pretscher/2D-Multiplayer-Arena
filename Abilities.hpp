@@ -18,7 +18,7 @@ public:
         currentPhase = 0;
 
         phaseInitialized = new bool[phaseCount];
-        phaseStart = new long[phaseCount];
+        phaseStart = new long long[phaseCount];
         phaseDuration = new int[phaseCount];
         timeBoundPhase = new bool [phaseCount];
         for (int i = 0; i < phaseCount; i++) {
@@ -142,7 +142,7 @@ public:
         addedToNetwork = true;
     }
 
-    inline long getStartTime(int index) {
+    inline long long getStartTime(int index) {
         return phaseStart [index];
     }
 
@@ -164,7 +164,7 @@ protected:
     bool* phaseInitialized;
 
     bool* timeBoundPhase;
-    long* phaseStart;
+    long long* phaseStart;
     int* phaseDuration;
 
 
@@ -283,7 +283,8 @@ public:
         }
         else {
             auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            endPhaseAfterMS(explosionDuration - (cTime - tempTimeSinceExplosionStart));
+            int duration = explosionDuration - (cTime - tempTimeSinceExplosionStart);
+            endPhaseAfterMS(duration);
         }
 
         this->explosionRow = this->helpProjectile->getRow() + this->helpProjectile->getRadius() - this->explosionRange;
@@ -500,7 +501,7 @@ public:
                 initCasting();
             }
 
-            long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+            long long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
             timeDiff = cTime - castStart;
 
 
@@ -604,7 +605,7 @@ public:
     }
 
     void draw() {
-        if(indicator != nullptr) {//set to nullptr if no longer needed
+        if(indicator != nullptr) {//set to nullptr if no long longer needed
             indicator->draw();
         } 
         if(bloodBall != nullptr) {
@@ -652,8 +653,8 @@ public:
 
 private:
     bool castingInitialized = false;
-    long castStart;
-    long timeDiff;
+    long long castStart;
+    long long timeDiff;
     float pathPercent;
     Projectile* bloodBall = nullptr;//we check if it is a nullpr later
     int tempGoalRow, tempGoalCol;

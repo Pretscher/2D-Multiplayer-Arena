@@ -33,7 +33,7 @@ private:
 
     float cPathIndex;
     bool findingPath;
-    long lastMoveTime;
+    long long lastMoveTime;
     
 public:
     int pathsFound = 0;

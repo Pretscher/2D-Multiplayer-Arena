@@ -43,8 +43,8 @@ Projectile::Projectile(int i_row, int i_col, float velocity, int i_goalRow, int 
 void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCount) {
 
 	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
-	long diff = now - this->lastMoveTime;
+	long long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	long long diff = now - this->lastMoveTime;
 	float dueSteps = diff / this->vel;
 
 	if (dueSteps >= 1.0f) {

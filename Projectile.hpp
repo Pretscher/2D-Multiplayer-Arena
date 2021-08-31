@@ -22,7 +22,7 @@ public:
 
 private:
 	bool moveThroughGoal;
-	long lastMoveTime;
+	long long lastMoveTime;
 	int goalRow;
 	int goalCol;
 	float row;

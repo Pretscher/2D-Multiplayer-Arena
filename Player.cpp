@@ -41,8 +41,8 @@ void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 
 void Player::move() {
 	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
-	long diff = now - lastMoveTime;
+	long long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	long long diff = now - lastMoveTime;
 	float dueSteps = diff / velocity;
 	
 	//move gradually between path steps

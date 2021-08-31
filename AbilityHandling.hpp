@@ -228,6 +228,7 @@ public:
             NetworkCommunication::addToken(newFireball->getGoalCol());
             NetworkCommunication::addToken(newFireball->getCastingPlayer());
             NetworkCommunication::addToken(newFireball->getPhase());
+            auto a = newFireball->getStartTime(2);
             NetworkCommunication::addToken(newFireball->getStartTime(2));
         }
         else {
