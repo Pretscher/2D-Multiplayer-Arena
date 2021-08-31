@@ -227,6 +227,7 @@ public:
                 NetworkCommunication::addToken(newFireball->getGoalRow());
                 NetworkCommunication::addToken(newFireball->getGoalCol());
                 NetworkCommunication::addToken(newFireball->getCastingPlayer());
+                NetworkCommunication::addToken(newFireball->getPhase());
                 NetworkCommunication::addToken(newFireball->getStartTime(2));
             }
             else {
@@ -262,9 +263,9 @@ public:
             int goalRow = NetworkCommunication::receiveNextToken();
             int goalCol = NetworkCommunication::receiveNextToken();
             int firingPlayerIndex = NetworkCommunication::receiveNextToken();
-            int exploding = NetworkCommunication::receiveNextToken();
+            int phase = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
-            fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, exploding, timeSinceExplosionStart));
+            fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, phase, timeSinceExplosionStart));
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
