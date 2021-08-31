@@ -172,9 +172,9 @@ public:
     inline int getCastingPlayer() {
         return myPlayerIndex;
     }
-public:
-    bool finished;
+
 protected:
+    bool finished;
     int myPlayerIndex;
 
     bool* phaseInitialized;
@@ -232,6 +232,27 @@ public:
     Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {//both constructors are used
         indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
     }
+
+    //create from network input(row is just current row so even with lag the start is always synced)
+    Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,
+        int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex) {
+
+        this->startRow = i_currentRow;
+        this->startCol = i_currentCol;
+        this->goalRow = i_goalRow;
+        this->goalCol = i_goalCol;
+        this->tempTimeSinceExplosionStart = i_timeSinceExplosionStart;
+        //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
+        //after exploding or you connect after explosion
+
+        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
+            abilityRecources::players [myPlayerIndex]);
+        for (int i = 0; i < i_phase; i++) {
+            nextPhase();
+        }
+        connectedFireball = true;
+    }
+
 
     void init0() {
 
@@ -338,25 +359,6 @@ public:
         Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
     }
 
-    //create from network input(row is just current row so even with lag the start is always synced)
-    Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex, 
-                           int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex) {
-
-        this->startRow = i_currentRow;
-        this->startCol = i_currentCol;
-        this->goalRow = i_goalRow;
-        this->goalCol = i_goalCol;
-        this->tempTimeSinceExplosionStart = i_timeSinceExplosionStart;
-        //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
-        //after exploding or you connect after explosion
-        
-        this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
-                                                                      abilityRecources::players[myPlayerIndex]);
-        for (int i = 0; i < i_phase; i++) {
-            nextPhase();
-        }
-        connectedFireball = true;
-    }
 
     void limitGoalPosToRange() {
         float* vecToGoal = new float [2];
@@ -431,10 +433,9 @@ private:
 
 
 
-class Transfusion {
+class Transfusion : public Ability {
 public:
-    Transfusion(int i_myPlayerIndex) {
-        this->myPlayerIndex = i_myPlayerIndex;
+    Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {
         this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range, 
                 abilityRecources::playerCount, abilityRecources::players);
 
@@ -446,13 +447,11 @@ public:
         }
     }
     //constructor through networking
-    Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) {
-        this->myPlayerIndex = i_myPlayerIndex;
+    Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex) {
         this->targetPlayerIndex = i_targetPlayerIndex;
 
         me = abilityRecources::players[myPlayerIndex];
         target = abilityRecources::players[targetPlayerIndex];
-        casting = true;
 
         lastRows = new int [positionsSavedCount];
         lastCols = new int [positionsSavedCount];
@@ -462,79 +461,92 @@ public:
         }
     }
 
-    void update() {
-        if(casting == false) {
-            if(indicator != nullptr && indicator->getTargetIndex() == -1) {
-                indicator->update();
-                if(indicator->endWithoutAction() == true) {
-                    finishedWithoutCasting = true;
-                    delete indicator;// we dont need this anymore
-                }
-            } 
-            else {
-                if(initializedEvents == false){
-                    initializedEvents = true;
-                    initCastAndRunInRange();
-                }
-                if(casting == false) {//if you still have to walk
-                    int halfW = me->getWidth() / 2;
-                    if(tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
-                        tempGoalRow = target->getRow() + halfW;
-                        tempGoalCol = target->getCol() + halfW;
-                        abilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
-                        abilityPathIndex = abilityRecources::players[myPlayerIndex]->pathsFound;
-                    }
-                    bool stop = false;
-                    //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
-                    //to stop going on the path the ability wants to find. But because of multithreading we cant say
-                    //when the pathfinding is finished with this particular path, so we just count the paths up in the
-                    //player obj and if the index is equal to abiltyPathIndex its still finding the path (same index
-                    //as when it was saved) and if its one higher the path was found. if its 2 higher a new path
-                    //was found and we interrupt.
-                    if(abilityRecources::players[myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
-                        stop = true;
-                    }
-                    if(stop == false) {
-                        int halfW = me->getWidth() / 2;
-                        int halfH = me->getHeight() / 2;
-                        if(Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
-                                    me->getRow() + halfH, target->getRow() + halfH) < range) {
-                            //got into range, stop going on path an cast ability
-                            abilityRecources::players[myPlayerIndex]->deletePath();
-                            casting = true;
-                        }
-                    } 
-                    else {
-                        //clicked somewhere else while finding path to target player to get in range => abort cast
-                        finishedWithoutCasting = true;
-                        delete indicator;// we dont need this anymore
-                    }
-                }
+    void init0() {
+
+    }
+
+    void exectue0() {
+        if (indicator != nullptr && indicator->getTargetIndex() == -1) {
+            indicator->update();
+            if (indicator->endWithoutAction() == true) {
+                finished = true;
+                delete indicator;// we dont need this anymore
             }
         }
         else {
-            if(castingInitialized == false) {
-                castingInitialized = true;
-                initCasting();
-            }
-
-            long long cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-            timeDiff = cTime - castStart;
-
-
-            checkBloodballCollision();
-            findNewPathToPlayerTimer ++;
-            if (findNewPathToPlayerTimer % 10 == true) {
-                followPlayer();
-            }
-
-            bloodBall->move(abilityRecources::worldRows, abilityRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
+            this->nextPhase();
         }
     }
 
-    void initCasting() {
-        castStart = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    void draw0(){
+        indicator->draw();
+    }
 
+    void init1() {
+        //save target player and unbind indicator from ability entirely
+        targetPlayerIndex = indicator->getTargetIndex();
+        me = abilityRecources::players [myPlayerIndex];
+        target = abilityRecources::players [targetPlayerIndex];
+        delete indicator;// we dont need this anymore
+        indicator = nullptr;//we check this in drawing caus bools are for noobs
+
+        //if player out of range, run into range
+        int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
+        int halfH = me->getHeight() / 2;
+        float dist = Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW,
+            me->getRow() + halfH, target->getRow() + halfH);
+        if (dist > range) {//if player is too far away
+            tempGoalRow = target->getRow() + halfW;//find a path to his center because thats better than left top coords
+            tempGoalCol = target->getCol() + halfH;
+            abilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
+            abilityPathIndex = abilityRecources::players [myPlayerIndex]->pathsFound;
+        }
+        else {
+            nextPhase();//if already in range, just start casting without moving
+        }
+    }
+
+    //find path to target player (damage part of succ)
+    void exectue1() {
+        int halfW = me->getWidth() / 2;
+        if (tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
+            tempGoalRow = target->getRow() + halfW;
+            tempGoalCol = target->getCol() + halfW;
+            abilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
+            abilityPathIndex = abilityRecources::players [myPlayerIndex]->pathsFound;
+        }
+        bool stop = false;
+        //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
+        //to stop going on the path the ability wants to find. But because of multithreading we cant say
+        //when the pathfinding is finished with this particular path, so we just count the paths up in the
+        //player obj and if the index is equal to abiltyPathIndex its still finding the path (same index
+        //as when it was saved) and if its one higher the path was found. if its 2 higher a new path
+        //was found and we interrupt.
+        if (abilityRecources::players [myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
+            stop = true;
+        }
+        if (stop == false) {
+            int halfW = me->getWidth() / 2;
+            int halfH = me->getHeight() / 2;
+            if (Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW,
+                me->getRow() + halfH, target->getRow() + halfH) < range) {
+                //got into range, stop going on path an cast ability
+                abilityRecources::players [myPlayerIndex]->deletePath();
+                nextPhase();
+            }
+        }
+        else {
+            //clicked somewhere else while finding path to target player to get in range => abort cast
+            finished = true;
+        }
+    }
+
+    void draw1() {
+
+    }
+
+    //init cast
+    void init2() {
         tempGoalRow = target->getRow();
         tempGoalCol = target->getCol();
         int halfW = me->getWidth() / 2;
@@ -544,6 +556,31 @@ public:
         for (int i = 0; i < positionsSavedCount; i++) {
             lastRows [i] = -1;
             lastCols [i] = -1;
+        }
+    }
+
+    void execute2() {
+        checkBloodballCollision();
+        findNewPathToPlayerTimer ++;
+        if (findNewPathToPlayerTimer % 10 == true) {
+            followPlayer();
+        }
+
+        bloodBall->move(abilityRecources::worldRows, abilityRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
+    }
+
+    void draw2() {
+        lastRows [cPositionSaveIndex] = bloodBall->getRow();
+        lastCols [cPositionSaveIndex] = bloodBall->getCol();
+        cPositionSaveIndex ++;
+        if (cPositionSaveIndex >= positionsSavedCount) {
+            cPositionSaveIndex = 0;
+        }
+        bloodBall->draw(sf::Color(255, 0, 0, 255));
+        for (int i = 0; i < positionsSavedCount; i++) {
+            if (lastRows [i] != -1) {
+                Renderer::drawCircle(lastRows [i], lastCols [i], bloodBall->getRadius(), sf::Color(255, 0, 0, 255), true, 0, false);
+            }
         }
     }
 
@@ -563,7 +600,7 @@ public:
                 else {
                     me->setHp(me->getMaxHp());
                 }
-                finishedCompletely = true;
+                finished = true;
             }
         }
     }
@@ -596,83 +633,13 @@ public:
         return c;
     }
 
-    void initCastAndRunInRange() {
-        //save target player and unbind indicator from ability entirely
-        targetPlayerIndex = indicator->getTargetIndex();
-        me = abilityRecources::players[myPlayerIndex];
-        target = abilityRecources::players[targetPlayerIndex];
-        delete indicator;// we dont need this anymore
-        indicator = nullptr;//we check this in drawing caus bools are for noobs
-        finishedSelectingTarget = true;
-
-        //if player out of range, run into range
-        int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
-        int halfH = me->getHeight() / 2;
-        float dist = Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW, 
-                me->getRow() + halfH, target->getRow() + halfH);
-        if(dist > range) {//if player is too far away
-            tempGoalRow = target->getRow() + halfW;//find a path to his center because thats better than left top coords
-            tempGoalCol = target->getCol() + halfH;
-            abilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
-            abilityPathIndex = abilityRecources::players[myPlayerIndex]->pathsFound;
-        } 
-        else {
-            casting = true;//if already in range, just start casting without moving
-        }
-    }
-
-    void draw() {
-        if(indicator != nullptr) {//set to nullptr if no long longer needed
-            indicator->draw();
-        } 
-        if(bloodBall != nullptr) {
-            lastRows [cPositionSaveIndex] = bloodBall->getRow();
-            lastCols [cPositionSaveIndex] = bloodBall->getCol();
-            cPositionSaveIndex ++;
-            if (cPositionSaveIndex >= positionsSavedCount) {
-                cPositionSaveIndex = 0;
-            }
-            bloodBall->draw(sf::Color(255, 0, 0, 255));
-            for (int i = 0; i < positionsSavedCount; i++) {
-                if (lastRows [i] != -1) {
-                    Renderer::drawCircle(lastRows [i], lastCols [i], bloodBall->getRadius(), sf::Color(255, 0, 0, 255), true, 0, false);
-                }
-            }
-        }
-    }
-
     //getters
-    inline bool hasEndedNoCast() {
-        return finishedWithoutCasting;
-    }
-    inline bool hasFinishedCast() {
-        return finishedCompletely;
-    }
-    inline bool hasSelectedTarget() {
-        return finishedSelectingTarget;
-    }
-    inline int getCastingPlayer() {
-        return myPlayerIndex;
-    }
+
     inline int getTargetPlayer() {
         return targetPlayerIndex;
     }
-    inline bool isCasting() {
-        return casting;
-    }
-    inline bool wasAddedToNetwork() {
-        return addedToNetwork;
-    }
-    /* only want to set this to true so not param */
-    void setAddedToNetwork() {
-        addedToNetwork = true;
-    }
 
 private:
-    bool castingInitialized = false;
-    long long castStart;
-    long long timeDiff;
-    float pathPercent;
     Projectile* bloodBall = nullptr;//we check if it is a nullpr later
     int tempGoalRow, tempGoalCol;
     bool flyBack = false;//blood goes to target player and then flies back, we need a bool to determine this break point
@@ -697,14 +664,7 @@ private:
     int* lastCols;
     int cPositionSaveIndex = 0;
 
-    //those have getters and setters and are important for outside management
-    bool finishedWithoutCasting = false;
-    bool finishedCompletely = false;
-    bool finishedSelectingTarget = false;
-    int myPlayerIndex;
     int targetPlayerIndex;
-    bool casting = false;
-    bool addedToNetwork = false;
 
     int findNewPathToPlayerTimer = 0;
 };

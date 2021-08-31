@@ -157,7 +157,7 @@ public:
         for (int i = 0; i < transfusions->size(); i++) {
             Transfusion* c = transfusions->at(i);
             c->update();
-            if (c->hasEndedNoCast() == true || c->hasFinishedCast() == true) {
+            if (c->finishedCompletely() == true) {
                 transfusions->erase(transfusions->begin() + i);
                 //dont pass through network anymore
                 if (newTransfusion != nullptr) {
@@ -168,14 +168,14 @@ public:
             }
             if (c != nullptr) {
                 //start cooldown only after target has been selected
-                if (c->hasSelectedTarget() == true) {
+                if (c->finishedPhase(0) == true) {
                     if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
                         abilityTriggering->manuallyStartCooldown(transfusionIndex);
                     }
                     transfusionIndicatorActive = false;
                 }
-                if (c->isCasting() == true && c->getCastingPlayer() == myPlayerI && c->wasAddedToNetwork() == false) {
-                    c->setAddedToNetwork();
+                if (c->finishedPhase(1) == true && c->getCastingPlayer() == myPlayerI && c->wasAddedToNetwork() == false) {
+                    c->addToNetwork();
                     hasNewTransfusion = true;
                     newTransfusion = c;
                 }
