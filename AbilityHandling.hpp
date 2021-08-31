@@ -133,14 +133,12 @@ public:
 
         for (int i = 0; i < fireballs->size(); i++) {
             Fireball* c = fireballs->at(i);
-            c->update();
             if (fireballIndicatorActive == true) {
                 if (c->finishedPhase(0) == true && c->wasAddedToNetwork() == false) {
                     newFireball = c;
                     c->addToNetwork();
                     hasNewFireball = true;
                     abilityTriggering->manuallyStartCooldown(fireballIndex);
-
                 }
             }
 
@@ -149,6 +147,8 @@ public:
                 fireballs->erase(fireballs->begin() + i);
                 fireballIndicatorActive = false;
             }
+
+            c->update();
         }
 
         for (int i = 0; i < transfusions->size(); i++) {
