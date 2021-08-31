@@ -120,14 +120,6 @@ public:
                 fireballIndicatorActive = true;
             }
         }
-        else {
-            //If fireball finished selecting destination, transmit through network asap
-            if (newFireball->finishedPhase(0) == true && newFireball->wasAddedToNetwork() == false) {
-                newFireball->addToNetwork();
-                hasNewFireball = true;
-                abilityTriggering->manuallyStartCooldown(fireballIndex);
-            }
-        }
 
         //transfusion cooldown handling
         if (transfusionIndicatorActive == false) {
@@ -140,17 +132,20 @@ public:
         }
 
         for (int i = 0; i < fireballs->size(); i++) {
-            fireballs->at(i)->update();
-            if (fireballs->at(i)->finishedCompletely() == true || fireballs->at(i)->hasFinishedNoCast() == true) {
-                fireballs->erase(fireballs->begin() + i);
-                
-                if (newFireball != nullptr) {
-                    delete newFireball;
-                    newFireball = nullptr;
-                    hasNewFireball = false;
+            Fireball* c = fireballs->at(i);
+            c->update();
+            if (fireballIndicatorActive == true) {
+                if (c->finishedPhase(0) == true && c->wasAddedToNetwork() == false) {
+                    c->addToNetwork();
+                    hasNewFireball = true;
+                    abilityTriggering->manuallyStartCooldown(fireballIndex);
+                    fireballIndicatorActive = false;
                 }
+            }
 
-                fireballIndicatorActive = false;
+            if (c->finishedCompletely() == true || c->hasFinishedNoCast() == true) {
+                delete c;
+                fireballs->erase(fireballs->begin() + i);
             }
         }
 
@@ -163,7 +158,6 @@ public:
                 if (newTransfusion != nullptr) {
                     delete newTransfusion;
                     newTransfusion = nullptr;
-                    hasNewTransfusion = false;
                 }
                 transfusionIndicatorActive = false;
             }
