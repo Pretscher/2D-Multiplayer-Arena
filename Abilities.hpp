@@ -24,6 +24,8 @@ public:
         for (int i = 0; i < phaseCount; i++) {
             phaseInitialized [i] = false;
             timeBoundPhase [i] = false;
+            phaseStart [i] = -1;
+            phaseDuration [i] = -1;
         }
     }
 
@@ -287,13 +289,14 @@ public:
         dealtDamage = false;
         explosionRange = 80;
 
-        if (connectedFireball == false) {//else time has to be synced with already ran out time
+        if (tempTimeSinceExplosionStart > 0) {//if sent after explosion
             endPhaseAfterMS(explosionDuration);
         }
         else {
             auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
             int duration = explosionDuration - (cTime - tempTimeSinceExplosionStart);
             endPhaseAfterMS(duration);
+            
         }
 
         this->explosionRow = this->helpProjectile->getRow() + this->helpProjectile->getRadius() - this->explosionRange;
@@ -417,7 +420,7 @@ private:
     bool connectedFireball = false;
     bool finishedNoCast = false;
 
-    int tempTimeSinceExplosionStart;
+    int tempTimeSinceExplosionStart = -1;
 };
 
 
