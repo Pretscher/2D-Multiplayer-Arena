@@ -136,6 +136,7 @@ public:
             c->update();
             if (fireballIndicatorActive == true) {
                 if (c->finishedPhase(0) == true && c->wasAddedToNetwork() == false) {
+                    newFireball = c;
                     c->addToNetwork();
                     hasNewFireball = true;
                     abilityTriggering->manuallyStartCooldown(fireballIndex);
@@ -221,8 +222,6 @@ public:
             NetworkCommunication::addToken(newFireball->getGoalRow());
             NetworkCommunication::addToken(newFireball->getGoalCol());
             NetworkCommunication::addToken(newFireball->getCastingPlayer());
-            NetworkCommunication::addToken(newFireball->getPhase());
-            auto a = newFireball->getStartTime(2);
             NetworkCommunication::addToken(newFireball->getStartTime(2));
 
         }
