@@ -198,27 +198,38 @@ public:
         }
 	}
 
-    void drawCDs() {
-        int col = 0;
+    void drawCDs() {//a lot of hardcoded stuff because of imported ui texture. 
+        int col = 1150;
+        int size = 75;
         for (int i = 0; i < abilityCount; i++) {
-            col += 150;
-            Renderer::drawRect(960, col, 100, 100, sf::Color(255, 100, 0, 255), true);
+            if (i > 0) {
+                col += size + 10;
+            }
+            int row = 990;
+
+            Renderer::drawRect(row, col, size, size, sf::Color(30, 30, 30, 255), true);
             int abilityRectHeight = 0;
 
             float cdPercent = abilityTriggering->getCooldownPercent(i);
             if (cdPercent > 0.01f && cdPercent < 0.99f) {
-                abilityRectHeight = 100 * cdPercent;
+                abilityRectHeight = size * cdPercent;
             }
-            Renderer::drawRect(960, col, 100, abilityRectHeight, sf::Color(0, 0, 255, 100), true);
+            else {
+                cdPercent = 0;
+            }
+            Renderer::drawRect(row + size - (cdPercent * size), col, size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
 
             std::string abilityLetter;
             if (i == 0) {
                 abilityLetter = std::string("Q");
             }
-            if (i == 1) {
+            else if (i == 1) {
                 abilityLetter = std::string("W");
             }
-            Renderer::drawText(abilityLetter, 910, col - 45, 200, 200, sf::Color(0, 0, 0, 255));
+            else {
+                abilityLetter = std::string("E");
+            }
+            Renderer::drawText(abilityLetter, row - size / 2.2f, col - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
         }
     }
 

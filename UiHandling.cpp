@@ -26,11 +26,12 @@ UiHandling::UiHandling(int frameRows, int frameCols) {
 	orb [5] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_border.png", false);
 }
 
+int lifebarSize = 300;
 void UiHandling::updateLifeBar(int playerHP, int playerMaxHP) {
 	if (playerHP > 0) {
 		float widthMult = (float)playerHP / playerMaxHP;
 		//cant draw lifebar here because rendering thread will be seperate => save lifebarwidth for drawing
-		lifeBarWidth = ((float)300) * widthMult;
+		lifeBarWidth = ((float) lifebarSize) * widthMult;
 	}
 	else {
 		lifeBarWidth = 0;
@@ -40,15 +41,10 @@ void UiHandling::updateLifeBar(int playerHP, int playerMaxHP) {
 
 
 void UiHandling::draw() {
-	//Renderer::drawRect(uiHeight, 0, frameCols, frameRows - uiHeight, sf::Color(50, 50, 50, 255), true);
-	//Renderer::drawRect(uiHeight + 10, 50, (frameCols - 100), 40, sf::Color(10, 10, 10, 255), true);
-	//Renderer::drawRect(uiHeight + 10, 50, lifeBarWidth, 40, sf::Color(0, 150, 0, 255), true);
-
-
 
 	for (int i = 0; i < 6; i++) {
 		if (i == 1) {
-			Renderer::drawRect(780, 1600, 300, lifeBarWidth, sf::Color(100, 0, 0, 255), true);
+			Renderer::drawRect(780 + lifebarSize - lifeBarWidth, 1600, 300, 300, sf::Color(100, 0, 0, 255), true);
 
 			float uiScale = 1.49;
 			Renderer::drawRectWithTexture(890, 1132, 530 * uiScale, 129 * uiScale, orb [i], true);
