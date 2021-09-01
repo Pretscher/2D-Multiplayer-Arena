@@ -5,6 +5,7 @@
 
 class Transfusion : public Ability {
 public:
+    //normal constructor if the ability is created on your network-side
     Transfusion(int i_myPlayerIndex);
     //constructor through networking
     Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex);

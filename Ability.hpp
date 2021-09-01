@@ -1,7 +1,6 @@
 #pragma once
 #include <math.h>
 
-
 /*This is a base class for every ability. It has all the commonalities abilities need to be bound to this project
 to use you have to override methods. Every ability should be cut into different phases, every phase MUST have
 an initialization-, an update- and a draw-function. You can set if a phase should end after a certain amount

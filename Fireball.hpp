@@ -5,6 +5,7 @@
 
 class Fireball : public Ability {
 public:
+    //normal constructor if the ability is created on your network-side
     Fireball(int i_myPlayerIndex);
     //create from network input(row is just current row so even with lag the start is always synced)
     Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,

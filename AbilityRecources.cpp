@@ -1,4 +1,5 @@
 #include "AbilityRecources.hpp"
+
 int AbilityRecources::worldRows;
 int AbilityRecources:: worldCols;
 Terrain* AbilityRecources::terrain;
