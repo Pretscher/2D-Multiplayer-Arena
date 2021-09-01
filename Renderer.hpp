@@ -7,6 +7,8 @@ public:
 
     static void init(sf::RenderWindow* window);
     static void initGrid( int rows,  int cols);
+    static int getWorldRows();
+    static int getWorldCols();
 
     static void drawRect(int row, int col, int width, int height, sf::Color c, bool solidWithViewspace);
     static void drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness, bool solidWithViewspace);
@@ -20,7 +22,7 @@ public:
 
     static void drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture, bool solidWithViewspace);
 
-    static sf::Texture loadTexture(std::string path);
+    static sf::Texture loadTexture(std::string path, bool repeat);
 
     static void drawText(std::string text, int row, int col, int width, int height, sf::Color color);
 };

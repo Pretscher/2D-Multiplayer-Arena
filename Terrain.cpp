@@ -1,7 +1,12 @@
 #include "Terrain.hpp"
 
+sf::Texture wall;
+sf::Texture ground;
+
 Terrain::Terrain() {
 	objectsRow = new std::vector<Rect*>();
+	wall = Renderer::loadTexture("Textures/cobble.jpg", true);
+	ground = Renderer::loadTexture("Textures/dirt.jpg", true);
 }
 
 void Terrain::addRect(int row, int col, int width, int height) {
@@ -9,10 +14,13 @@ void Terrain::addRect(int row, int col, int width, int height) {
 }
 
 void Terrain::draw() {
+
+	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldCols(), Renderer::getWorldRows(), ground, true);
 	for (unsigned int i = 0; i < objectsRow->size(); i++) {
 		Rect* rect = this->objectsRow->at(i);
-		Renderer::drawRect(rect->getRow(), rect->getCol(), rect->getWidth(), rect->getHeight(), sf::Color(200, 100, 200, 255), false);
+		Renderer::drawRectWithTexture(rect->getRow(), rect->getCol(), rect->getWidth(), rect->getHeight(), wall, false);
 	}
+
 }
 
 void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight) {

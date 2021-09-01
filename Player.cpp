@@ -135,10 +135,10 @@ void Player::draw() {
 
 void Player::initTextures() {
 	textures = new sf::Texture[4];
-	textures[0] = Renderer::loadTexture("Textures/mageFromAboveLeft.png");
-	textures[1] = Renderer::loadTexture("Textures/mageFromAboveRight.png");
-	textures[2] = Renderer::loadTexture("Textures/mageFromAboveTop.png");
-	textures[3] = Renderer::loadTexture("Textures/mageFromAboveBottom.png");
+	textures[0] = Renderer::loadTexture("Textures/mageFromAboveLeft.png", false);
+	textures[1] = Renderer::loadTexture("Textures/mageFromAboveRight.png", false);
+	textures[2] = Renderer::loadTexture("Textures/mageFromAboveTop.png", false);
+	textures[3] = Renderer::loadTexture("Textures/mageFromAboveBottom.png", false);
 }
 
 void Player::setTexture(int index) {

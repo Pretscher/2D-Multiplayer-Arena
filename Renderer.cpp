@@ -22,6 +22,14 @@ void Renderer::initGrid(int rows, int cols) {
     maxCols = cols;
 }
 
+int Renderer::getWorldRows() {
+    return maxRows;
+}
+
+int Renderer::getWorldCols() {
+    return maxCols;
+}
+
 void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
     viewSpace = io_viewSpace;
     viewSpaceLimits = io_viewspaceLimits;
@@ -214,12 +222,21 @@ void Renderer::updateViewSpace() {
 }
 
 
-sf::Texture Renderer::loadTexture(std::string path) {
+sf::Texture Renderer::loadTexture(std::string path, bool repeat) {
     sf::Texture texture;
     if (!texture.loadFromFile(path))
     {
         std::cout << "failed to load texture of path '" << path << "'";
         std::exit(0);
+    }
+    if (repeat == true) {
+        sf::Image img = texture.copyToImage();
+        if (texture.loadFromImage(img) == false) {
+            std::cout << "failed to load texture image of path '" << path << "'";
+            std::exit(0);
+        }
+
+        texture.setRepeated(true);
     }
     return texture;
 }
@@ -229,6 +246,7 @@ void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::
     fromRowColBounds(&width, &height);
 
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
+    
     square->setTexture(&texture);
     fromRowCol(&row, &col);
 
@@ -238,6 +256,11 @@ void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::
     else {
         square->move(col - viewSpace[1], row - viewSpace[0]);
     }
+
+    if (texture.isRepeated() == true) {
+        sf::IntRect rect = sf::IntRect(col, row, width, height);
+        square->setTextureRect(rect);
+    }//else stretch
 
     Renderer::currentWindow->draw(*square);
 
