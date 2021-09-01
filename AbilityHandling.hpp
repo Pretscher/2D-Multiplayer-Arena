@@ -128,6 +128,7 @@ public:
                     }
                 }
                 delete newFireball;
+                hasNewFireball = false;
                 newFireball = nullptr;
                 fireballIndicatorActive = false;
             }
@@ -163,6 +164,7 @@ public:
                 if (newTransfusion != nullptr) {
                     delete newTransfusion;
                     newTransfusion = nullptr;
+                    hasNewTransfusion = false;
                 }
                 transfusionIndicatorActive = false;
             }
