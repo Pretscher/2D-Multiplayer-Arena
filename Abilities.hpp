@@ -34,7 +34,6 @@ public:
     void update() {
         if (finished == false) {
             checkTime();
-            initCurrentPhase();
             executeCurrentPhase();
             if (currentPhase == 5) {
                 finished = true;
@@ -61,13 +60,7 @@ public:
     }
 
     void initCurrentPhase() {
-        if (currentPhase == 0) {
-            if (phaseInitialized [currentPhase] == false) {
-                init0();
-                phaseInitialized [currentPhase] = true;
-            }
-        }
-        else if (currentPhase == 1) {
+        if (currentPhase == 1) {
             if (phaseInitialized [currentPhase] == false) {
                 init1();
                 phaseInitialized [currentPhase] = true;
@@ -105,9 +98,7 @@ public:
 
     void draw() {
         if (currentPhase == 0) {
-            if (phaseInitialized [currentPhase] == true) {
-                draw0();
-            }
+            draw0();//needs no init, if this is not nullptr 0 is initialized caus constructor
         }
         if (currentPhase == 1) {
             if (phaseInitialized [currentPhase] == true) {
@@ -135,8 +126,14 @@ public:
         return currentPhase;
     }
 
+    inline void skipToPhase(int phase) {
+        currentPhase = phase;
+        initCurrentPhase();
+    }
+
     inline void nextPhase() {
         currentPhase ++;
+        initCurrentPhase();
     }
 
     inline bool finishedPhase(int index) {
@@ -190,7 +187,6 @@ protected:
 
     bool fromNetwork;
 
-    virtual void init0() { finished = true; }//if any of this is reached, finish. 
     virtual void init1() { finished = true; }
     virtual void init2() { finished = true; }
     virtual void init3() { finished = true; }
@@ -253,14 +249,7 @@ public:
 
         this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
             abilityRecources::players [myPlayerIndex]);
-        for (int i = 0; i < i_phase; i++) {
-            nextPhase();
-        }
-    }
-
-
-    void init0() override {
-
+        skipToPhase(i_phase);
     }
 
     void execute0() override {
@@ -468,12 +457,7 @@ public:
         me = abilityRecources::players [myPlayerIndex];
         target = abilityRecources::players [targetPlayerIndex];
 
-        nextPhase();
-        nextPhase();
-    }
-
-    void init0() override {
-
+        skipToPhase(2);
     }
 
     void execute0() override {
