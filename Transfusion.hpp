@@ -8,23 +8,28 @@ public:
     Transfusion(int i_myPlayerIndex);
     //constructor through networking
     Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex);
+
+    //Phase 0: Indicator. Select target with point and click. If selected
     void execute0() override;
     void draw0() override;
+    //Phase 1: find path to target player and follow him if neccessary. If in range, cast (phase 2) 
     void init1() override;
-    //find path to target player (damage part of succ)
     void execute1() override;
     void draw1() override;
-    //init cast
+    //Phase 2: Cast. Bloodballs fire to enemy (follow him) and come back (follow you). When you are reached, finish ability
     void init2() override;
     void execute2() override;
     void draw2() override;
 
+    //check if the bloodball collides with target player or you, depending if its flying to the enemy or you. 
     void checkBloodballCollision();
+    //if player position changes, fly to new position. Needs some delay or else lag xD 
+    //(Can fly through collidables so no pathfinding)
     void followPlayer();
+    //get current bloodball target
     Player* getBloodballTarget();
 
-    //getters
-
+    //get target player selected with indicator/passed through network
     inline int getTargetPlayer() {
         return targetPlayerIndex;
     }

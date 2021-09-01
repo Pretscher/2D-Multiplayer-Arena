@@ -10,19 +10,22 @@ public:
     Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,
                                                         int i_phase, int i_timeSinceExplosionStart);
 
+    //phase 0: Indicator. Select destination for fireball
     void execute0() override;
-    void init1() override;
-    void execute1() override;
+    void draw0() override;
+    //phase 2: Fireball flies
+    void init1() override;//cast fireball
+    void execute1() override;//fireball flies to destination/player/terrain and initiates explosion there
+    void draw1() override;
+    //phase 3: Explosion. Fire on ground and initial aoe damage. After time interval, explosion goes away. Then finish.
     void init2() override;
     void execute2() override;
-    void draw0() override;
-    void draw1() override;
     void draw2() override;
 
+    //If goal pos (indicator click) is outside of range, set goal pos to nearest point on range circle (through vector math)
     void limitGoalPosToRange();
 
 public:
-
     inline int getStartRow() {
         return startRow;
     }
