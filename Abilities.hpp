@@ -11,8 +11,9 @@ using namespace std::chrono;
 
 class Ability {
 public:
-    Ability(int i_myPlayerIndex) {
+    Ability(int i_myPlayerIndex, bool i_isFromNetwork) {
         finished = false;
+        isFromNetwork = i_isFromNetwork;
         myPlayerIndex = i_myPlayerIndex;
         addedToNetwork = false;
         phaseCount = 5;
@@ -183,6 +184,7 @@ protected:
     long long* phaseStart;
     int* phaseDuration;
 
+    bool isFromNetwork;
 
     virtual void init0() { finished = true; }//if any of this is reached, finish. 
     virtual void init1() { finished = true; }
@@ -229,13 +231,13 @@ namespace abilityRecources {
 
 class Fireball : public Ability {
 public:
-    Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {//both constructors are used
+    Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false) {//both constructors are used
         indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, abilityRecources::playerCount, abilityRecources::players);
     }
 
     //create from network input(row is just current row so even with lag the start is always synced)
     Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,
-        int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex) {
+        int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex, true) {
 
         this->startRow = i_currentRow;
         this->startCol = i_currentCol;
@@ -250,7 +252,6 @@ public:
         for (int i = 0; i < i_phase; i++) {
             nextPhase();
         }
-        connectedFireball = true;
     }
 
 
@@ -424,7 +425,6 @@ private:
     int goalRow;
     int goalCol;
 
-    bool connectedFireball = false;
     bool finishedNoCast = false;
 
     int tempTimeSinceExplosionStart = -1;
@@ -435,7 +435,7 @@ private:
 
 class Transfusion : public Ability {
 public:
-    Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex) {
+    Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false) {
         this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range, 
                 abilityRecources::playerCount, abilityRecources::players);
 
@@ -447,7 +447,7 @@ public:
         }
     }
     //constructor through networking
-    Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex) {
+    Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true) {
         this->targetPlayerIndex = i_targetPlayerIndex;
 
         me = abilityRecources::players[myPlayerIndex];
@@ -474,6 +474,9 @@ public:
             }
         }
         else {
+            targetPlayerIndex = indicator->getTargetIndex();
+            delete indicator;// we dont need this anymore
+            indicator = nullptr;//we check this in drawing caus bools are for noobs
             this->nextPhase();
         }
     }
@@ -483,12 +486,9 @@ public:
     }
 
     void init1() override {
-        //save target player and unbind indicator from ability entirely
-        targetPlayerIndex = indicator->getTargetIndex();
         me = abilityRecources::players [myPlayerIndex];
         target = abilityRecources::players [targetPlayerIndex];
-        delete indicator;// we dont need this anymore
-        indicator = nullptr;//we check this in drawing caus bools are for noobs
+
 
         //if player out of range, run into range
         int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
