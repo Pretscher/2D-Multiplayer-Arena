@@ -264,11 +264,13 @@ public:
             if (indicator->endWithoutAction() == true) {
                 delete indicator;
                 finishedNoCast = true;
+                indicator = nullptr;
             }
             else if (indicator->destinationSelected() == true) {
                 goalRow = indicator->getDestinationRow();
                 goalCol = indicator->getDestinationCol();
                 delete indicator;
+                indicator = nullptr;
                 this->nextPhase();//init casting
             }
             else {
@@ -349,7 +351,9 @@ public:
     }
 
     void draw0() override {
-        indicator->draw();
+        if (indicator != nullptr) {
+            indicator->draw();
+        }
     }
 
     void draw1() override {
