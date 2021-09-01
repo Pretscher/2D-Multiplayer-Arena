@@ -449,13 +449,13 @@ public:
     //constructor through networking
     Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true) {
         this->targetPlayerIndex = i_targetPlayerIndex;
-
         lastRows = new int [positionsSavedCount];
         lastCols = new int [positionsSavedCount];
         for (int i = 0; i < positionsSavedCount; i++) {
             lastRows [i] = -1;
             lastCols [i] = -1;
         }
+        nextPhase();
         nextPhase();
     }
 
