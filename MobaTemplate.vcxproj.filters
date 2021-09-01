@@ -16,6 +16,9 @@
     <Filter Include="Networking">
       <UniqueIdentifier>{e6d16e15-02fd-4d43-bb61-347d6f505981}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects\Abilities">
+      <UniqueIdentifier>{eae4a89b-88d4-4e2d-914f-8eb020c84f49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -74,6 +77,18 @@
     </ClCompile>
     <ClCompile Include="HeapNode.cpp">
       <Filter>A%2a-Algorithmus</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability.cpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Fireball.cpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Transfusion.cpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="AbilityRecources.cpp">
+      <Filter>GameObjects\Abilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,11 +158,20 @@
     <ClInclude Include="HeapNode.hpp">
       <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
-    <ClInclude Include="Abilities.hpp">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Indicator.hpp">
       <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability.hpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Fireball.hpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Transfusion.hpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="AbilityRecources.hpp">
+      <Filter>GameObjects\Abilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

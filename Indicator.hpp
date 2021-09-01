@@ -1,3 +1,4 @@
+#pragma once
 #include "Renderer.hpp"
 #include "Player.hpp"
 #include "Utils.hpp"
