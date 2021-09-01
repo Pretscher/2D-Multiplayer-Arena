@@ -13,7 +13,7 @@ class Ability {
 public:
     Ability(int i_myPlayerIndex, bool i_isFromNetwork) {
         finished = false;
-        isFromNetwork = i_isFromNetwork;
+        fromNetwork = i_isFromNetwork;
         myPlayerIndex = i_myPlayerIndex;
         addedToNetwork = false;
         phaseCount = 5;
@@ -174,6 +174,10 @@ public:
         return myPlayerIndex;
     }
 
+    inline bool isFromNetwork() {
+        return fromNetwork;
+    }
+
 protected:
     bool finished;
     int myPlayerIndex;
@@ -184,7 +188,7 @@ protected:
     long long* phaseStart;
     int* phaseDuration;
 
-    bool isFromNetwork;
+    bool fromNetwork;
 
     virtual void init0() { finished = true; }//if any of this is reached, finish. 
     virtual void init1() { finished = true; }

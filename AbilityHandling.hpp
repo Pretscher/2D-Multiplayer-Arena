@@ -136,9 +136,11 @@ public:
         }
         if (fireballIndicatorActive == true) {
             if (newFireball->finishedPhase(0) == true && newFireball->wasAddedToNetwork() == false) {
-                newFireball->addToNetwork();
-                hasNewFireball = true;
-                abilityTriggering->manuallyStartCooldown(fireballIndex);
+                if (newFireball->isFromNetwork() == false) {
+                    newFireball->addToNetwork();
+                    hasNewFireball = true;
+                    abilityTriggering->manuallyStartCooldown(fireballIndex);
+                }
             }
         }
         //transfusion cooldown handling
@@ -172,7 +174,9 @@ public:
                 //start cooldown only after target has been selected
                 if (c->finishedPhase(0) == true) {
                     if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
-                        abilityTriggering->manuallyStartCooldown(transfusionIndex);
+                        if (c->isFromNetwork() == false) {
+                            abilityTriggering->manuallyStartCooldown(transfusionIndex);
+                        }
                     }
                     transfusionIndicatorActive = false;
                 }
