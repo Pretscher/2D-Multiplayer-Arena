@@ -254,11 +254,11 @@ public:
     }
 
 
-    void init0() {
+    void init0() override {
 
     }
 
-    void execute0() {
+    void execute0() override {
         if (finishedNoCast == false) {
             if (indicator->endWithoutAction() == true) {
                 delete indicator;
@@ -276,7 +276,7 @@ public:
         }
     }
 
-    void init1() {
+    void init1() override {
         Player* myPlayer = abilityRecources::players [myPlayerIndex];
         //Turn player to mouse coords and set mouse coords as goal coords
         //if projectile destination is above player
@@ -296,7 +296,7 @@ public:
         this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
     }
 
-    void execute1() {
+    void execute1() override {
         auto collidables = abilityRecources::terrain->getCollidables();
         this->helpProjectile->move(abilityRecources::worldRows, abilityRecources::worldCols, collidables->data(), collidables->size());
         //if the projectile reaches its max range or collides with anything, it should explode
@@ -308,7 +308,7 @@ public:
         }
     }
 
-    void init2() {
+    void init2() override {
         explosionDmg = 30;
         burnDmg = 0.25f;
         explosionDuration = 2000;
@@ -329,7 +329,7 @@ public:
         this->explosionCol = this->helpProjectile->getCol() + this->helpProjectile->getRadius() - this->explosionRange;
     }
 
-    void execute2() {
+    void execute2() override {
         for (int i = 0; i < abilityRecources::playerCount; i++) {
             Player* c = abilityRecources::players [i];
             bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
@@ -347,15 +347,15 @@ public:
         this->dealtDamage = true;
     }
 
-    void draw0() {
+    void draw0() override {
         indicator->draw();
     }
 
-    void draw1() {
+    void draw1() override {
         this->helpProjectile->draw(sf::Color(255, 120, 0, 255));
     }
 
-    void draw2() {
+    void draw2() override {
         Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
     }
 
@@ -461,11 +461,11 @@ public:
         }
     }
 
-    void init0() {
+    void init0() override {
 
     }
 
-    void exectue0() {
+    void execute0() override {
         if (indicator != nullptr && indicator->getTargetIndex() == -1) {
             indicator->update();
             if (indicator->endWithoutAction() == true) {
@@ -478,11 +478,11 @@ public:
         }
     }
 
-    void draw0(){
+    void draw0() override {
         indicator->draw();
     }
 
-    void init1() {
+    void init1() override {
         //save target player and unbind indicator from ability entirely
         targetPlayerIndex = indicator->getTargetIndex();
         me = abilityRecources::players [myPlayerIndex];
@@ -507,7 +507,7 @@ public:
     }
 
     //find path to target player (damage part of succ)
-    void exectue1() {
+    void execute1() override {
         int halfW = me->getWidth() / 2;
         if (tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
             tempGoalRow = target->getRow() + halfW;
@@ -541,12 +541,12 @@ public:
         }
     }
 
-    void draw1() {
+    void draw1() override {
 
     }
 
     //init cast
-    void init2() {
+    void init2() override {
         tempGoalRow = target->getRow();
         tempGoalCol = target->getCol();
         int halfW = me->getWidth() / 2;
@@ -559,7 +559,7 @@ public:
         }
     }
 
-    void execute2() {
+    void execute2() override {
         checkBloodballCollision();
         findNewPathToPlayerTimer ++;
         if (findNewPathToPlayerTimer % 10 == true) {
@@ -569,7 +569,7 @@ public:
         bloodBall->move(abilityRecources::worldRows, abilityRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
     }
 
-    void draw2() {
+    void draw2() override {
         lastRows [cPositionSaveIndex] = bloodBall->getRow();
         lastCols [cPositionSaveIndex] = bloodBall->getCol();
         cPositionSaveIndex ++;
