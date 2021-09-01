@@ -448,13 +448,18 @@ public:
     }
     //constructor through networking
     Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true) {
-        this->targetPlayerIndex = i_targetPlayerIndex;
+        this->targetPlayerIndex = i_targetPlayerIndex;//we dont know the indicator so its target has to be passed
         lastRows = new int [positionsSavedCount];
         lastCols = new int [positionsSavedCount];
         for (int i = 0; i < positionsSavedCount; i++) {
             lastRows [i] = -1;
             lastCols [i] = -1;
         }
+
+        //normally initialized in init1, but we have to skip this
+        me = abilityRecources::players [myPlayerIndex];
+        target = abilityRecources::players [targetPlayerIndex];
+
         nextPhase();
         nextPhase();
     }
