@@ -60,28 +60,30 @@ public:
     }
 
     void initCurrentPhase() {
-        if (currentPhase == 1) {
-            if (phaseInitialized [currentPhase] == false) {
-                init1();
-                phaseInitialized [currentPhase] = true;
+        if (finished == false) {//only for big fuckups
+            if (currentPhase == 1) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init1();
+                    phaseInitialized [currentPhase] = true;
+                }
             }
-        }
-        else if (currentPhase == 2) {
-            if (phaseInitialized [currentPhase] == false) {
-                init2();
-                phaseInitialized [currentPhase] = true;
+            else if (currentPhase == 2) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init2();
+                    phaseInitialized [currentPhase] = true;
+                }
             }
-        }
-        if (currentPhase == 3) {
-            if (phaseInitialized [currentPhase] == false) {
-                init3();
-                phaseInitialized [currentPhase] = true;
+            if (currentPhase == 3) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init3();
+                    phaseInitialized [currentPhase] = true;
+                }
             }
-        }
-        else if (currentPhase == 4) {
-            if (phaseInitialized [currentPhase] == false) {
-                init4();
-                phaseInitialized [currentPhase] = true;
+            else if (currentPhase == 4) {
+                if (phaseInitialized [currentPhase] == false) {
+                    init4();
+                    phaseInitialized [currentPhase] = true;
+                }
             }
         }
     }
@@ -97,27 +99,29 @@ public:
     }
 
     void draw() {
-        if (currentPhase == 0) {
-            draw0();//needs no init, if this is not nullptr 0 is initialized caus constructor
-        }
-        if (currentPhase == 1) {
-            if (phaseInitialized [currentPhase] == true) {
-                draw1();
+        if (finished == false) {
+            if (currentPhase == 0) {
+                draw0();//needs no init, if this is not nullptr 0 is initialized caus constructor
             }
-        }
-        if (currentPhase == 2) {
-            if (phaseInitialized [currentPhase] == true) {
-                draw2();
+            if (currentPhase == 1) {
+                if (phaseInitialized [currentPhase] == true) {
+                    draw1();
+                }
             }
-        }
-        if (currentPhase == 3) {
-            if (phaseInitialized [currentPhase] == true) {
-                draw3();
+            if (currentPhase == 2) {
+                if (phaseInitialized [currentPhase] == true) {
+                    draw2();
+                }
             }
-        }
-        if (currentPhase == 4) {
-            if (phaseInitialized [currentPhase] == true) {
-                draw4();
+            if (currentPhase == 3) {
+                if (phaseInitialized [currentPhase] == true) {
+                    draw3();
+                }
+            }
+            if (currentPhase == 4) {
+                if (phaseInitialized [currentPhase] == true) {
+                    draw4();
+                }
             }
         }
     }
