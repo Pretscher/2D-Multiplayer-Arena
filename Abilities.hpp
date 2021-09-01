@@ -450,15 +450,13 @@ public:
     Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true) {
         this->targetPlayerIndex = i_targetPlayerIndex;
 
-        me = abilityRecources::players[myPlayerIndex];
-        target = abilityRecources::players[targetPlayerIndex];
-
         lastRows = new int [positionsSavedCount];
         lastCols = new int [positionsSavedCount];
         for (int i = 0; i < positionsSavedCount; i++) {
             lastRows [i] = -1;
             lastCols [i] = -1;
         }
+        nextPhase();
     }
 
     void init0() override {
