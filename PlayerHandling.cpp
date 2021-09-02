@@ -3,6 +3,7 @@
 #include "NetworkCommunication.hpp"
 #include "Renderer.hpp"
 
+int otherPlayer = 0;
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	playerCount = 2;
 	float vel = 50;//velocity on path if path is given
@@ -10,6 +11,10 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	int rectSize = 100;
 	int defaultMaxHp = 200;
 	int defaultDmg = 10;
+
+	if (myPlayerI == 0) {
+		otherPlayer = 1;
+	}
 
 	players = new Player * [playerCount];
 	for (int i = 0; i < playerCount; i++) {
@@ -27,14 +32,22 @@ void PlayerHandling::draw() {
 }
 
 void PlayerHandling::sendPlayerData() {
-	NetworkCommunication::addToken(players[myPlayerI]->getRow());
-	NetworkCommunication::addToken(players[myPlayerI]->getCol());
-	NetworkCommunication::addToken(players[myPlayerI]->getTextureIndex());
-	
-	int otherPlayer = 0;
-	if (myPlayerI == 0) {
-		otherPlayer = 1;
+	Player* me = players [myPlayerI];
+	if (me->hasNewPath == true) {
+		me->hasNewPath = false;
+		NetworkCommunication::addToken(1);//bool if new bath was found
+
+		NetworkCommunication::addToken(me->pathLenght);
+		for (int i = 0; i < me->pathLenght; i++) {
+			NetworkCommunication::addToken(me->pathXpositions [i]);
+			NetworkCommunication::addToken(me->pathYpositions [i]);
+		}
 	}
+	else {
+		NetworkCommunication::addToken(0);
+	}
+
+
 	NetworkCommunication::addToken(players[otherPlayer]->getHp());
 }
 
@@ -42,17 +55,17 @@ void PlayerHandling::sendPlayerData() {
 **/
 int hpSyncDelay = 0;
 void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
-	int otherPlayer = 0;
-	if (myPlayerI == 0) {
-		otherPlayer = 1;
+	if (NetworkCommunication::receiveNextToken() == 1) {//new path
+		int pathLenght = NetworkCommunication::receiveNextToken();
+		
+		int* pathX = new int [pathLenght];
+		int* pathY = new int [pathLenght];
+		for (int i = 0; i < pathLenght; i++) {
+			pathX [i] = NetworkCommunication::receiveNextToken();
+			pathY [i] = NetworkCommunication::receiveNextToken();
+		}
+		players [otherPlayer]->givePath(pathX, pathY, pathLenght);
 	}
-
-	int tempRow = players[otherPlayer]->getRow();
-	int tempCol = players[otherPlayer]->getCol();
-
-	players[otherPlayer]->setRow(NetworkCommunication::receiveNextToken());
-	players[otherPlayer]->setCol(NetworkCommunication::receiveNextToken());
-	players[otherPlayer]->setTexture(NetworkCommunication::receiveNextToken());
 
 	int hp = NetworkCommunication::receiveNextToken();
 	hpSyncDelay ++;
@@ -60,11 +73,4 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		players[myPlayerI]->setHp(hp);
 		hpSyncDelay = 0;
 	}
-
-	pathfinding->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
-	pathfinding->disableArea(players[otherPlayer]->getRow(), players[otherPlayer]->getCol(),
-		players[0]->getWidth(), players[0]->getHeight());//disable new position
-	//could have enabled other players position aswell
-	pathfinding->disableArea(players[myPlayerI]->getRow(), players[myPlayerI]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
-
 }

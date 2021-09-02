@@ -4,9 +4,6 @@
     <Filter Include="A%2a-Algorithmus">
       <UniqueIdentifier>{5d5155e8-e7ba-4861-b6d4-4c21d55f6bfb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Eventhandling">
-      <UniqueIdentifier>{9fdb86bc-524e-4530-ab06-ec127196975f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObjects">
       <UniqueIdentifier>{b7772fb4-c592-4852-9b09-32c3473f29b8}</UniqueIdentifier>
     </Filter>
@@ -19,13 +16,16 @@
     <Filter Include="GameObjects\Abilities">
       <UniqueIdentifier>{eae4a89b-88d4-4e2d-914f-8eb020c84f49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CrossProject\Eventhandling">
+      <UniqueIdentifier>{9fdb86bc-524e-4530-ab06-ec127196975f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="Eventhandling.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>GameObjects</Filter>
@@ -43,19 +43,19 @@
       <Filter>GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="PathfindingHandler.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="PlayerHandling.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="ProjectileHandling.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="UiHandling.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="WorldHandling.cpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClCompile>
     <ClCompile Include="PortableServer.cpp">
       <Filter>Networking</Filter>
@@ -93,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Eventhandling.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="Projectile.hpp">
       <Filter>GameObjects</Filter>
@@ -114,28 +114,28 @@
       <Filter>CrossProject</Filter>
     </ClInclude>
     <ClInclude Include="PathfindingHandler.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="Menu.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="AbilityHandling.hpp">
       <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="WorldHandling.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="UiHandling.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="ProjectileHandling.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="NetworkCommunication.hpp">
       <Filter>Networking</Filter>
     </ClInclude>
     <ClInclude Include="PlayerHandling.hpp">
-      <Filter>Eventhandling</Filter>
+      <Filter>CrossProject\Eventhandling</Filter>
     </ClInclude>
     <ClInclude Include="PortableClient.hpp">
       <Filter>Networking</Filter>

@@ -10,6 +10,7 @@ public:
     void draw();
     void setTexture(int index);
 
+    bool hasNewPath = false;
     int* pathXpositions;
     int* pathYpositions;
     int pathLenght;
