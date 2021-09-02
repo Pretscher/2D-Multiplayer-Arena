@@ -35,7 +35,10 @@ void PlayerHandling::sendPlayerData() {
 	}
 
 	Player* me = players [myPlayerI];
-	if (me->hasNewPath == true) {
+	if (me->hasPath() == false) {
+		NetworkCommunication::addToken(0);//bool if path should be interrupted
+	}
+	else if (me->hasNewPath == true) {
 		me->hasNewPath = false;
 		NetworkCommunication::addToken(1);//bool if new bath was found
 
@@ -46,7 +49,7 @@ void PlayerHandling::sendPlayerData() {
 		}
 	}
 	else {
-		NetworkCommunication::addToken(0);
+		NetworkCommunication::addToken(2);
 
 		//no new path, so we dont know where the other player is if we just connected or had 
 		//a lag so long that we missed an entire path-walk => just exchange positions
@@ -68,7 +71,14 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		otherPlayer = 1;
 	}
 
-	if (NetworkCommunication::receiveNextToken() == 1) {//new path
+	int actionIndex = NetworkCommunication::receiveNextToken();
+
+	if (actionIndex == 0) {//interrupt path
+		if (players [otherPlayer]->hasPath() == true) {
+			players [otherPlayer]->deletePath();
+		}
+	}
+	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
 		
 		int* pathX = new int [pathLenght];
@@ -79,7 +89,7 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		}
 		players [otherPlayer]->givePath(pathX, pathY, pathLenght);
 	}
-	else {
+	else if (actionIndex == 2) {
 		//no new path, so we dont know where the other player is if we just connected or had 
 		//a lag so long that we missed an entire path-walk => just exchange positions
 		int row = NetworkCommunication::receiveNextToken();
