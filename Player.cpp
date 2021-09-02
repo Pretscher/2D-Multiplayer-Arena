@@ -91,6 +91,8 @@ void Player::move() {
 					pathLenght = -1;
 					delete [] pathXpositions;
 					delete [] pathYpositions;
+
+					hasNewPath = false;
 				}
 			}
 

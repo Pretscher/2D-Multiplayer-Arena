@@ -14,6 +14,7 @@ public:
     int* pathXpositions;
     int* pathYpositions;
     int pathLenght;
+    float cPathIndex;
 private:
 
 	int row;
@@ -32,7 +33,7 @@ private:
     float maxHp;
     int dmg;
 
-    float cPathIndex;
+
     bool findingPath;
     long long lastMoveTime;
     

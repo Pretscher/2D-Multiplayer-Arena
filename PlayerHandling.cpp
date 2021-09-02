@@ -37,8 +37,8 @@ void PlayerHandling::sendPlayerData() {
 		me->hasNewPath = false;
 		NetworkCommunication::addToken(1);//bool if new bath was found
 
-		NetworkCommunication::addToken(me->pathLenght);
-		for (int i = 0; i < me->pathLenght; i++) {
+		NetworkCommunication::addToken(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+		for (int i = me->cPathIndex; i < me->pathLenght; i++) {
 			NetworkCommunication::addToken(me->pathXpositions [i]);
 			NetworkCommunication::addToken(me->pathYpositions [i]);
 		}
