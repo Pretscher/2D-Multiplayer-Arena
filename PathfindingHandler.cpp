@@ -83,7 +83,6 @@ void Pathfinding::update() {
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 	finishedPathfinding->lock();
-
 	if (findingPath == false) {
 		findingPath = true;
 		players[playerIndex]->setFindingPath(true);
@@ -94,14 +93,14 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 		cGoalX = goalX;
 		cGoalY = goalY;
 		cPlayerIndex = playerIndex;
-		finishedPathfinding->unlock();
 	}
 	else {
 		goalColToFind->push_back(goalX);
 		goalRowToFind->push_back(goalY);
 		indicesToFind->push_back(playerIndex);
-		finishedPathfinding->unlock();
 	}
+
+	finishedPathfinding->unlock();
 }
 
 void Pathfinding::workThroughPathfindingQueue() {
@@ -154,11 +153,9 @@ void Pathfinding::moveObjects() {
 void Pathfinding::playerInteraction(int movedPlayerIndex) {
 	//find new paths for players close to this player
 	Player* movedPlayer = players[movedPlayerIndex];
-	bool unlock = true;
 	for (int j = 0; j < playerCount; j++) {
 		if (players[j]->getHp() > 0) {
 			if (j != movedPlayerIndex) {
-				finishedPathfinding->lock();
 				Player* cPlayer = players[j];
 				if (cPlayer->hasPath() == true) {
 					//did player position change?
@@ -171,7 +168,6 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 								int col = cPlayer->getPathGoalX();
 								int row = cPlayer->getPathGoalY();
 								this->findPath(col, row, j);
-								unlock = false;
 								break;
 							}
 						}
@@ -182,9 +178,6 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 						//find new path to same goal
 
 					//}
-				}
-				if (unlock == true) {
-					finishedPathfinding->unlock();
 				}
 			}
 		}
