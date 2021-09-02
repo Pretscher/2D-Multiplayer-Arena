@@ -69,12 +69,11 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 	if (actionIndex == 0) {//interrupt path/no path is there
 		if (players [otherPlayer]->hasPath() == true) {
 			players [otherPlayer]->deletePath();
-
-			int row = NetworkCommunication::receiveNextToken();
-			int col = NetworkCommunication::receiveNextToken();
-			players [otherPlayer]->setRow(row);
-			players [otherPlayer]->setCol(col);
-		}
+		}			
+		int row = NetworkCommunication::receiveNextToken();
+		int col = NetworkCommunication::receiveNextToken();
+		players [otherPlayer]->setRow(row);
+		players [otherPlayer]->setCol(col);
 	}
 	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
