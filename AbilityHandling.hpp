@@ -176,7 +176,7 @@ public:
             }
             if (c != nullptr) {
                 //start cooldown only after target has been selected
-                if (c->finishedPhase(0) == true) {
+                if (c->finishedPhase(1) == true) {
                     if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
                         if (c->isFromNetwork() == false) {
                             abilityTriggering->manuallyStartCooldown(transfusionIndex);
