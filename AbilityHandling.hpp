@@ -124,30 +124,14 @@ public:
 
 	void update() {
         abilityTriggering->update();
+
         for (int i = 0; i < generalAbilities->size(); i++) {
             generalAbilities->at(i)->update();
         }
+
+        initFireball();
+        initTransfusion();
         
-
-        if (newAbilities [fireballIndex] == nullptr) {
-            if (abilityTriggering->startAbility(fireballIndex) == true) {
-                Fireball* newFB = new Fireball(myPlayerI);
-                
-                fireballs->push_back(newFB);
-                generalAbilities->push_back(newFB);
-                newAbilities [fireballIndex] = newFB;
-            }
-        }
-
-        if (abilityTriggering->startAbility(transfusionIndex) == true) {
-            Transfusion* newT = new Transfusion(myPlayerI);
-
-            transfusions->push_back(newT);
-            generalAbilities->push_back(newT);
-            newAbilities [transfusionIndex] = newT;
-            //start cooldown later when target has been selected
-        }
-
         for (int i = 0; i < abilityCount; i++) {
             Ability* cAbility = newAbilities [i];
             if (cAbility != nullptr) {
@@ -176,16 +160,10 @@ public:
                         }
 
                     }
-                    for (int cFB = 0; cFB < fireballs->size(); cFB++) {
-                        if (fireballs->at(cFB) == cAbility) {
-                            fireballs->erase(fireballs->begin() + cFB);
-                        }
-                    }
-                    for (int cT = 0; cT < transfusions->size(); cT++) {
-                        if (transfusions->at(cT) == cAbility) {
-                            transfusions->erase(transfusions->begin() + cT);
-                        }
-                    }
+
+                    deleteFireball(cAbility);
+                    deleteTransfusion(cAbility);
+
                     delete newAbilities [i];
                     newAbilities [i] = nullptr;
                     hasNewAbility [fireballIndex] = false;
@@ -308,7 +286,10 @@ public:
             int firingPlayerIndex = NetworkCommunication::receiveNextToken();
             int phase = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
-            fireballs->push_back(new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, phase, timeSinceExplosionStart));
+
+            Fireball* newFB = new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, phase, timeSinceExplosionStart);
+            fireballs->push_back(newFB);
+            generalAbilities->push_back(newFB);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -316,7 +297,62 @@ public:
 
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int tTargetPlayerIndex = NetworkCommunication::receiveNextToken();
-            transfusions->push_back(new Transfusion(tMyPlayerIndex, tTargetPlayerIndex));
+
+            Transfusion* newT = new Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
+
+            transfusions->push_back(newT);
+            generalAbilities->push_back(newT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    void initFireball() {
+        if (newAbilities [fireballIndex] == nullptr) {
+            if (abilityTriggering->startAbility(fireballIndex) == true) {
+                Fireball* newFB = new Fireball(myPlayerI);
+
+                fireballs->push_back(newFB);
+                generalAbilities->push_back(newFB);
+                newAbilities [fireballIndex] = newFB;
+            }
+        }
+    }
+
+
+    void initTransfusion() {
+        if (abilityTriggering->startAbility(transfusionIndex) == true) {
+            Transfusion* newT = new Transfusion(myPlayerI);
+
+            transfusions->push_back(newT);
+            generalAbilities->push_back(newT);
+            newAbilities [transfusionIndex] = newT;
+            //start cooldown later when target has been selected
+        }
+    }
+
+    void deleteFireball(Ability* toDelete) {
+        for (int cFB = 0; cFB < fireballs->size(); cFB++) {
+            if (fireballs->at(cFB) == toDelete) {
+                fireballs->erase(fireballs->begin() + cFB);
+            }
+        }
+
+    }
+
+    void deleteTransfusion(Ability* toDelete) {
+        for (int cT = 0; cT < transfusions->size(); cT++) {
+            if (transfusions->at(cT) == toDelete) {
+                transfusions->erase(transfusions->begin() + cT);
+            }
         }
     }
 
