@@ -3,7 +3,7 @@
 #include "NetworkCommunication.hpp"
 #include "Renderer.hpp"
 
-int otherPlayer = 0;
+
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	playerCount = 2;
 	float vel = 50;//velocity on path if path is given
@@ -12,9 +12,6 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	int defaultMaxHp = 200;
 	int defaultDmg = 10;
 
-	if (myPlayerI == 0) {
-		otherPlayer = 1;
-	}
 
 	players = new Player * [playerCount];
 	for (int i = 0; i < playerCount; i++) {
@@ -30,8 +27,13 @@ void PlayerHandling::draw() {
 		}
 	}
 }
-
+ 
 void PlayerHandling::sendPlayerData() {
+	int otherPlayer = 0;
+	if (myPlayerI == 0) {
+		otherPlayer = 1;
+	}
+
 	Player* me = players [myPlayerI];
 	if (me->hasNewPath == true) {
 		me->hasNewPath = false;
@@ -55,6 +57,11 @@ void PlayerHandling::sendPlayerData() {
 **/
 int hpSyncDelay = 0;
 void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
+	int otherPlayer = 0;
+	if (myPlayerI == 0) {
+		otherPlayer = 1;
+	}
+
 	if (NetworkCommunication::receiveNextToken() == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
 		
