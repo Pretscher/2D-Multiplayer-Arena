@@ -125,6 +125,7 @@ void Player::deletePath() {
 		delete[] pathYpositions;
 	}
 	findingPath = false;
+	hasNewPath = false;
 }
 
 void Player::draw() {
