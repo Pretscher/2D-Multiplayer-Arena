@@ -329,13 +329,15 @@ public:
 
 
     void initTransfusion() {
-        if (abilityTriggering->startAbility(transfusionIndex) == true) {
-            Transfusion* newT = new Transfusion(myPlayerI);
+        if (newAbilities [transfusionIndex] == nullptr) {
+            if (abilityTriggering->startAbility(transfusionIndex) == true) {
+                Transfusion* newT = new Transfusion(myPlayerI);
 
-            transfusions->push_back(newT);
-            generalAbilities->push_back(newT);
-            newAbilities [transfusionIndex] = newT;
-            //start cooldown later when target has been selected
+                transfusions->push_back(newT);
+                generalAbilities->push_back(newT);
+                newAbilities [transfusionIndex] = newT;
+                //start cooldown later when target has been selected
+            }
         }
     }
 
