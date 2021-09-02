@@ -36,8 +36,9 @@ void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 	cPathIndex = 0;
 	pathLenght = i_pathLenght;
 	pathsFound++;
-
-	hasNewPath = true;
+	if (pathLenght > 0) {
+		hasNewPath = true;
+	}
 }
 
 
