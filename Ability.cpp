@@ -2,32 +2,36 @@
 #include <chrono>
 using namespace std::chrono;
 
-Ability::Ability(int i_myPlayerIndex, bool i_isFromNetwork) {
-    finished = false;
-    fromNetwork = i_isFromNetwork;
-    myPlayerIndex = i_myPlayerIndex;
-    addedToNetwork = false;
-    phaseCount = 5;
-    currentPhase = 0;
+Ability::Ability(int i_myPlayerIndex, bool i_isFromNetwork, int i_cdStartPhase, int i_addToNetworkPhase, int i_abilityIndex) {
+    this->myPlayerIndex = i_myPlayerIndex;
+    this->fromNetwork = i_isFromNetwork;
+    this->cdStartPhase = i_cdStartPhase;
+    this->addToNetworkPhase = i_addToNetworkPhase;
+    this->abilityIndex = i_abilityIndex;
 
-    phaseInitialized = new bool [phaseCount];
-    phaseStart = new long long [phaseCount];
-    phaseDuration = new int [phaseCount];
-    timeBoundPhase = new bool [phaseCount];
+    this->finished = false;
+    this->addedToNetwork = false;
+    this->phaseCount = 5;
+    this->currentPhase = 0;
+
+    this->phaseInitialized = new bool [this->phaseCount];
+    this->phaseStart = new long long [this->phaseCount];
+    this->phaseDuration = new int [this->phaseCount];
+    this->timeBoundPhase = new bool [this->phaseCount];
     for (int i = 0; i < phaseCount; i++) {
-        phaseInitialized [i] = false;
-        timeBoundPhase [i] = false;
-        phaseStart [i] = -1;
-        phaseDuration [i] = -1;
+        this->phaseInitialized [i] = false;
+        this->timeBoundPhase [i] = false;
+        this->phaseStart [i] = -1;
+        this->phaseDuration [i] = -1;
     }
 }
 
 void Ability::update() {
-    if (finished == false) {
+    if (this->finished == false) {
         checkTime();
         executeCurrentPhase();
-        if (currentPhase == 5) {
-            finished = true;
+        if (this->currentPhase == 5) {
+            this->finished = true;
         }
     }
 }

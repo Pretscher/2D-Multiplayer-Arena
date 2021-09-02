@@ -22,7 +22,7 @@ public:
     pass a bool that saves wether the ability was added through the network. You can get that bool through "isFormNetwork()".
     The ability goes absolutely idle if "finished" is set to true. Then you only have to delete it.
     */
-    Ability(int i_myPlayerIndex, bool i_isFromNetwork);
+    Ability(int i_myPlayerIndex, bool i_isFromNetwork, int i_startCdPhase, int i_addToNetworkPhase, int i_abilityIndex);
 
     void update();
     void draw();
@@ -75,6 +75,18 @@ public:
         return fromNetwork;
     }
 
+    inline int getCDstartPhase() {
+        return cdStartPhase;
+    }
+
+    inline int getAddToNetworkPhase() {
+        return cdStartPhase;
+    }
+
+    inline int getAbilityIndex() {
+        return abilityIndex;
+    }
+
 protected:
     bool finished;
     int myPlayerIndex;
@@ -113,6 +125,11 @@ private:
     int currentPhase;
     int phaseCount;
     bool addedToNetwork;
+
+    int cdStartPhase;
+    int addToNetworkPhase;
+
+    int abilityIndex;
 };
 
 

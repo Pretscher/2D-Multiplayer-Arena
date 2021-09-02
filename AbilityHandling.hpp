@@ -48,8 +48,10 @@ public:
     }
 
     void manuallyStartCooldown(int index){
-        onCD[index] = true;
-        cooldownStarts[index] = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+        if (onCD [index] == false) {
+            onCD [index] = true;
+            cooldownStarts [index] = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+        }
     }
 
 
@@ -100,6 +102,7 @@ public:
         AbilityRecources::init(i_players, i_playerCount, i_terrain, i_worldRows, i_worldCols, i_pathfinding);
         fireballs = new std::vector<Fireball*>();
         transfusions = new std::vector<Transfusion*>();
+        generalAbilities = new std::vector<Ability*>();
         this->myPlayerI = i_myPlayerIndex;
         
         abilityCount = 2;
@@ -110,95 +113,102 @@ public:
         abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::Q, 5000);//right now Fireball
         transfusionIndex = 1;
         abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::W, 2000);//right now Transfusion
+
+        newAbilities = new Ability * [abilityCount];
+        for (int i = 0; i < abilityCount; i++) {
+            newAbilities [i] = nullptr;
+        }
     }
 
     
 
 	void update() {
         abilityTriggering->update();
+        for (int i = 0; i < generalAbilities->size(); i++) {
+            generalAbilities->at(i)->update();
+        }
         
-        if (fireballIndicatorActive == false) {
+
+        if (newAbilities [fireballIndex] == nullptr) {
             if (abilityTriggering->startAbility(fireballIndex) == true) {
-                newFireball = new Fireball(myPlayerI);
-                fireballs->push_back(newFireball);
-                fireballIndicatorActive = true;
+                Fireball* newFB = new Fireball(myPlayerI);
+                
+                fireballs->push_back(newFB);
+                generalAbilities->push_back(newFB);
+                newAbilities [fireballIndex] = newFB;
             }
         }
-        if (newFireball != nullptr) {
-            if (newFireball->finishedCompletely() == true || newFireball->hasFinishedNoCast() == true) {
-                for (int i = 0; i < fireballs->size(); i++) {
-                    if (fireballs->at(i) == newFireball) {
-                        fireballs->erase(fireballs->begin() + i);
+
+        if (abilityTriggering->startAbility(transfusionIndex) == true) {
+            Transfusion* newT = new Transfusion(myPlayerI);
+
+            transfusions->push_back(newT);
+            generalAbilities->push_back(newT);
+            newAbilities [transfusionIndex] = newT;
+            //start cooldown later when target has been selected
+        }
+
+        for (int i = 0; i < abilityCount; i++) {
+            Ability* cAbility = newAbilities [i];
+            if (cAbility != nullptr) {
+
+                if (cAbility->wasPhaseInitialized(cAbility->getAddToNetworkPhase()) == true && cAbility->wasAddedToNetwork() == false) {
+                    if (cAbility->isFromNetwork() == false) {
+                        cAbility->addToNetwork();
+                        hasNewAbility [cAbility->getAbilityIndex()] = true;
+                        abilityTriggering->manuallyStartCooldown(cAbility->getAbilityIndex());//start cd at the same time you add to network
                     }
                 }
-                delete newFireball;
-                hasNewFireball = false;
-                newFireball = nullptr;
-                fireballIndicatorActive = false;
-            }
 
-        }
-        if (fireballIndicatorActive == true) {
-            if (newFireball->finishedPhase(0) == true && newFireball->wasAddedToNetwork() == false) {
-                if (newFireball->isFromNetwork() == false) {
-                    newFireball->addToNetwork();
-                    hasNewFireball = true;
-                    abilityTriggering->manuallyStartCooldown(fireballIndex);
-                }
-            }
-        }
-        //transfusion cooldown handling
-        if (transfusionIndicatorActive == false) {
-            if (abilityTriggering->startAbility(transfusionIndex) == true) {
-                transfusionIndicatorActive = true;
-                newTransfusion = new Transfusion(myPlayerI);
-                transfusions->push_back(newTransfusion);
-                //start cooldown later when target has been selected
-            }
-        }
-
-        for (int i = 0; i < fireballs->size(); i++) {
-            fireballs->at(i)->update();
-        }
-
-        for (int i = 0; i < transfusions->size(); i++) {
-            Transfusion* c = transfusions->at(i);
-            c->update();
-            if (c->finishedCompletely() == true) {
-                transfusions->erase(transfusions->begin() + i);
-                //dont pass through network anymore
-                if (newTransfusion != nullptr) {
-                    delete newTransfusion;
-                    newTransfusion = nullptr;
-                    hasNewTransfusion = false;
-                }
-                transfusionIndicatorActive = false;
-            }
-            if (c != nullptr) {
                 //start cooldown only after target has been selected
-                if (c->finishedPhase(1) == true) {
-                    if (c->getTargetPlayer() != -1) {//TODO can we delete this? dunno anymore
-                        if (c->isFromNetwork() == false) {
-                            abilityTriggering->manuallyStartCooldown(transfusionIndex);
+                if (cAbility->wasPhaseInitialized(cAbility->getCDstartPhase()) == true) {
+                    if (cAbility->isFromNetwork() == false) {
+                        abilityTriggering->manuallyStartCooldown(cAbility->getAbilityIndex());
+                    }
+                }
+
+
+                //delete if not needed anymore
+                if (cAbility->finishedCompletely() == true) {
+                    for (int j = 0; j < generalAbilities->size(); j++) {
+                        if (generalAbilities->at(j) == cAbility) {
+                            generalAbilities->erase(generalAbilities->begin() + j);
+                        }
+
+                    }
+                    for (int cFB = 0; cFB < fireballs->size(); cFB++) {
+                        if (fireballs->at(cFB) == cAbility) {
+                            fireballs->erase(fireballs->begin() + cFB);
                         }
                     }
-                    transfusionIndicatorActive = false;
+                    for (int cT = 0; cT < transfusions->size(); cT++) {
+                        if (transfusions->at(cT) == cAbility) {
+                            transfusions->erase(transfusions->begin() + cT);
+                        }
+                    }
+                    delete newAbilities [i];
+                    newAbilities [i] = nullptr;
+                    hasNewAbility [fireballIndex] = false;
                 }
-                if (c->finishedPhase(1) == true && c->getCastingPlayer() == myPlayerI && c->wasAddedToNetwork() == false) {
+            }
+        }
+
+        //add to network
+        for (int i = 0; i < generalAbilities->size(); i++) {
+            Ability* c = generalAbilities->at(i);
+            if (c->wasAddedToNetwork() == false) {
+                if (c->wasPhaseInitialized(c->getAddToNetworkPhase()) == true && c->getCastingPlayer() == myPlayerI 
+                                                                            && c->wasAddedToNetwork() == false) {
                     c->addToNetwork();
-                    hasNewTransfusion = true;
-                    newTransfusion = c;
+                    hasNewAbility [c->getAbilityIndex()] = true;
                 }
             }
         }
 	}
 
 	void drawAbilities() {
-        for (int i = 0; i < fireballs->size(); i++) {
-            fireballs->at(i)->draw();
-        }
-        for (int i = 0; i < transfusions->size(); i++) {
-            transfusions->at(i)->draw();
+        for (int i = 0; i < generalAbilities->size(); i++) {
+            generalAbilities->at(i)->draw();
         }
 	}
 
@@ -239,28 +249,40 @@ public:
 
 
     void sendData() {
-        if (hasNewFireball == true) {
-            if (newFireball->wasPhaseInitialized(1) == true) {
-                hasNewFireball = false;
-                NetworkCommunication::addToken(1);//check if new fireball is to be added
-                NetworkCommunication::addToken(newFireball->getProjectileRow());
-                NetworkCommunication::addToken(newFireball->getProjectileCol());
-                NetworkCommunication::addToken(newFireball->getGoalRow());
-                NetworkCommunication::addToken(newFireball->getGoalCol());
-                NetworkCommunication::addToken(newFireball->getCastingPlayer());
-                NetworkCommunication::addToken(newFireball->getPhase());
-                NetworkCommunication::addToken(newFireball->getStartTime(2));
+        if (hasNewAbility[fireballIndex] == true) {
+            hasNewAbility [fireballIndex] = false;
+            NetworkCommunication::addToken(1);//check if new fireball is to be added
+
+            Fireball* newFireball = nullptr;
+            for (int i = 0; i < fireballs->size(); i++) {
+                if (fireballs->at(i) == newAbilities [fireballIndex]) {
+                    newFireball = fireballs->at(i);
+                    break;
+                }
             }
-            else {
-                NetworkCommunication::addToken(0);
-            }
+
+            NetworkCommunication::addToken(newFireball->getProjectileRow());
+            NetworkCommunication::addToken(newFireball->getProjectileCol());
+            NetworkCommunication::addToken(newFireball->getGoalRow());
+            NetworkCommunication::addToken(newFireball->getGoalCol());
+            NetworkCommunication::addToken(newFireball->getCastingPlayer());
+            NetworkCommunication::addToken(newFireball->getPhase());
+            NetworkCommunication::addToken(newFireball->getStartTime(2));
         }
         else {
             NetworkCommunication::addToken(0);
         }
 
-        if (hasNewTransfusion == true) {
-            hasNewTransfusion = false;
+        if (hasNewAbility [transfusionIndex] == true) {
+            hasNewAbility [transfusionIndex] = false;
+
+            Transfusion* newTransfusion = nullptr;
+            for (int i = 0; i < transfusions->size(); i++) {
+                if (transfusions->at(i) == newAbilities [transfusionIndex]) {
+                    newTransfusion = transfusions->at(i);
+                    break;
+                }
+            }
             NetworkCommunication::addToken(1);//check if new transfusion is to be added
             NetworkCommunication::addToken(newTransfusion->getCastingPlayer());
             NetworkCommunication::addToken(newTransfusion->getTargetPlayer());
@@ -301,21 +323,19 @@ public:
 private:
     bool samePress = false;
     int myPlayerI;
+    int abilityCount = 2;
 
     std::vector<Fireball*>* fireballs;
     std::vector<Transfusion*>* transfusions;
-    Transfusion* newTransfusion = nullptr;
-    Fireball* newFireball = nullptr;
+    std::vector<Ability*>* generalAbilities;
 
-    bool hasNewFireball = false;
-    bool hasNewTransfusion = false;
+    Ability** newAbilities;
+
+
+    bool* hasNewAbility = new bool [abilityCount];
 
     AbilityTriggering* abilityTriggering;
 
     int fireballIndex;
     int transfusionIndex;
-
-    int abilityCount;
-    bool transfusionIndicatorActive = false;
-    bool fireballIndicatorActive = false;
 };
