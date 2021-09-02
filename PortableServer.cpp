@@ -74,7 +74,7 @@ void PortableServer::waitForClient() {
 
 void PortableServer::receiveMultithreaded() {
     while (true) {
-
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         //received something
         inputLenght = read(clientSocket, inputBuffer, bufferMaxLenght);
         //received a valid message
@@ -264,7 +264,7 @@ void PortableServer::sendToClient(const char* message) {
 void PortableServer::receiveMultithreaded() {
     // Receive until the peer shuts down the connection
     while (true) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
 

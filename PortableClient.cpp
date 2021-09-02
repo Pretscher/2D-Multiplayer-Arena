@@ -57,6 +57,7 @@ void PortableClient::waitForServer() {
 
 void PortableClient::receiveMultithreaded() {
     while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         inputLenght = read(serverSocket, inputBuffer, bufferMaxLenght);
         //received a valid message
         if (inputLenght > 0) {
@@ -221,7 +222,7 @@ void PortableClient::sendToServer(const char* message) {
 
 void PortableClient::receiveMultithreaded() {
     while (true) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 
 
