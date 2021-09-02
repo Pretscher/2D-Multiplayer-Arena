@@ -87,16 +87,6 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		}
 		players [otherPlayer]->givePath(pathX, pathY, pathLenght);
 	}
-	else {
-		//no new path, so we dont know where the other player is if we just connected or had 
-		//a lag so long that we missed an entire path-walk => just exchange positions
-		int row = NetworkCommunication::receiveNextToken();
-		int col = NetworkCommunication::receiveNextToken();
-		if (players [otherPlayer]->hasPath() == false) {
-			players [otherPlayer]->setRow(row);
-			players [otherPlayer]->setCol(col);
-		}
-	}
 
 	int hp = NetworkCommunication::receiveNextToken();
 	hpSyncDelay ++;
