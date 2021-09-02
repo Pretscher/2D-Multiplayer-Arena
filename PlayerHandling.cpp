@@ -50,6 +50,9 @@ void PlayerHandling::sendPlayerData() {
 			NetworkCommunication::addToken(me->pathYpositions [i]);
 		}
 	}
+	else {
+		NetworkCommunication::addToken(2);
+	}
 
 
 	NetworkCommunication::addToken(players [otherPlayer]->getHp());
@@ -86,7 +89,9 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		}
 		players [otherPlayer]->givePath(pathX, pathY, pathLenght);
 	}
-
+	else if (actionIndex == 2) {//follow the path given to you
+		//do nothing yet
+	}
 	int hp = NetworkCommunication::receiveNextToken();
 	hpSyncDelay ++;
 	if (hpSyncDelay > 10) {
