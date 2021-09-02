@@ -35,12 +35,7 @@ void PlayerHandling::sendPlayerData() {
 	}
 
 	Player* me = players [myPlayerI];
-	if (me->hasPath() == false) {
-		NetworkCommunication::addToken(0);//bool if path should be interrupted
-		NetworkCommunication::addToken(me->getRow());
-		NetworkCommunication::addToken(me->getCol());
-	}
-	else if (me->hasNewPath == true) {
+	if (me->hasNewPath == true) {
 		me->hasNewPath = false;
 		NetworkCommunication::addToken(1);//bool if new bath was found
 
@@ -49,6 +44,15 @@ void PlayerHandling::sendPlayerData() {
 			NetworkCommunication::addToken(me->pathXpositions [i]);
 			NetworkCommunication::addToken(me->pathYpositions [i]);
 		}
+	}
+	else {
+		NetworkCommunication::addToken(0);
+
+		//no new path, so we dont know where the other player is if we just connected or had 
+		//a lag so long that we missed an entire path-walk => just exchange positions
+		
+		NetworkCommunication::addToken(me->getRow());
+		NetworkCommunication::addToken(me->getCol());
 	}
 
 
@@ -64,19 +68,7 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		otherPlayer = 1;
 	}
 
-	int actionIndex = NetworkCommunication::receiveNextToken();
-
-	if (actionIndex == 0) {//interrupt path/no path is there
-		if (players [otherPlayer]->hasPath() == true) {
-			players [otherPlayer]->deletePath();
-
-			int row = NetworkCommunication::receiveNextToken();
-			int col = NetworkCommunication::receiveNextToken();
-			players [otherPlayer]->setRow(row);
-			players [otherPlayer]->setCol(col);
-		}
-	}
-	else if (actionIndex == 1) {//new path
+	if (NetworkCommunication::receiveNextToken() == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
 		
 		int* pathX = new int [pathLenght];
@@ -86,6 +78,16 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 			pathY [i] = NetworkCommunication::receiveNextToken();
 		}
 		players [otherPlayer]->givePath(pathX, pathY, pathLenght);
+	}
+	else {
+		//no new path, so we dont know where the other player is if we just connected or had 
+		//a lag so long that we missed an entire path-walk => just exchange positions
+		int row = NetworkCommunication::receiveNextToken();
+		int col = NetworkCommunication::receiveNextToken();
+		if (players [otherPlayer]->hasPath() == false) {
+			players [otherPlayer]->setRow(row);
+			players [otherPlayer]->setCol(col);
+		}
 	}
 
 	int hp = NetworkCommunication::receiveNextToken();
