@@ -6,9 +6,10 @@
 #include <vector>
 #include <chrono>
 
+#include "VladE.hpp"
 #include "Transfusion.hpp"
 #include "Fireball.hpp"
-#include "AbilityRecources.hpp"
+#include "AbilityRecources.hpp"//init is called here
 using namespace std::chrono;
 
 class AbilityTriggering {
@@ -100,19 +101,13 @@ class AbilityHandling {
 public:
     AbilityHandling(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, int i_myPlayerIndex, Pathfinding* i_pathfinding) {
         AbilityRecources::init(i_players, i_playerCount, i_terrain, i_worldRows, i_worldCols, i_pathfinding);
-        fireballs = new std::vector<Fireball*>();
-        transfusions = new std::vector<Transfusion*>();
         generalAbilities = new std::vector<Ability*>();
         this->myPlayerI = i_myPlayerIndex;
         
-        abilityCount = 2;
         abilityTriggering = new AbilityTriggering(abilityCount);
 
         //ability declerations
-        fireballIndex = 0;
-        abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::Q, 5000);//right now Fireball
-        transfusionIndex = 1;
-        abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::W, 2000);//right now Transfusion
+        declareCustomAbilities();
 
         newAbilities = new Ability * [abilityCount];
         for (int i = 0; i < abilityCount; i++) {
@@ -129,9 +124,8 @@ public:
             generalAbilities->at(i)->update();
         }
 
-        initFireball();
-        initTransfusion();
-        
+        initAll();
+
         for (int i = 0; i < abilityCount; i++) {
             Ability* cAbility = newAbilities [i];
             if (cAbility != nullptr) {
@@ -161,8 +155,7 @@ public:
 
                     }
 
-                    deleteFireball(cAbility);
-                    deleteTransfusion(cAbility);
+                    deleteAll(cAbility);
 
                     delete newAbilities [i];
                     newAbilities [i] = nullptr;
@@ -312,8 +305,17 @@ public:
 
 
 
+    void initAll() {
+        initFireball();
+        initTransfusion();
+        initVladE();
+    }
 
-
+    void deleteAll(Ability* cAbility) {
+        deleteFireball(cAbility);
+        deleteTransfusion(cAbility);
+        deleteVladE(cAbility);
+    }
 
     void initFireball() {
         if (newAbilities [fireballIndex] == nullptr) {
@@ -326,7 +328,6 @@ public:
             }
         }
     }
-
 
     void initTransfusion() {
         if (newAbilities [transfusionIndex] == nullptr) {
@@ -341,39 +342,71 @@ public:
         }
     }
 
-    void deleteFireball(Ability* toDelete) {
-        for (int cFB = 0; cFB < fireballs->size(); cFB++) {
-            if (fireballs->at(cFB) == toDelete) {
-                fireballs->erase(fireballs->begin() + cFB);
+    void initVladE() {
+        if (newAbilities [vladEindex] == nullptr) {
+            if (abilityTriggering->startAbility(vladEindex) == true) {
+                VladE* newE = new VladE(myPlayerI);
+
+                vladEs->push_back(newE);
+                generalAbilities->push_back(newE);
+                newAbilities [vladEindex] = newE;
+                //start cooldown later when target has been selected
             }
         }
+    }
 
+    void deleteVladE(Ability* toDelete) {
+        for (int c = 0; c < vladEs->size(); c++) {
+            if (vladEs->at(c) == toDelete) {
+                vladEs->erase(vladEs->begin() + c);
+            }
+        }
+    }
+
+    void deleteFireball(Ability* toDelete) {
+        for (int c = 0; c < fireballs->size(); c++) {
+            if (fireballs->at(c) == toDelete) {
+                fireballs->erase(fireballs->begin() + c);
+            }
+        }
     }
 
     void deleteTransfusion(Ability* toDelete) {
-        for (int cT = 0; cT < transfusions->size(); cT++) {
-            if (transfusions->at(cT) == toDelete) {
-                transfusions->erase(transfusions->begin() + cT);
+        for (int c = 0; c < transfusions->size(); c++) {
+            if (transfusions->at(c) == toDelete) {
+                transfusions->erase(transfusions->begin() + c);
             }
         }
+    }
+
+    void declareCustomAbilities() {
+        fireballIndex = 0;
+        abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::Q, 5000);//right now Fireball
+        transfusionIndex = 1;
+        abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::W, 2000);//right now Transfusion
+        vladEindex = 2;
+        abilityTriggering->addAbility(vladEindex, sf::Keyboard::Key::E, 2000);//right now Transfusion
     }
 
 private:
     bool samePress = false;
     int myPlayerI;
-    int abilityCount = 2;
-
-    std::vector<Fireball*>* fireballs;
-    std::vector<Transfusion*>* transfusions;
     std::vector<Ability*>* generalAbilities;
-
     Ability** newAbilities;
-
-
-    bool* hasNewAbility = new bool [abilityCount];
 
     AbilityTriggering* abilityTriggering;
 
+    //NEW ABILITY ATTRIBUTES--------------------------------
+    
+    int abilityCount = 3;
+    bool* hasNewAbility = new bool [abilityCount];
+
+    std::vector<Fireball*>* fireballs = new std::vector<Fireball*>();
+    std::vector<Transfusion*>* transfusions = new std::vector<Transfusion*>();
+    std::vector<VladE*>* vladEs = new std::vector<VladE*>();;
+
+    //indices of abilities. Please set in "declareCustomAbilities()".
     int fireballIndex;
     int transfusionIndex;
+    int vladEindex;
 };

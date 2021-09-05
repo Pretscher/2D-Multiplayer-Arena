@@ -3,13 +3,17 @@
 #include <chrono>
 using namespace std::chrono;
 
-Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, 1, 1, 0) {//both constructors are used
+static int i_onCDPhase = 1;
+static int i_addToNetworkPhase = 2;
+static int i_abilityIndex = 0;
+
+Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {//both constructors are used
     indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, AbilityRecources::playerCount, AbilityRecources::players);
 }
 
 //create from network input(row is just current row so even with lag the start is always synced)
 Fireball::Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,
-    int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex, true, 1, 1, 0) {
+    int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
 
     this->startRow = i_currentRow;
     this->startCol = i_currentCol;

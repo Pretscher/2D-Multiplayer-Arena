@@ -85,7 +85,7 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		//std::cout << "time elapsed sind the algorithm started: " << Utils::endTimerGetTime();
 
 		//get lenght of path array
-		int pathLenght = 0;
+		int pathLenght = 1;//goal pos pushed back
 		int currentIndex = goalIndex;
 		while (true) {
 			currentIndex = previousIndex[currentIndex];
@@ -94,14 +94,15 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 				break;
 			}
 		}
-		
 
 		*o_XPos = new int[pathLenght];
 		*o_YPos = new int[pathLenght];
 		*o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
-		int indexInPath = pathLenght - 1;
+		(*o_XPos) [pathLenght - 1] = goalCol * graph->accuracy;
+		(*o_YPos) [pathLenght - 1] = goalRow * graph->accuracy;
+		int indexInPath = pathLenght - 2;
 		currentIndex = goalIndex;
 		while (true) {
 			(*o_XPos)[indexInPath] = graph->xCoords[currentIndex];

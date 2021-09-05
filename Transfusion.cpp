@@ -1,7 +1,13 @@
 #include "Transfusion.hpp"
 #include "AbilityRecources.hpp"
 
-Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, 2, 2, 1) {
+
+static int i_onCDPhase = 2;
+static int i_addToNetworkPhase = 2;
+static int i_abilityIndex = 1;
+
+
+Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
     this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range,
         AbilityRecources::playerCount, AbilityRecources::players);
 
@@ -13,7 +19,7 @@ Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, 
     }
 }
 //constructor through networking
-Transfusion::Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true, 2, 2, 1) {
+Transfusion::Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
     this->targetPlayerIndex = i_targetPlayerIndex;//we dont know the indicator so its target has to be passed
     lastRows = new int [positionsSavedCount];
     lastCols = new int [positionsSavedCount];
