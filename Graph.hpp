@@ -38,6 +38,8 @@ public:
 	std::vector<int> deactivatedX = std::vector<int>();
 	std::vector<int> deactivatedY = std::vector<int>();
 	void debugDrawing();
+
+	void findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant);
 private:
 	int findNextUseableVertex(int row, int col, bool moveableRelevant);
 };

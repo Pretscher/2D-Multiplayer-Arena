@@ -21,6 +21,7 @@ public:
     void execute2() override;
     void draw2() override;
 
+    void limitPosToRange(int* io_goalRow, int* io_goalCol);
 private:
     int radius = 50;
 

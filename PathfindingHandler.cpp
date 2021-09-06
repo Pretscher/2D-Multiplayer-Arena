@@ -71,6 +71,13 @@ void Pathfinding::pathFindingOnClick() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
+			mouseX -= players [0]->getWidth() / 2;
+			mouseY -= players [0]->getHeight() / 2;
+
+			enablePlayer(myPlayerIndex);
+			g->findNextUseableCoords(&mouseX, &mouseY, true);
+			disablePlayer(myPlayerIndex);
+
 			findPath(mouseX, mouseY, myPlayerIndex);
 		}
 	}
@@ -92,6 +99,7 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 		newPathFinding = true;
 		cGoalX = goalX;
 		cGoalY = goalY;
+
 		cPlayerIndex = playerIndex;
 	}
 	else {
@@ -197,9 +205,27 @@ void Pathfinding::enableArea(int row, int col, int width, int height) {
 	}
 }
 
+//enables player coords and after that disables all coords of other movables again in case their area was affected by that.
+void Pathfinding::enablePlayer(int i_playerIndex) {
+	Player* player = players [i_playerIndex];
 
+	g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
 
+	for (int i = 0; i < playerCount; i++) {
+		if (players [i]->getHp() > 0) {
+			if (i != cPlayerIndex) {
+				Player* cPlayer = players [i];
+				g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
+			}
+		}
+	}
+}
 
+//enables player coords and after that disables all coords of other movables again in case their area was affected by that.
+void Pathfinding::disablePlayer(int i_playerIndex) {
+	Player* player = players [i_playerIndex];
+	g->disableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
+}
 
 
 
@@ -215,34 +241,18 @@ void Pathfinding::startPathFinding() {
 			int* xPath = nullptr;
 			int* yPath = nullptr;
 			int pathlenght = 0;
-
-			int mouseRow = cGoalY;
-			int mouseCol = cGoalX;
-
 			Player* player = players[cPlayerIndex];
 
-
-			//Cant do that in the other thread while pathfinding so we needa do it here
-
-
-			g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
-
-			for (int i = 0; i < playerCount; i++) {
-				if (players[i]->getHp() > 0) {
-					if (i != cPlayerIndex) {
-						Player* cPlayer = players[i];
-						g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
-					}
-				}
-			}
+			enablePlayer(cPlayerIndex);
 
 			finishedPathfinding->unlock();
-			bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow(), player->getCol(), mouseRow, mouseCol);
+			bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() + (player->getHeight() / 2), 
+															 player->getCol() + (player->getWidth() / 2), cGoalY, cGoalX);
 
 			//reverse accuracy simplification
-			for (int i = 0; i < pathlenght; i++) {
-				xPath[i] /= pathfindingAccuracy;
-				yPath[i] /= pathfindingAccuracy;
+			for (int i = 0; i < pathlenght - 1; i++) {
+				xPath[i] = (float) xPath[i] / pathfindingAccuracy;
+				yPath[i] = (float) yPath[i] / pathfindingAccuracy;
 			}
 
 			finishedPathfinding->lock();

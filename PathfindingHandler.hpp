@@ -19,6 +19,9 @@ public:
 	void startPathFinding();
 	void findPath(int goalX, int goalY, int playerIndex);
 
+	void enablePlayer(int i_playerIndex);
+	void disablePlayer(int i_playerIndex);
+
 	void update();
 	void setPlayerIndex(int playerI) {
 		myPlayerIndex = playerI;

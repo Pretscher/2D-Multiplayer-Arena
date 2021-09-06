@@ -50,9 +50,8 @@ void Player::move() {
 	
 	//move gradually between path steps
 	if (dueSteps < 1) {
-		int roundPathIndex = int(cPathIndex);
-		int nextCol = pathXpositions [roundPathIndex];
-		int nextRow = pathYpositions [roundPathIndex];
+		int nextCol = pathXpositions [cPathIndex];
+		int nextRow = pathYpositions [cPathIndex];
 
 		float colDiff = (sqrt(((float) col - nextCol) * ((float) col - nextCol)) * dueSteps);
 		float rowDiff = (sqrt(((float) row - nextRow) * ((float) row - nextRow)) * dueSteps);
@@ -75,25 +74,27 @@ void Player::move() {
 		lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 		if (pathLenght != -1) {//too lazy for booleans as you can see
 			//has to be a float so that it can be modified by non-int velocities properly
-			int roundPathIndex = int(cPathIndex);
 
 			int nextCol;
 			int nextRow;
 			for (int i = 0; i <= dueSteps; i++) {
 				if (pathLenght == -1) return;
-				nextCol = pathXpositions [roundPathIndex];
-				nextRow = pathYpositions [roundPathIndex];
+				nextCol = pathXpositions [cPathIndex];
+				nextRow = pathYpositions [cPathIndex];
 
-				if (cPathIndex + 1 < pathLenght) {
+				if (cPathIndex < pathLenght - 2) {
 					cPathIndex ++;
 				}
 				else {
+					row = pathYpositions [pathLenght - 1];
+					col = pathXpositions [pathLenght - 1];
 					//go to state of not having a path
 					pathLenght = -1;
 					delete [] pathXpositions;
 					delete [] pathYpositions;
 
 					hasNewPath = false;
+					return;
 				}
 			}
 

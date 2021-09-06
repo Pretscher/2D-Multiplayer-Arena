@@ -60,6 +60,14 @@ static void toRowCol(int* io_X, int* io_Y) {
     *io_X = (helpCol / size.x) * maxCols;
 }
 
+static void toFloatRowCol(float* io_X, float* io_Y) {
+    auto size = Renderer::currentWindow->getSize();
+    float helpRow = (float) *io_Y;
+    float helpCol = (float) *io_X;
+    *io_Y = (helpRow / (float)size.y) * (float)maxRows;
+    *io_X = (helpCol / (float)size.x) * (float)maxCols;
+}
+
 //\coord conversion-------------------------------------------------------------------------------------------------------
 
 //Drawing functions-------------------------------------------------------------------------------------------------------
@@ -156,9 +164,9 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
     auto offset = currentWindow->getPosition();
-    int x = pos.x - offset.x;
-    int y = pos.y - offset.y - 60;
-    toRowCol(&x, &y);
+    float x = pos.x - offset.x - 10;
+    float y = pos.y - offset.y - 60;
+    toFloatRowCol(&y, &x);
 
     if (factorInBorders == true) {
         int limitRow = maxRows;

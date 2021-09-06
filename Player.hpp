@@ -14,7 +14,7 @@ public:
     int* pathXpositions;
     int* pathYpositions;
     int pathLenght;
-    float cPathIndex;
+    int cPathIndex;
 private:
 
 	int row;

@@ -3,14 +3,14 @@
 #include <chrono>
 #include "Algorithm.hpp"
 #include <limits>
-
+#include "Renderer.hpp"
 int Algorithm::currentIteration = -1;
 bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
 	currentIteration++;
 	
 	int startIndex = graph->getIndexFromCoords(startRow, startCol, true);
 	int goalIndex = graph->getIndexFromCoords(goalRow, goalCol, true);
-
+	
 	int graphNodeCount = graph->graphNodeCount;
 	//initialize GraphnodeHeuristics
 	graph->neighbourCosts = new int*[graphNodeCount];
@@ -100,8 +100,9 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		*o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
-		(*o_XPos) [pathLenght - 1] = goalCol * graph->accuracy;
-		(*o_YPos) [pathLenght - 1] = goalRow * graph->accuracy;
+		(*o_XPos) [pathLenght - 1] = goalCol;
+		(*o_YPos) [pathLenght - 1] = goalRow;
+
 		int indexInPath = pathLenght - 2;
 		currentIndex = goalIndex;
 		while (true) {

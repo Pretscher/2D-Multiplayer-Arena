@@ -2,13 +2,13 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include "Algorithm.hpp"
-
+#include <math.h>
 
 Graph::Graph(int i_rows, int i_cols, float i_accuracy) {
     accuracy = i_accuracy;
     this->graphNodeCount = 0;
-    this->cols = i_cols * accuracy;
-    this->rows = i_rows * accuracy;
+    this->cols = (float)i_cols * accuracy;
+    this->rows = (float)i_rows * accuracy;
     int lenght = this->rows * cols;
 
     //init everything with given sizes
@@ -225,9 +225,32 @@ int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
     }
 }
 
+void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
+    float x = (float) *io_x * accuracy;
+    float y = (float) *io_y * accuracy;
+
+    int cIndex = rawIndices [(int)y][(int)x];//check if index is valid now
+    if (cIndex != -1) {
+        if (moveableRelevant == true) {
+            if (usedByMoveable [cIndex] == true) {
+                cIndex = -1;
+            }
+        }
+    }
+    if (cIndex != -1) {
+        return;//dont change coords
+    }
+
+    int index = findNextUseableVertex(y, x, moveableRelevant);
+    *io_x = (float)xCoords [index] / accuracy;
+    *io_y = (float)yCoords [index] / accuracy;
+
+
+}
+
 int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
-    row = ((float)row * accuracy);
-    col = ((float)col * accuracy);
+    row = round(((float)row * accuracy));
+    col = round(((float)col * accuracy));
 
     if (row < rows && col < cols) {
         if (moveableRelevant == true) {
@@ -253,13 +276,15 @@ int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
     }
 }
 
+
+
 bool debug = false;
 
 void Graph::disableObjectBounds(int row, int col, int width, int height) {
-    row *= accuracy;
-    col *= accuracy;
-    width *= accuracy;
-    height *= accuracy;
+    row = (float) row * accuracy;
+    col = (float) col * accuracy;
+    width = (float) width * accuracy;
+    height = (float) height * accuracy;
 
     int minY = row - height + 1;
     if (minY < 0) {
@@ -284,21 +309,21 @@ void Graph::disableObjectBounds(int row, int col, int width, int height) {
           // if (Renderer::currentWindow != nullptr) {
              //  Renderer::drawRect(y / accuracy, x / accuracy, 2, 2, sf::Color(255, 255, 0, 255));
          //  }
-            int index = getIndexFromCoords(y / accuracy, x / accuracy, false);
+            int index = getIndexFromCoords((float) y / accuracy, (float) x / accuracy, false);
             usedByMoveable[index] = true;
             if (debug == true) {
-                deactivatedX.push_back(x / accuracy);
-                deactivatedY.push_back(y / accuracy);
+                deactivatedX.push_back((float) x / accuracy);
+                deactivatedY.push_back((float) y / accuracy);
             }
         }
     }
 }
 
 void Graph::enableObjectBounds(int row, int col, int width, int height) {
-    row *= accuracy;
-    col *= accuracy;
-    width *= accuracy;
-    height *= accuracy;
+    row = (float) row * accuracy;
+    col = (float) col * accuracy;
+    width = (float) width * accuracy;
+    height = (float) height * accuracy;
 
     int minY = row - height + 1;
     if (minY < 0) {
@@ -320,12 +345,12 @@ void Graph::enableObjectBounds(int row, int col, int width, int height) {
 
     for (int y = minY; y <= maxY; y ++) {
         for (int x = minX; x <= maxX; x ++) {
-            int index = getIndexFromCoords(y / accuracy, x / accuracy, false);
+            int index = getIndexFromCoords((float) y / accuracy, (float) x / accuracy, false);
             usedByMoveable[index] = false;
 
             if (debug == true) {
                 for (int i = 0; i < deactivatedY.size(); i++) {
-                    if (deactivatedY.at(i) == y / accuracy && deactivatedX.at(i) == x / accuracy) {
+                    if (deactivatedY.at(i) == (float)y / accuracy && deactivatedX.at(i) == (float)x / accuracy) {
                         deactivatedX.erase(deactivatedX.begin() + i);
                         deactivatedY.erase(deactivatedY.begin() + i);
                     }
