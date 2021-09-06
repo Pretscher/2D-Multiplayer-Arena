@@ -3,6 +3,8 @@
 #include <iostream>
 #include <chrono>
 #include <math.h>
+#include "GlobalRecources.hpp"
+
 Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg) {
 	this->col = i_col;
 	this->row = i_row;
@@ -24,13 +26,12 @@ Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, flo
 
 
 void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
+	GlobalRecources::pfMtx->lock();
 	//free memory in case of reassigning path
 	if (pathLenght != -1) {
 		delete[] pathXpositions;
 		delete[] pathYpositions;
 	}
-	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 	pathXpositions = i_pathX;
 	pathYpositions = i_pathY;
 	cPathIndex = 0;
@@ -39,6 +40,11 @@ void Player::givePath(int* i_pathX, int* i_pathY, int i_pathLenght) {
 	if (pathLenght > 0) {
 		hasNewPath = true;
 	}
+	GlobalRecources::pfMtx->unlock();
+
+	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
+	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+
 }
 
 
@@ -120,6 +126,7 @@ void Player::move() {
 }
 
 void Player::deletePath() {
+	GlobalRecources::pfMtx->lock();
 	if (pathLenght != -1) {
 		pathLenght = -1;
 		delete[] pathXpositions;
@@ -127,6 +134,7 @@ void Player::deletePath() {
 	}
 	findingPath = false;
 	hasNewPath = false;
+	GlobalRecources::pfMtx->unlock();
 }
 
 void Player::draw() {
@@ -150,4 +158,18 @@ void Player::initTextures() {
 
 void Player::setTexture(int index) {
 	cTextureI = index;
+}
+
+void Player::setFindingPath(bool i_findingPath) {
+	GlobalRecources::pfMtx->lock();
+	findingPath = i_findingPath;
+	GlobalRecources::pfMtx->unlock();
+}
+
+bool Player::isFindingPath() {
+	bool temp;
+	GlobalRecources::pfMtx->lock();
+	temp = findingPath;
+	GlobalRecources::pfMtx->unlock();
+	return temp;
 }

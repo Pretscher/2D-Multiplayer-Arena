@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Algorithm.hpp"
 #include <math.h>
+#include "GlobalRecources.hpp"
 
 Graph::Graph(int i_rows, int i_cols, float i_accuracy) {
     accuracy = i_accuracy;
@@ -281,6 +282,7 @@ int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
 bool debug = false;
 
 void Graph::disableObjectBounds(int row, int col, int width, int height) {
+    GlobalRecources::pfMtx->lock();
     row = (float) row * accuracy;
     col = (float) col * accuracy;
     width = (float) width * accuracy;
@@ -317,9 +319,13 @@ void Graph::disableObjectBounds(int row, int col, int width, int height) {
             }
         }
     }
+
+    GlobalRecources::pfMtx->unlock();
 }
 
 void Graph::enableObjectBounds(int row, int col, int width, int height) {
+    GlobalRecources::pfMtx->lock();
+
     row = (float) row * accuracy;
     col = (float) col * accuracy;
     width = (float) width * accuracy;
@@ -358,6 +364,8 @@ void Graph::enableObjectBounds(int row, int col, int width, int height) {
             }
         }
     }
+
+    GlobalRecources::pfMtx->unlock();
 }
 
 void Graph::moveObject(int row, int col, int oldRow, int oldCol, int width, int height) {

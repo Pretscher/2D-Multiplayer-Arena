@@ -87,7 +87,7 @@
     <ClCompile Include="Transfusion.cpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClCompile>
-    <ClCompile Include="AbilityRecources.cpp">
+    <ClCompile Include="GlobalRecources.cpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClCompile>
     <ClCompile Include="VladE.cpp">
@@ -173,7 +173,7 @@
     <ClInclude Include="Transfusion.hpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClInclude>
-    <ClInclude Include="AbilityRecources.hpp">
+    <ClInclude Include="GlobalRecources.hpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClInclude>
     <ClInclude Include="VladE.hpp">

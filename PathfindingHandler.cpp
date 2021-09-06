@@ -28,7 +28,7 @@ Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player*
 	this->indicesToFind = new std::vector<int>();
 
 	pathFindingThread = new std::thread(&startPathfindingThread, this);
-	finishedPathfinding = new std::mutex();
+	pfMtx = new std::mutex();
 
 	pathfindingAccuracy = 0.025f;
 	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
@@ -51,12 +51,6 @@ Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player*
 	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, i_players[0]->getWidth(), i_players[0]->getHeight());
 	g = new Graph(worldRows, worldCols, pathfindingAccuracy);
 	g->generateWorldGraph(collisionGrid);
-
-	for (int i = 0; i < playerCount; i++) {
-		if (players[i]->getHp() > 0) {
-			disableArea(players[i]->getRow(), players[i]->getCol(), players[i]->getWidth(), players[i]->getHeight());
-		}
-	}
 }
 
 void Pathfinding::pathFindingOnClick() {
@@ -66,7 +60,7 @@ void Pathfinding::pathFindingOnClick() {
 
 	//if rightclick is pressed, find path from player to position of click
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && findingPath == false) {
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && getFindingPath() == false) {
 		sameClick = true;
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
@@ -89,14 +83,13 @@ void Pathfinding::update() {
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
-	finishedPathfinding->lock();
-	if (findingPath == false) {
-		findingPath = true;
+	if (getFindingPath() == false) {
+		setFindingPath(true);
 		players[playerIndex]->setFindingPath(true);
 		if (players[playerIndex]->hasPath() == true) {
 			players[playerIndex]->deletePath();
 		}
-		newPathFinding = true;
+		setNewPathfinding(true);
 		cGoalX = goalX;
 		cGoalY = goalY;
 
@@ -107,22 +100,15 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 		goalRowToFind->push_back(goalY);
 		indicesToFind->push_back(playerIndex);
 	}
-
-	finishedPathfinding->unlock();
 }
 
 void Pathfinding::workThroughPathfindingQueue() {
 	if (goalColToFind->size() > 0) {
-		finishedPathfinding->lock();
-		if (findingPath == false) {
-			finishedPathfinding->unlock();
+		if (getFindingPath() == false) {
 			findPath(goalColToFind->at(0), goalRowToFind->at(0), indicesToFind->at(0));
 			goalColToFind->erase(goalColToFind->begin());
 			goalRowToFind->erase(goalRowToFind->begin());
 			indicesToFind->erase(indicesToFind->begin());
-		}
-		else {
-			finishedPathfinding->unlock();
 		}
 	}
 }
@@ -135,14 +121,12 @@ void Pathfinding::moveObjects() {
 	//this->enableArea(0, 0, wCols - 1, wRows - 1);//enable all
 	for (int i = 0; i < playerCount; i++) {
 		if (players[i]->getHp() > 0) {
-			finishedPathfinding->lock();
 			if (players[i]->hasPath() == true) {
 				int tempRow = players[i]->getRow();
 				int tempCol = players[i]->getCol();
 				players[i]->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
 				this->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
 				this->disableArea(players[i]->getRow(), players[i]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
-				finishedPathfinding->unlock();
 				//for efficiency only find new path if you move next to a possibly moving object
 				//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
 				if (players[i]->getRow() != tempRow && players[i]->getCol() != tempCol) {//only having a path doesnt mean you moved on it
@@ -152,7 +136,6 @@ void Pathfinding::moveObjects() {
 			}
 			else {
 				this->disableArea(players[i]->getRow(), players[i]->getCol(), players[i]->getWidth(), players[i]->getHeight());
-				finishedPathfinding->unlock();
 			}
 		}
 	}
@@ -194,13 +177,13 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 
 
 void Pathfinding::disableArea(int row, int col, int width, int height) {
-	if (findingPath == false) {
+	if (getFindingPath() == false) {
 		g->disableObjectBounds(row, col, width, height);
 	}
 }
 
 void Pathfinding::enableArea(int row, int col, int width, int height) {
-	if (findingPath == false) {
+	if (getFindingPath() == false) {
 		g->enableObjectBounds(row, col, width, height);
 	}
 }
@@ -221,7 +204,7 @@ void Pathfinding::enablePlayer(int i_playerIndex) {
 	}
 }
 
-//enables player coords and after that disables all coords of other movables again in case their area was affected by that.
+//enables player coords and after that disables all coords of other movables 			setNewPathfinding(false);again in case their area was affected by that.
 void Pathfinding::disablePlayer(int i_playerIndex) {
 	Player* player = players [i_playerIndex];
 	g->disableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
@@ -236,8 +219,8 @@ void Pathfinding::disablePlayer(int i_playerIndex) {
 void Pathfinding::startPathFinding() {
 	while (true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-		finishedPathfinding->lock();
-		if (newPathFinding == true) {
+
+		if (this->getNewPathfinding() == true) {
 			int* xPath = nullptr;
 			int* yPath = nullptr;
 			int pathlenght = 0;
@@ -245,7 +228,6 @@ void Pathfinding::startPathFinding() {
 
 			enablePlayer(cPlayerIndex);
 
-			finishedPathfinding->unlock();
 			bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() + (player->getHeight() / 2), 
 															 player->getCol() + (player->getWidth() / 2), cGoalY, cGoalX);
 
@@ -255,18 +237,43 @@ void Pathfinding::startPathFinding() {
 				yPath[i] = (float) yPath[i] / pathfindingAccuracy;
 			}
 
-			finishedPathfinding->lock();
-
 			if (found == true) {
 				player->givePath(xPath, yPath, pathlenght);
 			}
-			findingPath = false;
 			player->setFindingPath(false);
-			newPathFinding = false;
-			finishedPathfinding->unlock();
-		}
-		else {
-			finishedPathfinding->unlock();
+			setNewPathfinding(false);
+			setFindingPath(false);
 		}
 	}
+}
+
+//thread safety: this var should only be written through this setter, but you dont have to handle the mutex yourself
+void Pathfinding::setNewPathfinding(bool i_newPf) {
+	pfMtx->lock();
+	newPathFinding = i_newPf;
+	pfMtx->unlock();
+}
+
+//thread safety: this var should only be accessed through this getter, but you dont have to handle the mutex yourself
+bool Pathfinding::getNewPathfinding() {
+	bool temp;
+	pfMtx->lock();
+	temp = newPathFinding;
+	pfMtx->unlock();
+	return temp;
+}
+
+void Pathfinding::setFindingPath(bool i_newPf) {
+	pfMtx->lock();
+	findingPath = i_newPf;
+	pfMtx->unlock();
+}
+
+//thread safety: this var should only be accessed through this getter, but you dont have to handle the mutex yourself
+bool Pathfinding::getFindingPath() {
+	bool temp;
+	pfMtx->lock();
+	temp = findingPath;
+	pfMtx->unlock();
+	return temp;
 }

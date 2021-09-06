@@ -1,5 +1,5 @@
 #include "Transfusion.hpp"
-#include "AbilityRecources.hpp"
+#include "GlobalRecources.hpp"
 
 
 static int i_onCDPhase = 2;
@@ -9,7 +9,7 @@ static int i_abilityIndex = 1;
 
 Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
     this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range,
-        AbilityRecources::playerCount, AbilityRecources::players);
+        GlobalRecources::playerCount, GlobalRecources::players);
 
     lastRows = new int [positionsSavedCount];
     lastCols = new int [positionsSavedCount];
@@ -29,8 +29,8 @@ Transfusion::Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability
     }
 
     //normally initialized in init1, but we have to skip this
-    me = AbilityRecources::players [myPlayerIndex];
-    target = AbilityRecources::players [targetPlayerIndex];
+    me = GlobalRecources::players [myPlayerIndex];
+    target = GlobalRecources::players [targetPlayerIndex];
 
     skipToPhase(2);
 }
@@ -56,8 +56,8 @@ void Transfusion::draw0() {
 }
 
 void Transfusion::init1() {
-    me = AbilityRecources::players [myPlayerIndex];
-    target = AbilityRecources::players [targetPlayerIndex];
+    me = GlobalRecources::players [myPlayerIndex];
+    target = GlobalRecources::players [targetPlayerIndex];
 
 
     //if player out of range, run into range
@@ -68,8 +68,8 @@ void Transfusion::init1() {
     if (dist > range) {//if player is too far away
         tempGoalRow = target->getRow() + halfW;//find a path to his center because thats better than left top coords
         tempGoalCol = target->getCol() + halfH;
-        AbilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
-        abilityPathIndex = AbilityRecources::players [myPlayerIndex]->pathsFound;
+        GlobalRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
+        abilityPathIndex = GlobalRecources::players [myPlayerIndex]->pathsFound;
     }
     else {
         nextPhase();//if already in range, just start casting without moving
@@ -82,8 +82,8 @@ void Transfusion::execute1() {
     if (tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
         tempGoalRow = target->getRow() + halfW;
         tempGoalCol = target->getCol() + halfW;
-        AbilityRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
-        abilityPathIndex = AbilityRecources::players [myPlayerIndex]->pathsFound;
+        GlobalRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
+        abilityPathIndex = GlobalRecources::players [myPlayerIndex]->pathsFound;
     }
     bool stop = false;
     //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
@@ -92,7 +92,7 @@ void Transfusion::execute1() {
     //player obj and if the index is equal to abiltyPathIndex its still finding the path (same index
     //as when it was saved) and if its one higher the path was found. if its 2 higher a new path
     //was found and we interrupt.
-    if (AbilityRecources::players [myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
+    if (GlobalRecources::players [myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
         stop = true;
     }
     if (stop == false) {
@@ -101,7 +101,7 @@ void Transfusion::execute1() {
         if (Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW,
             me->getRow() + halfH, target->getRow() + halfH) < range) {
             //got into range, stop going on path an cast ability
-            AbilityRecources::players [myPlayerIndex]->deletePath();
+            GlobalRecources::players [myPlayerIndex]->deletePath();
             nextPhase();
         }
     }
@@ -136,7 +136,7 @@ void Transfusion::execute2() {
         followPlayer();
     }
 
-    bloodBall->move(AbilityRecources::worldRows, AbilityRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
+    bloodBall->move(GlobalRecources::worldRows, GlobalRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
 }
 
 void Transfusion::draw2() {

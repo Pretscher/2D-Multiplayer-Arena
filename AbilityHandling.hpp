@@ -9,7 +9,7 @@
 #include "VladE.hpp"
 #include "Transfusion.hpp"
 #include "Fireball.hpp"
-#include "AbilityRecources.hpp"//init is called here
+#include "GlobalRecources.hpp"//init is called here
 using namespace std::chrono;
 
 class AbilityTriggering {
@@ -99,8 +99,7 @@ private:
 
 class AbilityHandling {
 public:
-    AbilityHandling(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, int i_myPlayerIndex, Pathfinding* i_pathfinding) {
-        AbilityRecources::init(i_players, i_playerCount, i_terrain, i_worldRows, i_worldCols, i_pathfinding);
+    AbilityHandling(int i_myPlayerIndex) {
         generalAbilities = new std::vector<Ability*>();
         this->myPlayerI = i_myPlayerIndex;
         

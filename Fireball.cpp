@@ -1,5 +1,5 @@
 #include "Fireball.hpp"
-#include "AbilityRecources.hpp"
+#include "GlobalRecources.hpp"
 #include <chrono>
 using namespace std::chrono;
 
@@ -8,7 +8,7 @@ static int i_addToNetworkPhase = 2;
 static int i_abilityIndex = 0;
 
 Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {//both constructors are used
-    indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, AbilityRecources::playerCount, AbilityRecources::players);
+    indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, GlobalRecources::playerCount, GlobalRecources::players);
 }
 
 //create from network input(row is just current row so even with lag the start is always synced)
@@ -24,7 +24,7 @@ Fireball::Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goal
     //after exploding or you connect after explosion
 
     this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
-        AbilityRecources::players [myPlayerIndex]);
+        GlobalRecources::players [myPlayerIndex]);
     skipToPhase(i_phase);
 }
 
@@ -49,7 +49,7 @@ void Fireball::execute0() {
 }
 
 void Fireball::init1() {
-    Player* myPlayer = AbilityRecources::players [myPlayerIndex];
+    Player* myPlayer = GlobalRecources::players [myPlayerIndex];
     //Turn player to mouse coords and set mouse coords as goal coords
     //if projectile destination is above player
     if (this->goalRow < myPlayer->getRow()) {
@@ -69,8 +69,8 @@ void Fireball::init1() {
 }
 
 void Fireball::execute1() {
-    auto collidables = AbilityRecources::terrain->getCollidables();
-    this->helpProjectile->move(AbilityRecources::worldRows, AbilityRecources::worldCols, collidables->data(), collidables->size());
+    auto collidables = GlobalRecources::terrain->getCollidables();
+    this->helpProjectile->move(GlobalRecources::worldRows, GlobalRecources::worldCols, collidables->data(), collidables->size());
     //if the projectile reaches its max range or collides with anything, it should explode
     if ((abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
         + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
@@ -102,8 +102,8 @@ void Fireball::init2() {
 }
 
 void Fireball::execute2() {
-    for (int i = 0; i < AbilityRecources::playerCount; i++) {
-        Player* c = AbilityRecources::players [i];
+    for (int i = 0; i < GlobalRecources::playerCount; i++) {
+        Player* c = GlobalRecources::players [i];
         bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
             this->explosionCol, this->explosionRow, this->explosionRange, 10);
         if (collision == true) {

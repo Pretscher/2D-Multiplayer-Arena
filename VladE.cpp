@@ -1,7 +1,7 @@
 #include "VladE.hpp"
 #include <chrono>
 #include "Renderer.hpp"
-#include "AbilityRecources.hpp"
+#include "GlobalRecources.hpp"
 static int i_onCDPhase = 0;
 static int i_addToNetworkPhase = 0;
 static int i_abilityIndex = 2;
@@ -22,7 +22,7 @@ void VladE::execute0() {
 
 void VladE::draw0() {
 	int innerCircleRadius = range * abs(1.0f - percentFinishedCharge);
-	Player* myPlayer = AbilityRecources::players [myPlayerIndex];
+	Player* myPlayer = GlobalRecources::players [myPlayerIndex];
 
 	int innerRow = myPlayer->getRow() + (myPlayer->getHeight() / 2) - innerCircleRadius;
 	int innerCol = myPlayer->getCol() + (myPlayer->getWidth() / 2) - innerCircleRadius;
@@ -41,7 +41,7 @@ void VladE::init1() {
 		int startRow;
 		int startCol;
 
-		Player* myPlayer = AbilityRecources::players [myPlayerIndex];
+		Player* myPlayer = GlobalRecources::players [myPlayerIndex];
 		int pCol = myPlayer->getCol();
 		int pRow = myPlayer->getRow();
 		int pWidth = myPlayer->getWidth();
@@ -90,7 +90,7 @@ void VladE::init1() {
 }
 
 void VladE::limitPosToRange(int* io_goalRow, int* io_goalCol) {
-	Player* myPlayer = AbilityRecources::players [myPlayerIndex];
+	Player* myPlayer = GlobalRecources::players [myPlayerIndex];
 	
 	float* vecToGoal = new float [2];
 	vecToGoal [0] = *io_goalCol - myPlayer->getCol();
@@ -110,9 +110,9 @@ void VladE::limitPosToRange(int* io_goalRow, int* io_goalCol) {
 	}
 }
 void VladE::execute1() {
-	auto terrain = AbilityRecources::terrain->getCollidables();
+	auto terrain = GlobalRecources::terrain->getCollidables();
 	for (int i = 0; i < projectileCount; i++) {
-		projectiles[i]->move(AbilityRecources::worldRows, AbilityRecources::worldCols, terrain->data(), terrain->size());
+		projectiles[i]->move(GlobalRecources::worldRows, GlobalRecources::worldCols, terrain->data(), terrain->size());
 	}
 
 

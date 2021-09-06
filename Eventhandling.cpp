@@ -14,6 +14,8 @@
 #include "NetworkCommunication.hpp"
 #include "Playerhandling.hpp"
 #include "AbilityHandling.hpp"
+#include "GlobalRecources.hpp"
+
 static Pathfinding* pathfinding;
 
 static Menu* menu;
@@ -49,8 +51,11 @@ void eventhandling::init() {
 		playerHandling->getPlayerCount());
 	projectileHandling = new ProjectileHandling(worldRows, worldCols, playerHandling->getPlayers(), playerHandling->getPlayerCount());
 	NetworkCommunication::init();
-
 	menu = new Menu();
+
+	//so we dont have to worry about this messy recource-hell anymore
+	GlobalRecources::init(playerHandling->getPlayers(), playerHandling->getPlayerCount(), worldHandling->getTerrain(), 
+												worldRows, worldCols, pathfinding, pathfinding->getPathfingingMutex());
 }
 
 void eventhandling::eventloop() {
@@ -61,8 +66,7 @@ void eventhandling::eventloop() {
 			playerHandling->setPlayerIndex(0);//server has player index 0
 			pathfinding->setPlayerIndex(0);
 			projectileHandling->setPlayerIndex(0);
-			abilityHandling = new AbilityHandling(playerHandling->getPlayers(), playerHandling->getPlayerCount(),
-				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 0, pathfinding);
+			abilityHandling = new AbilityHandling(0);
 
 			networkThread = new std::thread(&initServer);
 			menuActive = false;//go to game
@@ -71,8 +75,7 @@ void eventhandling::eventloop() {
 			playerHandling->setPlayerIndex(1);//right now there are only two players so the client just has index 1
 			pathfinding->setPlayerIndex(1);
 			projectileHandling->setPlayerIndex(1);
-			abilityHandling = new AbilityHandling(playerHandling->getPlayers(), playerHandling->getPlayerCount(),
-				worldHandling->getTerrain(), worldHandling->getWorldRows(), worldHandling->getWorldCols(), 1, pathfinding);
+			abilityHandling = new AbilityHandling(1);
 			networkThread = new std::thread(&initClient);
 			menuActive = false;//go to game
 		}

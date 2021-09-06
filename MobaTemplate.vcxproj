@@ -148,7 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ability.cpp" />
-    <ClCompile Include="AbilityRecources.cpp" />
+    <ClCompile Include="GlobalRecources.cpp" />
     <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="BinaryHeap.cpp" />
     <ClCompile Include="Eventhandling.cpp" />
@@ -175,7 +175,7 @@
   <ItemGroup>
     <ClInclude Include="Ability.hpp" />
     <ClInclude Include="AbilityHandling.hpp" />
-    <ClInclude Include="AbilityRecources.hpp" />
+    <ClInclude Include="GlobalRecources.hpp" />
     <ClInclude Include="Algorithm.hpp" />
     <ClInclude Include="BinaryHeap.hpp" />
     <ClInclude Include="Eventhandling.hpp" />

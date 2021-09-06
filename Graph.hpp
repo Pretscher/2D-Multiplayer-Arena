@@ -3,10 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "GraphNode.hpp"
+#include <mutex>
 
 class Graph {
 public:
 	Graph(int rows, int cols, float i_accuracy);
+
 	float accuracy;
 
 	bool* usedByMoveable;

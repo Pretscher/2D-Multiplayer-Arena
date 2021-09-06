@@ -27,6 +27,10 @@ public:
 		myPlayerIndex = playerI;
 	}
 
+	std::mutex* getPathfingingMutex() {
+		return pfMtx;
+	}
+
 private:
 
 	int cGoalX;
@@ -37,8 +41,8 @@ private:
 	bool** collisionGrid;
 
 	std::thread* pathFindingThread;
+	std::mutex* pfMtx;
 	bool findingPath;
-	std::mutex* finishedPathfinding;
 	Player** players;
 	int playerCount;
 	float pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
@@ -56,5 +60,12 @@ private:
 	int wCols;
 	void pathFindingOnClick();
 	void moveObjects();
+
+	void setNewPathfinding(bool i_newPf);
+	bool getNewPathfinding();
+	void setFindingPath(bool i_newPf);
+
+	//thread safety: this var should only be accessed through this getter, but you dont have to handle the mutex yourself
+	bool getFindingPath();
 
 };

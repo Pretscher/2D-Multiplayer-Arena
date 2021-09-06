@@ -1,6 +1,5 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-
 class Player {
 public:
 	Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg);
@@ -38,6 +37,13 @@ private:
     long long lastMoveTime;
     
 public:
+    //used in pathfinding threads => mutices are locked and unlocked----------
+    void setFindingPath(bool i_findingPath);
+    bool isFindingPath();
+
+    //------------------------------------------------------------------------
+
+
     int pathsFound = 0;
     inline int getRow() { return row; }
     inline void setRow(int row) { this->row = row; }
@@ -68,13 +74,6 @@ public:
         return true;
     }
 
-    inline void setFindingPath(bool i_findingPath) {
-        findingPath = i_findingPath;
-    }
-
-    inline bool isFindingPath() {
-        return findingPath;
-    }
 
     inline int getPathGoalX() {
         return pathXpositions[pathLenght - 1];
@@ -87,5 +86,4 @@ public:
     inline int getTextureIndex() {
         return cTextureI;
     }
-
 };
