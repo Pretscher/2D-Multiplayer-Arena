@@ -24,6 +24,7 @@ public:
     void limitPosToRange(int* io_goalRow, int* io_goalCol);
 private:
     int radius = 50;
+    int damage = 40;
 
     int range = 300;
     float velocity = 15.0f;

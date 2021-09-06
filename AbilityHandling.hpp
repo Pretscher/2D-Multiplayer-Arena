@@ -63,6 +63,10 @@ public:
         return temp;
     }
 
+    void resetabilityStart(int index) {
+        createNewAbility [index] = false;
+    }
+
     void update(){
         for(int i = 0; i < abilityCount; i++){
             if (onCD[i] == false) {
@@ -133,7 +137,6 @@ public:
                     if (cAbility->isFromNetwork() == false) {
                         cAbility->addToNetwork();
                         hasNewAbility [cAbility->getAbilityIndex()] = true;
-                        abilityTriggering->manuallyStartCooldown(cAbility->getAbilityIndex());//start cd at the same time you add to network
                     }
                 }
 
@@ -153,12 +156,12 @@ public:
                         }
 
                     }
-
+                    hasNewAbility [cAbility->getAbilityIndex()] = false;
                     deleteAll(cAbility);
 
-                    delete newAbilities [i];
+                    delete cAbility;
                     newAbilities [i] = nullptr;
-                    hasNewAbility [fireballIndex] = false;
+                    abilityTriggering->resetabilityStart(i);
                 }
             }
         }
