@@ -24,6 +24,7 @@ Ability::Ability(int i_myPlayerIndex, bool i_isFromNetwork, int i_cdStartPhase, 
         this->phaseStart [i] = -1;
         this->phaseDuration [i] = -1;
     }
+    phaseInitialized [0] = true;
 }
 
 void Ability::update() {

@@ -5,7 +5,7 @@
 #include "Utils.hpp"
 
 
-static int i_onCDPhase = 1;
+static int i_onCDPhase = 0;
 static int i_addToNetworkPhase = 0;
 static int i_abilityIndex = 2;
 
