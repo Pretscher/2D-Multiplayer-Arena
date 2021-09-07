@@ -166,7 +166,7 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     auto offset = currentWindow->getPosition();
     float x = pos.x - offset.x - 10;
     float y = pos.y - offset.y - 60;
-    toFloatRowCol(&y, &x);
+    toFloatRowCol(&x, &y);
 
     if (factorInBorders == true) {
         int limitRow = maxRows;
