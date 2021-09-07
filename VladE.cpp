@@ -6,7 +6,7 @@
 
 
 static int i_onCDPhase = 1;
-static int i_addToNetworkPhase = 1;
+static int i_addToNetworkPhase = 0;
 static int i_abilityIndex = 2;
 
 VladE::VladE(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
