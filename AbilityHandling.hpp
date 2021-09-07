@@ -290,6 +290,26 @@ public:
             NetworkCommunication::addToken(0);
         }
 
+        if (hasNewAbility [vladWindex] == true) {
+            hasNewAbility [vladWindex] = false;
+
+            VladW* newW = nullptr;
+            for (int i = 0; i < vladWs->size(); i++) {
+                if (vladWs->at(i) == newAbilities [vladWindex]) {
+                    newW = vladWs->at(i);
+                    break;
+                }
+            }
+            NetworkCommunication::addToken(1);//check if new transfusion is to be added
+            NetworkCommunication::addToken(newW->getCastingPlayer());
+
+            auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            int timeSinceStart = cTime - newW->getStartTime(newW->getPhase());
+            NetworkCommunication::addToken(timeSinceStart);
+        }
+        else {
+            NetworkCommunication::addToken(0);
+        }
     }
 
     /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -338,6 +358,19 @@ public:
             vladEs->push_back(c);
             generalAbilities->push_back(c);
         }
+
+        if (NetworkCommunication::receiveNextToken() == 1) {
+            //theyre already in the right order
+
+            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
+            int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
+
+            VladW* c = new VladW(tMyPlayerIndex, timeSincePhaseStart);
+
+            vladWs->push_back(c);
+            generalAbilities->push_back(c);
+        }
+
     }
 
 
