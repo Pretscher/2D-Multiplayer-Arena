@@ -161,7 +161,9 @@ void Transfusion::checkBloodballCollision() {
         bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), 10) == true) {
         if (flyBack == false) {
             flyBack = true;
-            target->setHp(target->getHp() - dmg);
+            if (target->targetAble == true) {
+                target->setHp(target->getHp() - dmg);
+            }
         }
         else {
             if (me->getHp() + heal <= me->getMaxHp()) {

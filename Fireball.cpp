@@ -104,17 +104,18 @@ void Fireball::init2() {
 void Fireball::execute2() {
     for (int i = 0; i < GlobalRecources::playerCount; i++) {
         Player* c = GlobalRecources::players [i];
-        bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
-            this->explosionCol, this->explosionRow, this->explosionRange, 10);
-        if (collision == true) {
-            if (this->dealtDamage == false) {
-                c->setHp(c->getHp() - this->explosionDmg);
-            }
-            else {
-                c->setHp(c->getHp() - this->burnDmg);
+        if (c->targetAble == true) {
+            bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
+                this->explosionCol, this->explosionRow, this->explosionRange, 10);
+            if (collision == true) {
+                if (this->dealtDamage == false) {
+                    c->setHp(c->getHp() - this->explosionDmg);
+                }
+                else {
+                    c->setHp(c->getHp() - this->burnDmg);
+                }
             }
         }
-
     }
     this->dealtDamage = true;
 }

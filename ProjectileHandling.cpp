@@ -63,13 +63,15 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 
 		for (int j = 0; j < playerCount; j++) {
 			Player* cPlayer = players[j];
-			if (cPlayer != p->getPlayer()) {
-				if (players[j]->getHp() > 0) {
+			if (cPlayer->targetAble == true) {
+				if (cPlayer != p->getPlayer()) {
+					if (players [j]->getHp() > 0) {
 
-					if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
-						p->getRow(), p->getCol(), p->getRadius(), 10) == true) {
-						p->setDead(true);
-						cPlayer->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());
+						if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
+							p->getRow(), p->getCol(), p->getRadius(), 10) == true) {
+							p->setDead(true);
+							cPlayer->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());
+						}
 					}
 				}
 			}

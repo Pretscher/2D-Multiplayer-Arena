@@ -32,7 +32,6 @@ private:
     Projectile** projectiles;
     int projectileCount;
 
-    bool finishedNoCast = false;
     float percentFinishedCharge;
 
     bool* dealtDamageToPlayer;

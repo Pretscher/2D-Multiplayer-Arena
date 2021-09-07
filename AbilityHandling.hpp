@@ -6,6 +6,7 @@
 #include <vector>
 #include <chrono>
 
+#include "VladW.hpp"
 #include "VladE.hpp"
 #include "Transfusion.hpp"
 #include "Fireball.hpp"
@@ -213,8 +214,11 @@ public:
             else if (i == 1) {
                 abilityLetter = std::string("W");
             }
-            else {
+            else if (i == 2) {
                 abilityLetter = std::string("E");
+            }
+            else if (i == 3) {
+                abilityLetter = std::string("R");
             }
             Renderer::drawText(abilityLetter, row - size / 2.2f, col - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
         }
@@ -347,12 +351,14 @@ public:
         initFireball();
         initTransfusion();
         initVladE();
+        initVladW();
     }
 
     void deleteAll(Ability* cAbility) {
         deleteFireball(cAbility);
         deleteTransfusion(cAbility);
         deleteVladE(cAbility);
+        deleteVladW(cAbility);
     }
 
     void initFireball() {
@@ -393,6 +399,19 @@ public:
         }
     }
 
+    void initVladW() {
+        if (newAbilities [vladWindex] == nullptr) {
+            if (abilityTriggering->startAbility(vladWindex) == true) {
+                VladW* newW = new VladW(myPlayerI);
+
+                vladWs->push_back(newW);
+                generalAbilities->push_back(newW);
+                newAbilities [vladWindex] = newW;
+                //start cooldown later when target has been selected
+            }
+        }
+    }
+
     void deleteVladE(Ability* toDelete) {
         for (int c = 0; c < vladEs->size(); c++) {
             if (vladEs->at(c) == toDelete) {
@@ -417,6 +436,14 @@ public:
         }
     }
 
+    void deleteVladW(Ability* toDelete) {
+        for (int c = 0; c < vladWs->size(); c++) {
+            if (vladWs->at(c) == toDelete) {
+                vladWs->erase(vladWs->begin() + c);
+            }
+        }
+    }
+
     void declareCustomAbilities() {
         fireballIndex = 0;
         abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::Q, 5000);//right now Fireball
@@ -424,6 +451,8 @@ public:
         abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::W, 2000);//right now Transfusion
         vladEindex = 2;
         abilityTriggering->addAbility(vladEindex, sf::Keyboard::Key::E, 2000);//right now Transfusion
+        vladWindex = 3;
+        abilityTriggering->addAbility(vladWindex, sf::Keyboard::Key::R, 5000);//right now Transfusion
     }
 
 private:
@@ -436,15 +465,17 @@ private:
 
     //NEW ABILITY ATTRIBUTES--------------------------------
     
-    int abilityCount = 3;
+    int abilityCount = 4;
     bool* hasNewAbility = new bool [abilityCount];
 
     std::vector<Fireball*>* fireballs = new std::vector<Fireball*>();
     std::vector<Transfusion*>* transfusions = new std::vector<Transfusion*>();
-    std::vector<VladE*>* vladEs = new std::vector<VladE*>();;
+    std::vector<VladE*>* vladEs = new std::vector<VladE*>();
+    std::vector<VladW*>* vladWs = new std::vector<VladW*>();
 
     //indices of abilities. Please set in "declareCustomAbilities()".
     int fireballIndex;
     int transfusionIndex;
     int vladEindex;
+    int vladWindex;
 };

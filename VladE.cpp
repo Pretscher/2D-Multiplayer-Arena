@@ -208,19 +208,20 @@ void VladE::execute1() {
 	}
 
 
-	//end ability after all projectiles reached their destination
-	bool someoneAlive = false;
+
 	for (int j = 0; j < GlobalRecources::playerCount; j++) {
 		for (int i = 0; i < projectileCount; i++) {
 			if (projectiles [i]->getDead() == false) {
 				if (j != myPlayerIndex) {
 					Player* cPlayer = GlobalRecources::players [j];
-					if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
-						projectiles [i]->getRow(), projectiles [i]->getCol(), projectiles [i]->getRadius(), 10) == true) {
-						projectiles [i]->setDead(true);
-						if (dealtDamageToPlayer[j] == false) {
-							cPlayer->setHp(cPlayer->getHp() - this->damage);
-							dealtDamageToPlayer [j] = true;
+					if (cPlayer->targetAble == true) {
+						if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
+							projectiles [i]->getRow(), projectiles [i]->getCol(), projectiles [i]->getRadius(), 10) == true) {
+							projectiles [i]->setDead(true);
+							if (dealtDamageToPlayer [j] == false) {
+								cPlayer->setHp(cPlayer->getHp() - this->damage);
+								dealtDamageToPlayer [j] = true;
+							}
 						}
 					}
 				}
@@ -228,6 +229,8 @@ void VladE::execute1() {
 		}
 	}
 
+	//end ability after all projectiles reached their destination
+	bool someoneAlive = false;
 	for (int i = 0; i < projectileCount; i++) {
 		if (projectiles [i]->getDead() == false) {
 			someoneAlive = true;

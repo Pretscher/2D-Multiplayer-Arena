@@ -170,6 +170,7 @@
     <ClCompile Include="UiHandling.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VladE.cpp" />
+    <ClCompile Include="VladW.cpp" />
     <ClCompile Include="WorldHandling.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="UiHandling.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="VladE.hpp" />
+    <ClInclude Include="VladW.hpp" />
     <ClInclude Include="WorldHandling.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

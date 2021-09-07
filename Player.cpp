@@ -138,8 +138,9 @@ void Player::deletePath() {
 }
 
 void Player::draw() {
-	Renderer::drawRectWithTexture(row, col, width, height, textures[cTextureI], false);
-	
+	if (inVladW == false) {
+		Renderer::drawRectWithTexture(row, col, width, height, textures [cTextureI], false);
+	}
 	int barWidth = width * 1.5;
 	Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);
 	if (hp > 0) {

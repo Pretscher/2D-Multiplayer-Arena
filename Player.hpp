@@ -14,6 +14,10 @@ public:
     int* pathYpositions;
     int pathLenght;
     int cPathIndex;
+
+    //status effects
+    bool targetAble = true;
+    bool inVladW = false;
 private:
 
 	int row;
@@ -35,7 +39,7 @@ private:
 
     bool findingPath;
     long long lastMoveTime;
-    
+   
 public:
     //used in pathfinding threads => mutices are locked and unlocked----------
     void setFindingPath(bool i_findingPath);

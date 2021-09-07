@@ -68,10 +68,6 @@ void Pathfinding::pathFindingOnClick() {
 			mouseX -= players [0]->getWidth() / 2;
 			mouseY -= players [0]->getHeight() / 2;
 
-			enablePlayer(myPlayerIndex);
-			g->findNextUseableCoords(&mouseX, &mouseY, true);
-			disablePlayer(myPlayerIndex);
-
 			findPath(mouseX, mouseY, myPlayerIndex);
 		}
 	}
@@ -83,6 +79,22 @@ void Pathfinding::update() {
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
+	enablePlayer(myPlayerIndex, true);
+	for (int i = 0; i < playerCount; i++) {
+		if (players [i]->targetAble == false) {
+			if (i == myPlayerIndex) {
+				for (int j = 0; j < playerCount; j++) {
+					enablePlayer(j, false);//untargetable players walk through everyone
+				}
+			}
+			else {
+				enablePlayer(i, false);//you can walk on untargetable players
+			}
+		}
+	}
+	g->findNextUseableCoords(&goalX, &goalY, true);
+	disablePlayer(myPlayerIndex);
+
 	if (getFindingPath() == false) {
 		setFindingPath(true);
 		players[playerIndex]->setFindingPath(true);
@@ -189,16 +201,18 @@ void Pathfinding::enableArea(int row, int col, int width, int height) {
 }
 
 //enables player coords and after that disables all coords of other movables again in case their area was affected by that.
-void Pathfinding::enablePlayer(int i_playerIndex) {
+void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 	Player* player = players [i_playerIndex];
 
 	g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
 
-	for (int i = 0; i < playerCount; i++) {
-		if (players [i]->getHp() > 0) {
-			if (i != cPlayerIndex) {
-				Player* cPlayer = players [i];
-				g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
+	if (disableOthers == true) {
+		for (int i = 0; i < playerCount; i++) {
+			if (players [i]->getHp() > 0) {
+				if (i != cPlayerIndex) {
+					Player* cPlayer = players [i];
+					g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
+				}
 			}
 		}
 	}
@@ -226,7 +240,19 @@ void Pathfinding::startPathFinding() {
 			int pathlenght = 0;
 			Player* player = players[cPlayerIndex];
 
-			enablePlayer(cPlayerIndex);
+			enablePlayer(cPlayerIndex, true);
+			for (int i = 0; i < playerCount; i++) {
+				if (players [i]->targetAble == false) {
+					if (i == cPlayerIndex) {
+						for (int j = 0; j < playerCount; j++) {
+							enablePlayer(j, false);//untargetable players walk through everyone
+						}
+					}
+					else {
+						enablePlayer(i, false);//you can walk on untargetable players
+					}
+				}
+			}
 
 			bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() + (player->getHeight() / 2), 
 															 player->getCol() + (player->getWidth() / 2), cGoalY, cGoalX);

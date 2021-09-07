@@ -19,7 +19,7 @@ public:
 	void startPathFinding();
 	void findPath(int goalX, int goalY, int playerIndex);
 
-	void enablePlayer(int i_playerIndex);
+	void enablePlayer(int i_playerIndex, bool disableOthers);
 	void disablePlayer(int i_playerIndex);
 
 	void update();

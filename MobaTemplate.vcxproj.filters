@@ -93,6 +93,9 @@
     <ClCompile Include="VladE.cpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClCompile>
+    <ClCompile Include="VladW.cpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Eventhandling.hpp">
@@ -177,6 +180,9 @@
       <Filter>GameObjects\Abilities</Filter>
     </ClInclude>
     <ClInclude Include="VladE.hpp">
+      <Filter>GameObjects\Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="VladW.hpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClInclude>
   </ItemGroup>

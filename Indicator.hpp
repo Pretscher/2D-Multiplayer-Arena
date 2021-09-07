@@ -32,23 +32,25 @@ public:
         for (int i = 0; i < playerCount; i++) {
             if (i != this->myPlayerIndex) {
                 Player* c = players [i];
-                if (c->getHp() > 0) {
-                    int mouseRow = 0;
-                    int mouseCol = 0;
-                    Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
-                    if (Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
-                        c->getHeight(), mouseCol, mouseRow) == true) {
-                        //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
-                        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                            this->targetIndex = i;
+                if(c->targetAble == true) {
+                    if (c->getHp() > 0) {
+                        int mouseRow = 0;
+                        int mouseCol = 0;
+                        Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
+                        if (Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
+                            c->getHeight(), mouseCol, mouseRow) == true) {
+                            //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
+                            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                                this->targetIndex = i;
+                            }
+                            //draw an outline around the hovered over player
+                            Renderer::drawRectOutline(c->getRow(), c->getCol(), c->getWidth(), c->getHeight(),
+                                sf::Color(75, 165, 180, 150), 2, false);
                         }
-                        //draw an outline around the hovered over player
-                        Renderer::drawRectOutline(c->getRow(), c->getCol(), c->getWidth(), c->getHeight(),
-                            sf::Color(75, 165, 180, 150), 2, false);
-                    }
-                    else {
-                        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                            endWOaction = true;
+                        else {
+                            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                                endWOaction = true;
+                            }
                         }
                     }
                 }
