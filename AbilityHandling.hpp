@@ -277,7 +277,10 @@ public:
             NetworkCommunication::addToken(1);//check if new transfusion is to be added
             NetworkCommunication::addToken(newE->getCastingPlayer());
             NetworkCommunication::addToken(newE->getPhase());
-            NetworkCommunication::addToken(newE->getStartTime(newE->getPhase()));
+
+            auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            int timeSinceStart = cTime - newE->getStartTime(newE->getPhase());
+            NetworkCommunication::addToken(timeSinceStart);
         }
         else {
             NetworkCommunication::addToken(0);
