@@ -37,9 +37,14 @@ void VladE::draw0() {
 }
 
 void VladE::init1() {
-	projectileCount = 8;
+	projectileCount = 16;
 	projectiles = new Projectile* [projectileCount];
+	dealtDamageToPlayer = new bool [GlobalRecources::playerCount];
 	
+	for (int i = 0; i < GlobalRecources::playerCount; i++) {
+		dealtDamageToPlayer [i] = false;
+	}
+
 	for (int i = 0; i < projectileCount; i++) {
 		int startRow;
 		int startCol;
@@ -47,13 +52,14 @@ void VladE::init1() {
 		int goalCol;
 
 		Player* myPlayer = GlobalRecources::players [myPlayerIndex];
-		int pCol = myPlayer->getCol();
-		int pRow = myPlayer->getRow();
-		int pWidth = myPlayer->getWidth();
-		int pHeight = myPlayer->getHeight();
+		int pCol = myPlayer->getCol() - 20;//spawn a bit away from player, with 20 distance around him
+		int pRow = myPlayer->getRow() - 20;
+		int pWidth = myPlayer->getWidth() + 40;
+		int pHeight = myPlayer->getHeight() + 40;
 
 		switch (i) {
-		case 0:
+		//diagonal paths
+		case 0: //top left
 			startRow = pRow;
 			startCol = pCol;
 
@@ -61,7 +67,7 @@ void VladE::init1() {
 			goalCol = pCol - 500;
 
 			break;
-		case 1:
+		case 1://bottom left
 			startRow = pRow + pHeight;
 			startCol = pCol;
 
@@ -69,51 +75,113 @@ void VladE::init1() {
 			goalCol = pCol - 500;
 
 			break;
-		case 2:
+		case 2://top right
 			startRow = pRow;
 			startCol = pCol + pWidth;
 
 			goalRow = pRow - 500;
 			goalCol = pCol + pWidth + 500;
 			break;
-		case 3:
+		case 3://bottom right
 			startRow = pRow + pHeight;
 			startCol = pCol + pWidth;
 
 			goalRow = pRow + pHeight + 500;
 			goalCol = pCol + pWidth + 500;
 			break;
-		case 4:
+
+		//horizontal paths
+		case 4://left
 			startRow = pRow + (pHeight / 2);
 			startCol = pCol;
 
 			goalRow = pRow + (pHeight / 2);
 			goalCol = pCol - 500;
 			break;
-		case 5:
+		case 5://right
 			startRow = pRow;
 			startCol = pCol + (pWidth / 2);
 
 			goalRow = pRow - 500;
 			goalCol = pCol + (pWidth / 2);
 			break;
-		case 6:
+		case 6://top
 			startRow = pRow + pHeight;
 			startCol = pCol + (pWidth / 2);
 
 			goalRow = pRow + pHeight + 500;
 			goalCol = pCol + (pWidth / 2);
 			break;
-		case 7:
+		case 7://bottom
 			startRow = pRow + (pHeight / 2);
 			startCol = pCol + pWidth;
 
 			goalRow = pRow + (pHeight / 2);
+			goalCol = pCol + pWidth + 500;
+			break;
+
+
+		//between diagonal and horizontal/vertical paths
+		case 8://between right-bottom and bottom
+			startRow = pRow + pHeight;
+			startCol = pCol + ((3 * pHeight) / 4);
+
+			goalRow = pRow + pHeight + 500;
+			goalCol = pCol + ((3 * pHeight) / 4) + 250;
+			break;
+		case 9://between bottom and left-bottom
+			startRow = pRow + pHeight;
+			startCol = pCol + (pHeight / 4);
+
+			goalRow = pRow + pHeight + 500;
+			goalCol = pCol + (pHeight / 4) - 250;
+			break;
+		case 10://between left-bottom and left
+			startRow = pRow + ((3 * pHeight) / 4);
+			startCol = pCol;
+
+			goalRow = pRow + ((3 * pHeight) / 4) + 250;
+			goalCol = pCol - 500;
+			break;
+		case 11://between left and left-top
+			startRow = pRow + (pHeight / 4);
+			startCol = pCol;
+
+			goalRow = pRow + (pHeight / 4) - 250;
+			goalCol = pCol - 500;
+			break;
+		case 12://between left-top and top
+			startRow = pRow;
+			startCol = pCol + (pWidth / 4);
+
+			goalRow = pRow - 500;
+			goalCol = pCol + (pWidth / 4) - 250;
+			break;
+		case 13://between top and right-top
+			startRow = pRow;
+			startCol = pCol + ((3 * pWidth) / 4);
+
+			goalRow = pRow - 500;
+			goalCol = pCol + ((3 * pWidth) / 4) + 250;
+			break;
+		case 14://between right-top and right
+			startRow = pRow + (pHeight / 4);
+			startCol = pCol + pWidth;
+
+			goalRow = pRow + (pHeight / 4) - 250;
+			goalCol = pCol + pWidth + 500;
+			break;
+		case 15://between right and right-bottom
+			startRow = pRow + ((3 * pHeight) / 4);
+			startCol = pCol + pWidth;
+
+			goalRow = pRow + ((3 * pHeight) / 4) + 250;
 			goalCol = pCol + pWidth + 500;
 			break;
 		default:
 			break;
 		}
+
 
 		limitPosToRange(&goalRow, &goalCol);
 
@@ -132,25 +200,32 @@ void VladE::execute1() {
 
 	//end ability after all projectiles reached their destination
 	bool someoneAlive = false;
-	for (int i = 0; i < projectileCount; i++) {
-		for (int j = 0; j < GlobalRecources::playerCount; j++) {
-			if (j != myPlayerIndex) {
-				Player* cPlayer = GlobalRecources::players [j];
-				if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
-					projectiles [i]->getRow(), projectiles [i]->getCol(), projectiles [i]->getRadius(), 10) == true) {
-					projectiles [i]->setDead(true);
-					cPlayer->setHp(cPlayer->getHp() - this->damage);
+	for (int j = 0; j < GlobalRecources::playerCount; j++) {
+		for (int i = 0; i < projectileCount; i++) {
+			if (projectiles [i]->getDead() == false) {
+				if (j != myPlayerIndex) {
+					Player* cPlayer = GlobalRecources::players [j];
+					if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
+						projectiles [i]->getRow(), projectiles [i]->getCol(), projectiles [i]->getRadius(), 10) == true) {
+						projectiles [i]->setDead(true);
+						if (dealtDamageToPlayer[j] == false) {
+							cPlayer->setHp(cPlayer->getHp() - this->damage);
+							dealtDamageToPlayer [j] = true;
+						}
+					}
 				}
 			}
 		}
+	}
 
+	for (int i = 0; i < projectileCount; i++) {
 		if (projectiles [i]->getDead() == false) {
 			someoneAlive = true;
 			break;
 		}
-	}
-	if (someoneAlive == false) {
-		finished = true;
+		if (someoneAlive == false) {
+			finished = true;
+		}
 	}
 }
 
@@ -182,17 +257,17 @@ void VladE::limitPosToRange(int* io_goalRow, int* io_goalCol) {
 	Player* myPlayer = GlobalRecources::players [myPlayerIndex];
 
 	float* vecToGoal = new float [2];
-	vecToGoal [0] = *io_goalCol + radius - myPlayer->getCol();
-	vecToGoal [1] = *io_goalRow + radius - myPlayer->getRow();
+	vecToGoal [0] = *io_goalCol + radius - (myPlayer->getCol() + (myPlayer->getWidth() / 2));
+	vecToGoal [1] = *io_goalRow + radius - (myPlayer->getRow() + (myPlayer->getHeight() / 2));
 	//calculate vector lenght
 	float lenght = sqrt((vecToGoal [0] * vecToGoal [0]) + (vecToGoal [1] * vecToGoal [1]));
-	if (lenght > range) {
+	if (lenght > range + radius) {
 		//normalize vector lenght
 		vecToGoal [0] /= lenght;
 		vecToGoal [1] /= lenght;
 		//stretch vector to range
-		vecToGoal [0] *= range;
-		vecToGoal [1] *= range;
+		vecToGoal [0] *= range + radius;
+		vecToGoal [1] *= range + radius;
 		//place at starting point
 		*io_goalCol = myPlayer->getCol() + vecToGoal [0] + radius;
 		*io_goalRow = myPlayer->getRow() + vecToGoal [1] + radius;
