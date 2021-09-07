@@ -7,7 +7,7 @@ public:
    
     VladE(int i_myPlayerIndex);
     //create from network input(row is just current row so even with lag the start is always synced)
-    VladE(int i_currentRow, int i_currentCol, int i_phase, int i_timeInPhase);
+    VladE(int i_myPlayerIndex, int i_phase, int i_timeInPhase);
 
     //phase 0: Indicator. Select destination for fireball
     void execute0() override;

@@ -13,8 +13,17 @@ VladE::VladE(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	endPhaseAfterMS(1500);
 }
 //constructor through networking
-VladE::VladE(int i_myPlayerIndex, int i_currentCol, int i_phase, int i_timeInPhase) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	endPhaseAfterMS(1500);
+VladE::VladE(int i_myPlayerIndex, int i_phase, int i_timeInPhase) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	if (i_phase == 0) {
+		endPhaseAfterMS(1500 - i_timeInPhase);
+	}
+	if (i_phase == 1) {
+		nextPhase();
+		init1();//has to be called manually to use projectiles
+		for (int i = 0; i < projectileCount; i++) {
+			projectiles [i]->skipMovementTime(i_timeInPhase);
+		}
+	}
 }
 
 void VladE::execute0() {
@@ -37,6 +46,7 @@ void VladE::draw0() {
 }
 
 void VladE::init1() {
+	endPhaseAfterMS(1000);//we want to save the start time only till now and are too lazy to do it in a passed variable.
 	projectileCount = 16;
 	projectiles = new Projectile* [projectileCount];
 	dealtDamageToPlayer = new bool [GlobalRecources::playerCount];

@@ -263,6 +263,26 @@ public:
         else {
             NetworkCommunication::addToken(0);
         }
+
+        if (hasNewAbility [vladEindex] == true) {
+            hasNewAbility [vladEindex] = false;
+
+            VladE* newE = nullptr;
+            for (int i = 0; i < vladEs->size(); i++) {
+                if (vladEs->at(i) == newAbilities [vladEindex]) {
+                    newE = vladEs->at(i);
+                    break;
+                }
+            }
+            NetworkCommunication::addToken(1);//check if new transfusion is to be added
+            NetworkCommunication::addToken(newE->getCastingPlayer());
+            NetworkCommunication::addToken(newE->getPhase());
+            NetworkCommunication::addToken(newE->getStartTime(newE->getPhase()));
+        }
+        else {
+            NetworkCommunication::addToken(0);
+        }
+
     }
 
     /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -282,9 +302,9 @@ public:
             int phase = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
 
-            Fireball* newFB = new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, phase, timeSinceExplosionStart);
-            fireballs->push_back(newFB);
-            generalAbilities->push_back(newFB);
+            Fireball* c = new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, phase, timeSinceExplosionStart);
+            fireballs->push_back(c);
+            generalAbilities->push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -293,10 +313,23 @@ public:
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int tTargetPlayerIndex = NetworkCommunication::receiveNextToken();
 
-            Transfusion* newT = new Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
+            Transfusion* c = new Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
 
-            transfusions->push_back(newT);
-            generalAbilities->push_back(newT);
+            transfusions->push_back(c);
+            generalAbilities->push_back(c);
+        }
+
+        if (NetworkCommunication::receiveNextToken() == 1) {
+            //theyre already in the right order
+
+            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
+            int phase = NetworkCommunication::receiveNextToken();
+            int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
+
+            VladE* c = new VladE(tMyPlayerIndex, phase, timeSincePhaseStart);
+
+            vladEs->push_back(c);
+            generalAbilities->push_back(c);
         }
     }
 

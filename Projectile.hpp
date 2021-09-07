@@ -15,6 +15,10 @@ public:
 	void move(int maxRow, int maxCol, Rect** collisionRects, int rectCount);
 	void draw(sf::Color c);
 
+	//Call this to skip some steps in projectile movement based on time, useful for networking
+	void skipMovementTime(int i_skippedTime) {
+		lastMoveTime -= i_skippedTime;//will skip some steps to catch up with time
+	}
 
 	bool isDead() {
 		return this->dead;
