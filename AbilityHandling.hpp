@@ -132,8 +132,10 @@ public:
 
         for (int i = 0; i < abilityCount; i++) {
             if (newAbilities[i] == nullptr) {//dont double init
-                if (abilityTriggering->startAbility(i) == true) {//cooldown is ok and button is pressed
-                    initAbility(i);
+                if (newAbilities[vladWindex] == nullptr) {//cant cast in w
+                    if (abilityTriggering->startAbility(i) == true) {//cooldown is ok and button is pressed
+                        initAbility(i);
+                    }
                 }
             }
         }
