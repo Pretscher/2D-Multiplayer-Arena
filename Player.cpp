@@ -77,8 +77,6 @@ void Player::move() {
 	
 
 	if (dueSteps >= 1) {
-		auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-		lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 		if (pathLenght != -1) {//too lazy for booleans as you can see
 			//has to be a float so that it can be modified by non-int velocities properly
 
@@ -89,10 +87,7 @@ void Player::move() {
 				nextCol = pathXpositions[cPathIndex];
 				nextRow = pathYpositions[cPathIndex];
 
-				if (cPathIndex < pathLenght - 1) {
-					cPathIndex ++;
-				}
-				else {
+				if (cPathIndex == pathLenght - 1) {
 					row = pathYpositions[pathLenght - 1];
 					col = pathXpositions[pathLenght - 1];
 					//go to state of not having a path
@@ -101,6 +96,9 @@ void Player::move() {
 					delete[] pathYpositions;
 
 					hasNewPath = false;
+				}
+				if (cPathIndex < pathLenght - 1) {
+					cPathIndex ++;
 				}
 			}
 
@@ -122,6 +120,8 @@ void Player::move() {
 			this->col = nextCol;
 			this->row = nextRow;
 		}
+		auto timePoint = std::chrono::system_clock::now().time_since_epoch();
+		lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 	}
 }
 
