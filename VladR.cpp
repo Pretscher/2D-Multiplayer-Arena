@@ -13,12 +13,12 @@ VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 }
 //constructor through networking
 VladR::VladR(int i_myPlayerIndex, int i_timeInPhase, int i_row, int i_col) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	for (int i = 0; i < 2; i++) {
-		nextPhase();
-	}
-	networkingTimeInPhase = i_timeInPhase;
 	this->row = i_row;
 	this->col = i_col;
+	networkingTimeInPhase = i_timeInPhase;
+	for (int i = 0; i < 1; i++) {
+		nextPhase();
+	}
 }
 
 void VladR::execute0() {
