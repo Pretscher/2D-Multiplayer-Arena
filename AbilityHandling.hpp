@@ -334,14 +334,12 @@ public:
             }
             NetworkCommunication::addToken(1);//check if new transfusion is to be added
             NetworkCommunication::addToken(newR->getCastingPlayer());
-            NetworkCommunication::addToken(newR->getPhase());
-            if (newR->getPhase() == 2) {
-                int timeSinceStart = newR->getTimeSincePhaseStart(2);
-                NetworkCommunication::addToken(timeSinceStart);
-            }
-            else {
-                NetworkCommunication::addToken(-1);
-            }
+
+            int timeSinceStart = newR->getTimeSincePhaseStart(2);
+            NetworkCommunication::addToken(timeSinceStart);
+
+            NetworkCommunication::addToken(newR->getRow());
+            NetworkCommunication::addToken(newR->getCol());
             
         }
         else {
@@ -412,10 +410,11 @@ public:
             //theyre already in the right order
 
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
-            int phase = NetworkCommunication::receiveNextToken();
             int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
 
-            VladR* c = new VladR(tMyPlayerIndex, phase, timeSincePhaseStart);
+            int row = NetworkCommunication::receiveNextToken();
+            int col = NetworkCommunication::receiveNextToken();
+            VladR* c = new VladR(tMyPlayerIndex, timeSincePhaseStart, row, col);
 
             vladRs->push_back(c);
             generalAbilities->push_back(c);

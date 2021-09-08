@@ -12,14 +12,13 @@ VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	indicator = new AOEonRangeIndicator(i_myPlayerIndex, range, radius);
 }
 //constructor through networking
-VladR::VladR(int i_myPlayerIndex, int i_phase, int i_timeInPhase) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	for (int i = 0; i < i_phase; i++) {
+VladR::VladR(int i_myPlayerIndex, int i_timeInPhase, int i_row, int i_col) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	for (int i = 0; i < 2; i++) {
 		nextPhase();
 	}
-
-	if (i_phase == 2) {
-		networkingTimeInPhase = i_timeInPhase;
-	}
+	networkingTimeInPhase = i_timeInPhase;
+	this->row = i_row;
+	this->col = i_col;
 }
 
 void VladR::execute0() {
