@@ -57,4 +57,6 @@ private:
     int tempFlybackRow;
 
     int findNewPathToPlayerTimer = 0;
+
+    int networkingTimeInPhase = 0;
 };

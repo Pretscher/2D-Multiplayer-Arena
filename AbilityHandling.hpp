@@ -321,6 +321,32 @@ public:
         else {
             NetworkCommunication::addToken(0);
         }
+
+        if (hasNewAbility[vladRindex] == true) {
+            hasNewAbility[vladRindex] = false;
+
+            VladR* newR = nullptr;
+            for (int i = 0; i < vladRs->size(); i++) {
+                if (vladRs->at(i) == newAbilities[vladRindex]) {
+                    newR = vladRs->at(i);
+                    break;
+                }
+            }
+            NetworkCommunication::addToken(1);//check if new transfusion is to be added
+            NetworkCommunication::addToken(newR->getCastingPlayer());
+            NetworkCommunication::addToken(newR->getPhase());
+            if (newR->getPhase() == 2) {
+                int timeSinceStart = newR->getTimeSincePhaseStart(2);
+                NetworkCommunication::addToken(timeSinceStart);
+            }
+            else {
+                NetworkCommunication::addToken(-1);
+            }
+            
+        }
+        else {
+            NetworkCommunication::addToken(0);
+        }
     }
 
     /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -382,6 +408,18 @@ public:
             generalAbilities->push_back(c);
         }
 
+        if (NetworkCommunication::receiveNextToken() == 1) {
+            //theyre already in the right order
+
+            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
+            int phase = NetworkCommunication::receiveNextToken();
+            int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
+
+            VladR* c = new VladR(tMyPlayerIndex, phase, timeSincePhaseStart);
+
+            vladRs->push_back(c);
+            generalAbilities->push_back(c);
+        }
     }
 
 

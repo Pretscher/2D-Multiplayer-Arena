@@ -16,6 +16,10 @@ VladR::VladR(int i_myPlayerIndex, int i_phase, int i_timeInPhase) : Ability(i_my
 	for (int i = 0; i < i_phase; i++) {
 		nextPhase();
 	}
+
+	if (i_phase == 2) {
+		networkingTimeInPhase = i_timeInPhase;
+	}
 }
 
 void VladR::execute0() {
@@ -98,7 +102,7 @@ void VladR::init2() {
 		}
 	}
 
-	endPhaseAfterMS(timeTillProc);
+	endPhaseAfterMS(timeTillProc - networkingTimeInPhase);
 }
 
 void VladR::execute2() {
