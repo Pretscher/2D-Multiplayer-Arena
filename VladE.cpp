@@ -236,9 +236,9 @@ void VladE::execute1() {
 			someoneAlive = true;
 			break;
 		}
-		if (someoneAlive == false) {
-			finished = true;
-		}
+	}
+	if (someoneAlive == false) {
+		finished = true;
 	}
 }
 
