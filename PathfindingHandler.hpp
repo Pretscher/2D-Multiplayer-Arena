@@ -31,8 +31,12 @@ public:
 		return pfMtx;
 	}
 
-private:
+	Graph* getGraph() {
+		return g;
+	}
 
+private:
+	Graph* g;
 	int cGoalX;
 	int cGoalY;
 	int cPlayerIndex;
@@ -46,7 +50,7 @@ private:
 	Player** players;
 	int playerCount;
 	float pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
-	Graph* g;
+
 	bool sameClick = false;//dont do two pathfindings on the same click
 
 	std::vector<int>* goalColToFind;

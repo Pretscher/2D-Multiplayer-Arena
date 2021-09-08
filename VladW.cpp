@@ -1,6 +1,8 @@
 #include "VladW.hpp"
 #include "GlobalRecources.hpp"
 #include "Utils.hpp"
+#include "Graph.hpp"
+
 static int i_onCDPhase = 0;
 static int i_addToNetworkPhase = 0;
 static int i_abilityIndex = 1;
@@ -43,5 +45,11 @@ void VladW::init1() {
 	GlobalRecources::players[myPlayerIndex]->targetAble = true;
 
 	Player* current = GlobalRecources::players[myPlayerIndex];
-	GlobalRecources::pFinding->findPath(current->getCol(), current->getRow(), myPlayerIndex);
+
+
+	int row = current->getRow();
+	int col = current->getCol();
+
+	GlobalRecources::pFinding->getGraph()->findNextUseableCoords(&col, &row, true);
+	GlobalRecources::pFinding->findPath(col, row, myPlayerIndex);
 }

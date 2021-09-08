@@ -245,8 +245,6 @@ void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
     int index = findNextUseableVertex(y, x, moveableRelevant);
     *io_x = (float)xCoords[index] / accuracy;
     *io_y = (float)yCoords[index] / accuracy;
-
-
 }
 
 int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
