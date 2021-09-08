@@ -10,7 +10,7 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 	
 	int startIndex = graph->getIndexFromCoords(startRow, startCol, true);
 	int goalIndex = graph->getIndexFromCoords(goalRow, goalCol, true);
-	
+
 	int graphNodeCount = graph->graphNodeCount;
 	//initialize GraphnodeHeuristics
 	graph->neighbourCosts = new int*[graphNodeCount];
@@ -85,7 +85,7 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		//std::cout << "time elapsed sind the algorithm started: " << Utils::endTimerGetTime();
 
 		//get lenght of path array
-		int pathLenght = 1;//goal pos pushed back
+		int pathLenght = 0;//goal pos pushed back
 		int currentIndex = goalIndex;
 		while (true) {
 			currentIndex = previousIndex[currentIndex];
@@ -100,10 +100,8 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		*o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
-		(*o_XPos) [pathLenght - 1] = goalCol;
-		(*o_YPos) [pathLenght - 1] = goalRow;
 
-		int indexInPath = pathLenght - 2;
+		int indexInPath = pathLenght - 1;
 		currentIndex = goalIndex;
 		while (true) {
 			(*o_XPos)[indexInPath] = graph->xCoords[currentIndex];
@@ -114,6 +112,9 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 				break;
 			}
 		}
+
+		(*o_XPos) [pathLenght - 1] = goalCol;
+		(*o_YPos) [pathLenght - 1] = goalRow;
 
 		if (pathLenght == 0) {
 			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";

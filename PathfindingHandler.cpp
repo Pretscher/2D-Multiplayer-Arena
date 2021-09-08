@@ -79,6 +79,9 @@ void Pathfinding::update() {
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
+	if (goalX == players [playerIndex]->getCol() && goalY == players [playerIndex]->getRow()) {
+		return;
+	}
 	enablePlayer(myPlayerIndex, true);
 	for (int i = 0; i < playerCount; i++) {
 		if (players [i]->targetAble == false) {

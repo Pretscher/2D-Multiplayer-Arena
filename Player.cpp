@@ -74,6 +74,7 @@ void Player::move() {
 			row = (float) row - rowDiff;
 		}
 	}
+	
 
 	if (dueSteps >= 1) {
 		auto timePoint = std::chrono::system_clock::now().time_since_epoch();
@@ -88,7 +89,7 @@ void Player::move() {
 				nextCol = pathXpositions [cPathIndex];
 				nextRow = pathYpositions [cPathIndex];
 
-				if (cPathIndex < pathLenght - 2) {
+				if (cPathIndex < pathLenght - 1) {
 					cPathIndex ++;
 				}
 				else {
@@ -100,10 +101,10 @@ void Player::move() {
 					delete [] pathYpositions;
 
 					hasNewPath = false;
-					return;
 				}
 			}
 
+			//change texture based on movement direction
 			if (nextRow > row) {
 				cTextureI = 3;
 			}
@@ -113,7 +114,6 @@ void Player::move() {
 			if (nextCol < col) {
 				cTextureI = 0;
 			}
-
 			if (nextCol > col) {
 				cTextureI = 1;
 			}

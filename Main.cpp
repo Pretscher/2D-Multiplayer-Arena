@@ -28,11 +28,6 @@ void initDrawing() {
         cWindow->display();//display things drawn since clear() was called
 
     }
-    //doesnt reach this before programm is ending, but i heard its good style
-    delete cWindow;
-    delete event;
-
-    std::exit(0);
 }
 int main() {
     cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
