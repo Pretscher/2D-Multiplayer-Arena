@@ -56,8 +56,8 @@ void Player::move() {
 	
 	//move gradually between path steps
 	if (dueSteps < 1) {
-		int nextCol = pathXpositions [cPathIndex];
-		int nextRow = pathYpositions [cPathIndex];
+		int nextCol = pathXpositions[cPathIndex];
+		int nextRow = pathYpositions[cPathIndex];
 
 		float colDiff = (sqrt(((float) col - nextCol) * ((float) col - nextCol)) * dueSteps);
 		float rowDiff = (sqrt(((float) row - nextRow) * ((float) row - nextRow)) * dueSteps);
@@ -86,19 +86,19 @@ void Player::move() {
 			int nextRow;
 			for (int i = 0; i <= dueSteps; i++) {
 				if (pathLenght == -1) return;
-				nextCol = pathXpositions [cPathIndex];
-				nextRow = pathYpositions [cPathIndex];
+				nextCol = pathXpositions[cPathIndex];
+				nextRow = pathYpositions[cPathIndex];
 
 				if (cPathIndex < pathLenght - 1) {
 					cPathIndex ++;
 				}
 				else {
-					row = pathYpositions [pathLenght - 1];
-					col = pathXpositions [pathLenght - 1];
+					row = pathYpositions[pathLenght - 1];
+					col = pathXpositions[pathLenght - 1];
 					//go to state of not having a path
 					pathLenght = -1;
-					delete [] pathXpositions;
-					delete [] pathYpositions;
+					delete[] pathXpositions;
+					delete[] pathYpositions;
 
 					hasNewPath = false;
 				}
@@ -139,7 +139,7 @@ void Player::deletePath() {
 
 void Player::draw() {
 	if (inVladW == false) {
-		Renderer::drawRectWithTexture(row, col, width, height, textures [cTextureI], false);
+		Renderer::drawRectWithTexture(row, col, width, height, textures[cTextureI], false);
 	}
 	int barWidth = width * 1.5;
 	Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);

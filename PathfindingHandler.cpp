@@ -38,7 +38,7 @@ Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player*
 
 	int pathfindingRows = worldRows * pathfindingAccuracy;//max rows for pathfinding
 	int pathfindingCols = worldCols * pathfindingAccuracy;//max cols for pathfinding
-	collisionGrid = new bool* [pathfindingRows];
+	collisionGrid = new bool*[pathfindingRows];
 	for (int y = 0; y < pathfindingRows; y++) {
 		collisionGrid[y] = new bool[pathfindingCols];
 		for (int x = 0; x < pathfindingCols; x++) {
@@ -65,8 +65,8 @@ void Pathfinding::pathFindingOnClick() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			mouseX -= players [0]->getWidth() / 2;
-			mouseY -= players [0]->getHeight() / 2;
+			mouseX -= players[0]->getWidth() / 2;
+			mouseY -= players[0]->getHeight() / 2;
 
 			findPath(mouseX, mouseY, myPlayerIndex);
 		}
@@ -79,12 +79,12 @@ void Pathfinding::update() {
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
-	if (goalX == players [playerIndex]->getCol() && goalY == players [playerIndex]->getRow()) {
+	if (goalX == players[playerIndex]->getCol() && goalY == players[playerIndex]->getRow()) {
 		return;
 	}
 	enablePlayer(myPlayerIndex, true);
 	for (int i = 0; i < playerCount; i++) {
-		if (players [i]->targetAble == false) {
+		if (players[i]->targetAble == false) {
 			if (i == myPlayerIndex) {
 				for (int j = 0; j < playerCount; j++) {
 					enablePlayer(j, false);//untargetable players walk through everyone
@@ -205,15 +205,15 @@ void Pathfinding::enableArea(int row, int col, int width, int height) {
 
 //enables player coords and after that disables all coords of other movables again in case their area was affected by that.
 void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
-	Player* player = players [i_playerIndex];
+	Player* player = players[i_playerIndex];
 
 	g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
 
 	if (disableOthers == true) {
 		for (int i = 0; i < playerCount; i++) {
-			if (players [i]->getHp() > 0) {
+			if (players[i]->getHp() > 0) {
 				if (i != cPlayerIndex) {
-					Player* cPlayer = players [i];
+					Player* cPlayer = players[i];
 					g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
 				}
 			}
@@ -223,7 +223,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 
 //enables player coords and after that disables all coords of other movables 			setNewPathfinding(false);again in case their area was affected by that.
 void Pathfinding::disablePlayer(int i_playerIndex) {
-	Player* player = players [i_playerIndex];
+	Player* player = players[i_playerIndex];
 	g->disableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
 }
 
@@ -245,7 +245,7 @@ void Pathfinding::startPathFinding() {
 
 			enablePlayer(cPlayerIndex, true);
 			for (int i = 0; i < playerCount; i++) {
-				if (players [i]->targetAble == false) {
+				if (players[i]->targetAble == false) {
 					if (i == cPlayerIndex) {
 						for (int j = 0; j < playerCount; j++) {
 							enablePlayer(j, false);//untargetable players walk through everyone

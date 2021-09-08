@@ -65,7 +65,7 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 			Player* cPlayer = players[j];
 			if (cPlayer->targetAble == true) {
 				if (cPlayer != p->getPlayer()) {
-					if (players [j]->getHp() > 0) {
+					if (players[j]->getHp() > 0) {
 
 						if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
 							p->getRow(), p->getCol(), p->getRadius(), 10) == true) {

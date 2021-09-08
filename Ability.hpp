@@ -1,6 +1,6 @@
 #pragma once
 #include <math.h>
-
+#include <chrono>
 /*This is a base class for every ability. It has all the commonalities abilities need to be bound to this project
 to use you have to override methods. Every ability should be cut into different phases, every phase MUST have
 an initialization-, an update- and a draw-function. You can set if a phase should end after a certain amount
@@ -48,7 +48,7 @@ public:
     }
     
     inline bool wasPhaseInitialized(int index) {
-        return phaseInitialized [index];
+        return phaseInitialized[index];
     }
 
     inline bool finishedCompletely() {
@@ -64,7 +64,7 @@ public:
     }
 
     inline long long getStartTime(int index) {
-        return phaseStart [index];
+        return phaseStart[index];
     }
 
     inline int getCastingPlayer() {
@@ -85,6 +85,11 @@ public:
 
     inline int getAbilityIndex() {
         return abilityIndex;
+    }
+
+    inline int getTimeSincePhaseStart(int index) {
+        auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        return cTime - phaseStart[index];
     }
 
 protected:

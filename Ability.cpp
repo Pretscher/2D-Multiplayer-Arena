@@ -14,17 +14,17 @@ Ability::Ability(int i_myPlayerIndex, bool i_isFromNetwork, int i_cdStartPhase, 
     this->phaseCount = 5;
     this->currentPhase = 0;
 
-    this->phaseInitialized = new bool [this->phaseCount];
-    this->phaseStart = new long long [this->phaseCount];
-    this->phaseDuration = new int [this->phaseCount];
-    this->timeBoundPhase = new bool [this->phaseCount];
+    this->phaseInitialized = new bool[this->phaseCount];
+    this->phaseStart = new long long[this->phaseCount];
+    this->phaseDuration = new int[this->phaseCount];
+    this->timeBoundPhase = new bool[this->phaseCount];
     for (int i = 0; i < phaseCount; i++) {
-        this->phaseInitialized [i] = false;
-        this->timeBoundPhase [i] = false;
-        this->phaseStart [i] = -1;
-        this->phaseDuration [i] = -1;
+        this->phaseInitialized[i] = false;
+        this->timeBoundPhase[i] = false;
+        this->phaseStart[i] = -1;
+        this->phaseDuration[i] = -1;
     }
-    phaseInitialized [0] = true;
+    phaseInitialized[0] = true;
 }
 
 void Ability::update() {
@@ -58,37 +58,37 @@ void Ability::executeCurrentPhase() {
 void Ability::initCurrentPhase() {
     if (finished == false) {//only for big fuckups
         if (currentPhase == 1) {
-            if (phaseInitialized [currentPhase] == false) {
+            if (phaseInitialized[currentPhase] == false) {
                 init1();
-                phaseInitialized [currentPhase] = true;
+                phaseInitialized[currentPhase] = true;
             }
         }
         else if (currentPhase == 2) {
-            if (phaseInitialized [currentPhase] == false) {
+            if (phaseInitialized[currentPhase] == false) {
                 init2();
-                phaseInitialized [currentPhase] = true;
+                phaseInitialized[currentPhase] = true;
             }
         }
         if (currentPhase == 3) {
-            if (phaseInitialized [currentPhase] == false) {
+            if (phaseInitialized[currentPhase] == false) {
                 init3();
-                phaseInitialized [currentPhase] = true;
+                phaseInitialized[currentPhase] = true;
             }
         }
         else if (currentPhase == 4) {
-            if (phaseInitialized [currentPhase] == false) {
+            if (phaseInitialized[currentPhase] == false) {
                 init4();
-                phaseInitialized [currentPhase] = true;
+                phaseInitialized[currentPhase] = true;
             }
         }
     }
 }
 
 void Ability::checkTime() {
-    if (timeBoundPhase [currentPhase] == true) {
+    if (timeBoundPhase[currentPhase] == true) {
         auto cTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-        int diff = cTime - phaseStart [currentPhase];
-        if (diff > phaseDuration [currentPhase]) {
+        int diff = cTime - phaseStart[currentPhase];
+        if (diff > phaseDuration[currentPhase]) {
             nextPhase();
         }
     }
@@ -100,22 +100,22 @@ void Ability::draw() {
             draw0();//needs no init, if this is not nullptr 0 is initialized caus constructor
         }
         if (currentPhase == 1) {
-            if (phaseInitialized [currentPhase] == true) {
+            if (phaseInitialized[currentPhase] == true) {
                 draw1();
             }
         }
         if (currentPhase == 2) {
-            if (phaseInitialized [currentPhase] == true) {
+            if (phaseInitialized[currentPhase] == true) {
                 draw2();
             }
         }
         if (currentPhase == 3) {
-            if (phaseInitialized [currentPhase] == true) {
+            if (phaseInitialized[currentPhase] == true) {
                 draw3();
             }
         }
         if (currentPhase == 4) {
-            if (phaseInitialized [currentPhase] == true) {
+            if (phaseInitialized[currentPhase] == true) {
                 draw4();
             }
         }
@@ -125,7 +125,7 @@ void Ability::draw() {
 
 //call this from the init-function of the to-be-time-limited phase
 void Ability::endPhaseAfterMS(int ms) {
-    timeBoundPhase [currentPhase] = true;
-    phaseDuration [currentPhase] = ms;
-    phaseStart [currentPhase] = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    timeBoundPhase[currentPhase] = true;
+    phaseDuration[currentPhase] = ms;
+    phaseStart[currentPhase] = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }

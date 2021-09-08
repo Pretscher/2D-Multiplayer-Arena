@@ -95,7 +95,7 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 			}
 
 			for (unsigned int i = 0; i < rectCount; i++) {
-				Rect* cRect = collisionRects [i];
+				Rect* cRect = collisionRects[i];
 				if (Utils::collisionRectCircleOnlyOutline(cRect->getCol(), cRect->getRow(), cRect->getWidth(), cRect->getHeight(), nextCol, nextRow, this->radius) == true) {
 					dead = true;
 					return;

@@ -44,7 +44,7 @@ private:
 
     bool initializedEvents = false;
 
-    int abilityPathIndex;
+    int abilityPathIndex;//needed to determine wether another path has been found ->ability should be stopped
 
     Player* me;
     Player* target;

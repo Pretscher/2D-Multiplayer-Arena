@@ -170,6 +170,7 @@
     <ClCompile Include="UiHandling.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VladE.cpp" />
+    <ClCompile Include="VladR.cpp" />
     <ClCompile Include="VladW.cpp" />
     <ClCompile Include="WorldHandling.cpp" />
   </ItemGroup>
@@ -201,6 +202,7 @@
     <ClInclude Include="UiHandling.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="VladE.hpp" />
+    <ClInclude Include="VladR.hpp" />
     <ClInclude Include="VladW.hpp" />
     <ClInclude Include="WorldHandling.hpp" />
   </ItemGroup>

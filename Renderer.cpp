@@ -147,7 +147,7 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int
     sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dx) * std::abs(dx) + std::abs(dy) * std::abs(dy)), ht * 2));
 
     line.setOrigin(0, ht);
-    line.setPosition(col1 - viewSpace [1], row1 - viewSpace [0]);
+    line.setPosition(col1 - viewSpace[1], row1 - viewSpace[0]);
     line.setRotation(rot);
     line.setFillColor(c);
 
@@ -177,8 +177,8 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
         }
         if (x < limitCol && y < limitRow) {
             if (factorInViewspace == true) {
-                *o_x = x + viewSpace [1];
-                *o_y = y + viewSpace [0];
+                *o_x = x + viewSpace[1];
+                *o_y = y + viewSpace[0];
             }
             else {
                 *o_x = x;
@@ -188,8 +188,8 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     }
     else {
         if (factorInViewspace == true) {
-            *o_x = x + viewSpace [1];
-            *o_y = y + viewSpace [0];
+            *o_x = x + viewSpace[1];
+            *o_y = y + viewSpace[0];
         }
         else {
             *o_x = x;

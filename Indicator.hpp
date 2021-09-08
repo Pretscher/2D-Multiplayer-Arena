@@ -3,16 +3,14 @@
 #include "Player.hpp"
 #include "Utils.hpp"
 #include <math.h>
+#include "GlobalRecources.hpp"
 //Point and click indicator class-------------------------------------------------------------------
 
 class PointAndClickIndicator {
 public:
-    PointAndClickIndicator(int i_castingPlayer, int i_range, int i_playerCount, Player** i_players) {
+    PointAndClickIndicator(int i_castingPlayer, int i_range) {
         this->myPlayerIndex = i_castingPlayer;
         this->range = i_range;
-        this->playerCount = i_playerCount;
-        this->players = i_players;
-
         //set cursor to cross while indicator is active
         sf::Cursor cursor;
         if (cursor.loadFromSystem(sf::Cursor::Cross)) {
@@ -29,9 +27,9 @@ public:
     }
     void update() {
         //if true, end next tick (if no player was selected just do nothing and end indicator)
-        for (int i = 0; i < playerCount; i++) {
+        for (int i = 0; i < GlobalRecources::playerCount; i++) {
             if (i != this->myPlayerIndex) {
-                Player* c = players [i];
+                Player* c = GlobalRecources::players[i];
                 if(c->targetAble == true) {
                     if (c->getHp() > 0) {
                         int mouseRow = 0;
@@ -62,11 +60,11 @@ public:
     }
 
     void draw() {
+        Player* me = GlobalRecources::players[this->myPlayerIndex];
         //draw range indicator
-        int indicatorRow = players [this->myPlayerIndex]->getRow() +
-            players [this->myPlayerIndex]->getHeight() / 2 - this->range;//range = radius of circle
-        int indicatorCol = players [this->myPlayerIndex]->getCol() +
-            players [this->myPlayerIndex]->getWidth() / 2 - this->range;
+        int indicatorRow = me->getRow() + me->getHeight() / 2 - this->range;//range = radius of circle
+        int indicatorCol = me->getCol() + me->getWidth() / 2 - this->range;
+
         Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
         Renderer::drawCircle(indicatorRow, indicatorCol, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
     }
@@ -85,18 +83,13 @@ private:
     int myPlayerIndex;
 
     bool endWOaction = false;
-
-    int playerCount;
-    Player** players;
 };
 
 class ProjectileIndicator {
 public:
-    ProjectileIndicator(int i_castingPlayer, int i_range, int i_projRadius, int i_playerCount, Player** i_players) {
+    ProjectileIndicator(int i_castingPlayer, int i_range, int i_projRadius) {
         this->myPlayerIndex = i_castingPlayer;
         this->range = i_range;
-        this->playerCount = i_playerCount;
-        this->players = i_players;
         this->projectileRadius = i_projRadius;
 
         //set cursor to cross while indicator is active
@@ -128,29 +121,29 @@ public:
     }
 
     void limitGoalPosToRange() {
-        int playerCenterRow = players [this->myPlayerIndex]->getRow() + players [this->myPlayerIndex]->getHeight() / 2;
-        int playerCenterCol = players [this->myPlayerIndex]->getCol() + players [this->myPlayerIndex]->getWidth() / 2;
-        float* vecToGoal = new float [2];
-        vecToGoal [0] = cGoalCol - playerCenterCol;
-        vecToGoal [1] = cGoalRow - playerCenterRow;
+        int playerCenterRow = GlobalRecources::players[this->myPlayerIndex]->getRow() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
+        int playerCenterCol = GlobalRecources::players[this->myPlayerIndex]->getCol() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
+        float* vecToGoal = new float[2];
+        vecToGoal[0] = cGoalCol - playerCenterCol;
+        vecToGoal[1] = cGoalRow - playerCenterRow;
         //calculate vector lenght
-        float lenght = sqrt((vecToGoal [0] * vecToGoal [0]) + (vecToGoal [1] * vecToGoal [1]));
+        float lenght = sqrt((vecToGoal[0] * vecToGoal[0]) + (vecToGoal[1] * vecToGoal[1]));
         if (lenght > range) {
             //normalize vector lenght
-            vecToGoal [0] /= lenght;
-            vecToGoal [1] /= lenght;
+            vecToGoal[0] /= lenght;
+            vecToGoal[1] /= lenght;
             //stretch vector to range
-            vecToGoal [0] *= range;
-            vecToGoal [1] *= range;
+            vecToGoal[0] *= range;
+            vecToGoal[1] *= range;
             //place at starting point
-            cGoalCol = playerCenterCol + vecToGoal [0];
-            cGoalRow = playerCenterRow + vecToGoal [1];
+            cGoalCol = playerCenterCol + vecToGoal[0];
+            cGoalRow = playerCenterRow + vecToGoal[1];
         }
     }
 
     void draw() {
-        int playerCenterRow = players [this->myPlayerIndex]->getRow() + players [this->myPlayerIndex]->getHeight() / 2;
-        int playerCenterCol = players [this->myPlayerIndex]->getCol() + players [this->myPlayerIndex]->getWidth() / 2;
+        int playerCenterRow = GlobalRecources::players[this->myPlayerIndex]->getRow() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
+        int playerCenterCol = GlobalRecources::players[this->myPlayerIndex]->getCol() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
         //draw range indicator
         int indicatorRow = playerCenterRow - this->range;//range = radius of circle
         int indicatorCol = playerCenterCol - this->range;
@@ -191,7 +184,80 @@ private:
     bool endWOaction = false;
     bool fire = false;
 
-    int playerCount;
-    Player** players;
     int myPlayerIndex;
+};
+
+class AOEonRangeIndicator {
+public:
+    AOEonRangeIndicator(int i_castingPlayer, int i_range, int i_radius) {
+        this->myPlayerIndex = i_castingPlayer;
+        this->range = i_range;
+        this->radius = i_radius;
+
+        //set cursor to cross while indicator is active
+        sf::Cursor cursor;
+        if (cursor.loadFromSystem(sf::Cursor::Cross)) {
+            Renderer::currentWindow->setMouseCursor(cursor);
+        }
+    }
+
+    ~AOEonRangeIndicator() {
+        //go back to arrow cursor if indicator is inactive (delete indicator)
+        sf::Cursor cursor;
+        if (cursor.loadFromSystem(sf::Cursor::Arrow)) {
+            Renderer::currentWindow->setMouseCursor(cursor);
+        }
+    }
+
+    void update() {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            int mouseRow = 0;
+            int mouseCol = 0;
+            Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
+            targetDestinationCol = mouseCol;
+            targetDestinationRow = mouseRow;
+            destSelected = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            endWOaction = true;
+        }
+    }
+
+    void draw() {
+        int mouseRow = 0;
+        int mouseCol = 0;
+        Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
+        Renderer::drawCircle(mouseRow - radius, mouseCol - radius, radius, sf::Color(0, 255, 255, 100), false, 10, false);
+        Renderer::drawCircle(mouseRow - radius, mouseCol - radius, radius, sf::Color(0, 255, 255, 25), true, 0, false);
+
+        int playerCenterRow = GlobalRecources::players[this->myPlayerIndex]->getRow() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
+        int playerCenterCol = GlobalRecources::players[this->myPlayerIndex]->getCol() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
+        Renderer::drawCircle(playerCenterRow - range, playerCenterCol - range, range, sf::Color(0, 255, 255, 100), false, 10, false);
+        Renderer::drawCircle(playerCenterRow - range, playerCenterCol - range, range, sf::Color(0, 255, 255, 25), true, 0, false);
+    }
+
+    inline bool isDestSelected() {
+        return destSelected;
+    }
+
+    inline int getDestCol() {
+        return targetDestinationCol;
+    }
+    inline int getDestRow() {
+        return targetDestinationRow;
+    }
+
+    inline bool endWithoutAction() {
+        return endWOaction;
+    }
+
+private:
+    int radius;
+    int range;
+    int targetDestinationCol = -1;
+    int targetDestinationRow = -1;
+    int myPlayerIndex;
+
+    bool destSelected = false;
+    bool endWOaction = false;
 };

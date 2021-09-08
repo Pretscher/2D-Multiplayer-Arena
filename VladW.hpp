@@ -16,7 +16,4 @@ public:
 private:
     int damage = 1;
     int range = 150;
-
-    float percentFinishedCharge;
-    bool* dealtDamageToPlayer;
 };

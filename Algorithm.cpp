@@ -113,8 +113,8 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 			}
 		}
 
-		(*o_XPos) [pathLenght - 1] = goalCol;
-		(*o_YPos) [pathLenght - 1] = goalRow;
+		(*o_XPos)[pathLenght - 1] = goalCol;
+		(*o_YPos)[pathLenght - 1] = goalRow;
 
 		if (pathLenght == 0) {
 			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";

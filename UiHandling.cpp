@@ -15,15 +15,15 @@ UiHandling::UiHandling(int frameRows, int frameCols) {
 	sf::Texture wall;
 	sf::Texture ground;
 
-	orb = new sf::Texture [6];
+	orb = new sf::Texture[6];
 
-	orb [0] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_fill.png", false);
-	orb [1] = Renderer::loadTexture("Textures/UI/Uipanel.png", false);
-	orb [2] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_back1 _flipped.png", false);
+	orb[0] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_fill.png", false);
+	orb[1] = Renderer::loadTexture("Textures/UI/Uipanel.png", false);
+	orb[2] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_back1 _flipped.png", false);
 
-	orb [3] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_shadow.png", false);
-	orb [4] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_highlight.png", false);
-	orb [5] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_border.png", false);
+	orb[3] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_shadow.png", false);
+	orb[4] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_highlight.png", false);
+	orb[5] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_border.png", false);
 }
 
 int lifebarSize = 300;
@@ -47,13 +47,13 @@ void UiHandling::draw() {
 			Renderer::drawRect(780 + lifebarSize - lifeBarWidth, 1600, 300, 300, sf::Color(100, 0, 0, 255), true);
 
 			float uiScale = 1.49;
-			Renderer::drawRectWithTexture(890, 1132, 530 * uiScale, 129 * uiScale, orb [i], true);
+			Renderer::drawRectWithTexture(890, 1132, 530 * uiScale, 129 * uiScale, orb[i], true);
 		}
 		else if (i == 2) {
-			Renderer::drawRectWithTexture(750, 1575, 350, 300, orb [i], true);
+			Renderer::drawRectWithTexture(750, 1575, 350, 300, orb[i], true);
 		}
 		else {
-			Renderer::drawRectWithTexture(780, 1600, 300, 300, orb [i], true);
+			Renderer::drawRectWithTexture(780, 1600, 300, 300, orb[i], true);
 		}
 	}
 }

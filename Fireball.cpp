@@ -8,7 +8,7 @@ static int i_addToNetworkPhase = 2;
 static int i_abilityIndex = 0;
 
 Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {//both constructors are used
-    indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius, GlobalRecources::playerCount, GlobalRecources::players);
+    indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius);
 }
 
 //create from network input(row is just current row so even with lag the start is always synced)
@@ -24,7 +24,7 @@ Fireball::Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goal
     //after exploding or you connect after explosion
 
     this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
-        GlobalRecources::players [myPlayerIndex]);
+        GlobalRecources::players[myPlayerIndex]);
     skipToPhase(i_phase);
 }
 
@@ -49,7 +49,7 @@ void Fireball::execute0() {
 }
 
 void Fireball::init1() {
-    Player* myPlayer = GlobalRecources::players [myPlayerIndex];
+    Player* myPlayer = GlobalRecources::players[myPlayerIndex];
     //Turn player to mouse coords and set mouse coords as goal coords
     //if projectile destination is above player
     if (this->goalRow < myPlayer->getRow()) {
@@ -103,7 +103,7 @@ void Fireball::init2() {
 
 void Fireball::execute2() {
     for (int i = 0; i < GlobalRecources::playerCount; i++) {
-        Player* c = GlobalRecources::players [i];
+        Player* c = GlobalRecources::players[i];
         if (c->targetAble == true) {
             bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
                 this->explosionCol, this->explosionRow, this->explosionRange, 10);
@@ -136,20 +136,20 @@ void Fireball::draw2() {
 
 
 void Fireball::limitGoalPosToRange() {
-    float* vecToGoal = new float [2];
-    vecToGoal [0] = goalCol - startCol;
-    vecToGoal [1] = goalRow - startRow;
+    float* vecToGoal = new float[2];
+    vecToGoal[0] = goalCol - startCol;
+    vecToGoal[1] = goalRow - startRow;
     //calculate vector lenght
-    float lenght = sqrt((vecToGoal [0] * vecToGoal [0]) + (vecToGoal [1] * vecToGoal [1]));
+    float lenght = sqrt((vecToGoal[0] * vecToGoal[0]) + (vecToGoal[1] * vecToGoal[1]));
     if (lenght > range) {
         //normalize vector lenght
-        vecToGoal [0] /= lenght;
-        vecToGoal [1] /= lenght;
+        vecToGoal[0] /= lenght;
+        vecToGoal[1] /= lenght;
         //stretch vector to range
-        vecToGoal [0] *= range;
-        vecToGoal [1] *= range;
+        vecToGoal[0] *= range;
+        vecToGoal[1] *= range;
         //place at starting point
-        goalCol = startCol + vecToGoal [0];
-        goalRow = startRow + vecToGoal [1];
+        goalCol = startCol + vecToGoal[0];
+        goalRow = startRow + vecToGoal[1];
     }
 }

@@ -14,14 +14,14 @@ Graph::Graph(int i_rows, int i_cols, float i_accuracy) {
 
     //init everything with given sizes
     neighbourCount = new int[lenght];
-    neighbourIndices = new int* [lenght];//for every node there can be 8 neighbours, second dimension initialized in loop
+    neighbourIndices = new int*[lenght];//for every node there can be 8 neighbours, second dimension initialized in loop
     xCoords = new int[lenght];
     yCoords = new int[lenght];
     currentGraph = new int[lenght];
     heapIndices = new int[lenght];
     usedByMoveable = new bool[lenght];
 
-    rawIndices = new int* [this->rows];
+    rawIndices = new int*[this->rows];
     neighbourCosts = nullptr; //initialized later for every run of algorithm
 
 
@@ -58,7 +58,7 @@ void Graph::reset() {
 }
 
 /* MEMO:
-isUseable = new bool* [this->rows];
+isUseable = new bool*[this->rows];
 for (int y = 0; y < this->rows; y++) {
     isUseable[y] = new bool[this->cols];
 }*/
@@ -230,10 +230,10 @@ void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
     float x = (float) *io_x * accuracy;
     float y = (float) *io_y * accuracy;
 
-    int cIndex = rawIndices [(int)y][(int)x];//check if index is valid now
+    int cIndex = rawIndices[(int)y][(int)x];//check if index is valid now
     if (cIndex != -1) {
         if (moveableRelevant == true) {
-            if (usedByMoveable [cIndex] == true) {
+            if (usedByMoveable[cIndex] == true) {
                 cIndex = -1;
             }
         }
@@ -243,8 +243,8 @@ void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
     }
 
     int index = findNextUseableVertex(y, x, moveableRelevant);
-    *io_x = (float)xCoords [index] / accuracy;
-    *io_y = (float)yCoords [index] / accuracy;
+    *io_x = (float)xCoords[index] / accuracy;
+    *io_y = (float)yCoords[index] / accuracy;
 
 
 }

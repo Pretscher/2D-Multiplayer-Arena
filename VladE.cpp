@@ -21,20 +21,20 @@ VladE::VladE(int i_myPlayerIndex, int i_phase, int i_timeInPhase) : Ability(i_my
 		nextPhase();
 		init1();//has to be called manually to use projectiles
 		for (int i = 0; i < projectileCount; i++) {
-			projectiles [i]->skipMovementTime(i_timeInPhase);
+			projectiles[i]->skipMovementTime(i_timeInPhase);
 		}
 	}
 }
 
 void VladE::execute0() {
 	auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	float diff = cTime - phaseStart [0];
-	percentFinishedCharge = diff / phaseDuration [0];
+	float diff = cTime - phaseStart[0];
+	percentFinishedCharge = diff / phaseDuration[0];
 }
 
 void VladE::draw0() {
 	int innerCircleRadius = range * abs(1.0f - percentFinishedCharge);
-	Player* myPlayer = GlobalRecources::players [myPlayerIndex];
+	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 
 	int innerRow = myPlayer->getRow() + (myPlayer->getHeight() / 2) - innerCircleRadius;
 	int innerCol = myPlayer->getCol() + (myPlayer->getWidth() / 2) - innerCircleRadius;
@@ -48,11 +48,11 @@ void VladE::draw0() {
 void VladE::init1() {
 	endPhaseAfterMS(1000);//we want to save the start time only till now and are too lazy to do it in a passed variable.
 	projectileCount = 16;
-	projectiles = new Projectile* [projectileCount];
-	dealtDamageToPlayer = new bool [GlobalRecources::playerCount];
+	projectiles = new Projectile*[projectileCount];
+	dealtDamageToPlayer = new bool[GlobalRecources::playerCount];
 	
 	for (int i = 0; i < GlobalRecources::playerCount; i++) {
-		dealtDamageToPlayer [i] = false;
+		dealtDamageToPlayer[i] = false;
 	}
 
 	for (int i = 0; i < projectileCount; i++) {
@@ -61,7 +61,7 @@ void VladE::init1() {
 		int goalRow;
 		int goalCol;
 
-		Player* myPlayer = GlobalRecources::players [myPlayerIndex];
+		Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 		int pCol = myPlayer->getCol() - 20;//spawn a bit away from player, with 20 distance around him
 		int pRow = myPlayer->getRow() - 20;
 		int pWidth = myPlayer->getWidth() + 40;
@@ -197,7 +197,7 @@ void VladE::init1() {
 
 		if (goalCol < 0) goalCol = 0;
 		if (goalRow < 0) goalRow = 0;
-		projectiles [i] = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
+		projectiles[i] = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
 	}
 }
 
@@ -211,16 +211,16 @@ void VladE::execute1() {
 
 	for (int j = 0; j < GlobalRecources::playerCount; j++) {
 		for (int i = 0; i < projectileCount; i++) {
-			if (projectiles [i]->getDead() == false) {
+			if (projectiles[i]->getDead() == false) {
 				if (j != myPlayerIndex) {
-					Player* cPlayer = GlobalRecources::players [j];
+					Player* cPlayer = GlobalRecources::players[j];
 					if (cPlayer->targetAble == true) {
 						if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
-							projectiles [i]->getRow(), projectiles [i]->getCol(), projectiles [i]->getRadius(), 10) == true) {
-							projectiles [i]->setDead(true);
-							if (dealtDamageToPlayer [j] == false) {
+							projectiles[i]->getRow(), projectiles[i]->getCol(), projectiles[i]->getRadius(), 10) == true) {
+							projectiles[i]->setDead(true);
+							if (dealtDamageToPlayer[j] == false) {
 								cPlayer->setHp(cPlayer->getHp() - this->damage);
-								dealtDamageToPlayer [j] = true;
+								dealtDamageToPlayer[j] = true;
 							}
 						}
 					}
@@ -232,7 +232,7 @@ void VladE::execute1() {
 	//end ability after all projectiles reached their destination
 	bool someoneAlive = false;
 	for (int i = 0; i < projectileCount; i++) {
-		if (projectiles [i]->getDead() == false) {
+		if (projectiles[i]->getDead() == false) {
 			someoneAlive = true;
 			break;
 		}
@@ -244,11 +244,11 @@ void VladE::execute1() {
 
 void VladE::draw1() {
 	for (int i = 0; i < projectileCount; i++) {
-		if (projectiles [i]->getDead() == false) {
-			projectiles [i]->draw(sf::Color(150, 0, 0, 255));
+		if (projectiles[i]->getDead() == false) {
+			projectiles[i]->draw(sf::Color(150, 0, 0, 255));
 		}
 	}
-	Player* myPlayer = GlobalRecources::players [myPlayerIndex];
+	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 	int outerRow = myPlayer->getRow() + (myPlayer->getHeight() / 2) - range;
 	int outerCol = myPlayer->getCol() + (myPlayer->getWidth() / 2) - range;
 	Renderer::drawCircle(outerRow, outerCol, range, sf::Color(150, 0, 0, 255), false, 10, false);
@@ -267,22 +267,22 @@ void VladE::draw2() {
 }
 
 void VladE::limitPosToRange(int* io_goalRow, int* io_goalCol) {
-	Player* myPlayer = GlobalRecources::players [myPlayerIndex];
+	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 
-	float* vecToGoal = new float [2];
-	vecToGoal [0] = *io_goalCol + radius - (myPlayer->getCol() + (myPlayer->getWidth() / 2));
-	vecToGoal [1] = *io_goalRow + radius - (myPlayer->getRow() + (myPlayer->getHeight() / 2));
+	float* vecToGoal = new float[2];
+	vecToGoal[0] = *io_goalCol + radius - (myPlayer->getCol() + (myPlayer->getWidth() / 2));
+	vecToGoal[1] = *io_goalRow + radius - (myPlayer->getRow() + (myPlayer->getHeight() / 2));
 	//calculate vector lenght
-	float lenght = sqrt((vecToGoal [0] * vecToGoal [0]) + (vecToGoal [1] * vecToGoal [1]));
+	float lenght = sqrt((vecToGoal[0] * vecToGoal[0]) + (vecToGoal[1] * vecToGoal[1]));
 	if (lenght > range + radius) {
 		//normalize vector lenght
-		vecToGoal [0] /= lenght;
-		vecToGoal [1] /= lenght;
+		vecToGoal[0] /= lenght;
+		vecToGoal[1] /= lenght;
 		//stretch vector to range
-		vecToGoal [0] *= range + radius;
-		vecToGoal [1] *= range + radius;
+		vecToGoal[0] *= range + radius;
+		vecToGoal[1] *= range + radius;
 		//place at starting point
-		*io_goalCol = myPlayer->getCol() + vecToGoal [0] + radius;
-		*io_goalRow = myPlayer->getRow() + vecToGoal [1] + radius;
+		*io_goalCol = myPlayer->getCol() + vecToGoal[0] + radius;
+		*io_goalRow = myPlayer->getRow() + vecToGoal[1] + radius;
 	}
 }
