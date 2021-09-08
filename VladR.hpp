@@ -36,7 +36,7 @@ private:
     int timeTillProc = 4000;
     int healPerPlayer = 100;
 
-    int row;
+    int row; 
     int col;
     AOEonRangeIndicator* indicator;
 

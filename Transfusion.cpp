@@ -4,7 +4,7 @@
 
 static int i_onCDPhase = 2;
 static int i_addToNetworkPhase = 2;
-static int i_abilityIndex = 1;
+static int i_abilityIndex = 0;
 
 
 Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {

@@ -5,7 +5,7 @@ using namespace std::chrono;
 
 static int i_onCDPhase = 1;
 static int i_addToNetworkPhase = 2;
-static int i_abilityIndex = 0;
+static int i_abilityIndex = 4;
 
 Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {//both constructors are used
     indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius);

@@ -228,6 +228,9 @@ public:
             else if (i == 3) {
                 abilityLetter = std::string("R");
             }
+            else if (i == 4) {
+                abilityLetter = std::string("T");
+            }
             Renderer::drawText(abilityLetter, row - size / 2.2f, col - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
         }
     }
@@ -394,18 +397,18 @@ public:
         switch (abIndex) {
         case 0: {
             //change this
-            Fireball* newFB = new Fireball(myPlayerI);
-            fireballs->push_back(newFB);
-            generalAbilities->push_back(newFB);
-            newAbilities[abIndex] = newFB;
-            break;
-        }
-        case 1: {
-            //change this
             Transfusion* newT = new Transfusion(myPlayerI);
             transfusions->push_back(newT);
             generalAbilities->push_back(newT);
             newAbilities[abIndex] = newT;
+            break;
+        }
+        case 1: {
+            //change this
+            VladW* newW = new VladW(myPlayerI);
+            vladWs->push_back(newW);
+            generalAbilities->push_back(newW);
+            newAbilities[abIndex] = newW;
             break;
         }
         case 2: {
@@ -418,19 +421,20 @@ public:
         }
         case 3: {
             //change this
-            VladW* newW = new VladW(myPlayerI);
-            vladWs->push_back(newW);
-            generalAbilities->push_back(newW);
-            newAbilities[abIndex] = newW;
-            break;
-        }
-        case 4: {
-            //change this
             VladR* newR = new VladR(myPlayerI);
             vladRs->push_back(newR);
             generalAbilities->push_back(newR);
             newAbilities[abIndex] = newR;
             break;
+        }
+        case 4: {
+            //change this
+            Fireball* newFB = new Fireball(myPlayerI);
+            fireballs->push_back(newFB);
+            generalAbilities->push_back(newFB);
+            newAbilities[abIndex] = newFB;
+            break;
+
         }
         default:
             break;
@@ -442,16 +446,16 @@ public:
         //add abilities with respective indices
         switch (toDelete->getAbilityIndex()) {
         case 0:
-            for (int c = 0; c < fireballs->size(); c++) {
-                if (fireballs->at(c) == toDelete) {
-                    fireballs->erase(fireballs->begin() + c);
+            for (int c = 0; c < transfusions->size(); c++) {
+                if (transfusions->at(c) == toDelete) {
+                    transfusions->erase(transfusions->begin() + c);
                 }
             }
             break;
         case 1:
-            for (int c = 0; c < transfusions->size(); c++) {
-                if (transfusions->at(c) == toDelete) {
-                    transfusions->erase(transfusions->begin() + c);
+            for (int c = 0; c < vladWs->size(); c++) {
+                if (vladWs->at(c) == toDelete) {
+                    vladWs->erase(vladWs->begin() + c);
                 }
             }
             break;
@@ -463,35 +467,39 @@ public:
             }
             break;
         case 3:
-            for (int c = 0; c < vladWs->size(); c++) {
-                if (vladWs->at(c) == toDelete) {
-                    vladWs->erase(vladWs->begin() + c);
-                }
-            }
-        case 4:
+
             for (int c = 0; c < vladRs->size(); c++) {
                 if (vladRs->at(c) == toDelete) {
                     vladRs->erase(vladRs->begin() + c);
                 }
             }
             break;
+        case 4:
 
+            for (int c = 0; c < fireballs->size(); c++) {
+                if (fireballs->at(c) == toDelete) {
+                    fireballs->erase(fireballs->begin() + c);
+                }
+            }
+            break;
         default:
             break;
         }
     }
 
     void declareCustomAbilities() {
-        fireballIndex = 0;
-        abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::Q, 5000);//right now Fireball
-        transfusionIndex = 1;
-        abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::W, 2000);//right now Transfusion
+
+        transfusionIndex = 0;
+        abilityTriggering->addAbility(transfusionIndex, sf::Keyboard::Key::Q, 2000);
+        vladWindex = 1;
+        abilityTriggering->addAbility(vladWindex, sf::Keyboard::Key::W, 5000);
         vladEindex = 2;
-        abilityTriggering->addAbility(vladEindex, sf::Keyboard::Key::E, 2000);//right now Transfusion
-        vladWindex = 3;
-        abilityTriggering->addAbility(vladWindex, sf::Keyboard::Key::R, 5000);//right now Transfusion
-        vladRindex = 4;
-        abilityTriggering->addAbility(vladRindex, sf::Keyboard::Key::T, 5000);//right now Transfusion
+        abilityTriggering->addAbility(vladEindex, sf::Keyboard::Key::E, 2000);
+        vladRindex = 3;
+        abilityTriggering->addAbility(vladRindex, sf::Keyboard::Key::R, 5000);
+
+        fireballIndex = 4;
+        abilityTriggering->addAbility(fireballIndex, sf::Keyboard::Key::T, 5000);
     }
 
 private:

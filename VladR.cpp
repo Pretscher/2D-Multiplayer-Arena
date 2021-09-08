@@ -6,7 +6,7 @@
 
 static int i_onCDPhase = 2;
 static int i_addToNetworkPhase = 2;
-static int i_abilityIndex = 4;
+static int i_abilityIndex = 3;
 
 VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
 	indicator = new AOEonRangeIndicator(i_myPlayerIndex, range, radius);
@@ -102,7 +102,7 @@ void VladR::init2() {
 }
 
 void VladR::execute2() {
-
+	
 }
 
 void VladR::draw2() {

@@ -3,7 +3,7 @@
 #include "Utils.hpp"
 static int i_onCDPhase = 0;
 static int i_addToNetworkPhase = 0;
-static int i_abilityIndex = 3;
+static int i_abilityIndex = 1;
 
 VladW::VladW(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
 	endPhaseAfterMS(2000);
