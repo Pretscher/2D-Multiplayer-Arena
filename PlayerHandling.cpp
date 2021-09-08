@@ -9,7 +9,7 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	float vel = 100;//velocity on path if path is given
 	int startCol = 700;
 	int rectSize = 100;
-	int defaultMaxHp = 200;
+	int defaultMaxHp = 500;
 	int defaultDmg = 10;
 
 
