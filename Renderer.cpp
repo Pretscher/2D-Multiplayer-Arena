@@ -5,6 +5,7 @@
 //Call this-----------------------------------------------------------------------------------------------------------
 static int* viewSpace;
 static int* viewSpaceLimits;
+
 sf::RenderWindow* Renderer::currentWindow;
 void Renderer::init(sf::RenderWindow* window) {
     Renderer::currentWindow = window;
@@ -99,11 +100,13 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int
 }
 
 void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders) {
+    float topBarOffset = (float) currentWindow->getSize().y / 25;
+
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
     //normalize from to 1920 * 1080 resolution
     int pX = (((float)pos.x) / size.x) * 1920;
-    int pY = (((float)pos.y - ((float)size.y / 42)) / size.y) * 1080;
+    int pY = (((float)pos.y - topBarOffset) / size.y) * 1080;
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
         int a = 0;
     }
@@ -116,8 +119,8 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     float y = (float)pY - oY;
 
     if (factorInBorders == true) {
-        int limitRow = size.y;
-        int limitCol = size.x;
+        int limitRow = 1080;
+        int limitCol = 1920 + topBarOffset;
         if (x < limitCol && y < limitRow) {
             if (factorInViewspace == true) {
                 *o_x = x + viewSpace[1];
