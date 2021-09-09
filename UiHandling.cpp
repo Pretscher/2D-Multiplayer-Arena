@@ -10,8 +10,6 @@ UiHandling::UiHandling(int frameRows, int frameCols) {
 	this->frameRows = frameRows;
 	this->frameCols = frameCols;
 
-	Renderer::limitMouse(uiHeight, frameCols);
-
 	sf::Texture wall;
 	sf::Texture ground;
 

@@ -98,12 +98,6 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int
     Renderer::currentWindow->draw(line);
 }
 
-int mouseLimitRow, mouseLimitCol;
-void Renderer::limitMouse(int row, int col) {
-    mouseLimitRow = row;
-    mouseLimitCol = col;
-}
-
 void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders) {
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
@@ -122,12 +116,8 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     float y = (float)pY - oY;
 
     if (factorInBorders == true) {
-        int limitRow = size.x;
-        int limitCol = size.y;
-        if (factorInViewspace == true) {
-            limitRow = mouseLimitRow;
-            limitCol = mouseLimitCol;
-        }
+        int limitRow = size.y;
+        int limitCol = size.x;
         if (x < limitCol && y < limitRow) {
             if (factorInViewspace == true) {
                 *o_x = x + viewSpace[1];

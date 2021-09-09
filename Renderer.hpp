@@ -15,7 +15,6 @@ public:
     static void drawCircle(int row, int col, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace);
     static void drawLine(int row1, int col1, int row2, int col2, sf::Color c, int thickness);
   
-    static void limitMouse(int row, int col);
     static void getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders);
     static void updateViewSpace();
     static void linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits);

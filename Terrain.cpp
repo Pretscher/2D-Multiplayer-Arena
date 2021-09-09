@@ -15,7 +15,7 @@ void Terrain::addRect(int row, int col, int width, int height) {
 
 void Terrain::draw() {
 
-	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldCols(), Renderer::getWorldRows(), ground, true);
+	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldCols() * 2, Renderer::getWorldRows() * 2, ground, true);
 	for (unsigned int i = 0; i < objectsRow->size(); i++) {
 		Rect* rect = this->objectsRow->at(i);
 		Renderer::drawRectWithTexture(rect->getRow(), rect->getCol(), rect->getWidth(), rect->getHeight(), wall, false);
