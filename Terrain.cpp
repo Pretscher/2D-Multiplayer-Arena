@@ -1,4 +1,5 @@
 #include "Terrain.hpp"
+#include "GlobalRecources.hpp"
 
 sf::Texture wall;
 sf::Texture ground;
@@ -26,8 +27,19 @@ void Terrain::draw() {
 void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight) {
 	for (int i = 0; i < objectsRow->size(); i++) {
 		Rect* rect = this->objectsRow->at(i);
-		for (int y = (rect->getRow() - playerHeight + (1 / pathfindingAccuracy)) * pathfindingAccuracy; y < (rect->getRow() + rect->getHeight()) * pathfindingAccuracy; y++) {
-			for (int x = (rect->getCol() - playerWidth + (1 / pathfindingAccuracy)) * pathfindingAccuracy; x < (rect->getCol() + rect->getWidth()) * pathfindingAccuracy; x++) {
+
+		int startY = (rect->getRow() - playerHeight + (1 / pathfindingAccuracy)) * pathfindingAccuracy;
+		if (startY < 0) startY = 0;
+		int startX = (rect->getCol() - playerWidth + (1 / pathfindingAccuracy)) * pathfindingAccuracy;
+		if (startX < 0) startX = 0;
+
+		int endY = (rect->getRow() + rect->getHeight()) * pathfindingAccuracy;
+		if (endY >= GlobalRecources::worldRows) endY = GlobalRecources::worldRows - 1;
+		int endX = (rect->getCol() + rect->getWidth()) * pathfindingAccuracy;
+		if (endX >= GlobalRecources::worldRows) endX = GlobalRecources::worldCols - 1;
+
+		for (int y = startY; y < endY; y++) {
+			for (int x = startX; x < endX; x++) {
 				grid[y][x] = false;
 			}
 		}
