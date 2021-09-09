@@ -162,11 +162,23 @@ void Renderer::limitMouse(int row, int col) {
 
 void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders) {
     auto pos = sf::Mouse::getPosition();
+    
     auto size = Renderer::currentWindow->getSize();
+    int sX = size.x;
+    int sY = size.y;
+    toRowCol(&sX, &sY);
     auto offset = currentWindow->getPosition();
-    float x = pos.x - offset.x - 10;
-    float y = pos.y - offset.y - 60;
-    toFloatRowCol(&x, &y);
+    int oX = offset.x + 10;
+    int oY = offset.y + 10;
+    toRowCol(&oX, &oY);
+    int pX = pos.x;
+    int pY = pos.y;
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        int a = 0;
+    }
+    toRowCol(&pX, &pY);
+    float x = pX - oX - (sX / 380);
+    float y = pY - oY - (sY / 36);
 
     if (factorInBorders == true) {
         int limitRow = maxRows;
