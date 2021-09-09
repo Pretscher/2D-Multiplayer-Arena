@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include <math.h>
-
+#include "GlobalRecources.hpp"
 //Call this-----------------------------------------------------------------------------------------------------------
 static int* viewSpace;
 static int* viewSpaceLimits;
@@ -18,6 +18,9 @@ void Renderer::init(sf::RenderWindow* window) {
 void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
     viewSpace = io_viewSpace;
     viewSpaceLimits = io_viewspaceLimits;
+
+    GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
+    GlobalRecources::worldCols = getWorldCols();
 }
 
 int Renderer::getWorldCols() {
@@ -100,6 +103,9 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int
 }
 
 void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders) {
+    GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
+    GlobalRecources::worldCols = getWorldCols();
+
     float topBarOffset = (float) currentWindow->getSize().y / 25;
 
     auto pos = sf::Mouse::getPosition();

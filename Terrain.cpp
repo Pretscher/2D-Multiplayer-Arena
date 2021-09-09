@@ -28,15 +28,15 @@ void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int p
 	for (int i = 0; i < objectsRow->size(); i++) {
 		Rect* rect = this->objectsRow->at(i);
 
-		int startY = (rect->getRow() - playerHeight + (1 / pathfindingAccuracy)) * pathfindingAccuracy;
+		int startY = ((float)rect->getRow() - playerHeight + (1.0f / pathfindingAccuracy)) * pathfindingAccuracy;
 		if (startY < 0) startY = 0;
-		int startX = (rect->getCol() - playerWidth + (1 / pathfindingAccuracy)) * pathfindingAccuracy;
+		int startX = ((float)rect->getCol() - playerWidth + (1.0f / pathfindingAccuracy)) * pathfindingAccuracy;
 		if (startX < 0) startX = 0;
 
-		int endY = (rect->getRow() + rect->getHeight()) * pathfindingAccuracy;
+		int endY = ((float)rect->getRow() + rect->getHeight()) * pathfindingAccuracy;
 		if (endY >= GlobalRecources::worldRows) endY = GlobalRecources::worldRows - 1;
-		int endX = (rect->getCol() + rect->getWidth()) * pathfindingAccuracy;
-		if (endX >= GlobalRecources::worldRows) endX = GlobalRecources::worldCols - 1;
+		int endX = ((float) rect->getCol() + rect->getWidth()) * pathfindingAccuracy;
+		if (endX >= GlobalRecources::worldCols) endX = GlobalRecources::worldCols - 1;
 
 		for (int y = startY; y < endY; y++) {
 			for (int x = startX; x < endX; x++) {
