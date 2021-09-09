@@ -65,9 +65,12 @@ void Pathfinding::pathFindingOnClick() {
 		int mouseX = -1, mouseY = -1;
 		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseX != -1) {//stays at -1 if click is outside of window
-			mouseX -= players[0]->getWidth() / 2;
-			mouseY -= players[0]->getHeight() / 2;
-
+			if (mouseX - players[0]->getWidth() / 2 > 0) {
+				mouseX -= players[0]->getWidth() / 2;
+			}
+			if (mouseY - players[0]->getHeight() / 2 > 0) {
+				mouseY -= players[0]->getHeight() / 2;
+			}
 			findPath(mouseX, mouseY, myPlayerIndex);
 		}
 	}

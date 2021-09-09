@@ -22,7 +22,6 @@ WorldHandling::WorldHandling() {
 	worldCols = frameCols + viewSpaceLimits[1];
 
 
-	Renderer::initGrid(frameRows, frameCols);
 	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
 	terrain = new Terrain();
 	hardCodeTerrain();

@@ -6,7 +6,7 @@ public:
     static sf::RenderWindow* currentWindow;
 
     static void init(sf::RenderWindow* window);
-    static void initGrid( int rows,  int cols);
+
     static int getWorldRows();
     static int getWorldCols();
 
