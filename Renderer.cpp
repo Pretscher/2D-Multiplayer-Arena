@@ -111,12 +111,11 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();
 
-    float fractX = 2 * 1920.0f / sf::VideoMode::getDesktopMode().width;
     float fractY = 2 * 1080.0f / sf::VideoMode::getDesktopMode().height;
 
     //normalize from to 1920 * 1080 resolution
-    int pX = (((float)pos.x) / size.x) * fractX * 1920;
-    int pY = (((float)pos.y - topBarOffset) / size.y) * fractY * 1080;
+    int pX = (((float)pos.x) / size.x) * 1920;
+    int pY = (((float)pos.y - (topBarOffset * fractY)) / size.y) * 1080;
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
         int a = 0;
     }
