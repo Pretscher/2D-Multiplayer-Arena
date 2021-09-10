@@ -106,7 +106,7 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
     GlobalRecources::worldCols = getWorldCols();
 
-    float topBarOffset = (float) currentWindow->getSize().y / 25;
+    float topBarOffset = 50;
 
     auto pos = sf::Mouse::getPosition();
     auto size = Renderer::currentWindow->getSize();

@@ -42,6 +42,7 @@ void WorldHandling::hardCodeTerrain() {
 	terrain->addRect(worldRows - 30, 0, worldCols, 30);
 
 	terrain->addRect(300, 0, 300, 100);
+	terrain->addRect(300, 300, 100, 300);
 
 	terrain->addRect(1000, 1000, 500, 500);
 }
