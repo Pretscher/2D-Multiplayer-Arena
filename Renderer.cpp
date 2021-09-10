@@ -157,9 +157,7 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     toRowCol(&x, &y);
 
     if (factorInBorders == true) {
-        int limitRow = currentWindow->getSize().y;
-        int limitCol = currentWindow->getSize().x;
-        if (x < limitCol && y < limitRow) {
+        if (x < normalResCols && y < normalResRows) {
             if (factorInViewspace == true) {
                 *o_x = x + viewSpace[1];
                 *o_y = y + viewSpace[0];
