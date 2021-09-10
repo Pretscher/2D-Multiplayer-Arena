@@ -106,30 +106,13 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
     GlobalRecources::worldCols = getWorldCols();
 
-    float topBarOffset = 50;
-
-    auto pos = sf::Mouse::getPosition();
-    auto size = Renderer::currentWindow->getSize();
-
-    float fractY = 2 * 1080.0f / sf::VideoMode::getDesktopMode().height;
-
-    //normalize from to 1920 * 1080 resolution
-    int pX = (((float)pos.x) / size.x) * 1920;
-    int pY = (((float)pos.y - (topBarOffset * fractY)) / size.y) * 1080;
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        int a = 0;
-    }
-    //offset to top left of screen
-    auto offset = currentWindow->getPosition();
-    int oX = offset.x + 13;
-    int oY = offset.y + 13;
-
-    float x = pX - oX;
-    float y = (float)pY - oY;
+    auto pos = sf::Mouse::getPosition(*currentWindow);
+    int x = pos.x;
+    int y = pos.y;
 
     if (factorInBorders == true) {
-        int limitRow = 1080;
-        int limitCol = 1920 + topBarOffset;
+        int limitRow = currentWindow->getSize().y;
+        int limitCol = currentWindow->getSize().x;
         if (x < limitCol && y < limitRow) {
             if (factorInViewspace == true) {
                 *o_x = x + viewSpace[1];
