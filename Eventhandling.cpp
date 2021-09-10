@@ -38,7 +38,6 @@ static void recvAndImplementData();
 static std::thread* networkThread;
 
 
-
 void eventhandling::init() {
 	//be sure to not change the order, they depend on each other heavily
 	playerHandling = new PlayerHandling();

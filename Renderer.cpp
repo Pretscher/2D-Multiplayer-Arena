@@ -31,9 +31,43 @@ int Renderer::getWorldRows() {
     return currentWindow->getSize().y + viewSpaceLimits[0];
 }
 
+//coord conversion-------------------------------------------------------------------------------------------------------
+
+int normalResCols = 1920;
+int normalResRows = 1080;
+
+static void fromRowCol(int* ioRow, int* ioCol) {
+    auto size = Renderer::currentWindow->getSize();
+    float helpRow = (float) *ioRow;
+    float helpCol = (float) *ioCol;
+    *ioRow = (helpRow / normalResRows) * size.y;
+    *ioCol = (helpCol / normalResCols) * size.x;
+}
+
+static void fromRowColBounds(int* ioW, int* ioH) {
+    auto size = Renderer::currentWindow->getSize();
+    float helpW = (float) *ioW;
+    float helpH = (float) *ioH;
+    *ioW = (helpW / normalResCols) * size.x;
+    *ioH = (helpH / normalResRows) * size.y;
+}
+
+static void toRowCol(int* ioRow, int* ioCol) {
+    auto size = Renderer::currentWindow->getSize();
+    float helpRow = (float) *ioRow;
+    float helpCol = (float) *ioCol;
+    *ioRow = (helpRow / size.y) * normalResRows;
+    *ioCol = (helpCol / size.x) * normalResCols;
+}
+
+//\coord conversion-------------------------------------------------------------------------------------------------------
+
+
 //Drawing functions-------------------------------------------------------------------------------------------------------
 
 void Renderer::drawRect(int row, int col, int width, int height, sf::Color c, bool solidWithViewspace) {
+    fromRowColBounds(&width, &height);
+    fromRowCol(&row, &col);
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
 
     square->setFillColor(c);
@@ -50,7 +84,11 @@ void Renderer::drawRect(int row, int col, int width, int height, sf::Color c, bo
 
 
 void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness, bool solidWithViewspace) {
-    int unusedHelp = 0;
+    fromRowColBounds(&width, &height);
+    fromRowCol(&row, &col);
+    int unusedHelp = 0;//we dont need to write 2 values but only have functions for 2 values (lazyness)
+    fromRowColBounds(&thickness, &unusedHelp);
+
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width - thickness, height -  2 * thickness));
     square->setOutlineColor(c);
     square->setFillColor(sf::Color(0, 0, 0, 0));
@@ -67,8 +105,12 @@ void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Colo
 }
 
 void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace) {
-    sf::CircleShape* circle = new sf::CircleShape(radius);
+    fromRowCol(&row, &col);
+    int unusedHelp = 0;//we dont need to write 2 values but only have functions for 2 values (lazyness)
+    fromRowColBounds(&outlineThickness, &unusedHelp);
+    fromRowColBounds(&radius, &unusedHelp);
 
+    sf::CircleShape* circle = new sf::CircleShape(radius);
     if (fill == true) {
         circle->setFillColor(c);
     }
@@ -88,6 +130,9 @@ void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, 
 }
 
 void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int thickness) {
+    fromRowCol(&row1, &col1);
+    fromRowCol(&row2, &col2);
+
     float dx = col2 - col1;
     float dy = row2 - row1;
     int ht = thickness / 2;
@@ -109,6 +154,7 @@ void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool fact
     auto pos = sf::Mouse::getPosition(*currentWindow);
     int x = pos.x;
     int y = pos.y;
+    toRowCol(&x, &y);
 
     if (factorInBorders == true) {
         int limitRow = currentWindow->getSize().y;
@@ -191,6 +237,9 @@ sf::Texture Renderer::loadTexture(std::string path, bool repeat) {
 
 
 void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture, bool solidWithViewspace) {
+    fromRowColBounds(&width, &height);
+    fromRowCol(&row, &col);
+
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
     
     square->setTexture(&texture);
@@ -212,6 +261,9 @@ void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::
 }
 
 void Renderer::drawText(std::string i_text, int row, int col, int width, int height, sf::Color color) {
+    fromRowColBounds(&width, &height);
+    fromRowCol(&row, &col);
+
     sf::Text text;
 
     sf::Font font;
@@ -227,7 +279,7 @@ void Renderer::drawText(std::string i_text, int row, int col, int width, int hei
 
 
     text.setFillColor(color);
-    text.setCharacterSize(width / 4);//TODO window size reliants
+    text.setCharacterSize(width / 4);
 
     size_t CharacterSize = text.getCharacterSize();
 

@@ -30,7 +30,7 @@ void initDrawing() {
     }
 }
 int main() {
-    cWindow = new sf::RenderWindow(sf::VideoMode(1920, 1080), "MORD!");
+    cWindow = new sf::RenderWindow(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Mobatemplate", sf::Style::Titlebar | sf::Style::Close);
     Renderer::init(cWindow);
 
     eventhandling::init();
