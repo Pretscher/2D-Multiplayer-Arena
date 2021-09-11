@@ -151,35 +151,35 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int
     Renderer::currentWindow->draw(line);
 }
 
-void Renderer::getMousePos(int* o_x, int* o_y, bool factorInViewspace, bool factorInBorders) {
+void Renderer::getMousePos(int* o_rows, int* o_cols, bool factorInViewspace, bool factorInBorders) {
     GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
     GlobalRecources::worldCols = getWorldCols();
 
     auto pos = sf::Mouse::getPosition(*currentWindow);
-    int x = pos.x;
-    int y = pos.y;
-    toRowCol(&x, &y);
+    int col = pos.x;
+    int row = pos.y;
+    toRowCol(&row, &col);
 
     if (factorInBorders == true) {
-        if (x < normalResCols && y < normalResRows) {
+        if (col < normalResCols && row < normalResRows) {
             if (factorInViewspace == true) {
-                *o_x = x + viewSpace[1];
-                *o_y = y + viewSpace[0];
+                *o_cols = col + viewSpace[1];
+                *o_rows = row + viewSpace[0];
             }
             else {
-                *o_x = x;
-                *o_y = y;
+                *o_cols = col;
+                *o_rows = row;
             }
         }
     }
     else {
         if (factorInViewspace == true) {
-            *o_x = x + viewSpace[1];
-            *o_y = y + viewSpace[0];
+            *o_cols = col + viewSpace[1];
+            *o_rows = row + viewSpace[0];
         }
         else {
-            *o_x = x;
-            *o_y = y;
+            *o_cols = col;
+            *o_rows = row;
         }
     }
 }
@@ -189,9 +189,9 @@ void Renderer::updateViewSpace() {
 
     int moveSpeed = 30;
     
-    int mouseX = -1;
-    int mouseY = -1;
-    getMousePos(&mouseX, &mouseY, false, true);
+    int mouseCol = -1;
+    int mouseRow = -1;
+    getMousePos(&mouseRow, &mouseCol, false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];
@@ -203,10 +203,10 @@ void Renderer::updateViewSpace() {
     int vsBottom = viewSpaceLimits[3];
     toRowColBounds(&vsTop, &vsLeft);
     toRowColBounds(&vsBottom, &vsRight);
-    if (mouseX != -1) {
-        int localRow = mouseY;
-        int localCol = mouseX;
-        fromRowCol(&mouseY, &mouseX);
+    if (mouseRow != -1) {
+        int localRow = mouseRow;
+        int localCol = mouseCol;
+        fromRowCol(&mouseRow, &mouseCol);
 
         if (localRow < normalResRows / 10) {
             if (helpViewSpace[0] - moveSpeed > vsTop) {
@@ -317,9 +317,9 @@ void Renderer::drawText(std::string i_text, int row, int col, int width, int hei
     bool bold = (text.getStyle() == sf::Text::Bold);
     size_t MaxHeight = 0;
 
-    for (size_t x = 0; x < text.getString().getSize(); x++)
+    for (size_t col = 0; col < text.getString().getSize(); col++)
     {
-        sf::Uint32 Character = String.at(x);
+        sf::Uint32 Character = String.at(col);
 
         const sf::Glyph& CurrentGlyph = font.getGlyph(Character, CharacterSize, bold);
 

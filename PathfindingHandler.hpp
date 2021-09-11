@@ -17,7 +17,7 @@ public:
 	void disableArea(int row, int col, int width, int height);
 	void enableArea(int row, int col, int width, int height);
 	void startPathFinding();
-	void findPath(int goalX, int goalY, int playerIndex);
+	void findPath(int goalCol, int goalRow, int playerIndex);
 
 	void enablePlayer(int i_playerIndex, bool disableOthers);
 	void disablePlayer(int i_playerIndex);
@@ -37,8 +37,8 @@ public:
 
 private:
 	Graph* g;
-	int cGoalX;
-	int cGoalY;
+	int cgoalCol;
+	int cgoalRow;
 	int cPlayerIndex;
 	bool newPathFinding;
 

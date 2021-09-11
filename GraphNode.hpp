@@ -69,11 +69,11 @@ public:
     int getY() {
         return this->myY;
     }
-    void setX(int x) {
-        this->myX = x;
+    void setX(int col) {
+        this->myX = col;
     }
-    void setY(int y) {
-        this->myY = y;
+    void setY(int row) {
+        this->myY = row;
     }
 
 private:

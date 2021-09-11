@@ -28,10 +28,10 @@ bool Utils::collisionCoordsCircle(float cX, float cY, float cR, float pX, float 
 **/
 bool Utils::collisionRectCircle(int aCol, int aRow, int aW, int aH, int cCol, int cRow, int cR, int colPointDist) {
 	//check points of second rect for intersection with circle with given accuracy
-	for (float x = aCol; x <= aCol + aW; x += colPointDist) {
-		for (float y = aRow; y <= aRow + aH; y += colPointDist) {
-			//Renderer::drawRect(y, x, 2, 2, sf::Color(255, 255, 0, 255), false);
-			if (Utils::collisionCoordsCircle(cCol, cRow, cR, x, y) == true) {
+	for (float col = aCol; col <= aCol + aW; col += colPointDist) {
+		for (float row = aRow; row <= aRow + aH; row += colPointDist) {
+			//Renderer::drawRect(row, col, 2, 2, sf::Color(255, 255, 0, 255), false);
+			if (Utils::collisionCoordsCircle(cCol, cRow, cR, col, row) == true) {
 				return true;
 			}
 		}
@@ -41,18 +41,18 @@ bool Utils::collisionRectCircle(int aCol, int aRow, int aW, int aH, int cCol, in
 
 bool Utils::collisionRectCircleOnlyOutline(int aCol, int aRow, int aW, int aH, int cCol, int cRow, int cR) {
 	//check points of second rect for intersection with circle with given accuracy
-	for (float y = aRow; y <= aRow + aH; y += aH) {
-		for (float x = aCol; x <= aCol + aW; x += (cR * 2 - 1)) {
-			//Renderer::drawRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::collisionCoordsCircle(cCol, cRow, cR, x, y) == true) {
+	for (float row = aRow; row <= aRow + aH; row += aH) {
+		for (float col = aCol; col <= aCol + aW; col += (cR * 2 - 1)) {
+			//Renderer::drawRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
+			if (Utils::collisionCoordsCircle(cCol, cRow, cR, col, row) == true) {
 				return true;
 			}
 		}
 	}
-	for (float x = aCol; x <= aCol + aW; x += aW) {
-		for (float y = aRow; y <= aRow + aH; y += (cR * 2 - 1)) {
-			//Renderer::drawRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::collisionCoordsCircle(cCol, cRow, cR, x, y) == true) {
+	for (float col = aCol; col <= aCol + aW; col += aW) {
+		for (float row = aRow; row <= aRow + aH; row += (cR * 2 - 1)) {
+			//Renderer::drawRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
+			if (Utils::collisionCoordsCircle(cCol, cRow, cR, col, row) == true) {
 				return true;
 			}
 		}
@@ -62,9 +62,9 @@ bool Utils::collisionRectCircleOnlyOutline(int aCol, int aRow, int aW, int aH, i
 
 bool Utils::collisionRects(float aX, float aY, float aW, float aH, float bX, float bY, float bW, float bH, float colPointDist) {
 	//check points of second rect for intersection with first rect with given accuracy
-	for (float x = bX; x < bX + bW; x += colPointDist) {
-		for (float y = bY; y < bY + bH; y += colPointDist) {
-			if (Utils::collisionCoordsRect(aX, aY, aW, aH, x, y) == true) {
+	for (float col = bX; col < bX + bW; col += colPointDist) {
+		for (float row = bY; row < bY + bH; row += colPointDist) {
+			if (Utils::collisionCoordsRect(aX, aY, aW, aH, col, row) == true) {
 				return true;
 			}
 		}
@@ -74,10 +74,10 @@ bool Utils::collisionRects(float aX, float aY, float aW, float aH, float bX, flo
 /*
 sf::Vector2f* getLeftClickPos() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		float x = sf::Mouse::getPosition().x;
-		float y = sf::Mouse::getPosition().y;
-		Renderer::toCartesianCoords(&x, &y);
-		return new sf::Vector2f(x, y);
+		float col = sf::Mouse::getPosition().x;
+		float row = sf::Mouse::getPosition().y;
+		Renderer::toCartesianCoords(&col, &row);
+		return new sf::Vector2f(col, row);
 	}
 	return nullptr;
 }
@@ -119,10 +119,10 @@ float Utils::calcDist2D(float x1, float x2, float y1, float y2) {
 /*
 sf::Vector2f* getLeftClickPos() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		float x = sf::Mouse::getPosition().x;
-		float y = sf::Mouse::getPosition().y;
-		Renderer::toCartesianCoords(&x, &y);
-		return new sf::Vector2f(x, y);
+		float col = sf::Mouse::getPosition().x;
+		float row = sf::Mouse::getPosition().y;
+		Renderer::toCartesianCoords(&col, &row);
+		return new sf::Vector2f(col, row);
 	}
 	return nullptr;
 }

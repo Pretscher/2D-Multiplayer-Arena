@@ -8,37 +8,36 @@
 Graph::Graph(int i_rows, int i_cols, float i_accuracy) {
     accuracy = i_accuracy;
     this->graphNodeCount = 0;
-    this->cols = (float)i_cols * accuracy;
-    this->rows = (float)i_rows * accuracy;
-    int lenght = this->rows * cols;
+    this->colCount = (float)i_cols * accuracy;
+    this->rowCount = (float)i_rows * accuracy;
+    int lenght = this->rowCount * colCount;
 
     //init everything with given sizes
     neighbourCount = new int[lenght];
     neighbourIndices = new int*[lenght];//for every node there can be 8 neighbours, second dimension initialized in loop
-    xCoords = new int[lenght];
-    yCoords = new int[lenght];
+    indexBoundCols = new int[lenght];
+    indexBoundRows = new int[lenght];
     currentGraph = new int[lenght];
     heapIndices = new int[lenght];
     usedByMoveable = new bool[lenght];
 
-    rawIndices = new int*[this->rows];
+    rawIndices = new int*[this->rowCount];
     neighbourCosts = nullptr; //initialized later for every run of algorithm
 
-
-    blockedX = new std::vector<int>();
-    blockedY = new std::vector<int>();
+    deactivatedX = std::vector<int>();
+    deactivatedY = std::vector<int>();
 }
 
 Graph::~Graph() {
-    delete[] xCoords;
-    delete[] yCoords;
+    delete[] indexBoundCols;
+    delete[] indexBoundRows;
     delete[] neighbourCount;
     delete[] heapIndices;
     delete[] currentGraph;
     for (int i = 0; i < graphNodeCount; i++) {
         delete[] neighbourIndices[i];
         delete[] neighbourCosts[i];
-        if (i < rows) {
+        if (i < rowCount) {
             delete[] rawIndices[i];
         }
     }
@@ -54,73 +53,73 @@ void Graph::reset() {
     }
     delete[] neighbourCosts;
     delete[] heapIndices;
-    heapIndices = new int[this->rows * this->cols];
+    heapIndices = new int[this->rowCount * this->colCount];
 }
 
 /* MEMO:
-isUseable = new bool*[this->rows];
-for (int y = 0; y < this->rows; y++) {
-    isUseable[y] = new bool[this->cols];
+isUseable = new bool*[this->rowCount];
+for (int row = 0; row < this->rowCount; row++) {
+    isUseable[row] = new bool[this->colCount];
 }*/
 
 void Graph::generateWorldGraph(bool** isUseable) {
-    for (int y = 0; y < rows; y++) {
+    for (int row = 0; row < rowCount; row++) {
         //one row
-        rawIndices[y] = new int[cols];
+        rawIndices[row] = new int[colCount];
 
-        for (int x = 0; x < cols; x++) {
+        for (int col = 0; col < colCount; col++) {
             neighbourIndices[graphNodeCount] = new int[8];
-            //all rows and cols have been created
+            //all rowCount and colCount have been created
 
             //this should be initialized in "makeRectNodesUnusable()" if it was declared unusable
             //we have to do one less iteration through everything if we ask that here :)
-            if (isUseable[y][x] == true) {
-                rawIndices[y][x] = graphNodeCount;
+            if (isUseable[row][col] == true) {
+                rawIndices[row][col] = graphNodeCount;
                 usedByMoveable[graphNodeCount] = false;
-                xCoords[graphNodeCount] = x;
-                yCoords[graphNodeCount] = y;
+                indexBoundCols[graphNodeCount] = col;
+                indexBoundRows[graphNodeCount] = row;
 
                 //isUseable is false if it has been initialized as such in "makeRectNodesUnusable()"
                 neighbourCount[graphNodeCount] = 0;
-                int xI;
-                int yI;
-                if (x > 0) {
-                    xI = x - 1;
-                    yI = y;
-                    if (isUseable[yI][xI] == true) {
-                        neighbourIndices[rawIndices[yI][xI]][neighbourCount[rawIndices[yI][xI]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yI][xI]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yI][xI];
+                int colIndex;
+                int rowIndex;
+                if (col > 0) {
+                    colIndex = col - 1;
+                    rowIndex = row;
+                    if (isUseable[rowIndex][colIndex] == true) {
+                        neighbourIndices[rawIndices[rowIndex][colIndex]][neighbourCount[rawIndices[rowIndex][colIndex]]] = graphNodeCount;
+                        neighbourCount[rawIndices[rowIndex][colIndex]]++;
+                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[rowIndex][colIndex];
                         neighbourCount[graphNodeCount]++;
                     }
                 }
-                if (y > 0) {
-                    xI = x;
-                    yI = y - 1;
-                    if (isUseable[yI][xI] == true) {
-                        neighbourIndices[rawIndices[yI][xI]][neighbourCount[rawIndices[yI][xI]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yI][xI]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yI][xI];
+                if (row > 0) {
+                    colIndex = col;
+                    rowIndex = row - 1;
+                    if (isUseable[rowIndex][colIndex] == true) {
+                        neighbourIndices[rawIndices[rowIndex][colIndex]][neighbourCount[rawIndices[rowIndex][colIndex]]] = graphNodeCount;
+                        neighbourCount[rawIndices[rowIndex][colIndex]]++;
+                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[rowIndex][colIndex];
                         neighbourCount[graphNodeCount]++;
                     }
                 }
-                if (y > 0 && x > 0) {
-                    xI = x - 1;
-                    yI = y - 1;
-                    if (isUseable[yI][xI] == true) {
-                        neighbourIndices[rawIndices[yI][xI]][neighbourCount[rawIndices[yI][xI]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yI][xI]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yI][xI];
+                if (row > 0 && col > 0) {
+                    colIndex = col - 1;
+                    rowIndex = row - 1;
+                    if (isUseable[rowIndex][colIndex] == true) {
+                        neighbourIndices[rawIndices[rowIndex][colIndex]][neighbourCount[rawIndices[rowIndex][colIndex]]] = graphNodeCount;
+                        neighbourCount[rawIndices[rowIndex][colIndex]]++;
+                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[rowIndex][colIndex];
                         neighbourCount[graphNodeCount]++;
                     }
                 }
-                if (y > 0 && x < cols - 1) {
-                    xI = x + 1;
-                    yI = y - 1;
-                    if (isUseable[yI][xI] == true) {
-                        neighbourIndices[rawIndices[yI][xI]][neighbourCount[rawIndices[yI][xI]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yI][xI]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yI][xI];
+                if (row > 0 && col < colCount - 1) {
+                    colIndex = col + 1;
+                    rowIndex = row - 1;
+                    if (isUseable[rowIndex][colIndex] == true) {
+                        neighbourIndices[rawIndices[rowIndex][colIndex]][neighbourCount[rawIndices[rowIndex][colIndex]]] = graphNodeCount;
+                        neighbourCount[rawIndices[rowIndex][colIndex]]++;
+                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[rowIndex][colIndex];
                         neighbourCount[graphNodeCount]++;
                     }
                 }
@@ -129,10 +128,10 @@ void Graph::generateWorldGraph(bool** isUseable) {
                 graphNodeCount++;
             } //End one node
             else {
-                rawIndices[y][x] = -1;
+                rawIndices[row][col] = -1;
             }
         } //end one row
-    } //end all rows
+    } //end all rowCount
 }
 
 struct IntPoint{
@@ -145,16 +144,16 @@ struct IntPoint{
 };
 
 int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
-    //do (basically) breathfirstsearch: add 1 to rows, then 1 to cols. then add minus 1 to rows and cols. then +2 -2 etc. Till you 
+    //do (basically) breathfirstsearch: add 1 to rowCount, then 1 to colCount. then add minus 1 to rowCount and colCount. then +2 -2 etc. Till you 
     //found the next best useable node, which is also the nearest. 
 
     int cIndex = -1;
 
-    bool** visited = new bool*[rows];
-    for (int y = 0; y < rows; y++) {
-        visited[y] = new bool[cols];
-        for (int x = 0; x < cols; x++) {
-            visited[y][x] = false;
+    bool** visited = new bool*[rowCount];
+    for (int row = 0; row < rowCount; row++) {
+        visited[row] = new bool[colCount];
+        for (int col = 0; col < colCount; col++) {
+            visited[row][col] = false;
         }
     }
     
@@ -174,13 +173,13 @@ int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
 
         visited[cRow][cCol] = true;//dont use node again
         for (int i = 0; i < 4; i++) {
-            if (cRow + 1 < rows) {//bound check
+            if (cRow + 1 < rowCount) {//bound check
                 if (visited[cRow + 1][cCol] == false) {
                     toVisit->push_back(IntPoint(cRow + 1, cCol));
                     visited[cRow + 1][cCol] = true;//dont use node again
                 }
             }
-            if (cCol + 1 < cols) {//bound check
+            if (cCol + 1 < colCount) {//bound check
                 if (visited[cRow][cCol + 1] == false) {
                     toVisit->push_back(IntPoint(cRow, cCol + 1));
                     visited[cRow][cCol + 1] = true;//dont use node again
@@ -212,8 +211,8 @@ int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
         }
     }
 
-    for (int y = 0; y < rows; y++) {
-        delete[] visited[y];
+    for (int row = 0; row < rowCount; row++) {
+        delete[] visited[row];
     }
     delete[] visited;
     delete toVisit;
@@ -227,10 +226,10 @@ int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
 }
 
 void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
-    float x = (float) *io_x * accuracy;
-    float y = (float) *io_y * accuracy;
+    float col = (float) *io_x * accuracy;
+    float row = (float) *io_y * accuracy;
 
-    int cIndex = rawIndices[(int)y][(int)x];//check if index is valid now
+    int cIndex = rawIndices[(int)row][(int)col];//check if index is valid now
     if (cIndex != -1) {
         if (moveableRelevant == true) {
             if (usedByMoveable[cIndex] == true) {
@@ -242,16 +241,16 @@ void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
         return;//dont change coords
     }
 
-    int index = findNextUseableVertex(y, x, moveableRelevant);
-    *io_x = (float)xCoords[index] / accuracy;
-    *io_y = (float)yCoords[index] / accuracy;
+    int index = findNextUseableVertex(row, col, moveableRelevant);
+    *io_x = (float)indexBoundCols[index] / accuracy;
+    *io_y = (float)indexBoundRows[index] / accuracy;
 }
 
 int Graph::getIndexFromCoords(int row, int col, bool moveableRelevant) {
     row = round(((float)row * accuracy));
     col = round(((float)col * accuracy));
 
-    if (row < rows && col < cols) {
+    if (row < rowCount && col < colCount) {
         if (moveableRelevant == true) {
             if (rawIndices[row][col] >= 0 && usedByMoveable[rawIndices[row][col]] == false) {
                 return rawIndices[row][col];
@@ -296,24 +295,24 @@ void Graph::disableObjectBounds(int row, int col, int width, int height) {
     }
 
     int maxX = col + width;
-    if (maxX >= cols) {
-        maxX = cols - 2;
+    if (maxX >= colCount) {
+        maxX = colCount - 2;
     }
     int maxY = row + height;
-    if (maxY >= rows) {
-        maxY = rows - 2;
+    if (maxY >= rowCount) {
+        maxY = rowCount - 2;
     }
 
-    for (int y = minY; y <= maxY; y++) {
-        for (int x = minX; x <= maxX; x++) {
+    for (int row = minY; row <= maxY; row++) {
+        for (int col = minX; col <= maxX; col++) {
           // if (Renderer::currentWindow != nullptr) {
-             //  Renderer::drawRect(y / accuracy, x / accuracy, 2, 2, sf::Color(255, 255, 0, 255));
+             //  Renderer::drawRect(row / accuracy, col / accuracy, 2, 2, sf::Color(255, 255, 0, 255));
          //  }
-            int index = getIndexFromCoords((float) y / accuracy, (float) x / accuracy, false);
+            int index = getIndexFromCoords((float) row / accuracy, (float) col / accuracy, false);
             usedByMoveable[index] = true;
             if (debug == true) {
-                deactivatedX.push_back((float) x / accuracy);
-                deactivatedY.push_back((float) y / accuracy);
+                deactivatedX.push_back((float) col / accuracy);
+                deactivatedY.push_back((float) row / accuracy);
             }
         }
     }
@@ -339,22 +338,22 @@ void Graph::enableObjectBounds(int row, int col, int width, int height) {
     }   
 
     int maxX = col + width;
-    if (maxX >= cols) {
-        maxX = cols - 2;
+    if (maxX >= colCount) {
+        maxX = colCount - 2;
     }
     int maxY = row + height;
-    if (maxY >= rows) {
-        maxY = rows - 2;
+    if (maxY >= rowCount) {
+        maxY = rowCount - 2;
     }
 
-    for (int y = minY; y <= maxY; y ++) {
-        for (int x = minX; x <= maxX; x ++) {
-            int index = getIndexFromCoords((float) y / accuracy, (float) x / accuracy, false);
+    for (int row = minY; row <= maxY; row ++) {
+        for (int col = minX; col <= maxX; col ++) {
+            int index = getIndexFromCoords((float) row / accuracy, (float) col / accuracy, false);
             usedByMoveable[index] = false;
 
             if (debug == true) {
                 for (int i = 0; i < deactivatedY.size(); i++) {
-                    if (deactivatedY.at(i) == (float)y / accuracy && deactivatedX.at(i) == (float)x / accuracy) {
+                    if (deactivatedY.at(i) == (float)row / accuracy && deactivatedX.at(i) == (float)col / accuracy) {
                         deactivatedX.erase(deactivatedX.begin() + i);
                         deactivatedY.erase(deactivatedY.begin() + i);
                     }

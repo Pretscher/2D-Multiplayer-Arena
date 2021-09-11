@@ -79,11 +79,11 @@ public:
     }
 
 
-    inline int getPathGoalX() {
+    inline int getPathgoalCol() {
         return pathXpositions[pathLenght - 1];
     }
 
-    inline int getPathGoalY() {
+    inline int getPathgoalRow() {
         return pathYpositions[pathLenght - 1];
     }
 

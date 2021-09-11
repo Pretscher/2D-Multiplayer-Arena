@@ -5,7 +5,7 @@
 #include <limits>
 #include "Renderer.hpp"
 int Algorithm::currentIteration = -1;
-bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
+bool Algorithm::findPath(int** o_pathRows, int** o_pathCols, int* o_pathLenght, Graph* graph, int startRow, int startCol, int goalRow, int goalCol) {
 	currentIteration++;
 	
 	int startIndex = graph->getIndexFromCoords(startRow, startCol, true);
@@ -19,7 +19,7 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		graph->neighbourCosts[nodeIndex] = new int[graph->neighbourCount[nodeIndex]];
 		for (int i = 0; i < graph->neighbourCount[nodeIndex]; i++) {
 			int currentNeighbourIndex = graph->neighbourIndices[nodeIndex][i];
-			float heuristics = getHeuristic(graph->currentGraph, graph->xCoords, graph->yCoords, currentNeighbourIndex, goalIndex);
+			float heuristics = getHeuristic(graph->currentGraph, graph->getIndexBoundRows(), graph->getIndexBoundCols(), currentNeighbourIndex, goalIndex);
 			graph->neighbourCosts[nodeIndex][i] = heuristics;
 		}
 	}
@@ -35,7 +35,7 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 	previousIndex[startIndex] = startIndex;
 	BinaryHeap* heap = new BinaryHeap(graph, graphNodeCount);
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(graph->currentGraph, graph->xCoords, graph->yCoords,
+	HeapNode* toInsert = new HeapNode(getHeuristic(graph->currentGraph, graph->getIndexBoundRows(), graph->getIndexBoundCols(),
 		graph->currentGraph[startIndex], graph->currentGraph[goalIndex]), startIndex);
 	heap->insert(toInsert);
 	bool foundPath = false;
@@ -57,8 +57,8 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 						distanceTravelled[cNeighbourIndex] = tempDistance;
 						previousIndex[cNeighbourIndex] = cNodeIndex;
 
-						float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->currentGraph, graph->xCoords,
-							graph->yCoords, cNeighbourIndex, goalIndex);
+						float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->currentGraph, graph->getIndexBoundRows(), 
+							graph->getIndexBoundCols(), cNeighbourIndex, goalIndex);
 
 						bool alreadyInserted = true;
 						//if graphnode has been inserted to heap (index in heap initialized to -1)
@@ -95,8 +95,8 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 			}
 		}
 
-		*o_XPos = new int[pathLenght];
-		*o_YPos = new int[pathLenght];
+		*o_pathCols = new int[pathLenght];
+		*o_pathRows = new int[pathLenght];
 		*o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
@@ -104,8 +104,8 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 		int indexInPath = pathLenght - 1;
 		currentIndex = goalIndex;
 		while (true) {
-			(*o_XPos)[indexInPath] = graph->xCoords[currentIndex];
-			(*o_YPos)[indexInPath] = graph->yCoords[currentIndex];
+			(*o_pathCols)[indexInPath] = graph->getIndexBoundCols()[currentIndex];
+			(*o_pathRows)[indexInPath] = graph->getIndexBoundRows()[currentIndex];
 			currentIndex = previousIndex[currentIndex];
 			indexInPath--;
 			if (currentIndex == startIndex) {
@@ -113,8 +113,8 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 			}
 		}
 
-		(*o_XPos)[pathLenght - 1] = goalCol;
-		(*o_YPos)[pathLenght - 1] = goalRow;
+		(*o_pathCols)[pathLenght - 1] = goalCol;
+		(*o_pathRows)[pathLenght - 1] = goalRow;
 
 		if (pathLenght == 0) {
 			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
@@ -139,11 +139,11 @@ bool Algorithm::findPath(int** o_XPos, int** o_YPos, int* o_pathLenght, Graph* g
 	return false;
 }
 
-float Algorithm::getHeuristic(int* currentGraph, int* xPositions, int* yPositions, int startIndex, int goalIndex) {
-	float x1 = xPositions[currentGraph[startIndex]];
-	float x2 = xPositions[currentGraph[goalIndex]];
-	float y1 = yPositions[currentGraph[startIndex]];
-	float y2 = yPositions[currentGraph[goalIndex]];
+float Algorithm::getHeuristic(int* currentGraph, int* rows, int* cols, int startIndex, int goalIndex) {
+	float x1 = cols[currentGraph[startIndex]];
+	float x2 = cols[currentGraph[goalIndex]];
+	float y1 = rows[currentGraph[startIndex]];
+	float y2 = rows[currentGraph[goalIndex]];
 	float heuristics = (float)sqrt(abs(x2 - x1) * abs(x2 - x1) + abs(y2 - y1) * abs(y2 - y1));
 	return heuristics;
 }

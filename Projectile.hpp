@@ -40,8 +40,8 @@ private:
 	bool up;
 	Player* player;
 
-	float movementFunc(float x) {//used in constructor to calculate direction, f(x) = ax + b format
-		return this->slope * x + this->yOffset;
+	float movementFunc(float col) {//used in constructor to calculate direction, f(col) = ax + b format
+		return this->slope * col + this->yOffset;
 	}
 public:
     inline float getRow() { return row; }

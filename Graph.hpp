@@ -12,8 +12,7 @@ public:
 	float accuracy;
 
 	bool* usedByMoveable;
-	int* xCoords;
-	int* yCoords;
+
 	int* neighbourCount;
 	int** neighbourCosts;
 	int* heapIndices;
@@ -21,30 +20,42 @@ public:
 	int* currentGraph;
 	int graphNodeCount;
 	int** rawIndices;
-	//for getIndexFromCoords() method
-	int rows;
-	int cols;
+
+	int* getIndexBoundRows() {
+		return indexBoundRows;
+	}
+
+	int* getIndexBoundCols() {
+		return indexBoundCols;
+	}
+
+
 
 	void generateWorldGraph(bool** isUseable);
 	int getIndexFromCoords(int row, int col, bool moveableRelevant);
 	~Graph();
 	void reset();
-	std::vector<int>* blockedX;
-	std::vector<int>* blockedY;
 	void disableObjectBounds(int row, int col, int width, int height);
 	void moveObject(int row, int col, int oldRow, int oldCol, int width, int height);
 	void enableObjectBounds(int row, int col, int width, int height);
 
 	//debugging
 
-	std::vector<int> deactivatedX = std::vector<int>();
-	std::vector<int> deactivatedY = std::vector<int>();
+	std::vector<int> deactivatedX;
+	std::vector<int> deactivatedY;
 	void debugDrawing();
 
 	void findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant);
 	bool isDisabled(int index) {
 		return usedByMoveable[index];
 	}
+
 private:
 	int findNextUseableVertex(int row, int col, bool moveableRelevant);
+
+	//for getIndexFromCoords() and getting coords of indices
+	int rowCount;
+	int colCount;
+	int* indexBoundCols;
+	int* indexBoundRows;
 };

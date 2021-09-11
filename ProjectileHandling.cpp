@@ -25,8 +25,8 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 		samePress = true;
 
 
-		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
+		int mouseRow = -1, mouseCol = -1;
+		Renderer::getMousePos(&mouseRow, &mouseCol, true, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
 		Player* myPlayer = players[myPlayerI];
@@ -37,13 +37,13 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 
 
 		//if projectile destination is above player
-		if (mouseY < myPlayer->getRow()) {
+		if (mouseRow < myPlayer->getRow()) {
 			col = myPlayer->getCol() + halfW;
 			row = myPlayer->getRow();
 			myPlayer->setTexture(2);
 		}
 		//below
-		if (mouseY > myPlayer->getRow()) {
+		if (mouseRow > myPlayer->getRow()) {
 			col = myPlayer->getCol() + halfW;
 			row = myPlayer->getRow() + myPlayer->getHeight();
 			myPlayer->setTexture(3);
@@ -51,7 +51,7 @@ void ProjectileHandling::update(Rect** collidables, int collidableSize) {
 
 
 
-		Projectile* p = new Projectile(row, col, projectileVel, mouseY, mouseX, true, projectileRadius, myPlayer);
+		Projectile* p = new Projectile(row, col, projectileVel, mouseRow, mouseCol, true, projectileRadius, myPlayer);
 		projectiles->push_back(p);
 		newProjectiles->push_back(p);
 	}

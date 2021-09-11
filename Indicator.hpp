@@ -34,7 +34,7 @@ public:
                     if (c->getHp() > 0) {
                         int mouseRow = 0;
                         int mouseCol = 0;
-                        Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
+                        Renderer::getMousePos(&mouseRow, &mouseCol, true, true);
                         if (Utils::collisionCoordsRect(c->getCol(), c->getRow(), c->getWidth(),
                             c->getHeight(), mouseCol, mouseRow) == true) {
                             //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
@@ -109,7 +109,7 @@ public:
 
     void update() {
         if (endWOaction == false) {
-            Renderer::getMousePos(&cGoalCol, &cGoalRow, true, false);
+            Renderer::getMousePos(&cGoalRow, &cGoalCol, true, false);
             limitGoalPosToRange();
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 fire = true;
@@ -213,7 +213,7 @@ public:
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             int mouseRow = 0;
             int mouseCol = 0;
-            Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
+            Renderer::getMousePos(&mouseRow, &mouseCol, true, true);
             targetDestinationCol = mouseCol;
             targetDestinationRow = mouseRow;
             destSelected = true;
@@ -226,7 +226,7 @@ public:
     void draw() {
         int mouseRow = 0;
         int mouseCol = 0;
-        Renderer::getMousePos(&mouseCol, &mouseRow, true, true);
+        Renderer::getMousePos(&mouseRow, &mouseCol, true, true);
         Renderer::drawCircle(mouseRow - radius, mouseCol - radius, radius, sf::Color(0, 255, 255, 100), false, 10, false);
         Renderer::drawCircle(mouseRow - radius, mouseCol - radius, radius, sf::Color(0, 255, 255, 25), true, 0, false);
 
