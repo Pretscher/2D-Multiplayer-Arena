@@ -36,10 +36,10 @@ void WorldHandling::draw() {
 }
 
 void WorldHandling::hardCodeTerrain() {
-	terrain->addRect(0, 0, worldCols, 30);
-	terrain->addRect(0, 0, 30, worldRows);
-	terrain->addRect(0, worldCols - 30, 30, worldRows);
-	terrain->addRect(worldRows - 30, 0, worldCols, 30);
+	terrain->addRect(0, 0, worldCols, 50);
+	terrain->addRect(0, 0, 50, worldRows);
+	terrain->addRect(0, worldCols - 50, 50, worldRows);
+	terrain->addRect(worldRows - 70, 0, worldCols, 50);
 
 	terrain->addRect(300, 0, 300, 100);
 	terrain->addRect(300, 300, 100, 300);

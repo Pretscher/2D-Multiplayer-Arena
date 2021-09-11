@@ -211,17 +211,37 @@ void Renderer::updateViewSpace() {
         int localCol = mouseX;
         fromRowCol(&mouseY, &mouseX);
 
-        if (localRow < normalResRows / 10 && helpViewSpace[0] - moveSpeed > vsTop) {
-            helpViewSpace[0] -= moveSpeed;
+        if (localRow < normalResRows / 10) {
+            if (helpViewSpace[0] - moveSpeed > vsTop) {
+                helpViewSpace[0] -= moveSpeed;
+            }
+            else {
+                helpViewSpace[0] = vsTop;
+            }
         }
-        if (localRow > normalResRows * 0.9 && helpViewSpace[0] + moveSpeed < vsBottom) {
-            helpViewSpace[0] += moveSpeed;
+        if (localRow > normalResRows * 0.9) {
+            if (helpViewSpace[0] + moveSpeed < vsBottom) {
+                helpViewSpace[0] += moveSpeed;
+            }
+            else {
+                helpViewSpace[0] = vsBottom;
+            }
         }
-        if (localCol < normalResCols / 10 && helpViewSpace[1] - moveSpeed > vsLeft) {
-            helpViewSpace[1] -= moveSpeed;
+        if (localCol < normalResCols / 10) {
+            if (helpViewSpace[1] - moveSpeed > vsLeft) {
+                helpViewSpace[1] -= moveSpeed;
+            }
+            else {
+                helpViewSpace[1] = vsLeft;
+            }
         }
-        if (localCol > normalResCols * 0.9 && helpViewSpace[1] + moveSpeed < vsRight) {
-            helpViewSpace[1] += moveSpeed;
+        if (localCol > normalResCols * 0.9f) {
+            if (helpViewSpace[1] + moveSpeed < vsRight) {
+                helpViewSpace[1] += moveSpeed;
+            }
+            else {
+                helpViewSpace[1] = vsRight;
+            }
         }
     }
     delete[] viewSpace;
