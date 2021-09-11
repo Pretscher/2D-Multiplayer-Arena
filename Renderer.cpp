@@ -60,6 +60,13 @@ static void toRowCol(int* ioRow, int* ioCol) {
     *ioCol = (helpCol / size.x) * normalResCols;
 }
 
+static void toRowColBounds(int* ioW, int* ioH) {
+    auto size = Renderer::currentWindow->getSize();
+    float helpW = (float) *ioW;
+    float helpH = (float) *ioH;
+    *ioW = (helpW / normalResCols) * size.x;
+    *ioH = (helpH / normalResRows) * size.y;
+}
 //\coord conversion-------------------------------------------------------------------------------------------------------
 
 
@@ -192,20 +199,28 @@ void Renderer::updateViewSpace() {
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];
 
+
+    int vsLeft = viewSpaceLimits[0];
+    int vsRight = viewSpaceLimits[1];
+    int vsTop = viewSpaceLimits[2];
+    int vsBottom = viewSpaceLimits[3];
+    toRowColBounds(&vsTop, &vsLeft);
+    toRowColBounds(&vsBottom, &vsRight);
     if (mouseX != -1) {
         int localRow = mouseY;
         int localCol = mouseX;
+        fromRowCol(&mouseY, &mouseX);
 
-        if (localRow < size.y / 10 && helpViewSpace[0] - moveSpeed > viewSpaceLimits[2]) {
+        if (localRow < normalResRows / 10 && helpViewSpace[0] - moveSpeed > vsTop) {
             helpViewSpace[0] -= moveSpeed;
         }
-        if (localRow > size.y * 0.9 && helpViewSpace[0] + moveSpeed < viewSpaceLimits[3]) {
+        if (localRow > normalResRows * 0.9 && helpViewSpace[0] + moveSpeed < vsBottom) {
             helpViewSpace[0] += moveSpeed;
         }
-        if (localCol < size.x / 10 && helpViewSpace[1] - moveSpeed > viewSpaceLimits[0]) {
+        if (localCol < normalResCols / 10 && helpViewSpace[1] - moveSpeed > vsLeft) {
             helpViewSpace[1] -= moveSpeed;
         }
-        if (localCol > size.x * 0.9 && helpViewSpace[1] + moveSpeed < viewSpaceLimits[1]) {
+        if (localCol > normalResCols * 0.9 && helpViewSpace[1] + moveSpeed < vsRight) {
             helpViewSpace[1] += moveSpeed;
         }
     }
