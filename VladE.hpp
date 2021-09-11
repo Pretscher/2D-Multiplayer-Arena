@@ -6,7 +6,7 @@ class VladE : public Ability {
 public:
    
     VladE(int i_myPlayerIndex);
-    //create from network input(row is just current row so even with lag the start is always synced)
+    //create from network input(y is just current y so even with lag the start is always synced)
     VladE(int i_myPlayerIndex, int i_phase, int i_timeInPhase);
 
     //phase 0: Indicator. Select destination for fireball
@@ -21,7 +21,7 @@ public:
     void execute2() override;
     void draw2() override;
 
-    void limitPosToRange(int* io_goalRow, int* io_goalCol);
+    void limitPosToRange(int* io_goalY, int* io_goalX);
 private:
     int radius = 30;
     int damage = 40;

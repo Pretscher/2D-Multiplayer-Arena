@@ -5,11 +5,11 @@
 class Terrain {
 public:
 	Terrain();
-	void addRect(int row, int col, int width, int height);
+	void addRect(int y, int x, int width, int height);
 	void draw();
-	void addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight);
-	std::vector<Rect*>* getCollidables();
+	void addXlidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight);
+	std::vector<Rect*>* getXlidables();
 
 private:
-	std::vector<Rect*>* objectsRow;
+	std::vector<Rect*>* objectsY;
 };

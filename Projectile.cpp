@@ -5,42 +5,42 @@
 #include "Player.hpp"
 #include <chrono>
 
-Projectile::Projectile(int i_row, int i_col, float velocity, int i_goalRow, int i_goalCol, 
+Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goalX, 
 		bool i_moveThroughGoal, int radius, Player* shootingPlayer) {
 	
 	this->player = shootingPlayer;
-	this->row = i_row - radius;//not same as player position, changes with direction because player rotates
-	this->col = i_col - radius;
+	this->y = i_y - radius;//not same as player position, changes with direction because player rotates
+	this->x = i_x - radius;
 	this->vel = velocity;
 	this->radius = radius;
-	this->goalRow = i_goalRow;
-	this->goalCol = i_goalCol;
+	this->goalY = i_goalY;
+	this->goalX = i_goalX;
 	this->moveThroughGoal = i_moveThroughGoal;
 
-	//we want to push those projectiles through network with the same goalrow and goalcol so dont change them here. 
-	i_goalRow -= radius;
-	i_goalCol -= radius;
+	//we want to push those projectiles through network with the same goaly and goalx so dont change them here. 
+	i_goalY -= radius;
+	i_goalX -= radius;
 
 	this->dead = false;
 	//calculate function for line
 	this->slope = 0;
 	this->yOffset = 0;
-	if (i_goalCol > col) {
-		this->slope = (float)(i_goalRow - this->row) / (float)(i_goalCol - this->col);
+	if (i_goalX > x) {
+		this->slope = (float)(i_goalY - this->y) / (float)(i_goalX - this->x);
 	}
 	else {
-		this->slope = (float)(this->row - i_goalRow) / (float)(this->col - i_goalCol);
+		this->slope = (float)(this->y - i_goalY) / (float)(this->x - i_goalX);
 	}
 	//f(x1) = slope * x1 + yOffset <=> f(x1) - slope * x1 = yOffset (where f(x1) is obviously y1)
-	this->yOffset = (float)this->row - (this->slope * (float)this->col);
-	if (i_goalCol > this->col) this->up = true;
+	this->yOffset = (float)this->y - (this->slope * (float)this->x);
+	if (i_goalX > this->x) this->up = true;
 	else this->up = false;
 
 	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
 	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 }
 
-void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCount) {
+void Projectile::move(int maxY, int maxX, Rect** xlisionRects, int rectCount) {
 
 	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
 	long long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
@@ -54,59 +54,59 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 	for (int i = 0; i < (int)dueSteps; i++) {
 			float gotoDiff = this->vel * 2;
 
-			float nextCol = 0;
-			float nextRow = 0;
+			float nextX = 0;
+			float nextY = 0;
 
 			if (this->up == true) {
-				nextCol = this->col + this->vel;
+				nextX = this->x + this->vel;
 			}
 			else {
-				nextCol = this->col - this->vel;
+				nextX = this->x - this->vel;
 			}
-			nextRow = movementFunc(col);
+			nextY = movementFunc(x);
 
-			//save if row is negative
-			bool negRow = false;
-			if (nextRow < row) negRow = true;
+			//save if y is negative
+			bool negY = false;
+			if (nextY < y) negY = true;
 
-			float rowDiff = abs(nextRow - row);
-			float colDiff = abs(nextCol - col);
+			float yDiff = abs(nextY - y);
+			float xDiff = abs(nextX - x);
 
-			float sum = gotoDiff / (colDiff + rowDiff);
-			rowDiff *= sum;
-			colDiff *= sum;
-			if (negRow == false) {
-				nextRow = this->row + rowDiff;
+			float sum = gotoDiff / (xDiff + yDiff);
+			yDiff *= sum;
+			xDiff *= sum;
+			if (negY == false) {
+				nextY = this->y + yDiff;
 			}
 			else {
-				nextRow = this->row - rowDiff;
+				nextY = this->y - yDiff;
 			}
 			if (up == true) {
-				nextCol = this->col + colDiff;
+				nextX = this->x + xDiff;
 			}
 			else {
-				nextCol = this->col - colDiff;
+				nextX = this->x - xDiff;
 			}
 
 			//check if out of window bounds (TODO: COLLISISION WITH PLAYERS)
-			if (nextCol > maxCol || nextCol < 0 || nextRow > maxCol || nextRow < 0) {
+			if (nextX > maxX || nextX < 0 || nextY > maxX || nextY < 0) {
 				dead = true;
 				return;
 			}
 
 			for (unsigned int i = 0; i < rectCount; i++) {
-				Rect* cRect = collisionRects[i];
-				if (Utils::collisionRectCircleOnlyOutline(cRect->getCol(), cRect->getRow(), cRect->getWidth(), cRect->getHeight(), nextCol, nextRow, this->radius) == true) {
+				Rect* cRect = xlisionRects[i];
+				if (Utils::xlisionRectCircleOnlyOutline(cRect->getX(), cRect->getY(), cRect->getWidth(), cRect->getHeight(), nextX, nextY, this->radius) == true) {
 					dead = true;
 					return;
 				}
 			}
-			//no collisiom => move on function
-			this->row = nextRow;
-			this->col = nextCol;
+			//no xlisiom => move on function
+			this->y = nextY;
+			this->x = nextX;
 
 			if (moveThroughGoal == false) {
-				if (Utils::calcDist2D(goalCol - radius, col, goalRow - radius, row) < 50) {
+				if (Utils::calcDist2D(goalX - radius, x, goalY - radius, y) < 50) {
 					dead = true;
 					return;
 				}
@@ -115,5 +115,5 @@ void Projectile::move(int maxRow, int maxCol, Rect** collisionRects, int rectCou
 }
 
 void Projectile::draw(sf::Color c) {
-	Renderer::drawCircle((int)this->row, (int)this->col, this->radius, c, true, 0, false);
+	Renderer::drawCircle((int)this->y, (int)this->x, this->radius, c, true, 0, false);
 }

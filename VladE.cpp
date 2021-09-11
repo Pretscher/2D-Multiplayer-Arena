@@ -36,13 +36,13 @@ void VladE::draw0() {
 	int innerCircleRadius = range * abs(1.0f - percentFinishedCharge);
 	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 
-	int innerRow = myPlayer->getRow() + (myPlayer->getHeight() / 2) - innerCircleRadius;
-	int innerCol = myPlayer->getCol() + (myPlayer->getWidth() / 2) - innerCircleRadius;
-	Renderer::drawCircle(innerRow, innerCol, innerCircleRadius, sf::Color(150, 0, 0, 255), false, 5, false);
+	int innerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - innerCircleRadius;
+	int innerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - innerCircleRadius;
+	Renderer::drawCircle(innerY, innerX, innerCircleRadius, sf::Color(150, 0, 0, 255), false, 5, false);
 	
-	int outerRow = myPlayer->getRow() + (myPlayer->getHeight() / 2) - range;
-	int outerCol = myPlayer->getCol() + (myPlayer->getWidth() / 2) - range;
-	Renderer::drawCircle(outerRow, outerCol, range, sf::Color(150, 0, 0, 255), false, 10, false);
+	int outerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - range;
+	int outerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - range;
+	Renderer::drawCircle(outerY, outerX, range, sf::Color(150, 0, 0, 255), false, 10, false);
 }
 
 void VladE::init1() {
@@ -56,155 +56,155 @@ void VladE::init1() {
 	}
 
 	for (int i = 0; i < projectileCount; i++) {
-		int startRow;
-		int startCol;
-		int goalRow;
-		int goalCol;
+		int startY;
+		int startX;
+		int goalY;
+		int goalX;
 
 		Player* myPlayer = GlobalRecources::players[myPlayerIndex];
-		int pCol = myPlayer->getCol() - 20;//spawn a bit away from player, with 20 distance around him
-		int pRow = myPlayer->getRow() - 20;
+		int pX = myPlayer->getX() - 20;//spawn a bit away from player, with 20 distance around him
+		int pY = myPlayer->getY() - 20;
 		int pWidth = myPlayer->getWidth() + 40;
 		int pHeight = myPlayer->getHeight() + 40;
 
 		switch (i) {
 		//diagonal paths
 		case 0: //top left
-			startRow = pRow;
-			startCol = pCol;
+			startY = pY;
+			startX = pX;
 
-			goalRow = pRow - 500;
-			goalCol = pCol - 500;
+			goalY = pY - 500;
+			goalX = pX - 500;
 
 			break;
 		case 1://bottom left
-			startRow = pRow + pHeight;
-			startCol = pCol;
+			startY = pY + pHeight;
+			startX = pX;
 
-			goalRow = pRow + pHeight + 500;
-			goalCol = pCol - 500;
+			goalY = pY + pHeight + 500;
+			goalX = pX - 500;
 
 			break;
 		case 2://top right
-			startRow = pRow;
-			startCol = pCol + pWidth;
+			startY = pY;
+			startX = pX + pWidth;
 
-			goalRow = pRow - 500;
-			goalCol = pCol + pWidth + 500;
+			goalY = pY - 500;
+			goalX = pX + pWidth + 500;
 			break;
 		case 3://bottom right
-			startRow = pRow + pHeight;
-			startCol = pCol + pWidth;
+			startY = pY + pHeight;
+			startX = pX + pWidth;
 
-			goalRow = pRow + pHeight + 500;
-			goalCol = pCol + pWidth + 500;
+			goalY = pY + pHeight + 500;
+			goalX = pX + pWidth + 500;
 			break;
 
 		//horizontal paths
 		case 4://left
-			startRow = pRow + (pHeight / 2);
-			startCol = pCol;
+			startY = pY + (pHeight / 2);
+			startX = pX;
 
-			goalRow = pRow + (pHeight / 2);
-			goalCol = pCol - 500;
+			goalY = pY + (pHeight / 2);
+			goalX = pX - 500;
 			break;
 		case 5://right
-			startRow = pRow;
-			startCol = pCol + (pWidth / 2);
+			startY = pY;
+			startX = pX + (pWidth / 2);
 
-			goalRow = pRow - 500;
-			goalCol = pCol + (pWidth / 2);
+			goalY = pY - 500;
+			goalX = pX + (pWidth / 2);
 			break;
 		case 6://top
-			startRow = pRow + pHeight;
-			startCol = pCol + (pWidth / 2);
+			startY = pY + pHeight;
+			startX = pX + (pWidth / 2);
 
-			goalRow = pRow + pHeight + 500;
-			goalCol = pCol + (pWidth / 2);
+			goalY = pY + pHeight + 500;
+			goalX = pX + (pWidth / 2);
 			break;
 		case 7://bottom
-			startRow = pRow + (pHeight / 2);
-			startCol = pCol + pWidth;
+			startY = pY + (pHeight / 2);
+			startX = pX + pWidth;
 
-			goalRow = pRow + (pHeight / 2);
-			goalCol = pCol + pWidth + 500;
+			goalY = pY + (pHeight / 2);
+			goalX = pX + pWidth + 500;
 			break;
 
 
 		//between diagonal and horizontal/vertical paths
 		case 8://between right-bottom and bottom
-			startRow = pRow + pHeight;
-			startCol = pCol + ((3 * pHeight) / 4);
+			startY = pY + pHeight;
+			startX = pX + ((3 * pHeight) / 4);
 
-			goalRow = pRow + pHeight + 500;
-			goalCol = pCol + ((3 * pHeight) / 4) + 250;
+			goalY = pY + pHeight + 500;
+			goalX = pX + ((3 * pHeight) / 4) + 250;
 			break;
 		case 9://between bottom and left-bottom
-			startRow = pRow + pHeight;
-			startCol = pCol + (pHeight / 4);
+			startY = pY + pHeight;
+			startX = pX + (pHeight / 4);
 
-			goalRow = pRow + pHeight + 500;
-			goalCol = pCol + (pHeight / 4) - 250;
+			goalY = pY + pHeight + 500;
+			goalX = pX + (pHeight / 4) - 250;
 			break;
 		case 10://between left-bottom and left
-			startRow = pRow + ((3 * pHeight) / 4);
-			startCol = pCol;
+			startY = pY + ((3 * pHeight) / 4);
+			startX = pX;
 
-			goalRow = pRow + ((3 * pHeight) / 4) + 250;
-			goalCol = pCol - 500;
+			goalY = pY + ((3 * pHeight) / 4) + 250;
+			goalX = pX - 500;
 			break;
 		case 11://between left and left-top
-			startRow = pRow + (pHeight / 4);
-			startCol = pCol;
+			startY = pY + (pHeight / 4);
+			startX = pX;
 
-			goalRow = pRow + (pHeight / 4) - 250;
-			goalCol = pCol - 500;
+			goalY = pY + (pHeight / 4) - 250;
+			goalX = pX - 500;
 			break;
 		case 12://between left-top and top
-			startRow = pRow;
-			startCol = pCol + (pWidth / 4);
+			startY = pY;
+			startX = pX + (pWidth / 4);
 
-			goalRow = pRow - 500;
-			goalCol = pCol + (pWidth / 4) - 250;
+			goalY = pY - 500;
+			goalX = pX + (pWidth / 4) - 250;
 			break;
 		case 13://between top and right-top
-			startRow = pRow;
-			startCol = pCol + ((3 * pWidth) / 4);
+			startY = pY;
+			startX = pX + ((3 * pWidth) / 4);
 
-			goalRow = pRow - 500;
-			goalCol = pCol + ((3 * pWidth) / 4) + 250;
+			goalY = pY - 500;
+			goalX = pX + ((3 * pWidth) / 4) + 250;
 			break;
 		case 14://between right-top and right
-			startRow = pRow + (pHeight / 4);
-			startCol = pCol + pWidth;
+			startY = pY + (pHeight / 4);
+			startX = pX + pWidth;
 
-			goalRow = pRow + (pHeight / 4) - 250;
-			goalCol = pCol + pWidth + 500;
+			goalY = pY + (pHeight / 4) - 250;
+			goalX = pX + pWidth + 500;
 			break;
 		case 15://between right and right-bottom
-			startRow = pRow + ((3 * pHeight) / 4);
-			startCol = pCol + pWidth;
+			startY = pY + ((3 * pHeight) / 4);
+			startX = pX + pWidth;
 
-			goalRow = pRow + ((3 * pHeight) / 4) + 250;
-			goalCol = pCol + pWidth + 500;
+			goalY = pY + ((3 * pHeight) / 4) + 250;
+			goalX = pX + pWidth + 500;
 			break;
 		default:
 			break;
 		}
 
 
-		limitPosToRange(&goalRow, &goalCol);
+		limitPosToRange(&goalY, &goalX);
 
-		if (goalCol < 0) goalCol = 0;
-		if (goalRow < 0) goalRow = 0;
-		projectiles[i] = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
+		if (goalX < 0) goalX = 0;
+		if (goalY < 0) goalY = 0;
+		projectiles[i] = new Projectile(startY, startX, velocity, goalY, goalX, false, radius, myPlayer);
 	}
 }
 
 void VladE::execute1() {
-	auto terrain = GlobalRecources::terrain->getCollidables();
+	auto terrain = GlobalRecources::terrain->getXlidables();
 	for (int i = 0; i < projectileCount; i++) {
-		projectiles[i]->move(GlobalRecources::worldRows, GlobalRecources::worldCols, terrain->data(), terrain->size());
+		projectiles[i]->move(GlobalRecources::worldYs, GlobalRecources::worldXs, terrain->data(), terrain->size());
 	}
 
 
@@ -215,8 +215,8 @@ void VladE::execute1() {
 				if (j != myPlayerIndex) {
 					Player* cPlayer = GlobalRecources::players[j];
 					if (cPlayer->targetAble == true) {
-						if (Utils::collisionRectCircle(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight(),
-							projectiles[i]->getRow(), projectiles[i]->getCol(), projectiles[i]->getRadius(), 10) == true) {
+						if (Utils::xlisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
+							projectiles[i]->getY(), projectiles[i]->getX(), projectiles[i]->getRadius(), 10) == true) {
 							projectiles[i]->setDead(true);
 							if (dealtDamageToPlayer[j] == false) {
 								cPlayer->setHp(cPlayer->getHp() - this->damage);
@@ -249,9 +249,9 @@ void VladE::draw1() {
 		}
 	}
 	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
-	int outerRow = myPlayer->getRow() + (myPlayer->getHeight() / 2) - range;
-	int outerCol = myPlayer->getCol() + (myPlayer->getWidth() / 2) - range;
-	Renderer::drawCircle(outerRow, outerCol, range, sf::Color(150, 0, 0, 255), false, 10, false);
+	int outerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - range;
+	int outerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - range;
+	Renderer::drawCircle(outerY, outerX, range, sf::Color(150, 0, 0, 255), false, 10, false);
 }
 
 void VladE::init2() {
@@ -266,12 +266,12 @@ void VladE::draw2() {
 
 }
 
-void VladE::limitPosToRange(int* io_goalRow, int* io_goalCol) {
+void VladE::limitPosToRange(int* io_goalY, int* io_goalX) {
 	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 
 	float* vecToGoal = new float[2];
-	vecToGoal[0] = *io_goalCol + radius - (myPlayer->getCol() + (myPlayer->getWidth() / 2));
-	vecToGoal[1] = *io_goalRow + radius - (myPlayer->getRow() + (myPlayer->getHeight() / 2));
+	vecToGoal[0] = *io_goalX + radius - (myPlayer->getX() + (myPlayer->getWidth() / 2));
+	vecToGoal[1] = *io_goalY + radius - (myPlayer->getY() + (myPlayer->getHeight() / 2));
 	//calculate vector lenght
 	float lenght = sqrt((vecToGoal[0] * vecToGoal[0]) + (vecToGoal[1] * vecToGoal[1]));
 	if (lenght > range + radius) {
@@ -282,7 +282,7 @@ void VladE::limitPosToRange(int* io_goalRow, int* io_goalCol) {
 		vecToGoal[0] *= range + radius;
 		vecToGoal[1] *= range + radius;
 		//place at starting point
-		*io_goalCol = myPlayer->getCol() + vecToGoal[0] + radius;
-		*io_goalRow = myPlayer->getRow() + vecToGoal[1] + radius;
+		*io_goalX = myPlayer->getX() + vecToGoal[0] + radius;
+		*io_goalY = myPlayer->getY() + vecToGoal[1] + radius;
 	}
 }

@@ -7,8 +7,8 @@ class Fireball : public Ability {
 public:
     //normal constructor if the ability is created on your network-side
     Fireball(int i_myPlayerIndex);
-    //create from network input(row is just current row so even with lag the start is always synced)
-    Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,
+    //create from network input(y is just current y so even with lag the start is always synced)
+    Fireball(int i_currentY, int i_currentX, int i_goalY, int i_goalX, int i_myPlayerIndex,
                                                         int i_phase, int i_timeSinceExplosionStart);
 
     //phase 0: Indicator. Select destination for fireball
@@ -27,23 +27,23 @@ public:
     void limitGoalPosToRange();
 
 public:
-    inline int getStartRow() {
-        return startRow;
+    inline int getStartY() {
+        return startY;
     }
-    inline int getStartCol() {
-        return startCol;
+    inline int getStartX() {
+        return startX;
     }
-    inline int getGoalRow() {
-        return goalRow;
+    inline int getGoalY() {
+        return goalY;
     }
-    inline int getGoalCol() {
-        return goalCol;
+    inline int getGoalX() {
+        return goalX;
     }
-    inline int getProjectileRow() {
-        return helpProjectile->getRow();
+    inline int getProjectileY() {
+        return helpProjectile->getY();
     }
-    inline int getProjectileCol() {
-        return helpProjectile->getCol();
+    inline int getProjectileX() {
+        return helpProjectile->getX();
     }
     inline bool hasFinishedNoCast() {
         return finishedNoCast;
@@ -52,7 +52,7 @@ public:
 private:
     bool dealtDamage = false;
     int explosionRange = 80;
-    int explosionRow, explosionCol;
+    int explosionY, explosionX;
     int explosionDuration;
     int explosionDmg;
     float burnDmg;
@@ -65,10 +65,10 @@ private:
     ProjectileIndicator* indicator;
 
     //they have getters
-    int startRow;
-    int startCol;
-    int goalRow;
-    int goalCol;
+    int startY;
+    int startX;
+    int goalY;
+    int goalX;
 
     bool finishedNoCast = false;
 

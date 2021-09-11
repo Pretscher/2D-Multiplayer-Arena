@@ -5,47 +5,47 @@ sf::Texture wall;
 sf::Texture ground;
 
 Terrain::Terrain() {
-	objectsRow = new std::vector<Rect*>();
+	objectsY = new std::vector<Rect*>();
 	wall = Renderer::loadTexture("Textures/cobble.jpg", true);
 	ground = Renderer::loadTexture("Textures/dirt.jpg", true);
 }
 
-void Terrain::addRect(int row, int col, int width, int height) {
-	objectsRow->push_back(new Rect(row, col, width, height));
+void Terrain::addRect(int y, int x, int width, int height) {
+	objectsY->push_back(new Rect(y, x, width, height));
 }
 
 void Terrain::draw() {
 
-	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldCols() * 2, Renderer::getWorldRows() * 2, ground, true);
-	for (unsigned int i = 0; i < objectsRow->size(); i++) {
-		Rect* rect = this->objectsRow->at(i);
-		Renderer::drawRectWithTexture(rect->getRow(), rect->getCol(), rect->getWidth(), rect->getHeight(), wall, false);
+	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldXs() * 2, Renderer::getWorldYs() * 2, ground, true);
+	for (unsigned int i = 0; i < objectsY->size(); i++) {
+		Rect* rect = this->objectsY->at(i);
+		Renderer::drawRectWithTexture(rect->getY(), rect->getX(), rect->getWidth(), rect->getHeight(), wall, false);
 	}
 
 }
 
-void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight) {
-	for (int i = 0; i < objectsRow->size(); i++) {
-		Rect* rect = this->objectsRow->at(i);
+void Terrain::addXlidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight) {
+	for (int i = 0; i < objectsY->size(); i++) {
+		Rect* rect = this->objectsY->at(i);
 
-		int startRow = ((float)rect->getRow() - playerHeight + (1.0f / pathfindingAccuracy)) * pathfindingAccuracy;
-		if (startRow < 0) startRow = 0;
-		int startCol = ((float)rect->getCol() - playerWidth + (1.0f / pathfindingAccuracy)) * pathfindingAccuracy;
-		if (startCol < 0) startCol = 0;
+		int startY = ((float)rect->getY() - playerHeight + (1.0f / pathfindingAccuracy)) * pathfindingAccuracy;
+		if (startY < 0) startY = 0;
+		int startX = ((float)rect->getX() - playerWidth + (1.0f / pathfindingAccuracy)) * pathfindingAccuracy;
+		if (startX < 0) startX = 0;
 
-		int endRow = ((float)rect->getRow() + rect->getHeight()) * pathfindingAccuracy;
-		if (endRow >= GlobalRecources::worldRows) endRow = GlobalRecources::worldRows - 1;
-		int endCol = ((float) rect->getCol() + rect->getWidth()) * pathfindingAccuracy;
-		if (endCol >= GlobalRecources::worldCols) endCol = GlobalRecources::worldCols - 1;
+		int endY = ((float)rect->getY() + rect->getHeight()) * pathfindingAccuracy;
+		if (endY >= GlobalRecources::worldYs) endY = GlobalRecources::worldYs - 1;
+		int endX = ((float) rect->getX() + rect->getWidth()) * pathfindingAccuracy;
+		if (endX >= GlobalRecources::worldXs) endX = GlobalRecources::worldXs - 1;
 
-		for (int row = startRow; row < endRow; row++) {
-			for (int col = startCol; col < endCol; col++) {
-				grid[row][col] = false;
+		for (int y = startY; y < endY; y++) {
+			for (int x = startX; x < endX; x++) {
+				grid[y][x] = false;
 			}
 		}
 	}
 }
 
-std::vector<Rect*>* Terrain::getCollidables() {
-	return objectsRow;
+std::vector<Rect*>* Terrain::getXlidables() {
+	return objectsY;
 }

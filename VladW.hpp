@@ -5,7 +5,7 @@ class VladW : public Ability {
 public:
 
     VladW(int i_myPlayerIndex);
-    //create from network input(row is just current row so even with lag the start is always synced)
+    //create from network input(y is just current y so even with lag the start is always synced)
     VladW(int i_myPlayerIndex, int i_timeInPhase);
 
     //Has only one phase: being in pool

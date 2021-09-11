@@ -5,9 +5,9 @@
 #include <math.h>
 #include "GlobalRecources.hpp"
 
-Player::Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg) {
-	this->col = i_col;
-	this->row = i_row;
+Player::Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg) {
+	this->x = i_x;
+	this->y = i_y;
 	this->velocity = i_vel;
 	this->width = i_width;
 	this->height = i_height;
@@ -56,22 +56,22 @@ void Player::move() {
 	
 	//move gradually between path steps
 	if (dueSteps < 1) {
-		int nextCol = pathXpositions[cPathIndex];
-		int nextRow = pathYpositions[cPathIndex];
+		int nextX = pathXpositions[cPathIndex];
+		int nextY = pathYpositions[cPathIndex];
 
-		float colDiff = (sqrt(((float) col - nextCol) * ((float) col - nextCol)) * dueSteps);
-		float rowDiff = (sqrt(((float) row - nextRow) * ((float) row - nextRow)) * dueSteps);
-		if (col < nextCol) {
-			col = (float) col + colDiff;
+		float xDiff = (sqrt(((float) x - nextX) * ((float) x - nextX)) * dueSteps);
+		float yDiff = (sqrt(((float) y - nextY) * ((float) y - nextY)) * dueSteps);
+		if (x < nextX) {
+			x = (float) x + xDiff;
 		}
 		else {
-			col = (float) col - colDiff;
+			x = (float) x - xDiff;
 		}
-		if (row < nextRow) {
-			row = (float) row + rowDiff;
+		if (y < nextY) {
+			y = (float) y + yDiff;
 		}
 		else {
-			row = (float) row - rowDiff;
+			y = (float) y - yDiff;
 		}
 	}
 	
@@ -80,16 +80,16 @@ void Player::move() {
 		if (pathLenght != -1) {//too lazy for booleans as you can see
 			//has to be a float so that it can be modified by non-int velocities properly
 
-			int nextCol;
-			int nextRow;
+			int nextX;
+			int nextY;
 			for (int i = 0; i <= dueSteps; i++) {
 				if (pathLenght == -1) return;
-				nextCol = pathXpositions[cPathIndex];
-				nextRow = pathYpositions[cPathIndex];
+				nextX = pathXpositions[cPathIndex];
+				nextY = pathYpositions[cPathIndex];
 
 				if (cPathIndex == pathLenght - 1) {
-					row = pathYpositions[pathLenght - 1];
-					col = pathXpositions[pathLenght - 1];
+					y = pathYpositions[pathLenght - 1];
+					x = pathXpositions[pathLenght - 1];
 					//go to state of not having a path
 					pathLenght = -1;
 					delete[] pathXpositions;
@@ -103,22 +103,22 @@ void Player::move() {
 			}
 
 			//change texture based on movement direction
-			if (nextRow > row) {
+			if (nextY > y) {
 				cTextureI = 3;
 			}
-			if (nextRow < row) {
+			if (nextY < y) {
 				cTextureI = 2;
 			}
-			if (nextCol < col) {
+			if (nextX < x) {
 				cTextureI = 0;
 			}
-			if (nextCol > col) {
+			if (nextX > x) {
 				cTextureI = 1;
 			}
 
 			//go one step in path
-			this->col = nextCol;
-			this->row = nextRow;
+			this->x = nextX;
+			this->y = nextY;
 		}
 		auto timePoint = std::chrono::system_clock::now().time_since_epoch();
 		lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
@@ -139,13 +139,13 @@ void Player::deletePath() {
 
 void Player::draw() {
 	if (inVladW == false) {
-		Renderer::drawRectWithTexture(row, col, width, height, textures[cTextureI], false);
+		Renderer::drawRectWithTexture(y, x, width, height, textures[cTextureI], false);
 	}
 	int barWidth = width * 1.5;
-	Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);
+	Renderer::drawRect(y - 40, x - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);
 	if (hp > 0) {
 		float widthMult = (float)hp / maxHp;
-		Renderer::drawRect(row - 40, col - (barWidth - width) / 2, barWidth * widthMult, 30, sf::Color(0, 100, 0, 255), false);
+		Renderer::drawRect(y - 40, x - (barWidth - width) / 2, barWidth * widthMult, 30, sf::Color(0, 100, 0, 255), false);
 	}
 }
 

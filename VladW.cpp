@@ -25,8 +25,8 @@ void VladW::execute0() {
 		if (i != myPlayerIndex) {
 			Player* current = GlobalRecources::players[i];
 			if (current->targetAble == true) {
-				if (Utils::collisionRectCircle(current->getCol(), current->getRow(), current->getWidth(), current->getHeight(),
-					myPlayer->getCol() + (myPlayer->getWidth() / 2) - range, myPlayer->getRow() + (myPlayer->getHeight() / 2) - range, range, 10) == true) {
+				if (Utils::xlisionRectCircle(current->getX(), current->getY(), current->getWidth(), current->getHeight(),
+					myPlayer->getX() + (myPlayer->getWidth() / 2) - range, myPlayer->getY() + (myPlayer->getHeight() / 2) - range, range, 10) == true) {
 					current->setHp(current->getHp() - damage);
 				}
 			}
@@ -36,8 +36,8 @@ void VladW::execute0() {
 
 void VladW::draw0() {
 	Player* current = GlobalRecources::players[myPlayerIndex];
-	Renderer::drawCircle(current->getRow() + (current->getHeight() / 2) - range,
-		current->getCol() + (current->getWidth() / 2) - range, range, sf::Color(150, 0, 0, 255), true, 0, false);
+	Renderer::drawCircle(current->getY() + (current->getHeight() / 2) - range,
+		current->getX() + (current->getWidth() / 2) - range, range, sf::Color(150, 0, 0, 255), true, 0, false);
 }
 
 void VladW::init1() {
@@ -47,8 +47,8 @@ void VladW::init1() {
 	Player* current = GlobalRecources::players[myPlayerIndex];
 
 
-	int row = current->getRow();
-	int col = current->getCol();
+	int y = current->getY();
+	int x = current->getX();
 
-	GlobalRecources::pFinding->findPath(col, row, myPlayerIndex);
+	GlobalRecources::pFinding->findPath(x, y, myPlayerIndex);
 }

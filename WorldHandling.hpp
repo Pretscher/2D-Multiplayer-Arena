@@ -8,30 +8,30 @@ public:
 	void draw();
 	void hardCodeTerrain();
 
-	inline int getWorldRows() {
-		return worldRows;
+	inline int getWorldYs() {
+		return worldYs;
 	}
-	inline int getWorldCols() {
-		return worldCols;
+	inline int getWorldXs() {
+		return worldXs;
 	}
-	inline int getFrameRows() {
-		return frameRows;
+	inline int getFrameYs() {
+		return frameYs;
 	}
-	inline int getFrameCols() {
-		return frameCols;
+	inline int getFrameXs() {
+		return frameXs;
 	}
 	inline Terrain* getTerrain() {
 		return terrain;
 	}
 
 private:
-	int worldRows;
-	int worldCols;
-	Terrain* terrain;//contains every non-moving object with collision
+	int worldYs;
+	int worldXs;
+	Terrain* terrain;//contains every non-moving object with xlision
 
 	//Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
-	int* cViewSpace;//current viewspace position.[0] is row (bot to top),[1] is col (left to right) 
+	int* cViewSpace;//current viewspace position.[0] is y (bot to top),[1] is x (left to right) 
 	int* viewSpaceLimits;//maximum viewspace. [0] = left,[1] = right,[2] = top,[3] = bottom
 
-	int frameRows, frameCols;//rows and cols you can see at a time, viewspace limits need to be added for worldSize
+	int frameYs, frameXs;//ys and xs you can see at a time, viewspace limits need to be added for worldSize
 };

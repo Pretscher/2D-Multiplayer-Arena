@@ -2,25 +2,25 @@
 
 class Rect {
 public:
-	Rect(int row, int col, int width, int height) {
-		this->row = row;
-		this->col = col;
+	Rect(int y, int x, int width, int height) {
+		this->y = y;
+		this->x = x;
 		this->width = width;
 		this->height = height;
 	}
 
 private:
-	int row;
-	int col;
+	int y;
+	int x;
 	int width;
 	int height;
 
 public:
-	inline int getRow() { return row; }
-	inline void setRow(int row) { this->row = row; }
+	inline int getY() { return y; }
+	inline void setY(int y) { this->y = y; }
 
-	inline int getCol() { return col; }
-	inline void setCol(int col) { this->col = col; }
+	inline int getX() { return x; }
+	inline void setX(int x) { this->x = x; }
 
 	inline int getWidth() { return width; }
 	inline void setWidth(int width) { this->width = width; }

@@ -12,9 +12,9 @@ VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	indicator = new AOEonRangeIndicator(i_myPlayerIndex, range, radius);
 }
 //constructor through networking
-VladR::VladR(int i_myPlayerIndex, int i_timeInPhase, int i_row, int i_col) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	this->row = i_row;
-	this->col = i_col;
+VladR::VladR(int i_myPlayerIndex, int i_timeInPhase, int i_y, int i_x) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	this->y = i_y;
+	this->x = i_x;
 	networkingTimeInPhase = i_timeInPhase;
 	for (int i = 0; i < 1; i++) {
 		nextPhase();
@@ -24,8 +24,8 @@ VladR::VladR(int i_myPlayerIndex, int i_timeInPhase, int i_row, int i_col) : Abi
 void VladR::execute0() {
 	indicator->update();
 	if (indicator->isDestSelected() == true) {
-		row = indicator->getDestRow();
-		col = indicator->getDestCol();
+		y = indicator->getDestY();
+		x = indicator->getDestX();
 		nextPhase();
 	}
 	if (indicator->endWithoutAction() == true) {
@@ -42,9 +42,9 @@ void VladR::init1() {
 	//if player out of range, run into range
 	int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
 	int halfH = me->getHeight() / 2;
-	float dist = Utils::calcDist2D(me->getCol() + halfW, col + halfW, me->getRow() + halfH, row + halfH);
+	float dist = Utils::calcDist2D(me->getX() + halfW, x + halfW, me->getY() + halfH, y + halfH);
 	if (dist > range + radius) {//if player is too far away
-		GlobalRecources::pFinding->findPath(col, row, myPlayerIndex); //find a path to him
+		GlobalRecources::pFinding->findPath(x, y, myPlayerIndex); //find a path to him
 		abilityPathIndex = GlobalRecources::players[myPlayerIndex]->pathsFound;
 	}
 	else {
@@ -69,7 +69,7 @@ void VladR::execute1() {
 		Player* me = GlobalRecources::players[myPlayerIndex];
 		int halfW = me->getWidth() / 2;
 		int halfH = me->getHeight() / 2;
-		if (Utils::calcDist2D(me->getCol() + halfW, col, me->getRow() + halfH, row) < range + radius) {
+		if (Utils::calcDist2D(me->getX() + halfW, x, me->getY() + halfH, y) < range + radius) {
 			//got into range, stop going on path an cast ability
 			GlobalRecources::players[myPlayerIndex]->deletePath();
 			nextPhase();
@@ -93,7 +93,7 @@ void VladR::init2() {
 		if (i != myPlayerIndex) {
 			Player* cPlayer = GlobalRecources::players[i];
 			if (cPlayer->targetAble == true) {
-				if (Utils::calcDist2D(col, cPlayer->getCol(), row, cPlayer->getRow()) < radius) {
+				if (Utils::calcDist2D(x, cPlayer->getX(), y, cPlayer->getY()) < radius) {
 					affectedPlayers[affectedPlayerCount] = cPlayer;
 					affectedPlayerCount ++;
 				}
@@ -111,18 +111,18 @@ void VladR::execute2() {
 void VladR::draw2() {
 	for (int i = 0; i < affectedPlayerCount; i++) {
 		Player* cPlayer = affectedPlayers[i];
-		Renderer::drawCircle(cPlayer->getRow(), cPlayer->getCol(), 50, sf::Color(150, 0, 0, 255), false, 20, false);
+		Renderer::drawCircle(cPlayer->getY(), cPlayer->getX(), 50, sf::Color(150, 0, 0, 255), false, 20, false);
 	}
 	float phaseFinishedPercent = (float)this->getTimeSincePhaseStart(this->getPhase()) / timeTillProc;
 	if (phaseFinishedPercent < 0.25f) {
 
 
 		float alpha = 255 * abs(1 - phaseFinishedPercent * 4);//fade out with time
-		Renderer::drawCircle(row - radius, col - radius, radius, sf::Color(100, 0, 0, alpha), true, 0, false);
+		Renderer::drawCircle(y - radius, x - radius, radius, sf::Color(100, 0, 0, alpha), true, 0, false);
 
-		Renderer::drawCircle(row - radius, col - radius, radius, sf::Color(200, 0, 0, alpha), false, 30, false);
+		Renderer::drawCircle(y - radius, x - radius, radius, sf::Color(200, 0, 0, alpha), false, 30, false);
 		int secondRadiusOffset = 50;
-		Renderer::drawCircle(row - radius + secondRadiusOffset, col - radius + secondRadiusOffset, radius - secondRadiusOffset, 
+		Renderer::drawCircle(y - radius + secondRadiusOffset, x - radius + secondRadiusOffset, radius - secondRadiusOffset, 
 												sf::Color(150, 0, 0, alpha), false, 50, false);
 	}
 }
@@ -138,51 +138,51 @@ void VladR::init3() {
 	//create projectile that flies to player and heals him
 	Player* me = GlobalRecources::players[myPlayerIndex];
 	int halfW = me->getWidth() / 2;
-	bloodBall = new Projectile(row, col, flyBackVelocity, me->getRow() + halfW, me->getCol() + halfW, false, flyBackRadius, me);
+	bloodBall = new Projectile(y, x, flyBackVelocity, me->getY() + halfW, me->getX() + halfW, false, flyBackRadius, me);
 
-	lastRows = new int[positionsSavedCount];
-	lastCols = new int[positionsSavedCount];
+	lastYs = new int[positionsSavedCount];
+	lastXs = new int[positionsSavedCount];
 	for (int i = 0; i < positionsSavedCount; i++) {
-		lastRows[i] = -1;
-		lastCols[i] = -1;
+		lastYs[i] = -1;
+		lastXs[i] = -1;
 	}
-	tempFlybackRow = me->getRow() + halfW;
-	tempFlybackCol = me->getCol() + halfW;
+	tempFlybackY = me->getY() + halfW;
+	tempFlybackX = me->getX() + halfW;
 }
 
 void VladR::execute3() {
-	checkBloodballCollision();
+	checkBloodballXlision();
 	findNewPathToPlayerTimer ++;
 	if (findNewPathToPlayerTimer % 10 == true) {
 		followPlayer();
 	}
 
-	lastRows[cPositionSaveIndex] = bloodBall->getRow();
-	lastCols[cPositionSaveIndex] = bloodBall->getCol();
+	lastYs[cPositionSaveIndex] = bloodBall->getY();
+	lastXs[cPositionSaveIndex] = bloodBall->getX();
 	cPositionSaveIndex ++;
 	if (cPositionSaveIndex >= positionsSavedCount) {
 		cPositionSaveIndex = 0;
 	}
 
-	bloodBall->move(GlobalRecources::worldRows, GlobalRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
+	bloodBall->move(GlobalRecources::worldYs, GlobalRecources::worldXs, nullptr, 0);//should go through walls so we just dont pass them
 }
 
 
 void VladR::draw3() {
 	bloodBall->draw(sf::Color(150, 0, 0, 255));
 	for (int i = 0; i < positionsSavedCount; i++) {
-		if (lastRows[i] != -1) {
-			Renderer::drawCircle(lastRows[i], lastCols[i], bloodBall->getRadius(), sf::Color(150, 0, 0, 255), true, 0, false);
+		if (lastYs[i] != -1) {
+			Renderer::drawCircle(lastYs[i], lastXs[i], bloodBall->getRadius(), sf::Color(150, 0, 0, 255), true, 0, false);
 		}
 	}
 }
 
 
-void VladR::checkBloodballCollision() {
+void VladR::checkBloodballXlision() {
 	Player* me = GlobalRecources::players[myPlayerIndex];
 	//blood ball got to enemy and should fly back
-	if (Utils::collisionRectCircle(me->getRow(), me->getCol(), me->getWidth(), me->getHeight(),
-		bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), 10) == true) {
+	if (Utils::xlisionRectCircle(me->getY(), me->getX(), me->getWidth(), me->getHeight(),
+		bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
 		
 		int heal = + (healPerPlayer * affectedPlayerCount);
 		if (me->getHp() + heal <= me->getMaxHp()) {
@@ -197,16 +197,16 @@ void VladR::checkBloodballCollision() {
 
 void VladR::followPlayer() {
 	Player* me = GlobalRecources::players[myPlayerIndex];
-	if (tempFlybackRow != me->getRow() || tempFlybackCol != me->getCol()) {
-		tempFlybackRow = me->getRow();
-		tempFlybackCol = me->getCol();
-		int tempBBrow = bloodBall->getRow();
-		int tempBBcol = bloodBall->getCol();
+	if (tempFlybackY != me->getY() || tempFlybackX != me->getX()) {
+		tempFlybackY = me->getY();
+		tempFlybackX = me->getX();
+		int tempBBy = bloodBall->getY();
+		int tempBBx = bloodBall->getX();
 
 
 		int halfW = me->getWidth() / 2;
 		delete bloodBall;//definitly exists at this point so we can delete it
-		bloodBall = new Projectile(tempBBrow + flyBackRadius, tempBBcol + flyBackRadius, flyBackVelocity,
-			tempFlybackRow + halfW, tempFlybackCol + halfW, false, flyBackRadius, me);
+		bloodBall = new Projectile(tempBBy + flyBackRadius, tempBBx + flyBackRadius, flyBackVelocity,
+			tempFlybackY + halfW, tempFlybackX + halfW, false, flyBackRadius, me);
 	}
 }

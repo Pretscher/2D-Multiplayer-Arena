@@ -7,7 +7,7 @@
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	playerCount = 2;
 	float vel = 50;//velocity on path if path is given
-	int startCol = 700;
+	int startX = 700;
 	int rectSize = 100;
 	int defaultMaxHp = 500;
 	int defaultDmg = 10;
@@ -15,8 +15,8 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 
 	players = new Player *[playerCount];
 	for (int i = 0; i < playerCount; i++) {
-		int startRow = i * 1000 / playerCount + 200;//move players away from each other in row
-		players[i] = new Player(startCol, startRow, rectSize, rectSize, vel, defaultMaxHp, defaultDmg);//places players on map, col dist depends on playercount
+		int startY = i * 1000 / playerCount + 200;//move players away from each other in y
+		players[i] = new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg);//places players on map, x dist depends on playercount
 	}
 }
 
@@ -37,8 +37,8 @@ void PlayerHandling::sendPlayerData() {
 	Player* me = players[myPlayerI];
 	if (me->hasPath() == false) {
 		NetworkCommunication::addToken(0);//bool if path should be interrupted
-		NetworkCommunication::addToken(me->getRow());
-		NetworkCommunication::addToken(me->getCol());
+		NetworkCommunication::addToken(me->getY());
+		NetworkCommunication::addToken(me->getX());
 	}
 	else if (me->hasNewPath == true) {
 		me->hasNewPath = false;
@@ -73,10 +73,10 @@ void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
 		if (players[otherPlayer]->hasPath() == true) {
 			players[otherPlayer]->deletePath();
 		}			
-		int row = NetworkCommunication::receiveNextToken();
-		int col = NetworkCommunication::receiveNextToken();
-		players[otherPlayer]->setRow(row);
-		players[otherPlayer]->setCol(col);
+		int y = NetworkCommunication::receiveNextToken();
+		int x = NetworkCommunication::receiveNextToken();
+		players[otherPlayer]->setY(y);
+		players[otherPlayer]->setX(x);
 	}
 	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();

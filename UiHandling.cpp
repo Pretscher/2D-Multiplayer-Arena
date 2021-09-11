@@ -5,10 +5,10 @@
 
 sf::Texture* orb;
 sf::Texture uiPanel;
-UiHandling::UiHandling(int frameRows, int frameCols) {
+UiHandling::UiHandling(int frameYs, int frameXs) {
 	uiHeight = 1080;
-	this->frameRows = frameRows;
-	this->frameCols = frameCols;
+	this->frameYs = frameYs;
+	this->frameXs = frameXs;
 
 	sf::Texture wall;
 	sf::Texture ground;

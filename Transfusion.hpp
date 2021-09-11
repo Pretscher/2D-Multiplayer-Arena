@@ -22,10 +22,10 @@ public:
     void execute2() override;
     void draw2() override;
 
-    //check if the bloodball collides with target player or you, depending if its flying to the enemy or you. 
-    void checkBloodballCollision();
+    //check if the bloodball xlides with target player or you, depending if its flying to the enemy or you. 
+    void checkBloodballXlision();
     //if player position changes, fly to new position. Needs some delay or else lag xD 
-    //(Can fly through collidables so no pathfinding)
+    //(Can fly through xlidables so no pathfinding)
     void followPlayer();
     //get current bloodball target
     Player* getBloodballTarget();
@@ -37,7 +37,7 @@ public:
 
 private:
     Projectile* bloodBall = nullptr;//we check if it is a nullpr later
-    int tempGoalRow, tempGoalCol;
+    int tempGoalY, tempGoalX;
     bool flyBack = false;//blood goes to target player and then flies back, we need a bool to determine this break point
 
     PointAndClickIndicator* indicator = nullptr;//we check if it is a nullpr later
@@ -56,8 +56,8 @@ private:
     int range = 300;
 
     int positionsSavedCount = 10;//amount of blood balls flowing around
-    int* lastRows;
-    int* lastCols;
+    int* lastYs;
+    int* lastXs;
     int cPositionSaveIndex = 0;
 
     int targetPlayerIndex;

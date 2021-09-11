@@ -197,15 +197,15 @@ public:
 	}
 
     void drawCDs() {//a lot of hardcoded stuff because of imported ui texture. 
-        int col = 1150;
+        int x = 1150;
         int size = 75;
         for (int i = 0; i < abilityCount; i++) {
             if (i > 0) {
-                col += size + 10;
+                x += size + 10;
             }
-            int row = 990;
+            int y = 990;
 
-            Renderer::drawRect(row, col, size, size, sf::Color(30, 30, 30, 255), true);
+            Renderer::drawRect(y, x, size, size, sf::Color(30, 30, 30, 255), true);
             int abilityRectHeight = 0;
 
             float cdPercent = abilityTriggering->getCooldownPercent(i);
@@ -215,7 +215,7 @@ public:
             else {
                 cdPercent = 0;
             }
-            Renderer::drawRect(row + size - (cdPercent * size), col, size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
+            Renderer::drawRect(y + size - (cdPercent * size), x, size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
 
             std::string abilityLetter;
             if (i == 0) {
@@ -233,7 +233,7 @@ public:
             else if (i == 4) {
                 abilityLetter = std::string("T");
             }
-            Renderer::drawText(abilityLetter, row - size / 2.2f, col - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
+            Renderer::drawText(abilityLetter, y - size / 2.2f, x - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
         }
     }
 
@@ -251,10 +251,10 @@ public:
                 }
             }
 
-            NetworkCommunication::addToken(newFireball->getProjectileRow());
-            NetworkCommunication::addToken(newFireball->getProjectileCol());
-            NetworkCommunication::addToken(newFireball->getGoalRow());
-            NetworkCommunication::addToken(newFireball->getGoalCol());
+            NetworkCommunication::addToken(newFireball->getProjectileY());
+            NetworkCommunication::addToken(newFireball->getProjectileX());
+            NetworkCommunication::addToken(newFireball->getGoalY());
+            NetworkCommunication::addToken(newFireball->getGoalX());
             NetworkCommunication::addToken(newFireball->getCastingPlayer());
             NetworkCommunication::addToken(newFireball->getPhase());
             NetworkCommunication::addToken(newFireball->getStartTime(2));
@@ -340,8 +340,8 @@ public:
             int timeSinceStart = newR->getTimeSincePhaseStart(2);
             NetworkCommunication::addToken(timeSinceStart);
 
-            NetworkCommunication::addToken(newR->getRow());
-            NetworkCommunication::addToken(newR->getCol());
+            NetworkCommunication::addToken(newR->getY());
+            NetworkCommunication::addToken(newR->getX());
             
         }
         else {
@@ -358,15 +358,15 @@ public:
         }
         if (NetworkCommunication::receiveNextToken() == 1) {
             //theyre already in the right order
-            int startRow = NetworkCommunication::receiveNextToken();
-            int startCol = NetworkCommunication::receiveNextToken();
-            int goalRow = NetworkCommunication::receiveNextToken();
-            int goalCol = NetworkCommunication::receiveNextToken();
+            int startY = NetworkCommunication::receiveNextToken();
+            int startX = NetworkCommunication::receiveNextToken();
+            int goalY = NetworkCommunication::receiveNextToken();
+            int goalX = NetworkCommunication::receiveNextToken();
             int firingPlayerIndex = NetworkCommunication::receiveNextToken();
             int phase = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
 
-            Fireball* c = new Fireball(startRow, startCol, goalRow, goalCol, firingPlayerIndex, phase, timeSinceExplosionStart);
+            Fireball* c = new Fireball(startY, startX, goalY, goalX, firingPlayerIndex, phase, timeSinceExplosionStart);
             fireballs->push_back(c);
             generalAbilities->push_back(c);
         }
@@ -414,9 +414,9 @@ public:
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
 
-            int row = NetworkCommunication::receiveNextToken();
-            int col = NetworkCommunication::receiveNextToken();
-            VladR* c = new VladR(tMyPlayerIndex, timeSincePhaseStart, row, col);
+            int y = NetworkCommunication::receiveNextToken();
+            int x = NetworkCommunication::receiveNextToken();
+            VladR* c = new VladR(tMyPlayerIndex, timeSincePhaseStart, y, x);
 
             vladRs->push_back(c);
             generalAbilities->push_back(c);

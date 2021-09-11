@@ -10,21 +10,21 @@ static int i_abilityIndex = 0;
 Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
     this->indicator = new PointAndClickIndicator(this->myPlayerIndex, this->range);
 
-    lastRows = new int[positionsSavedCount];
-    lastCols = new int[positionsSavedCount];
+    lastYs = new int[positionsSavedCount];
+    lastXs = new int[positionsSavedCount];
     for (int i = 0; i < positionsSavedCount; i++) {
-        lastRows[i] = -1;
-        lastCols[i] = -1;
+        lastYs[i] = -1;
+        lastXs[i] = -1;
     }
 }
 //constructor through networking
 Transfusion::Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
     this->targetPlayerIndex = i_targetPlayerIndex;//we dont know the indicator so its target has to be passed
-    lastRows = new int[positionsSavedCount];
-    lastCols = new int[positionsSavedCount];
+    lastYs = new int[positionsSavedCount];
+    lastXs = new int[positionsSavedCount];
     for (int i = 0; i < positionsSavedCount; i++) {
-        lastRows[i] = -1;
-        lastCols[i] = -1;
+        lastYs[i] = -1;
+        lastXs[i] = -1;
     }
 
     //normally initialized in init1, but we have to skip this
@@ -62,12 +62,12 @@ void Transfusion::init1() {
     //if player out of range, run into range
     int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
     int halfH = me->getHeight() / 2;
-    float dist = Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW,
-        me->getRow() + halfH, target->getRow() + halfH);
+    float dist = Utils::calcDist2D(me->getX() + halfW, target->getX() + halfW,
+        me->getY() + halfH, target->getY() + halfH);
     if (dist > range) {//if player is too far away
-        tempGoalRow = target->getRow() + halfW;//find a path to his center because thats better than left top coords
-        tempGoalCol = target->getCol() + halfH;
-        GlobalRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex); //find a path to him
+        tempGoalY = target->getY() + halfW;//find a path to his center because thats better than left top coords
+        tempGoalX = target->getX() + halfH;
+        GlobalRecources::pFinding->findPath(tempGoalX, tempGoalY, myPlayerIndex); //find a path to him
         abilityPathIndex = GlobalRecources::players[myPlayerIndex]->pathsFound;
     }
     else {
@@ -78,10 +78,10 @@ void Transfusion::init1() {
 //find path to target player (damage part of succ)
 void Transfusion::execute1() {
     int halfW = me->getWidth() / 2;
-    if (tempGoalRow != (target->getRow() + halfW) || (tempGoalCol != target->getCol() + halfW)) {
-        tempGoalRow = target->getRow() + halfW;
-        tempGoalCol = target->getCol() + halfW;
-        GlobalRecources::pFinding->findPath(tempGoalCol, tempGoalRow, myPlayerIndex);
+    if (tempGoalY != (target->getY() + halfW) || (tempGoalX != target->getX() + halfW)) {
+        tempGoalY = target->getY() + halfW;
+        tempGoalX = target->getX() + halfW;
+        GlobalRecources::pFinding->findPath(tempGoalX, tempGoalY, myPlayerIndex);
         abilityPathIndex = GlobalRecources::players[myPlayerIndex]->pathsFound;
     }
 
@@ -98,8 +98,8 @@ void Transfusion::execute1() {
     if (stop == false) {
         int halfW = me->getWidth() / 2;
         int halfH = me->getHeight() / 2;
-        if (Utils::calcDist2D(me->getCol() + halfW, target->getCol() + halfW,
-            me->getRow() + halfH, target->getRow() + halfH) < range) {
+        if (Utils::calcDist2D(me->getX() + halfW, target->getX() + halfW,
+            me->getY() + halfH, target->getY() + halfH) < range) {
             //got into range, stop going on path an cast ability
             GlobalRecources::players[myPlayerIndex]->deletePath();
             nextPhase();
@@ -117,48 +117,48 @@ void Transfusion::draw1() {
 
 //init cast
 void Transfusion::init2() {
-    tempGoalRow = target->getRow();
-    tempGoalCol = target->getCol();
+    tempGoalY = target->getY();
+    tempGoalX = target->getX();
     int halfW = me->getWidth() / 2;
-    bloodBall = new Projectile(me->getRow() + halfW, me->getCol() + halfW, velocity,
-        tempGoalRow + halfW, tempGoalCol + halfW, false, radius, me);
+    bloodBall = new Projectile(me->getY() + halfW, me->getX() + halfW, velocity,
+        tempGoalY + halfW, tempGoalX + halfW, false, radius, me);
 
     for (int i = 0; i < positionsSavedCount; i++) {
-        lastRows[i] = -1;
-        lastCols[i] = -1;
+        lastYs[i] = -1;
+        lastXs[i] = -1;
     }
 }
 
 void Transfusion::execute2() {
-    checkBloodballCollision();
+    checkBloodballXlision();
     findNewPathToPlayerTimer ++;
     if (findNewPathToPlayerTimer % 10 == true) {
         followPlayer();
     }
 
-    bloodBall->move(GlobalRecources::worldRows, GlobalRecources::worldCols, nullptr, 0);//should go through walls so we just dont pass them
+    bloodBall->move(GlobalRecources::worldYs, GlobalRecources::worldXs, nullptr, 0);//should go through walls so we just dont pass them
 }
 
 void Transfusion::draw2() {
-    lastRows[cPositionSaveIndex] = bloodBall->getRow();
-    lastCols[cPositionSaveIndex] = bloodBall->getCol();
+    lastYs[cPositionSaveIndex] = bloodBall->getY();
+    lastXs[cPositionSaveIndex] = bloodBall->getX();
     cPositionSaveIndex ++;
     if (cPositionSaveIndex >= positionsSavedCount) {
         cPositionSaveIndex = 0;
     }
     bloodBall->draw(sf::Color(200, 0, 0, 255));
     for (int i = 0; i < positionsSavedCount; i++) {
-        if (lastRows[i] != -1) {
-            Renderer::drawCircle(lastRows[i], lastCols[i], bloodBall->getRadius(), sf::Color(200, 0, 0, 255), true, 0, false);
+        if (lastYs[i] != -1) {
+            Renderer::drawCircle(lastYs[i], lastXs[i], bloodBall->getRadius(), sf::Color(200, 0, 0, 255), true, 0, false);
         }
     }
 }
 
-void Transfusion::checkBloodballCollision() {
+void Transfusion::checkBloodballXlision() {
     Player* c = getBloodballTarget();
     //blood ball got to enemy and should fly back
-    if (Utils::collisionRectCircle(c->getRow(), c->getCol(), c->getWidth(), c->getHeight(),
-        bloodBall->getRow(), bloodBall->getCol(), bloodBall->getRadius(), 10) == true) {
+    if (Utils::xlisionRectCircle(c->getY(), c->getX(), c->getWidth(), c->getHeight(),
+        bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
         if (flyBack == false) {
             flyBack = true;
             if (target->targetAble == true) {
@@ -180,17 +180,17 @@ void Transfusion::checkBloodballCollision() {
 void Transfusion::followPlayer() {
     Player* c = getBloodballTarget();
 
-    if (tempGoalRow != c->getRow() || tempGoalCol != c->getCol()) {
-        tempGoalRow = c->getRow();
-        tempGoalCol = c->getCol();
-        int tempBBrow = bloodBall->getRow();
-        int tempBBcol = bloodBall->getCol();
+    if (tempGoalY != c->getY() || tempGoalX != c->getX()) {
+        tempGoalY = c->getY();
+        tempGoalX = c->getX();
+        int tempBBy = bloodBall->getY();
+        int tempBBx = bloodBall->getX();
 
 
         int halfW = me->getWidth() / 2;
         delete bloodBall;//definitly exists at this point so we can delete it
-        bloodBall = new Projectile(tempBBrow + radius, tempBBcol + radius, velocity,
-            tempGoalRow + halfW, tempGoalCol + halfW, false, radius, me);
+        bloodBall = new Projectile(tempBBy + radius, tempBBx + radius, velocity,
+            tempGoalY + halfW, tempGoalX + halfW, false, radius, me);
     }
 }
 

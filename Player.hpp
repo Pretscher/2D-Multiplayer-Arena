@@ -2,7 +2,7 @@
 #include "SFML/Graphics.hpp"
 class Player {
 public:
-	Player(int i_col, int i_row, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg);
+	Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg);
     void givePath(int* pathX, int* pathY, int pathLenght);
     void deletePath();
     void move();
@@ -20,8 +20,8 @@ public:
     bool inVladW = false;
 private:
 
-	int row;
-	int col;
+	int y;
+	int x;
 	float velocity;
     
     int width;
@@ -49,11 +49,11 @@ public:
 
 
     int pathsFound = 0;
-    inline int getRow() { return row; }
-    inline void setRow(int row) { this->row = row; }
+    inline int getY() { return y; }
+    inline void setY(int y) { this->y = y; }
 
-    inline int getCol() { return col; }
-    inline void setCol(int col) { this->col = col; }
+    inline int getX() { return x; }
+    inline void setX(int x) { this->x = x; }
 
     inline float getVelocity() { return velocity; }
     inline void setVelocity(float velocity) { this->velocity = velocity; }
@@ -79,11 +79,11 @@ public:
     }
 
 
-    inline int getPathgoalCol() {
+    inline int getPathgoalX() {
         return pathXpositions[pathLenght - 1];
     }
 
-    inline int getPathgoalRow() {
+    inline int getPathgoalY() {
         return pathYpositions[pathLenght - 1];
     }
 

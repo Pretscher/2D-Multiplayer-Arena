@@ -6,8 +6,8 @@ class VladR : public Ability {
 public:
 
     VladR(int i_myPlayerIndex);
-    //create from network input(row is just current row so even with lag the start is always synced)
-    VladR(int i_myPlayerIndex, int i_timeInPhase, int i_row, int i_col);
+    //create from network input(y is just current y so even with lag the start is always synced)
+    VladR(int i_myPlayerIndex, int i_timeInPhase, int i_y, int i_x);
 
     //Has only one phase: being in pool
     void execute0() override;
@@ -25,16 +25,16 @@ public:
     void execute3() override;
     void draw3() override;
 
-    inline int getRow() {
-        return row;
+    inline int getY() {
+        return y;
     }
-    inline int getCol() {
-        return col;
+    inline int getX() {
+        return x;
     }
 
 private:
 
-    void checkBloodballCollision();
+    void checkBloodballXlision();
     void followPlayer();
 
     int damage = 50;
@@ -43,8 +43,8 @@ private:
     int timeTillProc = 4000;
     int healPerPlayer = 100;
 
-    int row; 
-    int col;
+    int y; 
+    int x;
     AOEonRangeIndicator* indicator;
 
     int abilityPathIndex;//needed to determine wether another path has been found ->ability should be stopped
@@ -54,14 +54,14 @@ private:
 
     Projectile* bloodBall;
     int positionsSavedCount = 10;//amount of blood balls flowing around
-    int* lastRows;
-    int* lastCols;
+    int* lastYs;
+    int* lastXs;
     int cPositionSaveIndex = 0;
     float flyBackVelocity = 5.0f;
     int flyBackRadius = 10;
 
-    int tempFlybackCol;
-    int tempFlybackRow;
+    int tempFlybackX;
+    int tempFlybackY;
 
     int findNewPathToPlayerTimer = 0;
 

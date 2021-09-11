@@ -43,18 +43,18 @@ void eventhandling::init() {
 	playerHandling = new PlayerHandling();
 	worldHandling = new WorldHandling();
 
-	int worldRows = worldHandling->getWorldRows();
-	int worldCols = worldHandling->getWorldCols();
-	uiHandling = new UiHandling(worldHandling->getFrameRows(), worldHandling->getFrameCols());
-	pathfinding = new Pathfinding(worldRows, worldCols, worldHandling->getTerrain(), playerHandling->getPlayers(),
+	int worldYs = worldHandling->getWorldYs();
+	int worldXs = worldHandling->getWorldXs();
+	uiHandling = new UiHandling(worldHandling->getFrameYs(), worldHandling->getFrameXs());
+	pathfinding = new Pathfinding(worldYs, worldXs, worldHandling->getTerrain(), playerHandling->getPlayers(),
 		playerHandling->getPlayerCount());
-	projectileHandling = new ProjectileHandling(worldRows, worldCols, playerHandling->getPlayers(), playerHandling->getPlayerCount());
+	projectileHandling = new ProjectileHandling(worldYs, worldXs, playerHandling->getPlayers(), playerHandling->getPlayerCount());
 	NetworkCommunication::init();
 	menu = new Menu();
 
 	//so we dont have to worry about this messy recource-hell anymore
 	GlobalRecources::init(playerHandling->getPlayers(), playerHandling->getPlayerCount(), worldHandling->getTerrain(), 
-												worldRows, worldCols, pathfinding, pathfinding->getPathfingingMutex());
+												worldYs, worldXs, pathfinding, pathfinding->getPathfingingMutex());
 }
 
 void eventhandling::eventloop() {
@@ -85,14 +85,14 @@ void eventhandling::eventloop() {
 		worldHandling->update();
 		//pass current hp informations to uiHandling so that it can draw a proper life bar
 		uiHandling->updateLifeBar(playerHandling->getMyPlayer()->getHp(), playerHandling->getMyPlayer()->getMaxHp());
-		//does pathfinding on click and player collision
+		//does pathfinding on click and player xlision
 		pathfinding->update();
 		//moves all abilities and ticks through their states (example projectile->explosion->buring etc.)
 		abilityHandling->update();
 
-		//pass collidbales to projectile management every update so that projectiles can even be stopped by moving terrain
-		auto collidables = worldHandling->getTerrain()->getCollidables();
-		projectileHandling->update(collidables->data(), collidables->size());
+		//pass xlidbales to projectile management every update so that projectiles can even be stopped by moving terrain
+		auto xlidables = worldHandling->getTerrain()->getXlidables();
+		projectileHandling->update(xlidables->data(), xlidables->size());
 
 		//pass game information back and forth through tcp sockets
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {

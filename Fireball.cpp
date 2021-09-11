@@ -11,19 +11,19 @@ Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCD
     indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius);
 }
 
-//create from network input(row is just current row so even with lag the start is always synced)
-Fireball::Fireball(int i_currentRow, int i_currentCol, int i_goalRow, int i_goalCol, int i_myPlayerIndex,
+//create from network input(y is just current y so even with lag the start is always synced)
+Fireball::Fireball(int i_currentY, int i_currentX, int i_goalY, int i_goalX, int i_myPlayerIndex,
     int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
 
-    this->startRow = i_currentRow;
-    this->startCol = i_currentCol;
-    this->goalRow = i_goalRow;
-    this->goalCol = i_goalCol;
+    this->startY = i_currentY;
+    this->startX = i_currentX;
+    this->goalY = i_goalY;
+    this->goalX = i_goalX;
     this->tempTimeSinceExplosionStart = i_timeSinceExplosionStart;
     //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
     //after exploding or you connect after explosion
 
-    this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius,
+    this->helpProjectile = new Projectile(startY, startX, velocity, goalY, goalX, false, radius,
         GlobalRecources::players[myPlayerIndex]);
     skipToPhase(i_phase);
 }
@@ -36,8 +36,8 @@ void Fireball::execute0() {
             indicator = nullptr;
         }
         else if (indicator->destinationSelected() == true) {
-            goalRow = indicator->getDestinationRow();
-            goalCol = indicator->getDestinationCol();
+            goalY = indicator->getDestinationY();
+            goalX = indicator->getDestinationX();
             delete indicator;
             indicator = nullptr;
             this->nextPhase();//init casting
@@ -52,28 +52,28 @@ void Fireball::init1() {
     Player* myPlayer = GlobalRecources::players[myPlayerIndex];
     //Turn player to mouse coords and set mouse coords as goal coords
     //if projectile destination is above player
-    if (this->goalRow < myPlayer->getRow()) {
-        this->startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
-        this->startRow = myPlayer->getRow();
+    if (this->goalY < myPlayer->getY()) {
+        this->startX = myPlayer->getX() + (myPlayer->getWidth() / 2);
+        this->startY = myPlayer->getY();
         myPlayer->setTexture(2);
     }
     //below
-    if (this->goalRow > myPlayer->getRow()) {
-        this->startCol = myPlayer->getCol() + (myPlayer->getWidth() / 2);
-        this->startRow = myPlayer->getRow() + myPlayer->getHeight();
+    if (this->goalY > myPlayer->getY()) {
+        this->startX = myPlayer->getX() + (myPlayer->getWidth() / 2);
+        this->startY = myPlayer->getY() + myPlayer->getHeight();
         myPlayer->setTexture(3);
     }
 
     limitGoalPosToRange();
-    this->helpProjectile = new Projectile(startRow, startCol, velocity, goalRow, goalCol, false, radius, myPlayer);
+    this->helpProjectile = new Projectile(startY, startX, velocity, goalY, goalX, false, radius, myPlayer);
 }
 
 void Fireball::execute1() {
-    auto collidables = GlobalRecources::terrain->getCollidables();
-    this->helpProjectile->move(GlobalRecources::worldRows, GlobalRecources::worldCols, collidables->data(), collidables->size());
-    //if the projectile reaches its max range or collides with anything, it should explode
-    if ((abs(this->startRow - this->helpProjectile->getRow()) * abs(this->startRow - this->helpProjectile->getRow())
-        + abs(this->startCol - this->helpProjectile->getCol()) * abs(this->startCol - this->helpProjectile->getCol())
+    auto xlidables = GlobalRecources::terrain->getXlidables();
+    this->helpProjectile->move(GlobalRecources::worldYs, GlobalRecources::worldXs, xlidables->data(), xlidables->size());
+    //if the projectile reaches its max range or xlides with anything, it should explode
+    if ((abs(this->startY - this->helpProjectile->getY()) * abs(this->startY - this->helpProjectile->getY())
+        + abs(this->startX - this->helpProjectile->getX()) * abs(this->startX - this->helpProjectile->getX())
                 > this->range * this->range) || this->helpProjectile->isDead() == true) {
 
         this->nextPhase(); //init explosion
@@ -97,17 +97,17 @@ void Fireball::init2() {
 
     }
 
-    this->explosionRow = this->helpProjectile->getRow() + this->helpProjectile->getRadius() - this->explosionRange;
-    this->explosionCol = this->helpProjectile->getCol() + this->helpProjectile->getRadius() - this->explosionRange;
+    this->explosionY = this->helpProjectile->getY() + this->helpProjectile->getRadius() - this->explosionRange;
+    this->explosionX = this->helpProjectile->getX() + this->helpProjectile->getRadius() - this->explosionRange;
 }
 
 void Fireball::execute2() {
     for (int i = 0; i < GlobalRecources::playerCount; i++) {
         Player* c = GlobalRecources::players[i];
         if (c->targetAble == true) {
-            bool collision = Utils::collisionRectCircle(c->getCol(), c->getRow(), c->getWidth(), c->getHeight(),
-                this->explosionCol, this->explosionRow, this->explosionRange, 10);
-            if (collision == true) {
+            bool xlision = Utils::xlisionRectCircle(c->getX(), c->getY(), c->getWidth(), c->getHeight(),
+                this->explosionX, this->explosionY, this->explosionRange, 10);
+            if (xlision == true) {
                 if (this->dealtDamage == false) {
                     c->setHp(c->getHp() - this->explosionDmg);
                 }
@@ -131,14 +131,14 @@ void Fireball::draw1() {
 }
 
 void Fireball::draw2() {
-    Renderer::drawCircle(this->explosionRow, this->explosionCol, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
+    Renderer::drawCircle(this->explosionY, this->explosionX, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
 }
 
 
 void Fireball::limitGoalPosToRange() {
     float* vecToGoal = new float[2];
-    vecToGoal[0] = goalCol - startCol;
-    vecToGoal[1] = goalRow - startRow;
+    vecToGoal[0] = goalX - startX;
+    vecToGoal[1] = goalY - startY;
     //calculate vector lenght
     float lenght = sqrt((vecToGoal[0] * vecToGoal[0]) + (vecToGoal[1] * vecToGoal[1]));
     if (lenght > range) {
@@ -149,7 +149,7 @@ void Fireball::limitGoalPosToRange() {
         vecToGoal[0] *= range;
         vecToGoal[1] *= range;
         //place at starting point
-        goalCol = startCol + vecToGoal[0];
-        goalRow = startRow + vecToGoal[1];
+        goalX = startX + vecToGoal[0];
+        goalY = startY + vecToGoal[1];
     }
 }

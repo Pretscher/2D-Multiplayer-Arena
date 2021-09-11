@@ -16,70 +16,70 @@ void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
     viewSpace = io_viewSpace;
     viewSpaceLimits = io_viewspaceLimits;
 
-    GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
-    GlobalRecources::worldCols = getWorldCols();
+    GlobalRecources::worldYs = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
+    GlobalRecources::worldXs = getWorldXs();
 }
 
-int Renderer::getWorldCols() {
+int Renderer::getWorldXs() {
     return currentWindow->getSize().x + viewSpaceLimits[1];
 }
 
-int Renderer::getWorldRows() {
+int Renderer::getWorldYs() {
     return currentWindow->getSize().y + viewSpaceLimits[0];
 }
 
 //coord conversion-------------------------------------------------------------------------------------------------------
 
-int normalResCols = 1920;
-int normalResRows = 1080;
+int normalResXs = 1920;
+int normalResYs = 1080;
 
-static void fromRowCol(int* ioRow, int* ioCol) {
+static void fromYX(int* ioY, int* ioX) {
     auto size = Renderer::currentWindow->getSize();
-    float helpRow = (float) *ioRow;
-    float helpCol = (float) *ioCol;
-    *ioRow = (helpRow / normalResRows) * size.y;
-    *ioCol = (helpCol / normalResCols) * size.x;
+    float helpY = (float) *ioY;
+    float helpX = (float) *ioX;
+    *ioY = (helpY / normalResYs) * size.y;
+    *ioX = (helpX / normalResXs) * size.x;
 }
 
-static void fromRowColBounds(int* ioW, int* ioH) {
+static void fromYXBounds(int* ioW, int* ioH) {
     auto size = Renderer::currentWindow->getSize();
     float helpW = (float) *ioW;
     float helpH = (float) *ioH;
-    *ioW = (helpW / normalResCols) * size.x;
-    *ioH = (helpH / normalResRows) * size.y;
+    *ioW = (helpW / normalResXs) * size.x;
+    *ioH = (helpH / normalResYs) * size.y;
 }
 
-static void toRowCol(int* ioRow, int* ioCol) {
+static void toYX(int* ioY, int* ioX) {
     auto size = Renderer::currentWindow->getSize();
-    float helpRow = (float) *ioRow;
-    float helpCol = (float) *ioCol;
-    *ioRow = (helpRow / size.y) * normalResRows;
-    *ioCol = (helpCol / size.x) * normalResCols;
+    float helpY = (float) *ioY;
+    float helpX = (float) *ioX;
+    *ioY = (helpY / size.y) * normalResYs;
+    *ioX = (helpX / size.x) * normalResXs;
 }
 
-static void toRowColBounds(int* ioW, int* ioH) {
+static void toYXBounds(int* ioW, int* ioH) {
     auto size = Renderer::currentWindow->getSize();
     float helpW = (float) *ioW;
     float helpH = (float) *ioH;
-    *ioW = (helpW / normalResCols) * size.x;
-    *ioH = (helpH / normalResRows) * size.y;
+    *ioW = (helpW / normalResXs) * size.x;
+    *ioH = (helpH / normalResYs) * size.y;
 }
 //\coord conversion-------------------------------------------------------------------------------------------------------
 
 
 //Drawing functions-------------------------------------------------------------------------------------------------------
 
-void Renderer::drawRect(int row, int col, int width, int height, sf::Color c, bool solidWithViewspace) {
-    fromRowColBounds(&width, &height);
-    fromRowCol(&row, &col);
+void Renderer::drawRect(int y, int x, int width, int height, sf::Color c, bool solidWithViewspace) {
+    fromYXBounds(&width, &height);
+    fromYX(&y, &x);
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
 
     square->setFillColor(c);
     if (solidWithViewspace == true) {
-        square->move(col, row);
+        square->move(x, y);
     }
     else {
-        square->move(col - viewSpace[1], row - viewSpace[0]);
+        square->move(x - viewSpace[1], y - viewSpace[0]);
     }
     Renderer::currentWindow->draw(*square);
     
@@ -87,11 +87,11 @@ void Renderer::drawRect(int row, int col, int width, int height, sf::Color c, bo
 }
 
 
-void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness, bool solidWithViewspace) {
-    fromRowColBounds(&width, &height);
-    fromRowCol(&row, &col);
+void Renderer::drawRectOutline(int y, int x, int width, int height, sf::Color c, int thickness, bool solidWithViewspace) {
+    fromYXBounds(&width, &height);
+    fromYX(&y, &x);
     int unusedHelp = 0;//we dont need to write 2 values but only have functions for 2 values (lazyness)
-    fromRowColBounds(&thickness, &unusedHelp);
+    fromYXBounds(&thickness, &unusedHelp);
 
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width - thickness, height -  2 * thickness));
     square->setOutlineColor(c);
@@ -99,20 +99,20 @@ void Renderer::drawRectOutline(int row, int col, int width, int height, sf::Colo
     square->setOutlineThickness(thickness);
 
     if (solidWithViewspace == true) {
-        square->move(col, row);
+        square->move(x, y);
     }
     else {
-        square->move(col - viewSpace[1], row - viewSpace[0]);
+        square->move(x - viewSpace[1], y - viewSpace[0]);
     }
     Renderer::currentWindow->draw(*square);
     delete square;
 }
 
-void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace) {
-    fromRowCol(&row, &col);
+void Renderer::drawCircle(int y, int x, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace) {
+    fromYX(&y, &x);
     int unusedHelp = 0;//we dont need to write 2 values but only have functions for 2 values (lazyness)
-    fromRowColBounds(&outlineThickness, &unusedHelp);
-    fromRowColBounds(&radius, &unusedHelp);
+    fromYXBounds(&outlineThickness, &unusedHelp);
+    fromYXBounds(&radius, &unusedHelp);
 
     sf::CircleShape* circle = new sf::CircleShape(radius);
     if (fill == true) {
@@ -124,62 +124,62 @@ void Renderer::drawCircle(int row, int col, int radius, sf::Color c, bool fill, 
         circle->setFillColor(sf::Color(0, 0, 0, 0));
     }
     if (solidWithViewspace == true) {
-        circle->move(col, row);
+        circle->move(x, y);
     }
     else {
-        circle->move(col - viewSpace[1], row - viewSpace[0]);
+        circle->move(x - viewSpace[1], y - viewSpace[0]);
     }
     Renderer::currentWindow->draw(*circle);
     delete circle;
 }
 
-void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int thickness) {
-    fromRowCol(&row1, &col1);
-    fromRowCol(&row2, &col2);
+void Renderer::drawLine(int y1, int x1, int y2, int x2, sf::Color c, int thickness) {
+    fromYX(&y1, &x1);
+    fromYX(&y2, &x2);
 
-    float dCol = col2 - col1;
-    float dRow = row2 - row1;
+    float dX = x2 - x1;
+    float dY = y2 - y1;
     int ht = thickness / 2;
-    float rot = atan2(dRow, dCol) * 57.2958f;
-    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dCol) * std::abs(dCol) + std::abs(dRow) * std::abs(dRow)), ht * 2));
+    float rot = atan2(dY, dX) * 57.2958f;
+    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dX) * std::abs(dX) + std::abs(dY) * std::abs(dY)), ht * 2));
 
     line.setOrigin(0, ht);
-    line.setPosition(col1 - viewSpace[1], row1 - viewSpace[0]);
+    line.setPosition(x1 - viewSpace[1], y1 - viewSpace[0]);
     line.setRotation(rot);
     line.setFillColor(c);
 
     Renderer::currentWindow->draw(line);
 }
 
-void Renderer::getMousePos(int* o_rows, int* o_cols, bool factorInViewspace, bool factorInBorders) {
-    GlobalRecources::worldRows = getWorldRows();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
-    GlobalRecources::worldCols = getWorldCols();
+void Renderer::getMousePos(int* o_ys, int* o_xs, bool factorInViewspace, bool factorInBorders) {
+    GlobalRecources::worldYs = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
+    GlobalRecources::worldXs = getWorldXs();
 
     auto pos = sf::Mouse::getPosition(*currentWindow);
-    int col = pos.x;
-    int row = pos.y;
-    toRowCol(&row, &col);
+    int x = pos.x;
+    int y = pos.y;
+    toYX(&y, &x);
 
     if (factorInBorders == true) {
-        if (col < normalResCols && row < normalResRows) {
+        if (x < normalResXs && y < normalResYs) {
             if (factorInViewspace == true) {
-                *o_cols = col + viewSpace[1];
-                *o_rows = row + viewSpace[0];
+                *o_xs = x + viewSpace[1];
+                *o_ys = y + viewSpace[0];
             }
             else {
-                *o_cols = col;
-                *o_rows = row;
+                *o_xs = x;
+                *o_ys = y;
             }
         }
     }
     else {
         if (factorInViewspace == true) {
-            *o_cols = col + viewSpace[1];
-            *o_rows = row + viewSpace[0];
+            *o_xs = x + viewSpace[1];
+            *o_ys = y + viewSpace[0];
         }
         else {
-            *o_cols = col;
-            *o_rows = row;
+            *o_xs = x;
+            *o_ys = y;
         }
     }
 }
@@ -189,9 +189,9 @@ void Renderer::updateViewSpace() {
 
     int moveSpeed = 30;
     
-    int mouseCol = -1;
-    int mouseRow = -1;
-    getMousePos(&mouseRow, &mouseCol, false, true);
+    int mouseX = -1;
+    int mouseY = -1;
+    getMousePos(&mouseY, &mouseX, false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];
@@ -201,14 +201,14 @@ void Renderer::updateViewSpace() {
     int vsRight = viewSpaceLimits[1];
     int vsTop = viewSpaceLimits[2];
     int vsBottom = viewSpaceLimits[3];
-    toRowColBounds(&vsTop, &vsLeft);
-    toRowColBounds(&vsBottom, &vsRight);
-    if (mouseRow != -1) {
-        int localRow = mouseRow;
-        int localCol = mouseCol;
-        fromRowCol(&mouseRow, &mouseCol);
+    toYXBounds(&vsTop, &vsLeft);
+    toYXBounds(&vsBottom, &vsRight);
+    if (mouseY != -1) {
+        int localY = mouseY;
+        int localX = mouseX;
+        fromYX(&mouseY, &mouseX);
 
-        if (localRow < normalResRows / 10) {
+        if (localY < normalResYs / 10) {
             if (helpViewSpace[0] - moveSpeed > vsTop) {
                 helpViewSpace[0] -= moveSpeed;
             }
@@ -216,7 +216,7 @@ void Renderer::updateViewSpace() {
                 helpViewSpace[0] = vsTop;
             }
         }
-        if (localRow > normalResRows * 0.9) {
+        if (localY > normalResYs * 0.9) {
             if (helpViewSpace[0] + moveSpeed < vsBottom) {
                 helpViewSpace[0] += moveSpeed;
             }
@@ -224,7 +224,7 @@ void Renderer::updateViewSpace() {
                 helpViewSpace[0] = vsBottom;
             }
         }
-        if (localCol < normalResCols / 10) {
+        if (localX < normalResXs / 10) {
             if (helpViewSpace[1] - moveSpeed > vsLeft) {
                 helpViewSpace[1] -= moveSpeed;
             }
@@ -232,7 +232,7 @@ void Renderer::updateViewSpace() {
                 helpViewSpace[1] = vsLeft;
             }
         }
-        if (localCol > normalResCols * 0.9f) {
+        if (localX > normalResXs * 0.9f) {
             if (helpViewSpace[1] + moveSpeed < vsRight) {
                 helpViewSpace[1] += moveSpeed;
             }
@@ -266,22 +266,22 @@ sf::Texture Renderer::loadTexture(std::string path, bool repeat) {
 }
 
 
-void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture, bool solidWithViewspace) {
-    fromRowColBounds(&width, &height);
-    fromRowCol(&row, &col);
+void Renderer::drawRectWithTexture(int y, int x, int width, int height, sf::Texture texture, bool solidWithViewspace) {
+    fromYXBounds(&width, &height);
+    fromYX(&y, &x);
 
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
     
     square->setTexture(&texture);
     if (solidWithViewspace == true) {
-        square->move(col, row);
+        square->move(x, y);
     }
     else {
-        square->move(col - viewSpace[1], row - viewSpace[0]);
+        square->move(x - viewSpace[1], y - viewSpace[0]);
     }
 
     if (texture.isRepeated() == true) {
-        sf::IntRect rect = sf::IntRect(col, row, width, height);
+        sf::IntRect rect = sf::IntRect(x, y, width, height);
         square->setTextureRect(rect);
     }//else stretch
 
@@ -290,9 +290,9 @@ void Renderer::drawRectWithTexture(int row, int col, int width, int height, sf::
     delete square;
 }
 
-void Renderer::drawText(std::string i_text, int row, int col, int width, int height, sf::Color color) {
-    fromRowColBounds(&width, &height);
-    fromRowCol(&row, &col);
+void Renderer::drawText(std::string i_text, int y, int x, int width, int height, sf::Color color) {
+    fromYXBounds(&width, &height);
+    fromYX(&y, &x);
 
     sf::Text text;
 
@@ -317,9 +317,9 @@ void Renderer::drawText(std::string i_text, int row, int col, int width, int hei
     bool bold = (text.getStyle() == sf::Text::Bold);
     size_t MaxHeight = 0;
 
-    for (size_t col = 0; col < text.getString().getSize(); col++)
+    for (size_t x = 0; x < text.getString().getSize(); x++)
     {
-        sf::Uint32 Character = String.at(col);
+        sf::Uint32 Character = String.at(x);
 
         const sf::Glyph& CurrentGlyph = font.getGlyph(Character, CharacterSize, bold);
 
@@ -337,7 +337,7 @@ void Renderer::drawText(std::string i_text, int row, int col, int width, int hei
     int l = rect.left - (currentWindow->getSize().x / 385);
     int t = rect.top - (currentWindow->getSize().y / 72);
 
-    text.setPosition(l + col, t + row);
+    text.setPosition(l + x, t + y);
 
    // text.setStyle(sf::Text::Bold | sf::Text::Underlined);
     currentWindow->draw(text);

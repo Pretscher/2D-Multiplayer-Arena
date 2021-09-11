@@ -3,9 +3,9 @@
 #include <math.h>
 #include "Utils.hpp"
 
-bool Utils::collisionCoordsRect(float rectCol, float rectRow, float rectWidth, float rectHeight, float pointCol, float pointRow) {
-	if (rectCol < pointCol && rectCol + rectWidth > pointCol) {
-		if (rectRow < pointRow && rectRow + rectHeight > pointRow) {
+bool Utils::xlisionCoordsRect(float rectX, float rectY, float rectWidth, float rectHeight, float pointX, float pointY) {
+	if (rectX < pointX && rectX + rectWidth > pointX) {
+		if (rectY < pointY && rectY + rectHeight > pointY) {
 			return true;
 		}
 	}
@@ -14,21 +14,21 @@ bool Utils::collisionCoordsRect(float rectCol, float rectRow, float rectWidth, f
 /**
 * @param top left coords of circle and point coords
 **/
-bool Utils::collisionCoordsCircle(float circleCol, float circleRow, float circleRadius, float pointCol, float pointRow) {
-	float dist = sqrt((pointCol - (circleCol + circleRadius)) * (pointCol - (circleCol + circleRadius)) + (pointRow - (circleRow + circleRadius)) * (pointRow - (circleRow + circleRadius)));
+bool Utils::xlisionCoordsCircle(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
+	float dist = sqrt((pointX - (circleX + circleRadius)) * (pointX - (circleX + circleRadius)) + (pointY - (circleY + circleRadius)) * (pointY - (circleY + circleRadius)));
 	if (dist <= circleRadius) return true;
 	return false;
 }
 
 /**
-* @param top left coords of rect and circle, colPointDist is accuracy of detection
+* @param top left coords of rect and circle, xPointDist is accuracy of detection
 **/
-bool Utils::collisionRectCircle(int rectCol, int rectRow, int rectWidth, int rectHeight, int circleCol, int circleRow, int circleRadius, int colPointDist) {
+bool Utils::xlisionRectCircle(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius, int xPointDist) {
 	//check points of second rect for intersection with circle with given accuracy
-	for (float col = rectCol; col <= rectCol + rectWidth; col += colPointDist) {
-		for (float row = rectRow; row <= rectRow + rectHeight; row += colPointDist) {
-			//Renderer::drrectWidthRect(row, col, 2, 2, sf::Color(255, 255, 0, 255), false);
-			if (Utils::collisionCoordsCircle(circleCol, circleRow, circleRadius, col, row) == true) {
+	for (float x = rectX; x <= rectX + rectWidth; x += xPointDist) {
+		for (float y = rectY; y <= rectY + rectHeight; y += xPointDist) {
+			//Renderer::drrectWidthRect(y, x, 2, 2, sf::Color(255, 255, 0, 255), false);
+			if (Utils::xlisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
 				return true;
 			}
 		}
@@ -36,20 +36,20 @@ bool Utils::collisionRectCircle(int rectCol, int rectRow, int rectWidth, int rec
 	return false;
 }
 
-bool Utils::collisionRectCircleOnlyOutline(int rectCol, int rectRow, int rectWidth, int rectHeight, int circleCol, int circleRow, int circleRadius) {
+bool Utils::xlisionRectCircleOnlyOutline(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius) {
 	//check points of second rect for intersection with circle with given accuracy
-	for (float row = rectRow; row <= rectRow + rectHeight; row += rectHeight) {
-		for (float col = rectCol; col <= rectCol + rectWidth; col += (circleRadius * 2 - 1)) {
-			//Renderer::drrectWidthRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::collisionCoordsCircle(circleCol, circleRow, circleRadius, col, row) == true) {
+	for (float y = rectY; y <= rectY + rectHeight; y += rectHeight) {
+		for (float x = rectX; x <= rectX + rectWidth; x += (circleRadius * 2 - 1)) {
+			//Renderer::drrectWidthRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
+			if (Utils::xlisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
 				return true;
 			}
 		}
 	}
-	for (float col = rectCol; col <= rectCol + rectWidth; col += rectWidth) {
-		for (float row = rectRow; row <= rectRow + rectHeight; row += (circleRadius * 2 - 1)) {
-			//Renderer::drrectWidthRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::collisionCoordsCircle(circleCol, circleRow, circleRadius, col, row) == true) {
+	for (float x = rectX; x <= rectX + rectWidth; x += rectWidth) {
+		for (float y = rectY; y <= rectY + rectHeight; y += (circleRadius * 2 - 1)) {
+			//Renderer::drrectWidthRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
+			if (Utils::xlisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
 				return true;
 			}
 		}
@@ -57,11 +57,11 @@ bool Utils::collisionRectCircleOnlyOutline(int rectCol, int rectRow, int rectWid
 	return false;
 }
 
-bool Utils::collisionRects(float rect1Col, float rect1Row, float rect1Width, float rect1Height, float rect2Col, float rect2Row, float rect2Width, float rect2Height, float colPointDist) {
+bool Utils::xlisionRects(float rect1X, float rect1Y, float rect1Width, float rect1Height, float rect2X, float rect2Y, float rect2Width, float rect2Height, float xPointDist) {
 	//check points of second rect for intersection with first rect with given accuracy
-	for (float col = rect2Col; col < rect2Col + rect2Width; col += colPointDist) {
-		for (float row = rect2Row; row < rect2Row + rect2Height; row += colPointDist) {
-			if (Utils::collisionCoordsRect(rect1Col, rect1Row, rect1Width, rect1Height, col, row) == true) {
+	for (float x = rect2X; x < rect2X + rect2Width; x += xPointDist) {
+		for (float y = rect2Y; y < rect2Y + rect2Height; y += xPointDist) {
+			if (Utils::xlisionCoordsRect(rect1X, rect1Y, rect1Width, rect1Height, x, y) == true) {
 				return true;
 			}
 		}
@@ -70,12 +70,12 @@ bool Utils::collisionRects(float rect1Col, float rect1Row, float rect1Width, flo
 }
 
 bool randSeedInit = true;
-float Utils::RandomNumber(float Min, float MrectCol) {
+float Utils::RandomNumber(float Min, float MrectX) {
 	if (randSeedInit == true) {
 		srand(time(NULL));
 		randSeedInit = false;
 	}
-	return ((float(rand()) / float(RAND_MAX)) * (MrectCol - Min)) + Min;
+	return ((float(rand()) / float(RAND_MAX)) * (MrectX - Min)) + Min;
 }
 
 bool Utils::compareFloats(float a, float b, float accuracy) {
@@ -99,6 +99,6 @@ float Utils::calcDist1D(float a, float b) {
 	return dist;
 }
 
-float Utils::calcDist2D(float col1, float col2, float row1, float row2) {
-	return sqrt((col1 - col2) * (col1 - col2) + (row1 - row2) * (row1 - row2));
+float Utils::calcDist2D(float x1, float x2, float y1, float y2) {
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }

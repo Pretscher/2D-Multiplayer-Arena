@@ -10,16 +10,16 @@ WorldHandling::WorldHandling() {
 	viewSpaceLimits[2] = 0;//top
 	viewSpaceLimits[3] = 2000;//bot
 	cViewSpace = new int[2];
-	cViewSpace[0] = 0;//row (top to bot)
-	cViewSpace[1] = 0;//col (left to right)
+	cViewSpace[0] = 0;//y (top to bot)
+	cViewSpace[1] = 0;//x (left to right)
 
 
 
-	//hardcoded rows and cols
-	frameRows = 1080;
-	frameCols = 1920;
-	worldRows = frameRows + viewSpaceLimits[3];
-	worldCols = frameCols + viewSpaceLimits[1];
+	//hardcoded ys and xs
+	frameYs = 1080;
+	frameXs = 1920;
+	worldYs = frameYs + viewSpaceLimits[3];
+	worldXs = frameXs + viewSpaceLimits[1];
 
 
 	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
@@ -36,10 +36,10 @@ void WorldHandling::draw() {
 }
 
 void WorldHandling::hardCodeTerrain() {
-	terrain->addRect(0, 0, worldCols, 50);
-	terrain->addRect(0, 0, 50, worldRows);
-	terrain->addRect(0, worldCols - 50, 50, worldRows);
-	terrain->addRect(worldRows - 70, 0, worldCols, 50);
+	terrain->addRect(0, 0, worldXs, 50);
+	terrain->addRect(0, 0, 50, worldYs);
+	terrain->addRect(0, worldXs - 50, 50, worldYs);
+	terrain->addRect(worldYs - 70, 0, worldXs, 50);
 
 	terrain->addRect(300, 0, 300, 100);
 	terrain->addRect(300, 300, 100, 300);

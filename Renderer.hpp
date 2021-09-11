@@ -7,32 +7,32 @@ public:
 
     static void init(sf::RenderWindow* window);
 
-    static int getWorldRows();
-    static int getWorldCols();
+    static int getWorldYs();
+    static int getWorldXs();
 
-    static void drawRect(int row, int col, int width, int height, sf::Color c, bool solidWithViewspace);
-    static void drawRectOutline(int row, int col, int width, int height, sf::Color c, int thickness, bool solidWithViewspace);
-    static void drawCircle(int row, int col, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace);
-    static void drawLine(int row1, int col1, int row2, int col2, sf::Color c, int thickness);
+    static void drawRect(int y, int x, int width, int height, sf::Color c, bool solidWithViewspace);
+    static void drawRectOutline(int y, int x, int width, int height, sf::Color c, int thickness, bool solidWithViewspace);
+    static void drawCircle(int y, int x, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace);
+    static void drawLine(int y1, int x1, int y2, int x2, sf::Color c, int thickness);
   
-    static void getMousePos(int* o_Row, int* o_Col, bool factorInViewspace, bool factorInBorders);
+    static void getMousePos(int* o_Y, int* o_X, bool factorInViewspace, bool factorInBorders);
     static void updateViewSpace();
     static void linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits);
 
-    static void drawRectWithTexture(int row, int col, int width, int height, sf::Texture texture, bool solidWithViewspace);
+    static void drawRectWithTexture(int y, int x, int width, int height, sf::Texture texture, bool solidWithViewspace);
 
     static sf::Texture loadTexture(std::string path, bool repeat);
 
-    static void drawText(std::string text, int row, int col, int width, int height, sf::Color color);
+    static void drawText(std::string text, int y, int x, int width, int height, sf::Color color);
 };
 
 
 //help button class
 class Button {
 public:
-    Button(int row, int col, int width, int height, sf::Color color, std::string text, sf::Color textColor) {
-        this->row = row;
-        this->col = col;
+    Button(int y, int x, int width, int height, sf::Color color, std::string text, sf::Color textColor) {
+        this->y = y;
+        this->x = x;
         this->width = width;
         this->height = height;
         this->text = text;
@@ -43,11 +43,11 @@ public:
     bool isPressed() {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && sameClick == false) {
             sameClick = true;
-            int mRow;
-            int mCol;
-            Renderer::getMousePos(&mRow, &mCol, false, true);
-            if (mRow > this->row && mRow < this->row + this->height) {
-                if (mCol > this->col && mCol < this->col + this->width) {
+            int mY;
+            int mX;
+            Renderer::getMousePos(&mY, &mX, false, true);
+            if (mY > this->y && mY < this->y + this->height) {
+                if (mX > this->x && mX < this->x + this->width) {
                     return true;
                 }
             }
@@ -65,17 +65,17 @@ public:
             newColor.r += 50;
             newColor.g += 50;
             newColor.b += 50;
-            Renderer::drawRectOutline(row, col, width, height, newColor, 10, true);
+            Renderer::drawRectOutline(y, x, width, height, newColor, 10, true);
         }
         else {
-            Renderer::drawRectOutline(row, col, width, height, newColor, 3, true);
+            Renderer::drawRectOutline(y, x, width, height, newColor, 3, true);
         }
-        Renderer::drawRect(row, col, width, height, newColor, true);
+        Renderer::drawRect(y, x, width, height, newColor, true);
 
-        Renderer::drawText(text, row, col, width, height, textColor);
+        Renderer::drawText(text, y, x, width, height, textColor);
     }
 private:
-    int row, col, width, height;
+    int y, x, width, height;
     sf::Color color, textColor;
     std::string text;
 };

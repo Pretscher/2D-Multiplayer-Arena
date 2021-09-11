@@ -10,14 +10,14 @@ class Graph;
 class Pathfinding {
 
 public:
-	Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount);
-	std::vector<int>* newGoalRows = new std::vector<int>();
-	std::vector<int>* newGoalCols = new std::vector<int>();
+	Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_players, int i_playerCount);
+	std::vector<int>* newGoalYs = new std::vector<int>();
+	std::vector<int>* newGoalXs = new std::vector<int>();
 
-	void disableArea(int row, int col, int width, int height);
-	void enableArea(int row, int col, int width, int height);
+	void disableArea(int y, int x, int width, int height);
+	void enableArea(int y, int x, int width, int height);
 	void startPathFinding();
-	void findPath(int goalCol, int goalRow, int playerIndex);
+	void findPath(int goalX, int goalY, int playerIndex);
 
 	void enablePlayer(int i_playerIndex, bool disableOthers);
 	void disablePlayer(int i_playerIndex);
@@ -37,12 +37,12 @@ public:
 
 private:
 	Graph* g;
-	int cgoalCol;
-	int cgoalRow;
+	int cgoalX;
+	int cgoalY;
 	int cPlayerIndex;
 	bool newPathFinding;
 
-	bool** collisionGrid;
+	bool** xlisionGrid;
 
 	std::thread* pathFindingThread;
 	std::mutex* pfMtx;
@@ -53,15 +53,15 @@ private:
 
 	bool sameClick = false;//dont do two pathfindings on the same click
 
-	std::vector<int>* goalColToFind;
-	std::vector<int>* goalRowToFind;
+	std::vector<int>* goalXToFind;
+	std::vector<int>* goalYToFind;
 	std::vector<int>* indicesToFind;
 	int myPlayerIndex = 0;
 
 	void playerInteraction(int movedPlayerIndex);
 	void workThroughPathfindingQueue();
-	int wRows;
-	int wCols;
+	int wYs;
+	int wXs;
 	void pathFindingOnClick();
 	void moveObjects();
 

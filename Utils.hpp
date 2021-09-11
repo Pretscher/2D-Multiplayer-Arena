@@ -1,21 +1,21 @@
 #pragma once
 
 namespace Utils {
-	bool collisionCoordsRect(float rectCol, float rectRow, float rectWidth, float rectHeight, float pointCol, float pointRow);
+	bool xlisionCoordsRect(float rectX, float rectY, float rectWidth, float rectHeight, float pointX, float pointY);
 	/**
 	* @param top left coords of and circle
 	**/
-	bool collisionCoordsCircle(float circleCol, float circleRow, float circleRadius, float pointCol, float pointRow);
+	bool xlisionCoordsCircle(float circleX, float circleY, float circleRadius, float pointX, float pointY);
 	/**
-	* @param top left coords of rect and circle, colPointDist is accuracy of detection
+	* @param top left coords of rect and circle, xPointDist is accuracy of detection
 	**/
-	bool collisionRectCircle(int rectCol, int rectRow, int rectWidth, int rectHeight, int circleCol, int circleRow, int circleRadius, int colPointDist);
-	bool collisionRectCircleOnlyOutline(int rectCol, int rectRow, int rectWidth, int rectHeight, int circleCol, int circleRow, int circleRadius);
+	bool xlisionRectCircle(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius, int xPointDist);
+	bool xlisionRectCircleOnlyOutline(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius);
 
-	bool collisionRects(float rect1Col, float rect1Row, float rect1Width, float rect1Height, float rect2Col, float rect2Row, float rect2Width, float rect2Height, float colPointDist);
+	bool xlisionRects(float rect1X, float rect1Y, float rect1Width, float rect1Height, float rect2X, float rect2Y, float rect2Width, float rect2Height, float xPointDist);
 	float RandomNumber(float Min, float Max);
 	bool compareFloats(float a, float b, float accuracy);
 	float calcDist1D(float a, float b);
-	float calcDist2D(float col1, float col2, float row1, float row2);
+	float calcDist2D(float x1, float x2, float y1, float y2);
 
 };

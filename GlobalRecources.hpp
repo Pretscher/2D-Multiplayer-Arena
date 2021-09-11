@@ -7,9 +7,9 @@
 "add it if you need it" approach.*/ 
 class GlobalRecources {
 public:
-    static void init(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldRows, int i_worldCols, Pathfinding* i_pathfinding, std::mutex* i_pfMtx);
+    static void init(Player** i_players, int i_playerCount, Terrain* i_terrain, int i_worldYs, int i_worldXs, Pathfinding* i_pathfinding, std::mutex* i_pfMtx);
 
-    static int worldRows, worldCols;
+    static int worldYs, worldXs;
     static Terrain* terrain;
     static Player** players;
     static int playerCount;

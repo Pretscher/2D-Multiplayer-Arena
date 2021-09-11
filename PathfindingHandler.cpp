@@ -11,46 +11,46 @@ void startPathfindingThread(Pathfinding* pathfinding) {
 	pathfinding->startPathFinding();
 }
 
-Pathfinding::Pathfinding(int worldRows, int worldCols, Terrain* terrain, Player** i_players, int i_playerCount) {
-	cgoalCol = -1;
-	cgoalRow = -1;
+Pathfinding::Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_players, int i_playerCount) {
+	cgoalX = -1;
+	cgoalY = -1;
 	cPlayerIndex = -1;
 	newPathFinding = false;
 	
-	wRows = worldRows;
-	wCols = worldCols;
+	wYs = worldYs;
+	wXs = worldXs;
 
 	players = i_players;
 	playerCount = i_playerCount;
 	findingPath = false;
-	this->goalColToFind = new std::vector<int>();
-	this->goalRowToFind = new std::vector<int>();
+	this->goalXToFind = new std::vector<int>();
+	this->goalYToFind = new std::vector<int>();
 	this->indicesToFind = new std::vector<int>();
 
 	pathFindingThread = new std::thread(&startPathfindingThread, this);
 	pfMtx = new std::mutex();
 
 	pathfindingAccuracy = 0.025f;
-	//rows and cols are stretched to full screen anyway. Its just accuracy of rendering 
+	//ys and xs are stretched to full screen anyway. Its just accuracy of rendering 
 	//and relative coords on which you can orient your drawing. Also makes drawing a rect
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
 
 
-	int pathfindingRows = worldRows * pathfindingAccuracy;//max rows for pathfinding
-	int pathfindingCols = worldCols * pathfindingAccuracy;//max cols for pathfinding
-	collisionGrid = new bool*[pathfindingRows];
-	for (int row = 0; row < pathfindingRows; row++) {
-		collisionGrid[row] = new bool[pathfindingCols];
-		for (int col = 0; col < pathfindingCols; col++) {
-			collisionGrid[row][col] = true;
+	int pathfindingYs = worldYs * pathfindingAccuracy;//max ys for pathfinding
+	int pathfindingXs = worldXs * pathfindingAccuracy;//max xs for pathfinding
+	xlisionGrid = new bool*[pathfindingYs];
+	for (int y = 0; y < pathfindingYs; y++) {
+		xlisionGrid[y] = new bool[pathfindingXs];
+		for (int x = 0; x < pathfindingXs; x++) {
+			xlisionGrid[y][x] = true;
 		}
 	}
 
 	//create graph from unmoving solids, can be changed dynamically
 	//all player widths and heights are the same so we can just look at index 0
-	terrain->addCollidablesToGrid(collisionGrid, pathfindingAccuracy, i_players[0]->getWidth(), i_players[0]->getHeight());
-	g = new Graph(worldRows, worldCols, pathfindingAccuracy);
-	g->generateWorldGraph(collisionGrid);
+	terrain->addXlidablesToGrid(xlisionGrid, pathfindingAccuracy, i_players[0]->getWidth(), i_players[0]->getHeight());
+	g = new Graph(worldYs, worldXs, pathfindingAccuracy);
+	g->generateWorldGraph(xlisionGrid);
 }
 
 void Pathfinding::pathFindingOnClick() {
@@ -62,16 +62,16 @@ void Pathfinding::pathFindingOnClick() {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && getFindingPath() == false) {
 		sameClick = true;
-		int mouseRow = -1, mouseCol = -1;
-		Renderer::getMousePos(&mouseRow, &mouseCol, true, true);//writes mouse coords into mouseX, mouseY
-		if (mouseRow != -1) {//stays at -1 if click is outside of window
-			if (mouseCol - players[0]->getWidth() / 2 > 0) {
-				mouseCol -= players[0]->getWidth() / 2;
+		int mouseY = -1, mouseX = -1;
+		Renderer::getMousePos(&mouseY, &mouseX, true, true);//writes mouse coords into mouseX, mouseY
+		if (mouseY != -1) {//stays at -1 if click is outside of window
+			if (mouseX - players[0]->getWidth() / 2 > 0) {
+				mouseX -= players[0]->getWidth() / 2;
 			}
-			if (mouseRow - players[0]->getHeight() / 2 > 0) {
-				mouseRow -= players[0]->getHeight() / 2;
+			if (mouseY - players[0]->getHeight() / 2 > 0) {
+				mouseY -= players[0]->getHeight() / 2;
 			}
-			findPath(mouseCol, mouseRow, myPlayerIndex);
+			findPath(mouseX, mouseY, myPlayerIndex);
 		}
 	}
 }
@@ -81,7 +81,7 @@ void Pathfinding::update() {
 	moveObjects();
 }
 
-void Pathfinding::findPath(int goalCol, int goalRow, int playerIndex) {
+void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 
 	enablePlayer(myPlayerIndex, true);
 	for (int i = 0; i < playerCount; i++) {
@@ -96,16 +96,16 @@ void Pathfinding::findPath(int goalCol, int goalRow, int playerIndex) {
 			}
 		}
 	}
-	int pRow = players[playerIndex]->getRow();
-	int pCol = players[playerIndex]->getCol();
-	g->findNextUseableCoords(&pCol, &pRow, true);
-	players[playerIndex]->setRow(pRow);
-	players[playerIndex]->setCol(pCol);
+	int pY = players[playerIndex]->getY();
+	int pX = players[playerIndex]->getX();
+	g->findNextUseableCoords(&pX, &pY, true);
+	players[playerIndex]->setY(pY);
+	players[playerIndex]->setX(pX);
 
-	g->findNextUseableCoords(&goalCol, &goalRow, true);
+	g->findNextUseableCoords(&goalX, &goalY, true);
 	disablePlayer(myPlayerIndex);
 
-	if (goalCol == pCol && goalRow == pRow) {//player has valid coords and is at goal, so we can return after disabling palyers again
+	if (goalX == pX && goalY == pY) {//player has valid coords and is at goal, so we can return after disabling palyers again
 		return;
 	}
 
@@ -116,24 +116,24 @@ void Pathfinding::findPath(int goalCol, int goalRow, int playerIndex) {
 			players[playerIndex]->deletePath();
 		}
 		setNewPathfinding(true);
-		cgoalCol = goalCol;
-		cgoalRow = goalRow;
+		cgoalX = goalX;
+		cgoalY = goalY;
 
 		cPlayerIndex = playerIndex;
 	}
 	else {
-		goalColToFind->push_back(goalCol);
-		goalRowToFind->push_back(goalRow);
+		goalXToFind->push_back(goalX);
+		goalYToFind->push_back(goalY);
 		indicesToFind->push_back(playerIndex);
 	}
 }
 
 void Pathfinding::workThroughPathfindingQueue() {
-	if (goalColToFind->size() > 0) {
+	if (goalXToFind->size() > 0) {
 		if (getFindingPath() == false) {
-			findPath(goalColToFind->at(0), goalRowToFind->at(0), indicesToFind->at(0));
-			goalColToFind->erase(goalColToFind->begin());
-			goalRowToFind->erase(goalRowToFind->begin());
+			findPath(goalXToFind->at(0), goalYToFind->at(0), indicesToFind->at(0));
+			goalXToFind->erase(goalXToFind->begin());
+			goalYToFind->erase(goalYToFind->begin());
 			indicesToFind->erase(indicesToFind->begin());
 		}
 	}
@@ -143,24 +143,24 @@ void Pathfinding::workThroughPathfindingQueue() {
 
 void Pathfinding::moveObjects() {
 	workThroughPathfindingQueue();
-	//this->enableArea(0, 0, wCols - 1, wRows - 1);//enable all
+	//this->enableArea(0, 0, wXs - 1, wYs - 1);//enable all
 	for (int i = 0; i < playerCount; i++) {
 		if (players[i]->getHp() > 0) {
 			if (players[i]->hasPath() == true) {
-				int tempRow = players[i]->getRow();
-				int tempCol = players[i]->getCol();
+				int tempY = players[i]->getY();
+				int tempX = players[i]->getX();
 				players[i]->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
-				this->enableArea(tempRow, tempCol, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
-				this->disableArea(players[i]->getRow(), players[i]->getCol(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+				this->enableArea(tempY, tempX, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
+				this->disableArea(players[i]->getY(), players[i]->getX(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 				//for efficiency only find new path if you move next to a possibly moving object
 				//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
-				if (players[i]->getRow() != tempRow && players[i]->getCol() != tempCol) {//only having a path doesnt mean you moved on it
+				if (players[i]->getY() != tempY && players[i]->getX() != tempX) {//only having a path doesnt mean you moved on it
 					//find new paths for players close to this player
 					this->playerInteraction(i);
 				}
 			}
 			else {
-				this->disableArea(players[i]->getRow(), players[i]->getCol(), players[i]->getWidth(), players[i]->getHeight());
+				this->disableArea(players[i]->getY(), players[i]->getX(), players[i]->getWidth(), players[i]->getHeight());
 			}
 		}
 	}
@@ -176,36 +176,36 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 				if (cPlayer->hasPath() == true) {
 					//if paths cross each other, disable all crossing points and find new path. this is periodically called
 
-					std::vector<int>* disabledRows = nullptr;
-					std::vector<int>* disabledCols = nullptr;
+					std::vector<int>* disabledYs = nullptr;
+					std::vector<int>* disabledXs = nullptr;
 					for (int i = 0; i < cPlayer->pathLenght; i++) {
-						int col = cPlayer->pathXpositions[i];
-						int row = cPlayer->pathYpositions[i];
-						if (row > movedPlayer->getRow() - players[0]->getHeight() && row < movedPlayer->getRow() + players[0]->getHeight()) {
-							if (col > movedPlayer->getCol() - players[0]->getWidth() && col < movedPlayer->getCol() + players[0]->getWidth()) {
-								int col = cPlayer->getPathgoalCol();
-								int row = cPlayer->getPathgoalRow();
+						int x = cPlayer->pathXpositions[i];
+						int y = cPlayer->pathYpositions[i];
+						if (y > movedPlayer->getY() - players[0]->getHeight() && y < movedPlayer->getY() + players[0]->getHeight()) {
+							if (x > movedPlayer->getX() - players[0]->getWidth() && x < movedPlayer->getX() + players[0]->getWidth()) {
+								int x = cPlayer->getPathgoalX();
+								int y = cPlayer->getPathgoalY();
 								
-								this->disableArea(row - players[0]->getHeight(), col - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+								this->disableArea(y - players[0]->getHeight(), x - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 
-								if (disabledRows == nullptr) {
-									disabledRows = new std::vector<int>();
-									disabledCols = new std::vector<int>();
+								if (disabledYs == nullptr) {
+									disabledYs = new std::vector<int>();
+									disabledXs = new std::vector<int>();
 								}
-								disabledRows->push_back(row);
-								disabledCols->push_back(col);
+								disabledYs->push_back(y);
+								disabledXs->push_back(x);
 								break;
 							}
 						}
 					}
 					
-					if (disabledRows != nullptr) {
-						this->findPath(players[j]->getPathgoalCol(), players[j]->getPathgoalRow(), j);
-						for (int i = 0; i < disabledRows->size(); i++) {
-							this->enableArea(disabledRows->at(i) - players[0]->getHeight(), disabledCols->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
+					if (disabledYs != nullptr) {
+						this->findPath(players[j]->getPathgoalX(), players[j]->getPathgoalY(), j);
+						for (int i = 0; i < disabledYs->size(); i++) {
+							this->enableArea(disabledYs->at(i) - players[0]->getHeight(), disabledXs->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
 						}
-						delete disabledRows;
-						delete disabledCols;
+						delete disabledYs;
+						delete disabledXs;
 					}
 				}
 			}
@@ -214,15 +214,15 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 }
 
 
-void Pathfinding::disableArea(int row, int col, int width, int height) {
+void Pathfinding::disableArea(int y, int x, int width, int height) {
 	if (getFindingPath() == false) {
-		g->disableObjectBounds(row, col, width, height);
+		g->disableObjectBounds(y, x, width, height);
 	}
 }
 
-void Pathfinding::enableArea(int row, int col, int width, int height) {
+void Pathfinding::enableArea(int y, int x, int width, int height) {
 	if (getFindingPath() == false) {
-		g->enableObjectBounds(row, col, width, height);
+		g->enableObjectBounds(y, x, width, height);
 	}
 }
 
@@ -230,14 +230,14 @@ void Pathfinding::enableArea(int row, int col, int width, int height) {
 void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 	Player* player = players[i_playerIndex];
 
-	g->enableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
+	g->enableObjectBounds(player->getY(), player->getX(), player->getWidth(), player->getHeight());
 
 	if (disableOthers == true) {
 		for (int i = 0; i < playerCount; i++) {
 			if (players[i]->getHp() > 0) {
 				if (i != cPlayerIndex) {
 					Player* cPlayer = players[i];
-					g->disableObjectBounds(cPlayer->getRow(), cPlayer->getCol(), cPlayer->getWidth(), cPlayer->getHeight());
+					g->disableObjectBounds(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight());
 				}
 			}
 		}
@@ -247,7 +247,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 //enables player coords and after that disables all coords of other movables 			setNewPathfinding(false);again in case their area was affected by that.
 void Pathfinding::disablePlayer(int i_playerIndex) {
 	Player* player = players[i_playerIndex];
-	g->disableObjectBounds(player->getRow(), player->getCol(), player->getWidth(), player->getHeight());
+	g->disableObjectBounds(player->getY(), player->getX(), player->getWidth(), player->getHeight());
 }
 
 
@@ -261,8 +261,8 @@ void Pathfinding::startPathFinding() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 		if (this->getNewPathfinding() == true) {
-			int* pathCols = nullptr;
-			int* pathRows = nullptr;
+			int* pathXs = nullptr;
+			int* pathYs = nullptr;
 			int pathlenght = 0;
 			Player* player = players[cPlayerIndex];
 
@@ -280,19 +280,19 @@ void Pathfinding::startPathFinding() {
 				}
 			}
 
-			bool found = Algorithm::findPath(&pathRows, &pathCols, &pathlenght, g, player->getRow() + (player->getHeight() / 2),
-															 player->getCol() + (player->getWidth() / 2), cgoalRow, cgoalCol);
+			bool found = Algorithm::findPath(&pathYs, &pathXs, &pathlenght, g, player->getY() + (player->getHeight() / 2),
+															 player->getX() + (player->getWidth() / 2), cgoalY, cgoalX);
 
 			disablePlayer(cPlayerIndex);
 
 			//reverse accuracy simplification
 			for (int i = 0; i < pathlenght - 1; i++) {
-				pathCols[i] = (float) pathCols[i] / pathfindingAccuracy;
-				pathRows[i] = (float) pathRows[i] / pathfindingAccuracy;
+				pathXs[i] = (float) pathXs[i] / pathfindingAccuracy;
+				pathYs[i] = (float) pathYs[i] / pathfindingAccuracy;
 			}
 
 			if (found == true) {
-				player->givePath(pathCols, pathRows, pathlenght);
+				player->givePath(pathXs, pathYs, pathlenght);
 			}
 			player->setFindingPath(false);
 			setNewPathfinding(false);
