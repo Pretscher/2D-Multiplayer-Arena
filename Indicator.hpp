@@ -58,6 +58,9 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             endWOaction = true;
         }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            endWOaction = true;
+        }
     }
 
     void draw() {
@@ -118,6 +121,9 @@ public:
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                 endWOaction = true;
             }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+                endWOaction = true;
+            }
         }
     }
 
@@ -151,7 +157,7 @@ public:
         Renderer::drawCircle(indicatorX, indicatorY, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
 
 
-        Renderer::drawLine(playerCenterX, playerCenterY, cGoalY, cGoalX,
+        Renderer::drawLine(playerCenterX, playerCenterY, cGoalX, cGoalY,
             sf::Color(0, 255, 255, 100), projectileRadius * 2);
 
         int innerCircleRadius = 50;
@@ -219,6 +225,9 @@ public:
             destSelected = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            endWOaction = true;
+        }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
             endWOaction = true;
         }
     }

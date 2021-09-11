@@ -45,9 +45,6 @@ public:
     inline int getProjectileX() {
         return helpProjectile->getX();
     }
-    inline bool hasFinishedNoCast() {
-        return finishedNoCast;
-    }
 
 private:
     bool dealtDamage = false;
@@ -69,8 +66,6 @@ private:
     int startX;
     int goalY;
     int goalX;
-
-    bool finishedNoCast = false;
 
     int tempTimeSinceExplosionStart = -1;
 };

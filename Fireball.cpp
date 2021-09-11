@@ -29,22 +29,20 @@ Fireball::Fireball(int i_currentY, int i_currentX, int i_goalY, int i_goalX, int
 }
 
 void Fireball::execute0() {
-    if (finishedNoCast == false) {
-        if (indicator->endWithoutAction() == true) {
-            delete indicator;
-            finishedNoCast = true;
-            indicator = nullptr;
-        }
-        else if (indicator->destinationSelected() == true) {
-            goalY = indicator->getDestinationY();
-            goalX = indicator->getDestinationX();
-            delete indicator;
-            indicator = nullptr;
-            this->nextPhase();//init casting
-        }
-        else {
-            indicator->update();
-        }
+    if (indicator->endWithoutAction() == true) {
+        delete indicator;
+        finished = true;
+        indicator = nullptr;
+    }
+    else if (indicator->destinationSelected() == true) {
+        goalY = indicator->getDestinationY();
+        goalX = indicator->getDestinationX();
+        delete indicator;
+        indicator = nullptr;
+        this->nextPhase();//init casting
+    }
+    else {
+        indicator->update();
     }
 }
 

@@ -215,7 +215,7 @@ public:
             else {
                 cdPercent = 0;
             }
-            Renderer::drawRect(x + size - (cdPercent * size), y, size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
+            Renderer::drawRect(x, y + size - (cdPercent * size), size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
 
             std::string abilityLetter;
             if (i == 0) {
