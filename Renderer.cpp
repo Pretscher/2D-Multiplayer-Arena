@@ -137,11 +137,11 @@ void Renderer::drawLine(int row1, int col1, int row2, int col2, sf::Color c, int
     fromRowCol(&row1, &col1);
     fromRowCol(&row2, &col2);
 
-    float dx = col2 - col1;
-    float dy = row2 - row1;
+    float dCol = col2 - col1;
+    float dRow = row2 - row1;
     int ht = thickness / 2;
-    float rot = atan2(dy, dx) * 57.2958f;
-    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dx) * std::abs(dx) + std::abs(dy) * std::abs(dy)), ht * 2));
+    float rot = atan2(dRow, dCol) * 57.2958f;
+    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dCol) * std::abs(dCol) + std::abs(dRow) * std::abs(dRow)), ht * 2));
 
     line.setOrigin(0, ht);
     line.setPosition(col1 - viewSpace[1], row1 - viewSpace[0]);

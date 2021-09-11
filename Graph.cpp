@@ -47,15 +47,6 @@ Graph::~Graph() {
     delete[] usedByMoveable;
 }
 
-void Graph::reset() {
-    for (int i = 0; i < graphNodeCount; i++) {
-        delete[] neighbourCosts[i];
-    }
-    delete[] neighbourCosts;
-    delete[] heapIndices;
-    heapIndices = new int[this->rowCount * this->colCount];
-}
-
 /* MEMO:
 isUseable = new bool*[this->rowCount];
 for (int row = 0; row < this->rowCount; row++) {
@@ -132,6 +123,11 @@ void Graph::generateWorldGraph(bool** isUseable) {
             }
         } //end one row
     } //end all rowCount
+
+    neighbourCosts = new int* [graphNodeCount];
+    for (int i = 0; i < graphNodeCount; i++) {
+        neighbourCosts[i] = new int[8];
+    }
 }
 
 struct IntPoint{

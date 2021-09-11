@@ -11,16 +11,16 @@ bool Algorithm::findPath(int** o_pathRows, int** o_pathCols, int* o_pathLenght, 
 	int startIndex = graph->getIndexFromCoords(startRow, startCol, true);
 	int goalIndex = graph->getIndexFromCoords(goalRow, goalCol, true);
 
-	int graphNodeCount = graph->graphNodeCount;
+	int graphNodeCount = graph->getGraphNodeCount();
+
+	graph->resetHeapIndices();
+
 	//initialize GraphnodeHeuristics
-	graph->neighbourCosts = new int*[graphNodeCount];
 	for (int nodeIndex = 0; nodeIndex < graphNodeCount; nodeIndex++) {
-		graph->heapIndices[nodeIndex] = -1;
-		graph->neighbourCosts[nodeIndex] = new int[graph->neighbourCount[nodeIndex]];
-		for (int i = 0; i < graph->neighbourCount[nodeIndex]; i++) {
-			int currentNeighbourIndex = graph->neighbourIndices[nodeIndex][i];
-			float heuristics = getHeuristic(graph->currentGraph, graph->getIndexBoundRows(), graph->getIndexBoundCols(), currentNeighbourIndex, goalIndex);
-			graph->neighbourCosts[nodeIndex][i] = heuristics;
+		for (int i = 0; i < graph->getIndexNeighbourCount()[nodeIndex]; i++) {
+			int currentNeighbourIndex = graph->getNeighbourIndices()[nodeIndex][i];
+			float heuristics = getHeuristic(graph->getGraph(), graph->getIndexBoundRows(), graph->getIndexBoundCols(), currentNeighbourIndex, goalIndex);
+			graph->setNeighbourCost(nodeIndex, i, heuristics);
 		}
 	}
 
@@ -35,39 +35,39 @@ bool Algorithm::findPath(int** o_pathRows, int** o_pathCols, int* o_pathLenght, 
 	previousIndex[startIndex] = startIndex;
 	BinaryHeap* heap = new BinaryHeap(graph, graphNodeCount);
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(graph->currentGraph, graph->getIndexBoundRows(), graph->getIndexBoundCols(),
-		graph->currentGraph[startIndex], graph->currentGraph[goalIndex]), startIndex);
+	HeapNode* toInsert = new HeapNode(getHeuristic(graph->getGraph(), graph->getIndexBoundRows(), graph->getIndexBoundCols(),
+		graph->getGraph()[startIndex], graph->getGraph()[goalIndex]), startIndex);
 	heap->insert(toInsert);
 	bool foundPath = false;
 
 	while (heap->getCurrentNodeCount() > 0) {//while heap is not empty
 		HeapNode* helpNode = heap->extractMin();//extract best node
-		int cNodeIndex = graph->currentGraph[helpNode->getIndexInGraph()];//get graphIndex of best node
+		int cNodeIndex = graph->getGraph()[helpNode->getIndexInGraph()];//get graphIndex of best node
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;
 			break;
 		}
-			int neighbourCount = graph->neighbourCount[cNodeIndex];//we will look through graph->neighbourIndices of this node
+			int neighbourCount = graph->getIndexNeighbourCount()[cNodeIndex];//we will look through graph->getNeighbourIndices() of this node
 			for (int i = 0; i < neighbourCount; i++) {
-				int cNeighbourIndex = graph->neighbourIndices[cNodeIndex][i];
-				if (graph->usedByMoveable[cNeighbourIndex] == false) {//efficient method to exclude moveable collision objects from graph
-					float tempDistance = distanceTravelled[cNodeIndex] + graph->neighbourCosts[cNodeIndex][i];
+				int cNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
+				if (graph->isUsedByMoveableObject()[cNeighbourIndex] == false) {//efficient method to exclude moveable collision objects from graph
+					float tempDistance = distanceTravelled[cNodeIndex] + graph->getIndexNeighbourCosts()[cNodeIndex][i];
 
 					if (tempDistance < distanceTravelled[cNeighbourIndex]) {
 						distanceTravelled[cNeighbourIndex] = tempDistance;
 						previousIndex[cNeighbourIndex] = cNodeIndex;
 
-						float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->currentGraph, graph->getIndexBoundRows(), 
+						float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->getGraph(), graph->getIndexBoundRows(), 
 							graph->getIndexBoundCols(), cNeighbourIndex, goalIndex);
 
 						bool alreadyInserted = true;
 						//if graphnode has been inserted to heap (index in heap initialized to -1)
-						if (graph->heapIndices[cNeighbourIndex] == -1) {
+						if (graph->getHeapIndices()[cNeighbourIndex] == -1) {
 							alreadyInserted = false;
 						}
 
 						if (alreadyInserted == true) {
-							heap->decrease(graph->heapIndices[cNeighbourIndex], heuristicOfCurrentNeighbour);
+							heap->decrease(graph->getHeapIndices()[cNeighbourIndex], heuristicOfCurrentNeighbour);
 						}
 						else {
 							HeapNode* nodeToInsert = new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex);
@@ -118,20 +118,16 @@ bool Algorithm::findPath(int** o_pathRows, int** o_pathCols, int* o_pathLenght, 
 
 		if (pathLenght == 0) {
 			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
-			graph->reset();
 			delete heap;
 			delete[] distanceTravelled;
 			delete[] previousIndex;
 			return false;
 		}
-
-		graph->reset();
 		delete heap;
 		delete[] distanceTravelled;
 		delete[] previousIndex;
 		return true;
 	}
-	graph->reset();
 	delete heap;
 	delete[] distanceTravelled;
 	delete[] previousIndex;

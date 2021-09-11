@@ -15,7 +15,7 @@
 
 	void BinaryHeap::actualizeGraphIndex(int indexInHeap) {
 		unsigned int graphIndex = heap[indexInHeap]->getIndexInGraph();
-		graph->heapIndices[graphIndex] = indexInHeap;
+		graph->getHeapIndices()[graphIndex] = indexInHeap;
 	}
 
 	//-------------------------------------------
