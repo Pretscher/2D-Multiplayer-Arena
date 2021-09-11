@@ -167,8 +167,10 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 			if (j != movedPlayerIndex) {
 				Player* cPlayer = players[j];
 				if (cPlayer->hasPath() == true) {
-					//did player position change?
+					//if paths cross each other, disable all crossing points and find new path. this is periodically called
 
+					std::vector<int>* disabledRows = nullptr;
+					std::vector<int>* disabledCols = nullptr;
 					for (int i = 0; i < cPlayer->pathLenght; i++) {
 						int col = cPlayer->pathXpositions[i];
 						int row = cPlayer->pathYpositions[i];
@@ -176,17 +178,28 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 							if (col > movedPlayer->getCol() - players[0]->getWidth() && col < movedPlayer->getCol() + players[0]->getWidth()) {
 								int col = cPlayer->getPathGoalX();
 								int row = cPlayer->getPathGoalY();
-								this->findPath(col, row, j);
+								
+								this->disableArea(row - players[0]->getHeight(), col - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+
+								if (disabledRows == nullptr) {
+									disabledRows = new std::vector<int>();
+									disabledCols = new std::vector<int>();
+								}
+								disabledRows->push_back(row);
+								disabledCols->push_back(col);
 								break;
 							}
 						}
 					}
-
-					//if (abs((cPlayer->getRow() + (players[0]->getHeight() / 2)) - (movedPlayer->getRow() + (players[0]->getHeight() / 2))) < players[0]->getHeight() * 3
-					//	&& abs((cPlayer->getCol() + (players[0]->getWidth() / 2)) - (movedPlayer->getCol() + (players[0]->getWidth() / 2))) < players[0]->getWidth() * 3) {
-						//find new path to same goal
-
-					//}
+					
+					if (disabledRows != nullptr) {
+						this->findPath(movedPlayer->getPathGoalX(), movedPlayer->getPathGoalY(), movedPlayerIndex);
+						for (int i = 0; i < disabledRows->size(); i++) {
+							this->enableArea(disabledRows->at(i) - players[0]->getHeight(), disabledCols->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
+						}
+						delete disabledRows;
+						delete disabledCols;
+					}
 				}
 			}
 		}
