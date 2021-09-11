@@ -82,9 +82,7 @@ void Pathfinding::update() {
 }
 
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
-	if (goalX == players[playerIndex]->getCol() && goalY == players[playerIndex]->getRow()) {
-		return;
-	}
+
 	enablePlayer(myPlayerIndex, true);
 	for (int i = 0; i < playerCount; i++) {
 		if (players[i]->targetAble == false) {
@@ -98,8 +96,18 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 			}
 		}
 	}
+	int pRow = players[playerIndex]->getRow();
+	int pCol = players[playerIndex]->getCol();
+	g->findNextUseableCoords(&pCol, &pRow, true);
+	players[playerIndex]->setRow(pRow);
+	players[playerIndex]->setCol(pCol);
+
 	g->findNextUseableCoords(&goalX, &goalY, true);
 	disablePlayer(myPlayerIndex);
+
+	if (goalX == pCol && goalY == pRow) {//player has valid coords and is at goal, so we can return after disabling palyers again
+		return;
+	}
 
 	if (getFindingPath() == false) {
 		setFindingPath(true);
@@ -134,7 +142,6 @@ void Pathfinding::workThroughPathfindingQueue() {
 
 
 void Pathfinding::moveObjects() {
-	//g->debugDrawing();
 	workThroughPathfindingQueue();
 	//this->enableArea(0, 0, wCols - 1, wRows - 1);//enable all
 	for (int i = 0; i < playerCount; i++) {
@@ -275,6 +282,8 @@ void Pathfinding::startPathFinding() {
 
 			bool found = Algorithm::findPath(&xPath, &yPath, &pathlenght, g, player->getRow() + (player->getHeight() / 2), 
 															 player->getCol() + (player->getWidth() / 2), cGoalY, cGoalX);
+
+			disablePlayer(cPlayerIndex);
 
 			//reverse accuracy simplification
 			for (int i = 0; i < pathlenght - 1; i++) {

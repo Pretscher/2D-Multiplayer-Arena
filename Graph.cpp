@@ -174,25 +174,25 @@ int Graph::findNextUseableVertex(int row, int col, bool moveableRelevant) {
 
         visited[cRow][cCol] = true;//dont use node again
         for (int i = 0; i < 4; i++) {
-            if (cRow + 1 < rows) {
+            if (cRow + 1 < rows) {//bound check
                 if (visited[cRow + 1][cCol] == false) {
                     toVisit->push_back(IntPoint(cRow + 1, cCol));
                     visited[cRow + 1][cCol] = true;//dont use node again
                 }
             }
-            if (cCol + 1 < cols) {
+            if (cCol + 1 < cols) {//bound check
                 if (visited[cRow][cCol + 1] == false) {
                     toVisit->push_back(IntPoint(cRow, cCol + 1));
                     visited[cRow][cCol + 1] = true;//dont use node again
                 }
             }
-            if (cRow - 1 >= 0) {
+            if (cRow - 1 >= 0) {//bound check
                 if (visited[cRow - 1][cCol] == false) {
                     toVisit->push_back(IntPoint(cRow - 1, cCol));
                     visited[cRow - 1][cCol] = true;//dont use node again
                 }
             }
-            if (cCol - 1 >= 0) {
+            if (cCol - 1 >= 0) {//bound check
                 if (visited[cRow][cCol - 1] == false) {
                     toVisit->push_back(IntPoint(cRow, cCol - 1));
                     visited[cRow][cCol - 1] = true;//dont use node again

@@ -50,6 +50,5 @@ void VladW::init1() {
 	int row = current->getRow();
 	int col = current->getCol();
 
-	GlobalRecources::pFinding->getGraph()->findNextUseableCoords(&col, &row, true);
 	GlobalRecources::pFinding->findPath(col, row, myPlayerIndex);
 }

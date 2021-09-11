@@ -42,6 +42,9 @@ public:
 	void debugDrawing();
 
 	void findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant);
+	bool isDisabled(int index) {
+		return usedByMoveable[index];
+	}
 private:
 	int findNextUseableVertex(int row, int col, bool moveableRelevant);
 };
