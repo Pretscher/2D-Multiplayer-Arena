@@ -161,9 +161,6 @@
     <ClInclude Include="Graph.hpp">
       <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>
-    <ClInclude Include="GraphNode.hpp">
-      <Filter>A%2a-Algorithmus</Filter>
-    </ClInclude>
     <ClInclude Include="HeapNode.hpp">
       <Filter>A%2a-Algorithmus</Filter>
     </ClInclude>

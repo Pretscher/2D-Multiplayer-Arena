@@ -2,7 +2,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "GraphNode.hpp"
 #include <mutex>
 
 class Graph {
