@@ -10,9 +10,6 @@ sf::RenderWindow* Renderer::currentWindow;
 void Renderer::init(sf::RenderWindow* window) {
     Renderer::currentWindow = window;
     window->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
-
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
 }
 
 void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
