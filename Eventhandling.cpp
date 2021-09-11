@@ -107,9 +107,6 @@ void eventhandling::eventloop() {
 
 
 void eventhandling::drawingloop() {
-	int mouseX = -1, mouseY = -1;
-	Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
-	Renderer::drawRect(mouseY, mouseX, 50, 50, sf::Color(255, 0, 0, 255), false);
 	if (menuActive == true) {
 		menu->drawMenu();
 	}
