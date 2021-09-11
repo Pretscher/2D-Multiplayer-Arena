@@ -1,37 +1,34 @@
 #include <iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
-//#include "Renderer.hpp"
-#include <time.h>
-#include "Renderer.hpp"
 #include "Utils.hpp"
 
-bool Utils::collisionCoordsRect(float rX, float rY, float rW, float rH, float pX, float pY) {
-	if (rX < pX && rX + rW > pX) {
-		if (rY < pY && rY + rH > pY) {
+bool Utils::collisionCoordsRect(float rectCol, float rectRow, float rectWidth, float rectHeight, float pointCol, float pointRow) {
+	if (rectCol < pointCol && rectCol + rectWidth > pointCol) {
+		if (rectRow < pointRow && rectRow + rectHeight > pointRow) {
 			return true;
 		}
 	}
 	return false;
 }
 /**
-* @param top left coords of and circle
+* @param top left coords of circle and point coords
 **/
-bool Utils::collisionCoordsCircle(float cX, float cY, float cR, float pX, float pY) {
-	float dist = sqrt((pX - (cX + cR)) * (pX - (cX + cR)) + (pY - (cY + cR)) * (pY - (cY + cR)));
-	if (dist <= cR) return true;
+bool Utils::collisionCoordsCircle(float circleCol, float circleRow, float circleRadius, float pointCol, float pointRow) {
+	float dist = sqrt((pointCol - (circleCol + circleRadius)) * (pointCol - (circleCol + circleRadius)) + (pointRow - (circleRow + circleRadius)) * (pointRow - (circleRow + circleRadius)));
+	if (dist <= circleRadius) return true;
 	return false;
 }
 
 /**
 * @param top left coords of rect and circle, colPointDist is accuracy of detection
 **/
-bool Utils::collisionRectCircle(int aCol, int aRow, int aW, int aH, int cCol, int cRow, int cR, int colPointDist) {
+bool Utils::collisionRectCircle(int rectCol, int rectRow, int rectWidth, int rectHeight, int circleCol, int circleRow, int circleRadius, int colPointDist) {
 	//check points of second rect for intersection with circle with given accuracy
-	for (float col = aCol; col <= aCol + aW; col += colPointDist) {
-		for (float row = aRow; row <= aRow + aH; row += colPointDist) {
-			//Renderer::drawRect(row, col, 2, 2, sf::Color(255, 255, 0, 255), false);
-			if (Utils::collisionCoordsCircle(cCol, cRow, cR, col, row) == true) {
+	for (float col = rectCol; col <= rectCol + rectWidth; col += colPointDist) {
+		for (float row = rectRow; row <= rectRow + rectHeight; row += colPointDist) {
+			//Renderer::drrectWidthRect(row, col, 2, 2, sf::Color(255, 255, 0, 255), false);
+			if (Utils::collisionCoordsCircle(circleCol, circleRow, circleRadius, col, row) == true) {
 				return true;
 			}
 		}
@@ -39,20 +36,20 @@ bool Utils::collisionRectCircle(int aCol, int aRow, int aW, int aH, int cCol, in
 	return false;
 }
 
-bool Utils::collisionRectCircleOnlyOutline(int aCol, int aRow, int aW, int aH, int cCol, int cRow, int cR) {
+bool Utils::collisionRectCircleOnlyOutline(int rectCol, int rectRow, int rectWidth, int rectHeight, int circleCol, int circleRow, int circleRadius) {
 	//check points of second rect for intersection with circle with given accuracy
-	for (float row = aRow; row <= aRow + aH; row += aH) {
-		for (float col = aCol; col <= aCol + aW; col += (cR * 2 - 1)) {
-			//Renderer::drawRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::collisionCoordsCircle(cCol, cRow, cR, col, row) == true) {
+	for (float row = rectRow; row <= rectRow + rectHeight; row += rectHeight) {
+		for (float col = rectCol; col <= rectCol + rectWidth; col += (circleRadius * 2 - 1)) {
+			//Renderer::drrectWidthRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
+			if (Utils::collisionCoordsCircle(circleCol, circleRow, circleRadius, col, row) == true) {
 				return true;
 			}
 		}
 	}
-	for (float col = aCol; col <= aCol + aW; col += aW) {
-		for (float row = aRow; row <= aRow + aH; row += (cR * 2 - 1)) {
-			//Renderer::drawRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::collisionCoordsCircle(cCol, cRow, cR, col, row) == true) {
+	for (float col = rectCol; col <= rectCol + rectWidth; col += rectWidth) {
+		for (float row = rectRow; row <= rectRow + rectHeight; row += (circleRadius * 2 - 1)) {
+			//Renderer::drrectWidthRect(row, col, 2, 2, sf::Color(255, 255, 0, 255));
+			if (Utils::collisionCoordsCircle(circleCol, circleRow, circleRadius, col, row) == true) {
 				return true;
 			}
 		}
@@ -60,35 +57,25 @@ bool Utils::collisionRectCircleOnlyOutline(int aCol, int aRow, int aW, int aH, i
 	return false;
 }
 
-bool Utils::collisionRects(float aX, float aY, float aW, float aH, float bX, float bY, float bW, float bH, float colPointDist) {
+bool Utils::collisionRects(float rect1Col, float rect1Row, float rect1Width, float rect1Height, float rect2Col, float rect2Row, float rect2Width, float rect2Height, float colPointDist) {
 	//check points of second rect for intersection with first rect with given accuracy
-	for (float col = bX; col < bX + bW; col += colPointDist) {
-		for (float row = bY; row < bY + bH; row += colPointDist) {
-			if (Utils::collisionCoordsRect(aX, aY, aW, aH, col, row) == true) {
+	for (float col = rect2Col; col < rect2Col + rect2Width; col += colPointDist) {
+		for (float row = rect2Row; row < rect2Row + rect2Height; row += colPointDist) {
+			if (Utils::collisionCoordsRect(rect1Col, rect1Row, rect1Width, rect1Height, col, row) == true) {
 				return true;
 			}
 		}
 	}
 	return false;
 }
-/*
-sf::Vector2f* getLeftClickPos() {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		float col = sf::Mouse::getPosition().x;
-		float row = sf::Mouse::getPosition().y;
-		Renderer::toCartesianCoords(&col, &row);
-		return new sf::Vector2f(col, row);
-	}
-	return nullptr;
-}
-*/
+
 bool randSeedInit = true;
-float Utils::RandomNumber(float Min, float Max) {
+float Utils::RandomNumber(float Min, float MrectCol) {
 	if (randSeedInit == true) {
 		srand(time(NULL));
 		randSeedInit = false;
 	}
-	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
+	return ((float(rand()) / float(RAND_MAX)) * (MrectCol - Min)) + Min;
 }
 
 bool Utils::compareFloats(float a, float b, float accuracy) {
@@ -99,31 +86,19 @@ bool Utils::compareFloats(float a, float b, float accuracy) {
 	return (roundA == roundB);
 }
 
-float Utils::calcDist1D(float y1, float y2) {
+float Utils::calcDist1D(float a, float b) {
 	float dist = 0;
-	float a = abs(y1);
-	float b = abs(y2);
-	if (a >= b) {
-		dist = a - b;
+	float absA = abs(a);
+	float absB = abs(b);
+	if (absA >= absB) {
+		dist = absA - absB;
 	}
-	if (b > a) {
-		dist = b - a;
+	if (absB > absA) {
+		dist = absB - absA;
 	}
 	return dist;
 }
 
-float Utils::calcDist2D(float x1, float x2, float y1, float y2) {
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+float Utils::calcDist2D(float col1, float col2, float row1, float row2) {
+	return sqrt((col1 - col2) * (col1 - col2) + (row1 - row2) * (row1 - row2));
 }
-
-/*
-sf::Vector2f* getLeftClickPos() {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		float col = sf::Mouse::getPosition().x;
-		float row = sf::Mouse::getPosition().y;
-		Renderer::toCartesianCoords(&col, &row);
-		return new sf::Vector2f(col, row);
-	}
-	return nullptr;
-}
-*/
