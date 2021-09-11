@@ -139,13 +139,13 @@ void Player::deletePath() {
 
 void Player::draw() {
 	if (inVladW == false) {
-		Renderer::drawRectWithTexture(y, x, width, height, textures[cTextureI], false);
+		Renderer::drawRectWithTexture(x, y, width, height, textures[cTextureI], false);
 	}
 	int barWidth = width * 1.5;
-	Renderer::drawRect(y - 40, x - (barWidth - width) / 2, barWidth, 30, sf::Color(20, 30, 20, 255), false);
+	Renderer::drawRect(x - (barWidth - width) / 2, y - 40, barWidth, 30, sf::Color(20, 30, 20, 255), false);
 	if (hp > 0) {
 		float widthMult = (float)hp / maxHp;
-		Renderer::drawRect(y - 40, x - (barWidth - width) / 2, barWidth * widthMult, 30, sf::Color(0, 100, 0, 255), false);
+		Renderer::drawRect(x - (barWidth - width) / 2, y - 40, barWidth * widthMult, 30, sf::Color(0, 100, 0, 255), false);
 	}
 }
 

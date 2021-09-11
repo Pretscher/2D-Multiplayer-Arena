@@ -36,13 +36,13 @@ void VladE::draw0() {
 	int innerCircleRadius = range * abs(1.0f - percentFinishedCharge);
 	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 
-	int innerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - innerCircleRadius;
 	int innerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - innerCircleRadius;
-	Renderer::drawCircle(innerY, innerX, innerCircleRadius, sf::Color(150, 0, 0, 255), false, 5, false);
-	
-	int outerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - range;
+	int innerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - innerCircleRadius;
+	Renderer::drawCircle(innerX, innerY, innerCircleRadius, sf::Color(150, 0, 0, 255), false, 5, false);
+
 	int outerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - range;
-	Renderer::drawCircle(outerY, outerX, range, sf::Color(150, 0, 0, 255), false, 10, false);
+	int outerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - range;
+	Renderer::drawCircle(outerX, outerY, range, sf::Color(150, 0, 0, 255), false, 10, false);
 }
 
 void VladE::init1() {
@@ -251,7 +251,7 @@ void VladE::draw1() {
 	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
 	int outerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - range;
 	int outerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - range;
-	Renderer::drawCircle(outerY, outerX, range, sf::Color(150, 0, 0, 255), false, 10, false);
+	Renderer::drawCircle(outerX, outerY, range, sf::Color(150, 0, 0, 255), false, 10, false);
 }
 
 void VladE::init2() {

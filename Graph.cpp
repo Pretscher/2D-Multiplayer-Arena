@@ -301,9 +301,6 @@ void Graph::disableObjectBounds(int y, int x, int width, int height) {
 
     for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
-          // if (Renderer::currentWindow != nullptr) {
-             //  Renderer::drawRect(y / accuracy, x / accuracy, 2, 2, sf::Color(255, 255, 0, 255));
-         //  }
             int index = getIndexFromCoords((float) y / accuracy, (float) x / accuracy, false);
             usedByMoveable[index] = true;
             if (debug == true) {
@@ -370,7 +367,7 @@ void Graph::moveObject(int y, int x, int oldY, int oldX, int width, int height) 
 
 void Graph::debugDrawing() {
     debug = true;
-    for (int i = 0; i < deactivatedY.size(); i++) {
-        Renderer::drawRect(deactivatedY.at(i), deactivatedX.at(i), 2, 2, sf::Color(255, 255, 0, 255), false);
+    for (int i = 0; i < deactivatedX.size(); i++) {
+        Renderer::drawRect(deactivatedX.at(i), deactivatedY.at(i), 2, 2, sf::Color(255, 255, 0, 255), false);
     }
 }

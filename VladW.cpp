@@ -36,8 +36,8 @@ void VladW::execute0() {
 
 void VladW::draw0() {
 	Player* current = GlobalRecources::players[myPlayerIndex];
-	Renderer::drawCircle(current->getY() + (current->getHeight() / 2) - range,
-		current->getX() + (current->getWidth() / 2) - range, range, sf::Color(150, 0, 0, 255), true, 0, false);
+	Renderer::drawCircle(current->getX() + (current->getWidth() / 2) - range,
+		current->getY() + (current->getHeight() / 2) - range, range, sf::Color(150, 0, 0, 255), true, 0, false);
 }
 
 void VladW::init1() {

@@ -131,7 +131,7 @@ void Fireball::draw1() {
 }
 
 void Fireball::draw2() {
-    Renderer::drawCircle(this->explosionY, this->explosionX, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
+    Renderer::drawCircle(this->explosionX, this->explosionY, this->explosionRange, sf::Color(255, 120, 0, 255), true, 0, false);
 }
 
 

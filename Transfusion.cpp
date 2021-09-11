@@ -149,7 +149,7 @@ void Transfusion::draw2() {
     bloodBall->draw(sf::Color(200, 0, 0, 255));
     for (int i = 0; i < positionsSavedCount; i++) {
         if (lastYs[i] != -1) {
-            Renderer::drawCircle(lastYs[i], lastXs[i], bloodBall->getRadius(), sf::Color(200, 0, 0, 255), true, 0, false);
+            Renderer::drawCircle(lastXs[i], lastYs[i], bloodBall->getRadius(), sf::Color(200, 0, 0, 255), true, 0, false);
         }
     }
 }

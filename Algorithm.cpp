@@ -5,7 +5,7 @@
 #include <limits>
 #include "Renderer.hpp"
 int Algorithm::currentIteration = -1;
-bool Algorithm::findPath(int** o_pathYs, int** o_pathXs, int* o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
+bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
 	currentIteration++;
 	
 	int startIndex = graph->getIndexFromCoords(startY, startX, true);

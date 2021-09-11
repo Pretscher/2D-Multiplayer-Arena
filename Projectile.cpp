@@ -115,5 +115,5 @@ void Projectile::move(int maxY, int maxX, Rect** xlisionRects, int rectCount) {
 }
 
 void Projectile::draw(sf::Color c) {
-	Renderer::drawCircle((int)this->y, (int)this->x, this->radius, c, true, 0, false);
+	Renderer::drawCircle((int)this->x, (int)this->y, this->radius, c, true, 0, false);
 }

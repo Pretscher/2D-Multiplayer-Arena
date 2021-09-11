@@ -111,18 +111,18 @@ void VladR::execute2() {
 void VladR::draw2() {
 	for (int i = 0; i < affectedPlayerCount; i++) {
 		Player* cPlayer = affectedPlayers[i];
-		Renderer::drawCircle(cPlayer->getY(), cPlayer->getX(), 50, sf::Color(150, 0, 0, 255), false, 20, false);
+		Renderer::drawCircle(cPlayer->getX(), cPlayer->getY(), 50, sf::Color(150, 0, 0, 255), false, 20, false);
 	}
 	float phaseFinishedPercent = (float)this->getTimeSincePhaseStart(this->getPhase()) / timeTillProc;
 	if (phaseFinishedPercent < 0.25f) {
 
 
 		float alpha = 255 * abs(1 - phaseFinishedPercent * 4);//fade out with time
-		Renderer::drawCircle(y - radius, x - radius, radius, sf::Color(100, 0, 0, alpha), true, 0, false);
+		Renderer::drawCircle(x - radius, y - radius, radius, sf::Color(100, 0, 0, alpha), true, 0, false);
 
-		Renderer::drawCircle(y - radius, x - radius, radius, sf::Color(200, 0, 0, alpha), false, 30, false);
+		Renderer::drawCircle(x - radius, y - radius, radius, sf::Color(200, 0, 0, alpha), false, 30, false);
 		int secondRadiusOffset = 50;
-		Renderer::drawCircle(y - radius + secondRadiusOffset, x - radius + secondRadiusOffset, radius - secondRadiusOffset, 
+		Renderer::drawCircle(x - radius + secondRadiusOffset, y - radius + secondRadiusOffset, radius - secondRadiusOffset, 
 												sf::Color(150, 0, 0, alpha), false, 50, false);
 	}
 }
@@ -172,7 +172,7 @@ void VladR::draw3() {
 	bloodBall->draw(sf::Color(150, 0, 0, 255));
 	for (int i = 0; i < positionsSavedCount; i++) {
 		if (lastYs[i] != -1) {
-			Renderer::drawCircle(lastYs[i], lastXs[i], bloodBall->getRadius(), sf::Color(150, 0, 0, 255), true, 0, false);
+			Renderer::drawCircle(lastXs[i], lastYs[i], bloodBall->getRadius(), sf::Color(150, 0, 0, 255), true, 0, false);
 		}
 	}
 }

@@ -43,9 +43,8 @@ public:
     bool isPressed() {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && sameClick == false) {
             sameClick = true;
-            int mY;
-            int mX;
-            Renderer::getMousePos(&mY, &mX, false, true);
+            int mX, mY;
+            Renderer::getMousePos(&mX, &mY, false, true);
             if (mY > this->y && mY < this->y + this->height) {
                 if (mX > this->x && mX < this->x + this->width) {
                     return true;
@@ -65,17 +64,17 @@ public:
             newColor.r += 50;
             newColor.g += 50;
             newColor.b += 50;
-            Renderer::drawRectOutline(y, x, width, height, newColor, 10, true);
+            Renderer::drawRectOutline(x, y, width, height, newColor, 10, true);
         }
         else {
-            Renderer::drawRectOutline(y, x, width, height, newColor, 3, true);
+            Renderer::drawRectOutline(x, y, width, height, newColor, 3, true);
         }
-        Renderer::drawRect(y, x, width, height, newColor, true);
+        Renderer::drawRect(x, y, width, height, newColor, true);
 
-        Renderer::drawText(text, y, x, width, height, textColor);
+        Renderer::drawText(text, x, y, width, height, textColor);
     }
 private:
-    int y, x, width, height;
+    int x, y, width, height;
     sf::Color color, textColor;
     std::string text;
 };

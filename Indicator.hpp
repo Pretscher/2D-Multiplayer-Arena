@@ -32,9 +32,10 @@ public:
                 Player* c = GlobalRecources::players[i];
                 if(c->targetAble == true) {
                     if (c->getHp() > 0) {
-                        int mouseY = 0;
-                        int mouseX = 0;
-                        Renderer::getMousePos(&mouseY, &mouseX, true, true);
+
+                        int mouseX = 0, mouseY = 0;
+                        Renderer::getMousePos(&mouseX, &mouseY, true, true);
+
                         if (Utils::xlisionCoordsRect(c->getX(), c->getY(), c->getWidth(),
                             c->getHeight(), mouseX, mouseY) == true) {
                             //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
@@ -42,7 +43,7 @@ public:
                                 this->targetIndex = i;
                             }
                             //draw an outline around the hovered over player
-                            Renderer::drawRectOutline(c->getY(), c->getX(), c->getWidth(), c->getHeight(),
+                            Renderer::drawRectOutline(c->getX(), c->getY(), c->getWidth(), c->getHeight(),
                                 sf::Color(75, 165, 180, 150), 2, false);
                         }
                         else {
@@ -65,8 +66,8 @@ public:
         int indicatorY = me->getY() + me->getHeight() / 2 - this->range;//range = radius of circle
         int indicatorX = me->getX() + me->getWidth() / 2 - this->range;
 
-        Renderer::drawCircle(indicatorY, indicatorX, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
-        Renderer::drawCircle(indicatorY, indicatorX, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
+        Renderer::drawCircle(indicatorX, indicatorY, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
+        Renderer::drawCircle(indicatorX, indicatorY, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
     }
 
     inline int getTargetIndex() {
@@ -109,7 +110,7 @@ public:
 
     void update() {
         if (endWOaction == false) {
-            Renderer::getMousePos(&cGoalY, &cGoalX, true, false);
+            Renderer::getMousePos(&cGoalX, &cGoalY, true, false);
             limitGoalPosToRange();
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 fire = true;
@@ -147,16 +148,16 @@ public:
         //draw range indicator
         int indicatorY = playerCenterY - this->range;//range = radius of circle
         int indicatorX = playerCenterX - this->range;
-        Renderer::drawCircle(indicatorY, indicatorX, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
+        Renderer::drawCircle(indicatorX, indicatorY, this->range, sf::Color(0, 255, 255, 100), false, 10, false);
 
 
-        Renderer::drawLine(playerCenterY, playerCenterX, cGoalY, cGoalX,
+        Renderer::drawLine(playerCenterX, playerCenterY, cGoalY, cGoalX,
             sf::Color(0, 255, 255, 100), projectileRadius * 2);
 
         int innerCircleRadius = 50;
-        Renderer::drawCircle(playerCenterY - innerCircleRadius, playerCenterX - innerCircleRadius,
+        Renderer::drawCircle(playerCenterX - innerCircleRadius, playerCenterY - innerCircleRadius,
                 innerCircleRadius,sf::Color(0, 0, 0, 255), true, 0, false);
-        Renderer::drawCircle(indicatorY, indicatorX, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
+        Renderer::drawCircle(indicatorX, indicatorY, this->range, sf::Color(0, 255, 255, 25), true, 0, false);
     }
 
     inline bool endWithoutAction() {
@@ -211,9 +212,8 @@ public:
 
     void update() {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            int mouseY = 0;
-            int mouseX = 0;
-            Renderer::getMousePos(&mouseY, &mouseX, true, true);
+            int mouseX = 0, mouseY = 0;
+            Renderer::getMousePos(&mouseX, &mouseY, true, true);
             targetDestinationX = mouseX;
             targetDestinationY = mouseY;
             destSelected = true;
@@ -226,14 +226,14 @@ public:
     void draw() {
         int mouseY = 0;
         int mouseX = 0;
-        Renderer::getMousePos(&mouseY, &mouseX, true, true);
-        Renderer::drawCircle(mouseY - radius, mouseX - radius, radius, sf::Color(0, 255, 255, 100), false, 10, false);
-        Renderer::drawCircle(mouseY - radius, mouseX - radius, radius, sf::Color(0, 255, 255, 25), true, 0, false);
+        Renderer::getMousePos(&mouseX, &mouseY, true, true);
+        Renderer::drawCircle(mouseX - radius, mouseY - radius, radius, sf::Color(0, 255, 255, 100), false, 10, false);
+        Renderer::drawCircle(mouseX - radius, mouseY - radius, radius, sf::Color(0, 255, 255, 25), true, 0, false);
 
         int playerCenterY = GlobalRecources::players[this->myPlayerIndex]->getY() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
         int playerCenterX = GlobalRecources::players[this->myPlayerIndex]->getX() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
-        Renderer::drawCircle(playerCenterY - range, playerCenterX - range, range, sf::Color(0, 255, 255, 100), false, 10, false);
-        Renderer::drawCircle(playerCenterY - range, playerCenterX - range, range, sf::Color(0, 255, 255, 25), true, 0, false);
+        Renderer::drawCircle(playerCenterX - range, playerCenterY - range, range, sf::Color(0, 255, 255, 100), false, 10, false);
+        Renderer::drawCircle(playerCenterX - range, playerCenterY - range, range, sf::Color(0, 255, 255, 25), true, 0, false);
     }
 
     inline bool isDestSelected() {

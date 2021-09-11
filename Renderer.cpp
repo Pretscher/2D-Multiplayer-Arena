@@ -69,7 +69,7 @@ static void toYXBounds(int* ioW, int* ioH) {
 
 //Drawing functions-------------------------------------------------------------------------------------------------------
 
-void Renderer::drawRect(int y, int x, int width, int height, sf::Color c, bool solidWithViewspace) {
+void Renderer::drawRect(int x, int y, int width, int height, sf::Color c, bool solidWithViewspace) {
     fromYXBounds(&width, &height);
     fromYX(&y, &x);
     sf::RectangleShape* square = new sf::RectangleShape(sf::Vector2f(width, height));
@@ -87,7 +87,7 @@ void Renderer::drawRect(int y, int x, int width, int height, sf::Color c, bool s
 }
 
 
-void Renderer::drawRectOutline(int y, int x, int width, int height, sf::Color c, int thickness, bool solidWithViewspace) {
+void Renderer::drawRectOutline(int x, int y, int width, int height, sf::Color c, int thickness, bool solidWithViewspace) {
     fromYXBounds(&width, &height);
     fromYX(&y, &x);
     int unusedHelp = 0;//we dont need to write 2 values but only have functions for 2 values (lazyness)
@@ -108,7 +108,7 @@ void Renderer::drawRectOutline(int y, int x, int width, int height, sf::Color c,
     delete square;
 }
 
-void Renderer::drawCircle(int y, int x, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace) {
+void Renderer::drawCircle(int x, int y, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace) {
     fromYX(&y, &x);
     int unusedHelp = 0;//we dont need to write 2 values but only have functions for 2 values (lazyness)
     fromYXBounds(&outlineThickness, &unusedHelp);
@@ -133,7 +133,7 @@ void Renderer::drawCircle(int y, int x, int radius, sf::Color c, bool fill, int 
     delete circle;
 }
 
-void Renderer::drawLine(int y1, int x1, int y2, int x2, sf::Color c, int thickness) {
+void Renderer::drawLine(int x1, int y1, int x2, int y2, sf::Color c, int thickness) {
     fromYX(&y1, &x1);
     fromYX(&y2, &x2);
 
@@ -151,7 +151,7 @@ void Renderer::drawLine(int y1, int x1, int y2, int x2, sf::Color c, int thickne
     Renderer::currentWindow->draw(line);
 }
 
-void Renderer::getMousePos(int* o_ys, int* o_xs, bool factorInViewspace, bool factorInBorders) {
+void Renderer::getMousePos(int* o_xs, int* o_ys, bool factorInViewspace, bool factorInBorders) {
     GlobalRecources::worldYs = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
     GlobalRecources::worldXs = getWorldXs();
 
@@ -160,11 +160,15 @@ void Renderer::getMousePos(int* o_ys, int* o_xs, bool factorInViewspace, bool fa
     int y = pos.y;
     toYX(&y, &x);
 
+    int helpVsX = viewSpace[1];
+    int helpVsY = viewSpace[0];
+    toYX(&helpVsX, &helpVsY);
+
     if (factorInBorders == true) {
         if (x < normalResXs && y < normalResYs) {
             if (factorInViewspace == true) {
-                *o_xs = x + viewSpace[1];
-                *o_ys = y + viewSpace[0];
+                *o_xs = x + helpVsX;
+                *o_ys = y + helpVsY;
             }
             else {
                 *o_xs = x;
@@ -174,8 +178,8 @@ void Renderer::getMousePos(int* o_ys, int* o_xs, bool factorInViewspace, bool fa
     }
     else {
         if (factorInViewspace == true) {
-            *o_xs = x + viewSpace[1];
-            *o_ys = y + viewSpace[0];
+            *o_xs = x + helpVsX;
+            *o_ys = y + helpVsY;
         }
         else {
             *o_xs = x;
@@ -191,7 +195,7 @@ void Renderer::updateViewSpace() {
     
     int mouseX = -1;
     int mouseY = -1;
-    getMousePos(&mouseY, &mouseX, false, true);
+    getMousePos(&mouseX, &mouseY, false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];
@@ -266,7 +270,7 @@ sf::Texture Renderer::loadTexture(std::string path, bool repeat) {
 }
 
 
-void Renderer::drawRectWithTexture(int y, int x, int width, int height, sf::Texture texture, bool solidWithViewspace) {
+void Renderer::drawRectWithTexture(int x, int y, int width, int height, sf::Texture texture, bool solidWithViewspace) {
     fromYXBounds(&width, &height);
     fromYX(&y, &x);
 
@@ -290,7 +294,7 @@ void Renderer::drawRectWithTexture(int y, int x, int width, int height, sf::Text
     delete square;
 }
 
-void Renderer::drawText(std::string i_text, int y, int x, int width, int height, sf::Color color) {
+void Renderer::drawText(std::string i_text, int x, int y, int width, int height, sf::Color color) {
     fromYXBounds(&width, &height);
     fromYX(&y, &x);
 

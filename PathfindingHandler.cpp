@@ -63,7 +63,8 @@ void Pathfinding::pathFindingOnClick() {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) == true && sameClick == false && getFindingPath() == false) {
 		sameClick = true;
 		int mouseY = -1, mouseX = -1;
-		Renderer::getMousePos(&mouseY, &mouseX, true, true);//writes mouse coords into mouseX, mouseY
+		
+		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseY != -1) {//stays at -1 if click is outside of window
 			if (mouseX - players[0]->getWidth() / 2 > 0) {
 				mouseX -= players[0]->getWidth() / 2;
@@ -280,7 +281,7 @@ void Pathfinding::startPathFinding() {
 				}
 			}
 
-			bool found = Algorithm::findPath(&pathYs, &pathXs, &pathlenght, g, player->getY() + (player->getHeight() / 2),
+			bool found = Algorithm::findPath(&pathXs, &pathYs, &pathlenght, g, player->getY() + (player->getHeight() / 2),
 															 player->getX() + (player->getWidth() / 2), cgoalY, cgoalX);
 
 			disablePlayer(cPlayerIndex);

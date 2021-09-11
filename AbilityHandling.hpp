@@ -205,7 +205,7 @@ public:
             }
             int y = 990;
 
-            Renderer::drawRect(y, x, size, size, sf::Color(30, 30, 30, 255), true);
+            Renderer::drawRect(x, y, size, size, sf::Color(30, 30, 30, 255), true);
             int abilityRectHeight = 0;
 
             float cdPercent = abilityTriggering->getCooldownPercent(i);
@@ -215,7 +215,7 @@ public:
             else {
                 cdPercent = 0;
             }
-            Renderer::drawRect(y + size - (cdPercent * size), x, size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
+            Renderer::drawRect(x + size - (cdPercent * size), y, size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
 
             std::string abilityLetter;
             if (i == 0) {
@@ -233,7 +233,7 @@ public:
             else if (i == 4) {
                 abilityLetter = std::string("T");
             }
-            Renderer::drawText(abilityLetter, y - size / 2.2f, x - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
+            Renderer::drawText(abilityLetter, x - size / 2.2f, y - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
         }
     }
 

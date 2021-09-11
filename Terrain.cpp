@@ -16,10 +16,10 @@ void Terrain::addRect(int y, int x, int width, int height) {
 
 void Terrain::draw() {
 
-	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldXs() * 2, Renderer::getWorldYs() * 2, ground, true);
+	Renderer::drawRectWithTexture(0, 0, Renderer::getWorldXs(), Renderer::getWorldYs(), ground, true);
 	for (unsigned int i = 0; i < objectsY->size(); i++) {
 		Rect* rect = this->objectsY->at(i);
-		Renderer::drawRectWithTexture(rect->getY(), rect->getX(), rect->getWidth(), rect->getHeight(), wall, false);
+		Renderer::drawRectWithTexture(rect->getX(), rect->getY(), rect->getWidth(), rect->getHeight(), wall, false);
 	}
 
 }
