@@ -193,7 +193,7 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 					}
 					
 					if (disabledRows != nullptr) {
-						this->findPath(movedPlayer->getPathGoalX(), movedPlayer->getPathGoalY(), movedPlayerIndex);
+						this->findPath(players[j]->getPathGoalX(), players[j]->getPathGoalY(), j);
 						for (int i = 0; i < disabledRows->size(); i++) {
 							this->enableArea(disabledRows->at(i) - players[0]->getHeight(), disabledCols->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
 						}
