@@ -23,7 +23,7 @@ public:
     void draw2() override;
 
     //check if the bloodball colides with target player or you, depending if its flying to the enemy or you. 
-    void checkBloodballXlision();
+    void checkBloodballCollision();
     //if player position changes, fly to new position. Needs some delay or else lag xD 
     //(Can fly through colidables so no pathfinding)
     void followPlayer();

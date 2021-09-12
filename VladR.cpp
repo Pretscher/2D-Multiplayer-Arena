@@ -151,7 +151,7 @@ void VladR::init3() {
 }
 
 void VladR::execute3() {
-	checkBloodballXlision();
+	checkBloodballCollision();
 	findNewPathToPlayerTimer ++;
 	if (findNewPathToPlayerTimer % 10 == true) {
 		followPlayer();
@@ -178,7 +178,7 @@ void VladR::draw3() {
 }
 
 
-void VladR::checkBloodballXlision() {
+void VladR::checkBloodballCollision() {
 	Player* me = GlobalRecources::players[myPlayerIndex];
 	//blood ball got to enemy and should fly back
 	if (Utils::colisionRectCircle(me->getY(), me->getX(), me->getWidth(), me->getHeight(),

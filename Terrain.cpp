@@ -46,6 +46,6 @@ void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int p
 	}
 }
 
-std::vector<Rect*>* Terrain::getXlidables() {
+std::vector<Rect*>* Terrain::getCollidables() {
 	return objectsY;
 }

@@ -34,7 +34,7 @@ public:
 
 private:
 
-    void checkBloodballXlision();
+    void checkBloodballCollision();
     void followPlayer();
 
     int damage = 50;

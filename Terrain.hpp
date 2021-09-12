@@ -8,7 +8,7 @@ public:
 	void addRect(int y, int x, int width, int height);
 	void draw();
 	void addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight);
-	std::vector<Rect*>* getXlidables();
+	std::vector<Rect*>* getCollidables();
 
 private:
 	std::vector<Rect*>* objectsY;

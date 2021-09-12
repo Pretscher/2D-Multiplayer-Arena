@@ -130,7 +130,7 @@ void Transfusion::init2() {
 }
 
 void Transfusion::execute2() {
-    checkBloodballXlision();
+    checkBloodballCollision();
     findNewPathToPlayerTimer ++;
     if (findNewPathToPlayerTimer % 10 == true) {
         followPlayer();
@@ -154,7 +154,7 @@ void Transfusion::draw2() {
     }
 }
 
-void Transfusion::checkBloodballXlision() {
+void Transfusion::checkBloodballCollision() {
     Player* c = getBloodballTarget();
     //blood ball got to enemy and should fly back
     if (Utils::colisionRectCircle(c->getY(), c->getX(), c->getWidth(), c->getHeight(),
