@@ -181,7 +181,7 @@ void VladR::draw3() {
 void VladR::checkBloodballXlision() {
 	Player* me = GlobalRecources::players[myPlayerIndex];
 	//blood ball got to enemy and should fly back
-	if (Utils::xlisionRectCircle(me->getY(), me->getX(), me->getWidth(), me->getHeight(),
+	if (Utils::colisionRectCircle(me->getY(), me->getX(), me->getWidth(), me->getHeight(),
 		bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
 		
 		int heal = + (healPerPlayer * affectedPlayerCount);

@@ -36,7 +36,7 @@ public:
                         int mouseX = 0, mouseY = 0;
                         Renderer::getMousePos(&mouseX, &mouseY, true, true);
 
-                        if (Utils::xlisionCoordsRect(c->getX(), c->getY(), c->getWidth(),
+                        if (Utils::colisionCoordsRect(c->getX(), c->getY(), c->getWidth(),
                             c->getHeight(), mouseX, mouseY) == true) {
                             //IF LEFTCLICK HAS BEEN PRESSED (see above) select player
                             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {

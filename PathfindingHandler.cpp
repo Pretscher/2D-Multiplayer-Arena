@@ -38,19 +38,19 @@ Pathfinding::Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_
 
 	int pathfindingYs = worldYs * pathfindingAccuracy;//max ys for pathfinding
 	int pathfindingXs = worldXs * pathfindingAccuracy;//max xs for pathfinding
-	xlisionGrid = new bool*[pathfindingYs];
+	colisionGrid = new bool*[pathfindingYs];
 	for (int y = 0; y < pathfindingYs; y++) {
-		xlisionGrid[y] = new bool[pathfindingXs];
+		colisionGrid[y] = new bool[pathfindingXs];
 		for (int x = 0; x < pathfindingXs; x++) {
-			xlisionGrid[y][x] = true;
+			colisionGrid[y][x] = true;
 		}
 	}
 
 	//create graph from unmoving solids, can be changed dynamically
 	//all player widths and heights are the same so we can just look at index 0
-	terrain->addXlidablesToGrid(xlisionGrid, pathfindingAccuracy, i_players[0]->getWidth(), i_players[0]->getHeight());
+	terrain->addCollidablesToGrid(colisionGrid, pathfindingAccuracy, i_players[0]->getWidth(), i_players[0]->getHeight());
 	g = new Graph(worldYs, worldXs, pathfindingAccuracy);
-	g->generateWorldGraph(xlisionGrid);
+	g->generateWorldGraph(colisionGrid);
 }
 
 void Pathfinding::pathFindingOnClick() {

@@ -10,7 +10,7 @@ public:
 	ProjectileHandling(int worldYs, int worldXs, Player** players, int playerCount);
 	
 	void draw();
-	void update(Rect** xlidables, int xlidableSize);
+	void update(Rect** colidables, int colidableSize);
 	void sendProjectiles();
 	void receiveProjectiles();
 

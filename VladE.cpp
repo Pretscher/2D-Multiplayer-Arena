@@ -215,7 +215,7 @@ void VladE::execute1() {
 				if (j != myPlayerIndex) {
 					Player* cPlayer = GlobalRecources::players[j];
 					if (cPlayer->targetAble == true) {
-						if (Utils::xlisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
+						if (Utils::colisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
 							projectiles[i]->getY(), projectiles[i]->getX(), projectiles[i]->getRadius(), 10) == true) {
 							projectiles[i]->setDead(true);
 							if (dealtDamageToPlayer[j] == false) {

@@ -50,7 +50,7 @@ bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Grap
 			int neighbourCount = graph->getIndexNeighbourCount()[cNodeIndex];//we will look through graph->getNeighbourIndices() of this node
 			for (int i = 0; i < neighbourCount; i++) {
 				int cNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
-				if (graph->isUsedByMoveableObject()[cNeighbourIndex] == false) {//efficient method to exclude moveable xlision objects from graph
+				if (graph->isUsedByMoveableObject()[cNeighbourIndex] == false) {//efficient method to exclude moveable colision objects from graph
 					float tempDistance = distanceTravelled[cNodeIndex] + graph->getIndexNeighbourCosts()[cNodeIndex][i];
 
 					if (tempDistance < distanceTravelled[cNeighbourIndex]) {

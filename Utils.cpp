@@ -3,7 +3,7 @@
 #include <math.h>
 #include "Utils.hpp"
 
-bool Utils::xlisionCoordsRect(float rectX, float rectY, float rectWidth, float rectHeight, float pointX, float pointY) {
+bool Utils::colisionCoordsRect(float rectX, float rectY, float rectWidth, float rectHeight, float pointX, float pointY) {
 	if (rectX < pointX && rectX + rectWidth > pointX) {
 		if (rectY < pointY && rectY + rectHeight > pointY) {
 			return true;
@@ -14,7 +14,7 @@ bool Utils::xlisionCoordsRect(float rectX, float rectY, float rectWidth, float r
 /**
 * @param top left coords of circle and point coords
 **/
-bool Utils::xlisionCoordsCircle(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
+bool Utils::colisionCoordsCircle(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
 	float dist = sqrt((pointX - (circleX + circleRadius)) * (pointX - (circleX + circleRadius)) + (pointY - (circleY + circleRadius)) * (pointY - (circleY + circleRadius)));
 	if (dist <= circleRadius) return true;
 	return false;
@@ -23,12 +23,12 @@ bool Utils::xlisionCoordsCircle(float circleX, float circleY, float circleRadius
 /**
 * @param top left coords of rect and circle, xPointDist is accuracy of detection
 **/
-bool Utils::xlisionRectCircle(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius, int xPointDist) {
+bool Utils::colisionRectCircle(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius, int xPointDist) {
 	//check points of second rect for intersection with circle with given accuracy
 	for (float x = rectX; x <= rectX + rectWidth; x += xPointDist) {
 		for (float y = rectY; y <= rectY + rectHeight; y += xPointDist) {
 			//Renderer::drrectWidthRect(y, x, 2, 2, sf::Color(255, 255, 0, 255), false);
-			if (Utils::xlisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
+			if (Utils::colisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
 				return true;
 			}
 		}
@@ -36,12 +36,12 @@ bool Utils::xlisionRectCircle(int rectX, int rectY, int rectWidth, int rectHeigh
 	return false;
 }
 
-bool Utils::xlisionRectCircleOnlyOutline(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius) {
+bool Utils::colisionRectCircleOnlyOutline(int rectX, int rectY, int rectWidth, int rectHeight, int circleX, int circleY, int circleRadius) {
 	//check points of second rect for intersection with circle with given accuracy
 	for (float y = rectY; y <= rectY + rectHeight; y += rectHeight) {
 		for (float x = rectX; x <= rectX + rectWidth; x += (circleRadius * 2 - 1)) {
 			//Renderer::drrectWidthRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::xlisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
+			if (Utils::colisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
 				return true;
 			}
 		}
@@ -49,7 +49,7 @@ bool Utils::xlisionRectCircleOnlyOutline(int rectX, int rectY, int rectWidth, in
 	for (float x = rectX; x <= rectX + rectWidth; x += rectWidth) {
 		for (float y = rectY; y <= rectY + rectHeight; y += (circleRadius * 2 - 1)) {
 			//Renderer::drrectWidthRect(y, x, 2, 2, sf::Color(255, 255, 0, 255));
-			if (Utils::xlisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
+			if (Utils::colisionCoordsCircle(circleX, circleY, circleRadius, x, y) == true) {
 				return true;
 			}
 		}
@@ -57,11 +57,11 @@ bool Utils::xlisionRectCircleOnlyOutline(int rectX, int rectY, int rectWidth, in
 	return false;
 }
 
-bool Utils::xlisionRects(float rect1X, float rect1Y, float rect1Width, float rect1Height, float rect2X, float rect2Y, float rect2Width, float rect2Height, float xPointDist) {
+bool Utils::colisionRects(float rect1X, float rect1Y, float rect1Width, float rect1Height, float rect2X, float rect2Y, float rect2Width, float rect2Height, float xPointDist) {
 	//check points of second rect for intersection with first rect with given accuracy
 	for (float x = rect2X; x < rect2X + rect2Width; x += xPointDist) {
 		for (float y = rect2Y; y < rect2Y + rect2Height; y += xPointDist) {
-			if (Utils::xlisionCoordsRect(rect1X, rect1Y, rect1Width, rect1Height, x, y) == true) {
+			if (Utils::colisionCoordsRect(rect1X, rect1Y, rect1Width, rect1Height, x, y) == true) {
 				return true;
 			}
 		}

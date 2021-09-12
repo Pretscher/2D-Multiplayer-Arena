@@ -24,7 +24,7 @@ void Terrain::draw() {
 
 }
 
-void Terrain::addXlidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight) {
+void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight) {
 	for (int i = 0; i < objectsY->size(); i++) {
 		Rect* rect = this->objectsY->at(i);
 

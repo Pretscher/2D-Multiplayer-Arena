@@ -85,14 +85,14 @@ void eventhandling::eventloop() {
 		worldHandling->update();
 		//pass current hp informations to uiHandling so that it can draw a proper life bar
 		uiHandling->updateLifeBar(playerHandling->getMyPlayer()->getHp(), playerHandling->getMyPlayer()->getMaxHp());
-		//does pathfinding on click and player xlision
+		//does pathfinding on click and player colision
 		pathfinding->update();
 		//moves all abilities and ticks through their states (example projectile->explosion->buring etc.)
 		abilityHandling->update();
 
-		//pass xlidbales to projectile management every update so that projectiles can even be stopped by moving terrain
-		auto xlidables = worldHandling->getTerrain()->getXlidables();
-		projectileHandling->update(xlidables->data(), xlidables->size());
+		//pass colidbales to projectile management every update so that projectiles can even be stopped by moving terrain
+		auto colidables = worldHandling->getTerrain()->getXlidables();
+		projectileHandling->update(colidables->data(), colidables->size());
 
 		//pass game information back and forth through tcp sockets
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {

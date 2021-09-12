@@ -1,7 +1,7 @@
 #include "ProjectileHandling.hpp"
 
 #include "Renderer.hpp"
-#include "Utils.hpp"//xlision between projectiles and players/terrain calculated in utils
+#include "Utils.hpp"//colision between projectiles and players/terrain calculated in utils
 #include "NetworkCommunication.hpp"//send and receive stuff through networking
 
 ProjectileHandling::ProjectileHandling(int worldYs, int worldXs, Player** players, int playerCount) {
@@ -16,7 +16,7 @@ ProjectileHandling::ProjectileHandling(int worldYs, int worldXs, Player** player
 	projectiles = new std::vector<Projectile*>();;//stores all projectiles for creation, drawing, moving and damage calculation. 
 }
 
-void ProjectileHandling::update(Rect** xlidables, int xlidableSize) {
+void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 	//dont shoot a projectile for the same space-press
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == false) {
 		samePress = false;
@@ -59,7 +59,7 @@ void ProjectileHandling::update(Rect** xlidables, int xlidableSize) {
 	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
 	for (int i = 0; i < projectiles->size(); i++) {
 		Projectile* p = projectiles->at(i);
-		p->move(worldYs, worldXs, xlidables, xlidableSize);//give it the maximum ys so it know when it can stop moving
+		p->move(worldYs, worldXs, colidables, colidableSize);//give it the maximum ys so it know when it can stop moving
 
 		for (int j = 0; j < playerCount; j++) {
 			Player* cPlayer = players[j];
@@ -67,7 +67,7 @@ void ProjectileHandling::update(Rect** xlidables, int xlidableSize) {
 				if (cPlayer != p->getPlayer()) {
 					if (players[j]->getHp() > 0) {
 
-						if (Utils::xlisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
+						if (Utils::colisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
 							p->getY(), p->getX(), p->getRadius(), 10) == true) {
 							p->setDead(true);
 							cPlayer->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());

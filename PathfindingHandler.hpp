@@ -42,7 +42,7 @@ private:
 	int cPlayerIndex;
 	bool newPathFinding;
 
-	bool** xlisionGrid;
+	bool** colisionGrid;
 
 	std::thread* pathFindingThread;
 	std::mutex* pfMtx;

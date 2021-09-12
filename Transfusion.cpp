@@ -157,7 +157,7 @@ void Transfusion::draw2() {
 void Transfusion::checkBloodballXlision() {
     Player* c = getBloodballTarget();
     //blood ball got to enemy and should fly back
-    if (Utils::xlisionRectCircle(c->getY(), c->getX(), c->getWidth(), c->getHeight(),
+    if (Utils::colisionRectCircle(c->getY(), c->getX(), c->getWidth(), c->getHeight(),
         bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
         if (flyBack == false) {
             flyBack = true;

@@ -25,7 +25,7 @@ void VladW::execute0() {
 		if (i != myPlayerIndex) {
 			Player* current = GlobalRecources::players[i];
 			if (current->targetAble == true) {
-				if (Utils::xlisionRectCircle(current->getX(), current->getY(), current->getWidth(), current->getHeight(),
+				if (Utils::colisionRectCircle(current->getX(), current->getY(), current->getWidth(), current->getHeight(),
 					myPlayer->getX() + (myPlayer->getWidth() / 2) - range, myPlayer->getY() + (myPlayer->getHeight() / 2) - range, range, 10) == true) {
 					current->setHp(current->getHp() - damage);
 				}

@@ -27,7 +27,7 @@ public:
 private:
 	int worldYs;
 	int worldXs;
-	Terrain* terrain;//contains every non-moving object with xlision
+	Terrain* terrain;//contains every non-moving object with colision
 
 	//Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
 	int* cViewSpace;//current viewspace position.[0] is y (bot to top),[1] is x (left to right) 

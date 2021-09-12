@@ -40,7 +40,7 @@ Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goal
 	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
 }
 
-void Projectile::move(int maxY, int maxX, Rect** xlisionRects, int rectCount) {
+void Projectile::move(int maxY, int maxX, Rect** colisionRects, int rectCount) {
 
 	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
 	long long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
@@ -95,13 +95,13 @@ void Projectile::move(int maxY, int maxX, Rect** xlisionRects, int rectCount) {
 			}
 
 			for (unsigned int i = 0; i < rectCount; i++) {
-				Rect* cRect = xlisionRects[i];
-				if (Utils::xlisionRectCircleOnlyOutline(cRect->getX(), cRect->getY(), cRect->getWidth(), cRect->getHeight(), nextX, nextY, this->radius) == true) {
+				Rect* cRect = colisionRects[i];
+				if (Utils::colisionRectCircleOnlyOutline(cRect->getX(), cRect->getY(), cRect->getWidth(), cRect->getHeight(), nextX, nextY, this->radius) == true) {
 					dead = true;
 					return;
 				}
 			}
-			//no xlisiom => move on function
+			//no colisiom => move on function
 			this->y = nextY;
 			this->x = nextX;
 

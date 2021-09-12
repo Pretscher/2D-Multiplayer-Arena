@@ -67,9 +67,9 @@ void Fireball::init1() {
 }
 
 void Fireball::execute1() {
-    auto xlidables = GlobalRecources::terrain->getXlidables();
-    this->helpProjectile->move(GlobalRecources::worldYs, GlobalRecources::worldXs, xlidables->data(), xlidables->size());
-    //if the projectile reaches its max range or xlides with anything, it should explode
+    auto colidables = GlobalRecources::terrain->getXlidables();
+    this->helpProjectile->move(GlobalRecources::worldYs, GlobalRecources::worldXs, colidables->data(), colidables->size());
+    //if the projectile reaches its max range or colides with anything, it should explode
     if ((abs(this->startY - this->helpProjectile->getY()) * abs(this->startY - this->helpProjectile->getY())
         + abs(this->startX - this->helpProjectile->getX()) * abs(this->startX - this->helpProjectile->getX())
                 > this->range * this->range) || this->helpProjectile->isDead() == true) {
@@ -103,9 +103,9 @@ void Fireball::execute2() {
     for (int i = 0; i < GlobalRecources::playerCount; i++) {
         Player* c = GlobalRecources::players[i];
         if (c->targetAble == true) {
-            bool xlision = Utils::xlisionRectCircle(c->getX(), c->getY(), c->getWidth(), c->getHeight(),
+            bool colision = Utils::colisionRectCircle(c->getX(), c->getY(), c->getWidth(), c->getHeight(),
                 this->explosionX, this->explosionY, this->explosionRange, 10);
-            if (xlision == true) {
+            if (colision == true) {
                 if (this->dealtDamage == false) {
                     c->setHp(c->getHp() - this->explosionDmg);
                 }
