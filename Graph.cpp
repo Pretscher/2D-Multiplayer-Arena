@@ -212,7 +212,7 @@ int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) {
     }
     delete[] visited;
     delete toVisit;
-    if (cIndex > 0) {
+    if (cIndex >= 0) {
         return cIndex;
     }
     else {
