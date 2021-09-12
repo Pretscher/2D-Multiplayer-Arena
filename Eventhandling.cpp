@@ -15,6 +15,7 @@
 #include "Playerhandling.hpp"
 #include "AbilityHandling.hpp"
 #include "GlobalRecources.hpp"
+#include "Graph.hpp"
 
 static Pathfinding* pathfinding;
 
@@ -118,6 +119,7 @@ void eventhandling::drawingloop() {
 		uiHandling->draw();//draw last, should be over every item ingame
 		abilityHandling->drawCDs();
 	}
+	//GlobalRecources::pFinding->getGraph()->debugDrawing();
 }
 
 

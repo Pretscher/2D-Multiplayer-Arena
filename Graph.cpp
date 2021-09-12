@@ -281,22 +281,22 @@ void Graph::disableObjectBounds(int y, int x, int width, int height) {
     width = (float) width * accuracy;
     height = (float) height * accuracy;
 
-    int minY = y - height + 1;
+    int minY = y;
     if (minY < 0) {
         minY = 0;
     }
-    int minX = x - width + 1;
+    int minX = x;
     if (minX < 0) {
         minX = 0;
     }
 
-    int maxX = x + width;
+    int maxX = x + width + 1;
     if (maxX >= xCount) {
-        maxX = xCount - 2;
+        maxX = xCount - 1;
     }
-    int maxY = y + height;
+    int maxY = y + height + 1;
     if (maxY >= yCount) {
-        maxY = yCount - 2;
+        maxY = yCount - 1;
     }
 
     for (int y = minY; y <= maxY; y++) {

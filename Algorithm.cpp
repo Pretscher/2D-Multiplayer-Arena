@@ -24,6 +24,8 @@ bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Grap
 		}
 	}
 
+	int* graphIndices = graph->getGraph();
+
 	float* distanceTravelled = new float[graphNodeCount];
 	int* previousIndex = new int[graphNodeCount];
 
@@ -35,48 +37,42 @@ bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Grap
 	previousIndex[startIndex] = startIndex;
 	BinaryHeap* heap = new BinaryHeap(graph, graphNodeCount);
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), graph->getIndexBoundXs(),
-		graph->getGraph()[startIndex], graph->getGraph()[goalIndex]), startIndex);
+	HeapNode* toInsert = new HeapNode(getHeuristic(graphIndices, graph->getIndexBoundYs(), graph->getIndexBoundXs(),
+		graphIndices[startIndex], graphIndices[goalIndex]), startIndex);
 	heap->insert(toInsert);
 	bool foundPath = false;
 
 	while (heap->getCurrentNodeCount() > 0) {//while heap is not empty
 		HeapNode* helpNode = heap->extractMin();//extract best node
-		int cNodeIndex = graph->getGraph()[helpNode->getIndexInGraph()];//get graphIndex of best node
+		int cNodeIndex = graphIndices[helpNode->getIndexInGraph()];//get graphIndex of best node
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;
 			break;
-		}
-			int neighbourCount = graph->getIndexNeighbourCount()[cNodeIndex];//we will look through graph->getNeighbourIndices() of this node
-			for (int i = 0; i < neighbourCount; i++) {
-				int cNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
-				if (graph->isUsedByMoveableObject()[cNeighbourIndex] == false) {//efficient method to exclude moveable colision objects from graph
-					float tempDistance = distanceTravelled[cNodeIndex] + graph->getIndexNeighbourCosts()[cNodeIndex][i];
+		}	
+		//we will look through graph->getNeighbourIndices() of this node
+		for (int i = 0; i < graph->getIndexNeighbourCount()[cNodeIndex]; i++) {
+			int cNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
+			if (graph->isUsedByMoveableObject()[cNeighbourIndex] == false) {//efficient method to exclude moveable colision objects from graph
+				
+				float tempDistance = distanceTravelled[cNodeIndex] + graph->getIndexNeighbourCosts()[cNodeIndex][i];
+				if (tempDistance < distanceTravelled[cNeighbourIndex]) {
+					distanceTravelled[cNeighbourIndex] = tempDistance;
+					previousIndex[cNeighbourIndex] = cNodeIndex;
 
-					if (tempDistance < distanceTravelled[cNeighbourIndex]) {
-						distanceTravelled[cNeighbourIndex] = tempDistance;
-						previousIndex[cNeighbourIndex] = cNodeIndex;
+					float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->getGraph(), graph->getIndexBoundYs(),
+						graph->getIndexBoundXs(), cNeighbourIndex, goalIndex);
 
-						float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), 
-							graph->getIndexBoundXs(), cNeighbourIndex, goalIndex);
-
-						bool alreadyInserted = true;
-						//if graphnode has been inserted to heap (index in heap initialized to -1)
-						if (graph->getHeapIndices()[cNeighbourIndex] == -1) {
-							alreadyInserted = false;
-						}
-
-						if (alreadyInserted == true) {
-							heap->decrease(graph->getHeapIndices()[cNeighbourIndex], heuristicOfCurrentNeighbour);
-						}
-						else {
-							HeapNode* nodeToInsert = new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex);
-							heap->insert(nodeToInsert);
-						}
+					//if graphnode has been inserted to heap (index in heap initialized to -1)
+					if (graph->getHeapIndices()[cNeighbourIndex] != -1) {
+						heap->decrease(graph->getHeapIndices()[cNeighbourIndex], heuristicOfCurrentNeighbour);
+					}
+					else {
+						HeapNode* nodeToInsert = new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex);
+						heap->insert(nodeToInsert);
 					}
 				}
 			}
-		
+		}
 		delete helpNode;
 	}
 

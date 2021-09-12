@@ -231,12 +231,12 @@ void Pathfinding::enableArea(int y, int x, int width, int height) {
 void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 	Player* player = players[i_playerIndex];
 
-	g->enableObjectBounds(player->getY(), player->getX(), player->getWidth(), player->getHeight());
+	g->enableObjectBounds(player->getY() - 50, player->getX() - 50, player->getWidth() + 100, player->getHeight() + 100);
 
 	if (disableOthers == true) {
 		for (int i = 0; i < playerCount; i++) {
 			if (players[i]->getHp() > 0) {
-				if (i != cPlayerIndex) {
+				if (i != i_playerIndex) {
 					Player* cPlayer = players[i];
 					g->disableObjectBounds(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight());
 				}
