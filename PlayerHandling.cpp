@@ -63,7 +63,7 @@ void PlayerHandling::sendPlayerData() {
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
 **/
 int hpSyncDelay = 0;
-void PlayerHandling::receivePlayerData(Pathfinding* pathfinding) {
+void PlayerHandling::receivePlayerData(Pathfinding&& pathfinding) {
 	int otherPlayer = 0;
 	if (myPlayerI == 0) {
 		otherPlayer = 1;
