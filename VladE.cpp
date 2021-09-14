@@ -204,7 +204,7 @@ void VladE::init1() {
 void VladE::execute1() {
 	auto terrain = GlobalRecources::terrain->getCollidables();
 	for (int i = 0; i < projectileCount; i++) {
-		projectiles[i]->move(GlobalRecources::worldYs, GlobalRecources::worldXs, terrain->data(), terrain->size());
+		projectiles[i]->move(GlobalRecources::worldHeight, GlobalRecources::worldWidth, terrain->data(), terrain->size());
 	}
 
 

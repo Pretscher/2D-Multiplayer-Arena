@@ -16,8 +16,8 @@ void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
     viewSpace = io_viewSpace;
     viewSpaceLimits = io_viewspaceLimits;
 
-    GlobalRecources::worldYs = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
-    GlobalRecources::worldXs = getWorldXs();
+    GlobalRecources::worldHeight = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
+    GlobalRecources::worldWidth = getWorldXs();
 }
 
 int Renderer::getWorldXs() {
@@ -152,8 +152,8 @@ void Renderer::drawLine(int x1, int y1, int x2, int y2, sf::Color c, int thickne
 }
 
 void Renderer::getMousePos(int* o_xs, int* o_ys, bool factorInViewspace, bool factorInBorders) {
-    GlobalRecources::worldYs = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
-    GlobalRecources::worldXs = getWorldXs();
+    GlobalRecources::worldHeight = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
+    GlobalRecources::worldWidth = getWorldXs();
 
     auto pos = sf::Mouse::getPosition(*currentWindow);
     int x = pos.x;

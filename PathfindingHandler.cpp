@@ -6,22 +6,23 @@
 #include "Player.hpp"
 #include "Graph.hpp"
 #include "Algorithm.hpp"
+#include "GlobalRecources.hpp"
 
 void startPathfindingThread(Pathfinding* pathfinding) {
 	pathfinding->startPathFinding();
 }
 
-Pathfinding::Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_players, int i_playerCount) {
+Pathfinding::Pathfinding() {
 	cgoalX = -1;
 	cgoalY = -1;
 	cPlayerIndex = -1;
 	newPathFinding = false;
 	
-	wYs = worldYs;
-	wXs = worldXs;
+	wYs = GlobalRecources::worldHeight;
+	wXs = GlobalRecources::worldWidth;
 
-	players = i_players;
-	playerCount = i_playerCount;
+	players = GlobalRecources::players;
+	playerCount = GlobalRecources::playerCount;
 	findingPath = false;
 	this->goalXToFind = new std::vector<int>();
 	this->goalYToFind = new std::vector<int>();
@@ -36,8 +37,8 @@ Pathfinding::Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_
 	//and stuff easy because width can equal height to make it have sides of the same lenght.
 
 
-	int pathfindingYs = worldYs * pathfindingAccuracy;//max ys for pathfinding
-	int pathfindingXs = worldXs * pathfindingAccuracy;//max xs for pathfinding
+	int pathfindingYs = wYs * pathfindingAccuracy;//max ys for pathfinding
+	int pathfindingXs = wXs * pathfindingAccuracy;//max xs for pathfinding
 	colisionGrid = new bool*[pathfindingYs];
 	for (int y = 0; y < pathfindingYs; y++) {
 		colisionGrid[y] = new bool[pathfindingXs];
@@ -48,9 +49,12 @@ Pathfinding::Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_
 
 	//create graph from unmoving solids, can be changed dynamically
 	//all player widths and heights are the same so we can just look at index 0
-	terrain->addCollidablesToGrid(colisionGrid, pathfindingAccuracy, i_players[0]->getWidth(), i_players[0]->getHeight());
-	g = new Graph(worldYs, worldXs, pathfindingAccuracy);
+	GlobalRecources::terrain->addCollidablesToGrid(colisionGrid, pathfindingAccuracy, players[0]->getWidth(), players[0]->getHeight());
+	g = new Graph(wYs, wXs, pathfindingAccuracy);
 	g->generateWorldGraph(colisionGrid);
+
+	GlobalRecources::pfMtx = pfMtx;
+	GlobalRecources::pFinding = this;
 }
 
 void Pathfinding::pathFindingOnClick() {

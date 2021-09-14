@@ -7,7 +7,7 @@
 class ProjectileHandling {
 public:
 
-	ProjectileHandling(int worldYs, int worldXs, Player** players, int playerCount);
+	ProjectileHandling();
 	
 	void draw();
 	void update(Rect** colidables, int colidableSize);
@@ -25,7 +25,7 @@ private:
 	std::vector<Projectile*>* newProjectiles;
 	std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
-	int worldYs, worldXs;
+	int worldHeight, worldWidth;
 	Player** players;
 	int myPlayerI;
 	int playerCount;

@@ -2,13 +2,14 @@
 
 #include "Renderer.hpp"
 #include "Terrain.hpp"
+#include "GlobalRecources.hpp"
 
 sf::Texture* orb;
 sf::Texture uiPanel;
-UiHandling::UiHandling(int frameYs, int frameXs) {
+UiHandling::UiHandling() {
 	uiHeight = 1080;
-	this->frameYs = frameYs;
-	this->frameXs = frameXs;
+	this->frameHeight = GlobalRecources::frameHeight;
+	this->frameWidth = GlobalRecources::frameWidth;
 
 	sf::Texture wall;
 	sf::Texture ground;

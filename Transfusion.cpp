@@ -136,7 +136,7 @@ void Transfusion::execute2() {
         followPlayer();
     }
 
-    bloodBall->move(GlobalRecources::worldYs, GlobalRecources::worldXs, nullptr, 0);//should go through walls so we just dont pass them
+    bloodBall->move(GlobalRecources::worldHeight, GlobalRecources::worldWidth, nullptr, 0);//should go through walls so we just dont pass them
 }
 
 void Transfusion::draw2() {

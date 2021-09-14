@@ -10,7 +10,7 @@ class Graph;
 class Pathfinding {
 
 public:
-	Pathfinding(int worldYs, int worldXs, Terrain* terrain, Player** i_players, int i_playerCount);
+	Pathfinding();
 	std::vector<int>* newGoalYs = new std::vector<int>();
 	std::vector<int>* newGoalXs = new std::vector<int>();
 

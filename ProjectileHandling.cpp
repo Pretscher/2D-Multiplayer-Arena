@@ -3,15 +3,15 @@
 #include "Renderer.hpp"
 #include "Utils.hpp"//colision between projectiles and players/terrain calculated in utils
 #include "NetworkCommunication.hpp"//send and receive stuff through networking
-
-ProjectileHandling::ProjectileHandling(int worldYs, int worldXs, Player** players, int playerCount) {
+#include "GlobalRecources.hpp"
+ProjectileHandling::ProjectileHandling() {
 	projectileVel = 10.0f;
 	projectileRadius = 20;
 
-	this->players = players;
-	this->worldYs = worldYs;
-	this->worldXs = worldXs;
-	this->playerCount = playerCount;
+	this->players = GlobalRecources::players;
+	this->worldHeight = GlobalRecources::worldHeight;
+	this->worldWidth = GlobalRecources::worldWidth;
+	this->playerCount = GlobalRecources::playerCount;
 	newProjectiles = new std::vector<Projectile*>();
 	projectiles = new std::vector<Projectile*>();;//stores all projectiles for creation, drawing, moving and damage calculation. 
 }
@@ -59,7 +59,7 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
 	for (int i = 0; i < projectiles->size(); i++) {
 		Projectile* p = projectiles->at(i);
-		p->move(worldYs, worldXs, colidables, colidableSize);//give it the maximum ys so it know when it can stop moving
+		p->move(worldHeight, worldWidth, colidables, colidableSize);//give it the maximum ys so it know when it can stop moving
 
 		for (int j = 0; j < playerCount; j++) {
 			Player* cPlayer = players[j];

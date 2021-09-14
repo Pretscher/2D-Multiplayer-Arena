@@ -2,14 +2,14 @@
 
 class UiHandling {
 public:
-	UiHandling(int frameYs, int frameXs);
+	UiHandling();
 	void updateLifeBar(int playerHP, int playerMaxHP);
 	void draw();
 
 	void drawAbilityUI(float qCooldownPercent);
 private:
 	int uiHeight;
-	int frameYs, frameXs;
+	int frameHeight, frameWidth;
 	int playerHP;
 	int lifeBarWidth;
 };

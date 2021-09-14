@@ -34,9 +34,9 @@ void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int p
 		if (startX < 0) startX = 0;
 
 		int endY = ((float)rect->getY() + rect->getHeight()) * pathfindingAccuracy;
-		if (endY >= GlobalRecources::worldYs) endY = GlobalRecources::worldYs - 1;
+		if (endY >= GlobalRecources::worldHeight) endY = GlobalRecources::worldHeight - 1;
 		int endX = ((float) rect->getX() + rect->getWidth()) * pathfindingAccuracy;
-		if (endX >= GlobalRecources::worldXs) endX = GlobalRecources::worldXs - 1;
+		if (endX >= GlobalRecources::worldWidth) endX = GlobalRecources::worldWidth - 1;
 
 		for (int y = startY; y < endY; y++) {
 			for (int x = startX; x < endX; x++) {

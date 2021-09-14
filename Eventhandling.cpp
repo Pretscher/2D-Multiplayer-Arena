@@ -39,23 +39,19 @@ static void recvAndImplementData();
 static std::thread* networkThread;
 
 
+
+
 void eventhandling::init() {
+	int worldWidth = 1920, worldHeight = 1080, vsWidth = 2000, vsHeight = 2000;
 	//be sure to not change the order, they depend on each other heavily
 	playerHandling = new PlayerHandling();
-	worldHandling = new WorldHandling();
-
-	int worldYs = worldHandling->getWorldYs();
-	int worldXs = worldHandling->getWorldXs();
-	uiHandling = new UiHandling(worldHandling->getFrameYs(), worldHandling->getFrameXs());
-	pathfinding = new Pathfinding(worldYs, worldXs, worldHandling->getTerrain(), playerHandling->getPlayers(),
-		playerHandling->getPlayerCount());
-	projectileHandling = new ProjectileHandling(worldYs, worldXs, playerHandling->getPlayers(), playerHandling->getPlayerCount());
+	worldHandling = new WorldHandling(worldWidth, worldHeight, vsWidth, vsHeight);
+	uiHandling = new UiHandling();
+	pathfinding = new Pathfinding();
+	projectileHandling = new ProjectileHandling();
 	NetworkCommunication::init();
 	menu = new Menu();
 
-	//so we dont have to worry about this messy recource-hell anymore
-	GlobalRecources::init(playerHandling->getPlayers(), playerHandling->getPlayerCount(), worldHandling->getTerrain(), 
-												worldYs, worldXs, pathfinding, pathfinding->getPathfingingMutex());
 }
 
 void eventhandling::eventloop() {

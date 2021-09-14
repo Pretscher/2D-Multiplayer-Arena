@@ -68,7 +68,7 @@ void Fireball::init1() {
 
 void Fireball::execute1() {
     auto colidables = GlobalRecources::terrain->getCollidables();
-    this->helpProjectile->move(GlobalRecources::worldYs, GlobalRecources::worldXs, colidables->data(), colidables->size());
+    this->helpProjectile->move(GlobalRecources::worldHeight, GlobalRecources::worldWidth, colidables->data(), colidables->size());
     //if the projectile reaches its max range or colides with anything, it should explode
     if ((abs(this->startY - this->helpProjectile->getY()) * abs(this->startY - this->helpProjectile->getY())
         + abs(this->startX - this->helpProjectile->getX()) * abs(this->startX - this->helpProjectile->getX())

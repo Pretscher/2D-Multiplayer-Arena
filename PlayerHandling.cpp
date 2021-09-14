@@ -2,7 +2,7 @@
 
 #include "NetworkCommunication.hpp"
 #include "Renderer.hpp"
-
+#include "GlobalRecources.hpp"
 
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	playerCount = 2;
@@ -18,6 +18,8 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 		int startY = i * 1000 / playerCount + 200;//move players away from each other in y
 		players[i] = new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg);//places players on map, x dist depends on playercount
 	}
+	GlobalRecources::players = players;
+	GlobalRecources::playerCount = playerCount;
 }
 
 void PlayerHandling::draw() {
