@@ -29,14 +29,14 @@ void NetworkCommunication::addToken(int token) {
 	tokenCount++;
 }
 
-void NetworkCommunication::sendTokensToServer(std::unique_ptr<PortableServer> server) {
+void NetworkCommunication::sendTokensToServer(std::unique_ptr<PortableServer>&& server) {
 	if(server->isConnected() == true) {
 		server->sendToClient(rawData.c_str());
 		rawData.clear();
 	}
 }
 
-void NetworkCommunication::sendTokensToClient(std::unique_ptr<PortableClient> client) {
+void NetworkCommunication::sendTokensToClient(std::unique_ptr<PortableClient>&& client) {
 	if(client->isConnected() == true) {
 		client->sendToServer(rawData.c_str());
 		rawData.clear();
@@ -49,7 +49,7 @@ int NetworkCommunication::receiveNextToken() {
 	return out;
 }
 
-void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServer> server) {
+void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServer>&& server) {
 	if(server->isConnected() == true) {
 		std::string* data;
 		bool copyAndParse = false;
@@ -71,7 +71,7 @@ void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServ
 	}
 }
 
-void NetworkCommunication::receiveTonkensFromClient(std::unique_ptr<PortableClient> client) {
+void NetworkCommunication::receiveTonkensFromClient(std::unique_ptr<PortableClient>&& client) {
 	if(client->isConnected() == true) {
 		std::string* data;
 		bool copyAndParse = false;

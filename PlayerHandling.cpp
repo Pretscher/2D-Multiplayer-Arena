@@ -48,6 +48,7 @@ void PlayerHandling::sendPlayerData() {
 
 		NetworkCommunication::addToken(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
 		for (int i = me->cPathIndex; i < me->pathLenght; i++) {
+			int x = me->pathXpositions[i];
 			NetworkCommunication::addToken(me->pathXpositions[i]);
 			NetworkCommunication::addToken(me->pathYpositions[i]);
 		}
