@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-
+#include <iostream>
 class PortableServer;
 class PortableClient;
 class NetworkCommunication {
@@ -11,12 +11,12 @@ public:
 	static void addToken(char* token);
 	static void addToken(int token);
 
-	static void sendTokensToServer(PortableServer&& server);
-	static void sendTokensToClient(PortableClient&& client);
+	static void sendTokensToServer(std::unique_ptr<PortableServer> server);
+	static void sendTokensToClient(std::unique_ptr<PortableClient> client);
 
 	static int receiveNextToken();
-	static void receiveTonkensFromServer(PortableServer&& server);
-	static void receiveTonkensFromClient(PortableClient&& client);
+	static void receiveTonkensFromServer(std::unique_ptr<PortableServer> server);
+	static void receiveTonkensFromClient(std::unique_ptr<PortableClient> client);
 
 	static int getTokenCount();
 

@@ -63,7 +63,7 @@ void PlayerHandling::sendPlayerData() {
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
 **/
 int hpSyncDelay = 0;
-void PlayerHandling::receivePlayerData(Pathfinding&& pathfinding) {
+void PlayerHandling::receivePlayerData() {
 	int otherPlayer = 0;
 	if (myPlayerI == 0) {
 		otherPlayer = 1;
@@ -83,13 +83,13 @@ void PlayerHandling::receivePlayerData(Pathfinding&& pathfinding) {
 	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
 
-		int* pathX = new int[pathLenght];
-		int* pathY = new int[pathLenght];
+		std::unique_ptr<int[]> pathX = std::unique_ptr<int[]>(new int[pathLenght]);
+		std::unique_ptr<int[]> pathY = std::unique_ptr<int[]>(new int[pathLenght]);
 		for (int i = 0; i < pathLenght; i++) {
 			pathX[i] = NetworkCommunication::receiveNextToken();
 			pathY[i] = NetworkCommunication::receiveNextToken();
 		}
-		players[otherPlayer]->givePath(pathX, pathY, pathLenght);
+		players[otherPlayer]->givePath(std::move(pathX), std::move(pathY), pathLenght);
 	}
 	else if (actionIndex == 2) {//follow the path given to you
 		//do nothing yet

@@ -16,13 +16,13 @@
 #include "AbilityHandling.hpp"
 #include "GlobalRecources.hpp"
 #include "Graph.hpp"
+using namespace std;
 
-
-static std::unique_ptr<Menu> menu;
+static unique_ptr<Menu> menu;
 static bool menuActive = true;
 
-static std::unique_ptr<PortableServer> server;
-static std::unique_ptr<PortableClient> client;
+static unique_ptr<PortableServer> server;
+static unique_ptr<PortableClient> client;
 
 static bool received = true;
 
@@ -32,22 +32,22 @@ static void sendData();
 static void recvAndImplementData();
 static std::thread* networkThread;
 
-static std::unique_ptr<PlayerHandling> playerHandling;
-static std::unique_ptr<WorldHandling> worldHandling;
-static std::unique_ptr<UiHandling> uiHandling;
-static std::unique_ptr<Pathfinding> pathfinding;
-static std::unique_ptr<ProjectileHandling> projectileHandling;
+static unique_ptr<PlayerHandling> playerHandling;
+static unique_ptr<WorldHandling> worldHandling;
+static unique_ptr<UiHandling> uiHandling;
+static unique_ptr<Pathfinding> pathfinding;
+static unique_ptr<ProjectileHandling> projectileHandling;
 
-static std::unique_ptr<AbilityHandling> abilityHandling;
+static unique_ptr<AbilityHandling> abilityHandling;
 void eventhandling::init() {
 	int worldWidth = 1920, worldHeight = 1080, vsWidth = 2000, vsHeight = 2000;
 	//be sure to not change the order, they depend on each other heavily
-	playerHandling = std::unique_ptr<PlayerHandling>(new PlayerHandling());
-	worldHandling = std::unique_ptr<WorldHandling>(new WorldHandling(worldWidth, worldHeight, vsWidth, vsHeight));
-	uiHandling = std::unique_ptr<UiHandling>(new UiHandling());
-	pathfinding = std::unique_ptr<Pathfinding>(new Pathfinding());
-	projectileHandling = std::unique_ptr<ProjectileHandling>(new ProjectileHandling());
-	menu = std::unique_ptr<Menu>(new Menu());
+	playerHandling = unique_ptr<PlayerHandling>(new PlayerHandling());
+	worldHandling = unique_ptr<WorldHandling>(new WorldHandling(worldWidth, worldHeight, vsWidth, vsHeight));
+	uiHandling = unique_ptr<UiHandling>(new UiHandling());
+	pathfinding = unique_ptr<Pathfinding>(new Pathfinding());
+	projectileHandling = unique_ptr<ProjectileHandling>(new ProjectileHandling());
+	menu = unique_ptr<Menu>(new Menu());
 }
 
 void eventhandling::eventloop() {
@@ -72,7 +72,7 @@ void eventhandling::eventloop() {
 			playerHandling->setPlayerIndex(playerIndex);//right now there are only two players so the client just has index 1
 			pathfinding->setPlayerIndex(playerIndex);
 			projectileHandling->setPlayerIndex(playerIndex);
-			abilityHandling = std::unique_ptr<AbilityHandling>(new AbilityHandling(playerIndex));
+			abilityHandling = unique_ptr<AbilityHandling>(new AbilityHandling(playerIndex));
 		}
 	}
 
@@ -122,14 +122,14 @@ void eventhandling::drawingloop() {
 
 
 static void initServer() {
-	server = std::unique_ptr<PortableServer>(new PortableServer());
+	server = unique_ptr<PortableServer>(new PortableServer());
 	server->waitForClient();
 	server->receiveMultithreaded();
 }
 
 static void initClient() {
 	std::string s = "192.168.178.28";//TODO: typeable ip
-	client = std::unique_ptr<PortableClient>(new PortableClient(s.c_str()));
+	client = unique_ptr<PortableClient>(new PortableClient(s.c_str()));
 	client->waitForServer();
 	client->receiveMultithreaded();
 }
@@ -144,10 +144,10 @@ static void sendData() {
 
 
 	if (playerHandling->getPlayerIndex() == 0) {
-		NetworkCommunication::sendTokensToServer(std::move(*server.get()));
+		NetworkCommunication::sendTokensToServer(std::move(server));
 	}
 	if (playerHandling->getPlayerIndex() == 1) {
-		NetworkCommunication::sendTokensToClient(std::move(*client.get()));
+		NetworkCommunication::sendTokensToClient(std::move(client));
 	}
 }
 
@@ -157,18 +157,18 @@ static void recvAndImplementData() {
 	if (playerHandling->getPlayerIndex() == 0) {
 		if (server->newMessage() == true) {
 			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromServer(std::move(*server.get()));
+			NetworkCommunication::receiveTonkensFromServer(std::move(server));
 		}
 	}
 	else {
 		if (client->newMessage() == true) {
 			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromClient(std::move(*client.get()));
+			NetworkCommunication::receiveTonkensFromClient(std::move(client));
 		}
 	}
 	if (receivedSth == true) {
 		abilityHandling->receiveData();
-		playerHandling->receivePlayerData(std::move(*pathfinding.get()));
+		playerHandling->receivePlayerData();
 		projectileHandling->receiveProjectiles();
 
 		received = true;

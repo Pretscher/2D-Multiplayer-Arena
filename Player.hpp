@@ -3,15 +3,15 @@
 class Player {
 public:
 	Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg);
-    void givePath(int* pathX, int* pathY, int pathLenght);
+    void givePath(std::shared_ptr<int[]> pathX, std::shared_ptr<int[]> pathY, int pathLenght);
     void deletePath();
     void move();
     void draw();
     void setTexture(int index);
 
     bool hasNewPath = false;
-    int* pathXpositions;
-    int* pathYpositions;
+    std::shared_ptr<int[]> pathXpositions;
+    std::shared_ptr<int[]> pathYpositions;
     int pathLenght;
     int cPathIndex;
 

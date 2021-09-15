@@ -5,7 +5,7 @@
 #include <limits>
 #include "Renderer.hpp"
 int Algorithm::currentIteration = -1;
-bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
+bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[]>&& o_pathXs, int&& o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
 	currentIteration++;
 	
 	int startIndex = graph->getIndexFromCoords(startY, startX, true);
@@ -91,17 +91,17 @@ bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Grap
 			}
 		}
 
-		*o_pathXs = new int[pathLenght];
-		*o_pathYs = new int[pathLenght];
-		*o_pathLenght = pathLenght;
+		o_pathXs = std::shared_ptr<int[]>(new int[pathLenght]);
+		o_pathYs = std::shared_ptr<int[]>(new int[pathLenght]);
+		o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
 
 		int indexInPath = pathLenght - 1;
 		currentIndex = goalIndex;
 		while (true) {
-			(*o_pathXs)[indexInPath] = graph->getIndexBoundXs()[currentIndex];
-			(*o_pathYs)[indexInPath] = graph->getIndexBoundYs()[currentIndex];
+			o_pathXs[indexInPath] = graph->getIndexBoundXs()[currentIndex];
+			o_pathYs[indexInPath] = graph->getIndexBoundYs()[currentIndex];
 			currentIndex = previousIndex[currentIndex];
 			indexInPath--;
 			if (currentIndex == startIndex) {
@@ -109,8 +109,8 @@ bool Algorithm::findPath(int** o_pathXs, int** o_pathYs, int* o_pathLenght, Grap
 			}
 		}
 
-		(*o_pathXs)[pathLenght - 1] = goalX;
-		(*o_pathYs)[pathLenght - 1] = goalY;
+		o_pathXs[pathLenght - 1] = goalX;
+		o_pathYs[pathLenght - 1] = goalY;
 
 		if (pathLenght == 0) {
 			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";

@@ -29,16 +29,16 @@ void NetworkCommunication::addToken(int token) {
 	tokenCount++;
 }
 
-void NetworkCommunication::sendTokensToServer(PortableServer&& server) {
-	if(server.isConnected() == true) {
-		server.sendToClient(rawData.c_str());
+void NetworkCommunication::sendTokensToServer(std::unique_ptr<PortableServer> server) {
+	if(server->isConnected() == true) {
+		server->sendToClient(rawData.c_str());
 		rawData.clear();
 	}
 }
 
-void NetworkCommunication::sendTokensToClient(PortableClient&& client) {
-	if(client.isConnected() == true) {
-		client.sendToServer(rawData.c_str());
+void NetworkCommunication::sendTokensToClient(std::unique_ptr<PortableClient> client) {
+	if(client->isConnected() == true) {
+		client->sendToServer(rawData.c_str());
 		rawData.clear();
 	}
 }
@@ -49,45 +49,45 @@ int NetworkCommunication::receiveNextToken() {
 	return out;
 }
 
-void NetworkCommunication::receiveTonkensFromServer(PortableServer&& server) {
-	if(server.isConnected() == true) {
+void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServer> server) {
+	if(server->isConnected() == true) {
 		std::string* data;
 		bool copyAndParse = false;
-		server.getMutex()->lock();//gets locked before writing message
-		data = server.getLastMessage();
+		server->getMutex()->lock();//gets locked before writing message
+		data = server->getLastMessage();
 		if (data != nullptr && data->size() > 0) {
 			copyAndParse = true;
 		}
 
 		if (copyAndParse == true) {
 			data = new std::string(data->c_str());//copy so network can overwrite
-			server.getMutex()->unlock();
+			server->getMutex()->unlock();
 			parseToIntsData = extractInts(*data);
 		}
 		else {
-			server.getMutex()->unlock();
+			server->getMutex()->unlock();
 		}
 		tokenIndex = 0;
 	}
 }
 
-void NetworkCommunication::receiveTonkensFromClient(PortableClient&& client) {
-	if(client.isConnected() == true) {
+void NetworkCommunication::receiveTonkensFromClient(std::unique_ptr<PortableClient> client) {
+	if(client->isConnected() == true) {
 		std::string* data;
 		bool copyAndParse = false;
-		client.getMutex()->lock();//gets locked before writing message
-		data = client.getLastMessage();
+		client->getMutex()->lock();//gets locked before writing message
+		data = client->getLastMessage();
 		if (data != nullptr && data->size() > 0) {
 			copyAndParse = true;
 		}
 
 		if (copyAndParse == true) {
 			data = new std::string(data->c_str());//copy so network can overwrite
-			client.getMutex()->unlock();
+			client->getMutex()->unlock();
 			parseToIntsData = extractInts(*data);
 		}
 		else {
-			client.getMutex()->unlock();
+			client->getMutex()->unlock();
 		}
 		tokenIndex = 0;
 	}

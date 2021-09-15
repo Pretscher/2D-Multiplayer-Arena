@@ -266,8 +266,8 @@ void Pathfinding::startPathFinding() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
 		if (this->getNewPathfinding() == true) {
-			int* pathXs = nullptr;
-			int* pathYs = nullptr;
+			std::shared_ptr<int[]> pathXs;
+			std::shared_ptr<int[]> pathYs;
 			int pathlenght = 0;
 			Player* player = players[cPlayerIndex];
 
@@ -285,7 +285,7 @@ void Pathfinding::startPathFinding() {
 				}
 			}
 
-			bool found = Algorithm::findPath(&pathXs, &pathYs, &pathlenght, g, player->getY() + (player->getHeight() / 2),
+			bool found = Algorithm::findPath(std::move(pathYs), std::move(pathXs), std::move(pathlenght), g, player->getY() + (player->getHeight() / 2),
 															 player->getX() + (player->getWidth() / 2), cgoalY, cgoalX);
 
 			disablePlayer(cPlayerIndex);
@@ -297,7 +297,7 @@ void Pathfinding::startPathFinding() {
 			}
 
 			if (found == true) {
-				player->givePath(pathXs, pathYs, pathlenght);
+				player->givePath(std::move(pathXs), std::move(pathYs), pathlenght);
 			}
 			player->setFindingPath(false);
 			setNewPathfinding(false);
