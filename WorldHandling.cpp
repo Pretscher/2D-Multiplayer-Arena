@@ -3,18 +3,16 @@
 #include "Renderer.hpp"
 #include "Terrain.hpp"
 #include "GlobalRecources.hpp"
-WorldHandling::WorldHandling(int frameWidth, int frameHeight, int viewspaceLimitsX, int viespaceLimitsY) {
+WorldHandling::WorldHandling(int frameWidth, int frameHeight, int viewspaceLimitsX, int viewspaceLimitsY) {
 	//hardcoded ys and xs
-	frameWidth = frameWidth;
-	frameHeight = frameHeight;
-	worldHeight = frameWidth + viewspaceLimitsX;
-	worldWidth = frameHeight + viespaceLimitsY;
+	worldHeight = frameHeight + viewspaceLimitsY;
+	worldWidth = frameWidth + viewspaceLimitsX;
 
 	viewSpaceLimits = new int[4];
 	viewSpaceLimits[0] = 0;//left
 	viewSpaceLimits[1] = viewspaceLimitsX;//right
 	viewSpaceLimits[2] = 0;//top
-	viewSpaceLimits[3] = viespaceLimitsY;//bot
+	viewSpaceLimits[3] = viewspaceLimitsY;//bot
 	cViewSpace = new int[2];
 	cViewSpace[0] = 0;//y (top to bot)
 	cViewSpace[1] = 0;//x (left to right)

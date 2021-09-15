@@ -19,7 +19,7 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 	for (int nodeIndex = 0; nodeIndex < graphNodeCount; nodeIndex++) {
 		for (int i = 0; i < graph->getIndexNeighbourCount()[nodeIndex]; i++) {
 			int currentNeighbourIndex = graph->getNeighbourIndices()[nodeIndex][i];
-			float heuristics = getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), graph->getIndexBoundXs(), currentNeighbourIndex, goalIndex);
+			float heuristics = getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), graph->getIndexBoundXs(), currentNeighbourIndex, nodeIndex);
 			graph->setNeighbourCost(nodeIndex, i, heuristics);
 		}
 	}
