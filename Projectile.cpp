@@ -4,6 +4,8 @@
 #include "Utils.hpp"
 #include "Player.hpp"
 #include <chrono>
+#include "iostream" 
+using namespace std;
 
 Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goalX, 
 		bool i_moveThroughGoal, int radius, Player* shootingPlayer) {
@@ -36,14 +38,14 @@ Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goal
 	if (i_goalX > this->x) this->up = true;
 	else this->up = false;
 
-	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	auto timePoint = chrono::system_clock::now().time_since_epoch();
+	lastMoveTime = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 }
 
 void Projectile::move(int maxY, int maxX, Rect** colisionRects, int rectCount) {
 
-	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	long long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	auto timePoint = chrono::system_clock::now().time_since_epoch();
+	long long now = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 	long long diff = now - this->lastMoveTime;
 	float dueSteps = diff / this->vel;
 

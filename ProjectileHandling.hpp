@@ -1,4 +1,6 @@
 #pragma once
+#include "iostream" 
+using namespace std;
 #include <vector>
 #include "Projectile.hpp"
 #include "Rect.hpp"
@@ -22,8 +24,8 @@ private:
 	float projectileVel;
 	int projectileRadius;
 	bool samePress = false;
-	std::vector<Projectile*>* newProjectiles;
-	std::vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
+	vector<Projectile*>* newProjectiles;
+	vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
 	int worldHeight, worldWidth;
 	Player** players;

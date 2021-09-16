@@ -1,4 +1,6 @@
 #include "WorldHandling.hpp"	
+#include "iostream" 
+using namespace std;
 
 #include "Renderer.hpp"
 #include "Terrain.hpp"
@@ -8,8 +10,8 @@ WorldHandling::WorldHandling(int frameWidth, int frameHeight, int viewspaceLimit
 	worldHeight = frameHeight + viewspaceLimitsY;
 	worldWidth = frameWidth + viewspaceLimitsX;
 
-	viewSpaceLimits = std::shared_ptr<const int[]>(new int[4]{0, viewspaceLimitsX, 0, viewspaceLimitsY});
-	cViewSpace = std::shared_ptr<int[]>(new int[2]);
+	viewSpaceLimits = shared_ptr<const int[]>(new int[4]{0, viewspaceLimitsX, 0, viewspaceLimitsY});
+	cViewSpace = shared_ptr<int[]>(new int[2]);
 	cViewSpace[0] = 0;//y (top to bot)
 	cViewSpace[1] = 0;//x (left to right)
 

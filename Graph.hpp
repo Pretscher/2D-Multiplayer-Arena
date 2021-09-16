@@ -2,6 +2,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+using namespace std;
 #include <mutex>
 
 class Graph {
@@ -16,8 +17,8 @@ public:
 	void enableObjectBounds(int y, int x, int width, int height);
 
 	//debugging
-	std::vector<int> deactivatedX;
-	std::vector<int> deactivatedY;
+	vector<int> deactivatedX;
+	vector<int> deactivatedY;
 	void debugDrawing();
 
 

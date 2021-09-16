@@ -1,4 +1,6 @@
 #pragma once
+#include "iostream" 
+using namespace std;
 #include "Player.hpp"
 #include "Renderer.hpp"
 #include "Terrain.hpp"
@@ -13,7 +15,7 @@
 #include "Transfusion.hpp"
 #include "Fireball.hpp"
 #include "GlobalRecources.hpp"//init is called here
-using namespace std::chrono;
+using namespace chrono;
 
 class AbilityTriggering {
 public:
@@ -107,7 +109,7 @@ private:
 class AbilityHandling {
 public:
     AbilityHandling(int i_myPlayerIndex) {
-        generalAbilities = new std::vector<Ability*>();
+        generalAbilities = new vector<Ability*>();
         this->myPlayerI = i_myPlayerIndex;
         
         abilityTriggering = new AbilityTriggering(abilityCount);
@@ -217,21 +219,21 @@ public:
             }
             Renderer::drawRect(x, y + size - (cdPercent * size), size, (cdPercent * size), sf::Color(0, 0, 150, 100), true);
 
-            std::string abilityLetter;
+            string abilityLetter;
             if (i == 0) {
-                abilityLetter = std::string("Q");
+                abilityLetter = string("Q");
             }
             else if (i == 1) {
-                abilityLetter = std::string("W");
+                abilityLetter = string("W");
             }
             else if (i == 2) {
-                abilityLetter = std::string("E");
+                abilityLetter = string("E");
             }
             else if (i == 3) {
-                abilityLetter = std::string("R");
+                abilityLetter = string("R");
             }
             else if (i == 4) {
-                abilityLetter = std::string("T");
+                abilityLetter = string("T");
             }
             Renderer::drawText(abilityLetter, x - size / 2.2f, y - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
         }
@@ -295,7 +297,7 @@ public:
             NetworkCommunication::addToken(newE->getCastingPlayer());
             NetworkCommunication::addToken(newE->getPhase());
 
-            auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
             int timeSinceStart = cTime - newE->getStartTime(newE->getPhase());
             NetworkCommunication::addToken(timeSinceStart);
         }
@@ -316,7 +318,7 @@ public:
             NetworkCommunication::addToken(1);//check if new transfusion is to be added
             NetworkCommunication::addToken(newW->getCastingPlayer());
 
-            auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
             int timeSinceStart = cTime - newW->getStartTime(newW->getPhase());
             NetworkCommunication::addToken(timeSinceStart);
         }
@@ -544,7 +546,7 @@ public:
 private:
     bool samePress = false;
     int myPlayerI;
-    std::vector<Ability*>* generalAbilities;
+    vector<Ability*>* generalAbilities;
     Ability** newAbilities;
 
     AbilityTriggering* abilityTriggering;
@@ -554,12 +556,12 @@ private:
     int abilityCount = 5;
     bool* hasNewAbility = new bool[abilityCount];
 
-    std::vector<Fireball*>* fireballs = new std::vector<Fireball*>();
-    std::vector<Transfusion*>* transfusions = new std::vector<Transfusion*>();
+    vector<Fireball*>* fireballs = new vector<Fireball*>();
+    vector<Transfusion*>* transfusions = new vector<Transfusion*>();
 
-    std::vector<VladE*>* vladEs = new std::vector<VladE*>();
-    std::vector<VladW*>* vladWs = new std::vector<VladW*>();
-    std::vector<VladR*>* vladRs = new std::vector<VladR*>();
+    vector<VladE*>* vladEs = new vector<VladE*>();
+    vector<VladW*>* vladWs = new vector<VladW*>();
+    vector<VladR*>* vladRs = new vector<VladR*>();
 
     //indices of abilities. Please set in "declareCustomAbilities()".
     int fireballIndex;

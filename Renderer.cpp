@@ -4,8 +4,8 @@
 #include "GlobalRecources.hpp"
 //Call this-----------------------------------------------------------------------------------------------------------
 
-std::shared_ptr<int[]> Renderer::viewSpace;
-std::shared_ptr<const int[]>  Renderer::viewSpaceLimits;
+shared_ptr<int[]> Renderer::viewSpace;
+shared_ptr<const int[]>  Renderer::viewSpaceLimits;
 sf::RenderWindow* Renderer::currentWindow;
 
 void Renderer::init(sf::RenderWindow* window) {
@@ -13,7 +13,7 @@ void Renderer::init(sf::RenderWindow* window) {
     window->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
 }
 
-void Renderer::linkViewSpace(std::shared_ptr<int[]> io_viewSpace, std::shared_ptr<const int[]> io_viewspaceLimits) {
+void Renderer::linkViewSpace(shared_ptr<int[]> io_viewSpace, shared_ptr<const int[]> io_viewspaceLimits) {
     viewSpace = io_viewSpace;
     viewSpaceLimits = io_viewspaceLimits;
 
@@ -142,7 +142,7 @@ void Renderer::drawLine(int x1, int y1, int x2, int y2, sf::Color c, int thickne
     float dY = y2 - y1;
     int ht = thickness / 2;
     float rot = atan2(dY, dX) * 57.2958f;
-    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(std::sqrt(std::abs(dX) * std::abs(dX) + std::abs(dY) * std::abs(dY)), ht * 2));
+    sf::RectangleShape line = sf::RectangleShape(sf::Vector2f(sqrt(abs(dX) * abs(dX) + abs(dY) * abs(dY)), ht * 2));
 
     line.setOrigin(0, ht);
     line.setPosition(x1 - viewSpace[1], y1 - viewSpace[0]);
@@ -195,7 +195,7 @@ void Renderer::updateViewSpace() {
     int moveSpeed = 30;
     
     int mouseX = -1, mouseY = -1;
-    getMousePos(std::move(mouseX), std::move(mouseY), false, true);
+    getMousePos(move(mouseX), move(mouseY), false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];
@@ -251,18 +251,18 @@ void Renderer::updateViewSpace() {
 }
 
 
-sf::Texture Renderer::loadTexture(std::string path, bool repeat) {
+sf::Texture Renderer::loadTexture(string path, bool repeat) {
     sf::Texture texture;
     if (!texture.loadFromFile(path))
     {
-        std::cout << "failed to load texture of path '" << path << "'";
-        std::exit(0);
+        cout << "failed to load texture of path '" << path << "'";
+        exit(0);
     }
     if (repeat == true) {
         sf::Image img = texture.copyToImage();
         if (texture.loadFromImage(img) == false) {
-            std::cout << "failed to load texture image of path '" << path << "'";
-            std::exit(0);
+            cout << "failed to load texture image of path '" << path << "'";
+            exit(0);
         }
 
         texture.setRepeated(true);
@@ -295,7 +295,7 @@ void Renderer::drawRectWithTexture(int x, int y, int width, int height, sf::Text
     delete square;
 }
 
-void Renderer::drawText(std::string i_text, int x, int y, int width, int height, sf::Color color) {
+void Renderer::drawText(string i_text, int x, int y, int width, int height, sf::Color color) {
     fromYXBounds(&width, &height);
     fromYX(&y, &x);
 
@@ -304,7 +304,7 @@ void Renderer::drawText(std::string i_text, int x, int y, int width, int height,
     sf::Font font;
     if (!font.loadFromFile("Calibri Regular.ttf"))
     {
-        std::cout << "error loading font.";
+        cout << "error loading font.";
     }
 
     // select the font
@@ -318,7 +318,7 @@ void Renderer::drawText(std::string i_text, int x, int y, int width, int height,
 
     size_t CharacterSize = text.getCharacterSize();
 
-    std::string String = text.getString().toAnsiString();
+    string String = text.getString().toAnsiString();
     bool bold = (text.getStyle() == sf::Text::Bold);
     size_t MaxHeight = 0;
 

@@ -1,5 +1,6 @@
 #pragma once
-#include <iostream>
+#include "iostream" 
+using namespace std;
 #include <vector>
 #include <thread>
 #include <mutex>
@@ -11,8 +12,8 @@ class Pathfinding {
 
 public:
 	Pathfinding();
-	std::vector<int>* newGoalYs = new std::vector<int>();
-	std::vector<int>* newGoalXs = new std::vector<int>();
+	unique_ptr<vector<int>> newGoalYs;
+	unique_ptr<vector<int>> newGoalXs;
 
 	void startPathFinding();
 	void findPath(int goalX, int goalY, int playerIndex);
@@ -25,7 +26,7 @@ public:
 		myPlayerIndex = playerI;
 	}
 
-	std::mutex* getPathfingingMutex() {
+	mutex* getPathfingingMutex() {
 		return pfMtx;
 	}
 
@@ -42,8 +43,8 @@ private:
 
 	bool** colisionGrid;
 
-	std::thread* pathFindingThread;
-	std::mutex* pfMtx;
+	thread* pathFindingThread;
+	mutex* pfMtx;
 	bool findingPath;
 	Player** players;
 	int playerCount;
@@ -51,9 +52,9 @@ private:
 
 	bool sameClick = false;//dont do two pathfindings on the same click
 
-	std::vector<int>* goalXToFind;
-	std::vector<int>* goalYToFind;
-	std::vector<int>* indicesToFind;
+	vector<int>* goalXToFind;
+	vector<int>* goalYToFind;
+	vector<int>* indicesToFind;
 	int myPlayerIndex = 0;
 
 	void playerInteraction(int movedPlayerIndex);

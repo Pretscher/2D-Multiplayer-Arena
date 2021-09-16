@@ -1,18 +1,19 @@
 #include "NetworkCommunication.hpp"
 
-#include <iostream>
+#include "iostream" 
+using namespace std;
 #include "PortableClient.hpp"
 #include "PortableServer.hpp"
 
 int NetworkCommunication::tokenCount;
-std::string NetworkCommunication::rawData;
-std::vector<int> NetworkCommunication::parseToIntsData;
+string NetworkCommunication::rawData;
+vector<int> NetworkCommunication::parseToIntsData;
 int NetworkCommunication::tokenIndex;
 
 void NetworkCommunication::addToken(char* token) {
 	if (token == nullptr) {
-		std::cout << "networkCommunication received nullptr as outgoing token";
-		std::exit(0);
+		cout << "networkCommunication received nullptr as outgoing token";
+		exit(0);
 	}
 	if (rawData.size() > 0) {//dont start with a comma
 		rawData.push_back(',');
@@ -25,18 +26,18 @@ void NetworkCommunication::addToken(int token) {
 	if (rawData.size() > 0) {//dont start  or end with a comma
 		rawData.push_back(',');
 	}
-	rawData.append(std::to_string(token).c_str());
+	rawData.append(to_string(token).c_str());
 	tokenCount++;
 }
 
-void NetworkCommunication::sendTokensToServer(std::unique_ptr<PortableServer>&& server) {
+void NetworkCommunication::sendTokensToServer(unique_ptr<PortableServer>&& server) {
 	if(server->isConnected() == true) {
 		server->sendToClient(rawData.c_str());
 		rawData.clear();
 	}
 }
 
-void NetworkCommunication::sendTokensToClient(std::unique_ptr<PortableClient>&& client) {
+void NetworkCommunication::sendTokensToClient(unique_ptr<PortableClient>&& client) {
 	if(client->isConnected() == true) {
 		client->sendToServer(rawData.c_str());
 		rawData.clear();
@@ -49,9 +50,9 @@ int NetworkCommunication::receiveNextToken() {
 	return out;
 }
 
-void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServer>&& server) {
+void NetworkCommunication::receiveTonkensFromServer(unique_ptr<PortableServer>&& server) {
 	if(server->isConnected() == true) {
-		std::string* data;
+		string* data;
 		bool copyAndParse = false;
 		server->getMutex()->lock();//gets locked before writing message
 		data = server->getLastMessage();
@@ -60,7 +61,7 @@ void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServ
 		}
 
 		if (copyAndParse == true) {
-			data = new std::string(data->c_str());//copy so network can overwrite
+			data = new string(data->c_str());//copy so network can overwrite
 			server->getMutex()->unlock();
 			parseToIntsData = extractInts(*data);
 		}
@@ -71,9 +72,9 @@ void NetworkCommunication::receiveTonkensFromServer(std::unique_ptr<PortableServ
 	}
 }
 
-void NetworkCommunication::receiveTonkensFromClient(std::unique_ptr<PortableClient>&& client) {
+void NetworkCommunication::receiveTonkensFromClient(unique_ptr<PortableClient>&& client) {
 	if(client->isConnected() == true) {
-		std::string* data;
+		string* data;
 		bool copyAndParse = false;
 		client->getMutex()->lock();//gets locked before writing message
 		data = client->getLastMessage();
@@ -82,7 +83,7 @@ void NetworkCommunication::receiveTonkensFromClient(std::unique_ptr<PortableClie
 		}
 
 		if (copyAndParse == true) {
-			data = new std::string(data->c_str());//copy so network can overwrite
+			data = new string(data->c_str());//copy so network can overwrite
 			client->getMutex()->unlock();
 			parseToIntsData = extractInts(*data);
 		}
@@ -101,17 +102,17 @@ int NetworkCommunication::getTokenCount() {
 	return tokenCount;
 }
 
-std::vector<int> NetworkCommunication::extractInts(std::string str) {
-	std::vector<int> out = std::vector<int>();
+vector<int> NetworkCommunication::extractInts(string str) {
+	vector<int> out = vector<int>();
 	int lastSplit = 0;
 	for (int i = 0; i < str.length(); i++) {
 		if (str.at(i) == ',') {
-			int temp = std::stoi(str.substr(lastSplit, i));
+			int temp = stoi(str.substr(lastSplit, i));
 			out.push_back(temp);
 			lastSplit = i + 1;
 		}
 		if (i == str.length() - 1) {
-			int temp = std::stoi(str.substr(lastSplit, i));
+			int temp = stoi(str.substr(lastSplit, i));
 			out.push_back(temp);
 		}
 	}

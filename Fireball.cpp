@@ -1,7 +1,9 @@
 #include "Fireball.hpp"
 #include "GlobalRecources.hpp"
+#include "iostream" 
+using namespace std;
 #include <chrono>
-using namespace std::chrono;
+using namespace chrono;
 
 static int i_onCDPhase = 1;
 static int i_addToNetworkPhase = 2;

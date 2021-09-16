@@ -4,6 +4,9 @@
 #include "Utils.hpp"//colision between projectiles and players/terrain calculated in utils
 #include "NetworkCommunication.hpp"//send and receive stuff through networking
 #include "GlobalRecources.hpp"
+
+#include "iostream" 
+using namespace std;
 ProjectileHandling::ProjectileHandling() {
 	projectileVel = 10.0f;
 	projectileRadius = 20;
@@ -12,8 +15,8 @@ ProjectileHandling::ProjectileHandling() {
 	this->worldHeight = GlobalRecources::worldHeight;
 	this->worldWidth = GlobalRecources::worldWidth;
 	this->playerCount = GlobalRecources::playerCount;
-	newProjectiles = new std::vector<Projectile*>();
-	projectiles = new std::vector<Projectile*>();;//stores all projectiles for creation, drawing, moving and damage calculation. 
+	newProjectiles = new vector<Projectile*>();
+	projectiles = new vector<Projectile*>();;//stores all projectiles for creation, drawing, moving and damage calculation. 
 }
 
 void ProjectileHandling::update(Rect** colidables, int colidableSize) {
@@ -26,7 +29,7 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 
 
 		int mouseX, mouseY;
-		Renderer::getMousePos(std::move(mouseX), std::move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(move(mouseX), move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
 		Player* myPlayer = players[myPlayerI];

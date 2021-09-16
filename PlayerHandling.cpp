@@ -1,8 +1,9 @@
 #include "Playerhandling.hpp"
-
 #include "NetworkCommunication.hpp"
 #include "Renderer.hpp"
 #include "GlobalRecources.hpp"
+#include "iostream" 
+using namespace std;
 
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	playerCount = 2;
@@ -84,13 +85,13 @@ void PlayerHandling::receivePlayerData() {
 	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
 
-		std::unique_ptr<int[]> pathX = std::unique_ptr<int[]>(new int[pathLenght]);
-		std::unique_ptr<int[]> pathY = std::unique_ptr<int[]>(new int[pathLenght]);
+		unique_ptr<int[]> pathX = unique_ptr<int[]>(new int[pathLenght]);
+		unique_ptr<int[]> pathY = unique_ptr<int[]>(new int[pathLenght]);
 		for (int i = 0; i < pathLenght; i++) {
 			pathX[i] = NetworkCommunication::receiveNextToken();
 			pathY[i] = NetworkCommunication::receiveNextToken();
 		}
-		players[otherPlayer]->givePath(std::move(pathX), std::move(pathY), pathLenght);
+		players[otherPlayer]->givePath(move(pathX), move(pathY), pathLenght);
 	}
 	else if (actionIndex == 2) {//follow the path given to you
 		//do nothing yet

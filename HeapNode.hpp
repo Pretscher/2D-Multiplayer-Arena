@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+using namespace std;
 #include <limits>
 
 class HeapNode {
@@ -15,6 +16,6 @@ public:
 
 private:
     int usedInIteration = -1;
-    float myKey = std::numeric_limits<float>::max();
+    float myKey = numeric_limits<float>::max();
     int myIndexInGraph = -1;
 };

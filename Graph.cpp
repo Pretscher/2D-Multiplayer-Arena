@@ -24,8 +24,8 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
     rawIndices = new int*[this->yCount];
     neighbourCosts = nullptr; //initialized later for every run of algorithm
 
-    deactivatedX = std::vector<int>();
-    deactivatedY = std::vector<int>();
+    deactivatedX = vector<int>();
+    deactivatedY = vector<int>();
 }
 
 Graph::~Graph() {
@@ -160,7 +160,7 @@ int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) {
     
 
 
-    std::vector<IntPoint>* toVisit = new std::vector<IntPoint>();
+    vector<IntPoint>* toVisit = new vector<IntPoint>();
     //while no suitable index found (rawIndices[tempY][tempX] is -1 if unuseable) and in bounds of window)
     IntPoint cPoint = IntPoint(y, x);
     toVisit->push_back(cPoint);
@@ -221,8 +221,8 @@ int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) {
         return cIndex;
     }
     else {
-        std::cout << "error in findUseableVertex";
-        std::exit(0);
+        cout << "error in findUseableVertex";
+        exit(0);
     }
 }
 
@@ -270,8 +270,8 @@ int Graph::getIndexFromCoords(int y, int x, bool moveableRelevant) {
         }
     }
     else {
-        std::cout << "out of bounds y or x in 'Graph->getIndexFromCoords'";
-        std::exit(0);
+        cout << "out of bounds y or x in 'Graph->getIndexFromCoords'";
+        exit(0);
     }
 }
 

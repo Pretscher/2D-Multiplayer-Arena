@@ -30,7 +30,7 @@ static void initServer();
 static void initClient();
 static void sendData();
 static void recvAndImplementData();
-static std::thread* networkThread;
+static thread* networkThread;
 
 static unique_ptr<PlayerHandling> playerHandling;
 static unique_ptr<WorldHandling> worldHandling;
@@ -59,13 +59,13 @@ void eventhandling::eventloop() {
 		if (menu->hostServer() == true) {
 			playerIndex = 0;
 			initIndex = true;
-			networkThread = new std::thread(&initServer);
+			networkThread = new thread(&initServer);
 			menuActive = false;//go to game
 		}
 		if (menu->connectAsClient() == true) {
 			playerIndex = 1;
 			initIndex = true;
-			networkThread = new std::thread(&initClient);
+			networkThread = new thread(&initClient);
 			menuActive = false;//go to game
 		}
 		if (initIndex == true) {
@@ -128,7 +128,7 @@ static void initServer() {
 }
 
 static void initClient() {
-	std::string s = "192.168.178.28";//TODO: typeable ip
+	string s = "192.168.178.28";//TODO: typeable ip
 	client = unique_ptr<PortableClient>(new PortableClient(s.c_str()));
 	client->waitForServer();
 	client->receiveMultithreaded();
@@ -144,10 +144,10 @@ static void sendData() {
 
 
 	if (playerHandling->getPlayerIndex() == 0) {
-		NetworkCommunication::sendTokensToServer(std::move(server));
+		NetworkCommunication::sendTokensToServer(move(server));
 	}
 	if (playerHandling->getPlayerIndex() == 1) {
-		NetworkCommunication::sendTokensToClient(std::move(client));
+		NetworkCommunication::sendTokensToClient(move(client));
 	}
 }
 
@@ -157,13 +157,13 @@ static void recvAndImplementData() {
 	if (playerHandling->getPlayerIndex() == 0) {
 		if (server->newMessage() == true) {
 			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromServer(std::move(server));
+			NetworkCommunication::receiveTonkensFromServer(move(server));
 		}
 	}
 	else {
 		if (client->newMessage() == true) {
 			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromClient(std::move(client));
+			NetworkCommunication::receiveTonkensFromClient(move(client));
 		}
 	}
 	if (receivedSth == true) {

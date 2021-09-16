@@ -1,4 +1,6 @@
 #pragma once
+#include "iostream" 
+using namespace std;
 #include <math.h>
 #include <chrono>
 /*This is a base class for every ability. It has all the commonalities abilities need to be bound to this project
@@ -88,7 +90,7 @@ public:
     }
 
     inline int getTimeSincePhaseStart(int index) {
-        auto cTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
         return cTime - phaseStart[index];
     }
 

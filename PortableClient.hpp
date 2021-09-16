@@ -1,6 +1,7 @@
 #pragma once
 // Client side C/C++ program to demonstrate Socket programming
-
+#include "iostream" 
+using namespace std;
 #include <string>
 #include <mutex>
 
@@ -10,8 +11,8 @@ public:
     void waitForServer();
     void receiveMultithreaded();
     void sendToServer(const char* message);
-    std::string* getLastMessage();
+    string* getLastMessage();
     bool isConnected();
-    std::mutex* getMutex();
+    mutex* getMutex();
     bool newMessage();
 };

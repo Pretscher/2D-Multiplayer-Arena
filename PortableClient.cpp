@@ -1,4 +1,6 @@
 #include "PortableClient.hpp"
+#include <iostream>
+using namespace std;
 
 #ifdef __linux__ 
 
@@ -8,7 +10,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-#include <iostream>
 #include <mutex>
 #include <thread>
 
@@ -24,8 +25,8 @@ static int bufferMaxLenght = 512;
 static char* inputBuffer = new char[bufferMaxLenght];
 
 static bool gotNewMessage = false;
-static std::string* lastMessage;
-static std::mutex* writingMessage = new std::mutex();
+static string* lastMessage;
+static mutex* writingMessage = new mutex();
 static bool waitHandShaking = false;
 
 PortableClient::PortableClient(const char* serverIP) {
@@ -33,7 +34,7 @@ PortableClient::PortableClient(const char* serverIP) {
     if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
-        std::exit(0);
+        exit(0);
     }
 
     serv_addr.sin_family = AF_INET;
@@ -43,7 +44,7 @@ PortableClient::PortableClient(const char* serverIP) {
     if (inet_pton(AF_INET, serverIP, &serv_addr.sin_addr) <= 0)
     {
         printf("\nInvalid address/ Address not supported \n");
-        std::exit(0);
+        exit(0);
     }
     }
 
@@ -51,20 +52,20 @@ void PortableClient::waitForServer() {
     if (connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
     {
         printf("\nConnection Failed \n");
-        std::exit(0);
+        exit(0);
     }
     connected = true;
 }
 
 void PortableClient::receiveMultithreaded() {
     while (true) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        this_thread::sleep_for(chrono::milliseconds(1));
         inputLenght = read(serverSocket, inputBuffer, bufferMaxLenght);
         //received a valid message
         if (inputLenght > 0) {
             writingMessage->lock();
             if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new std::string();
+            lastMessage = new string();
             gotNewMessage = true;
             //save message
             for (int i = 0; i < inputLenght; i++) {
@@ -75,8 +76,8 @@ void PortableClient::receiveMultithreaded() {
         }
 
         if (inputLenght < 0) {
-            std::cout << "error, client received message with negative lenght";
-            std::exit(0);
+            cout << "error, client received message with negative lenght";
+            exit(0);
         }
     }
 }
@@ -88,7 +89,7 @@ void PortableClient::sendToServer(const char* message) {
     }
 }
 
-std::string* PortableClient::getLastMessage() {
+string* PortableClient::getLastMessage() {
     return lastMessage;
 }
 
@@ -96,7 +97,7 @@ bool PortableClient::isConnected() {
     return connected;
 }
 
-std::mutex* PortableClient::getMutex() {
+mutex* PortableClient::getMutex() {
     return writingMessage;
 }
 
@@ -112,7 +113,6 @@ bool PortableClient::newMessage() {
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream>
 #include <mutex>
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -127,10 +127,10 @@ static int iResult;
 static SOCKET ConnectSocket;
 static char* recvbuf;
 static int recvbuflen;
-static std::string* lastMessage;
+static string* lastMessage;
 static bool connected = false;
 static bool wait = false;
-static std::mutex* mutex = new std::mutex();
+static std::mutex* mtx = new  std::mutex();
 static bool gotNewMessage = false;
 
 PortableClient::PortableClient(const char* serverIP) {
@@ -148,7 +148,7 @@ PortableClient::PortableClient(const char* serverIP) {
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        std::cout << "Client WSAStartup failed with error: \n" << iResult;
+        cout << "Client WSAStartup failed with error: \n" << iResult;
         return;
     }
 
@@ -160,7 +160,7 @@ PortableClient::PortableClient(const char* serverIP) {
     // Resolve the server address and port
     iResult = getaddrinfo(serverIP, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
-        std::cout << "Client getaddrinfo failed with error: \n" << iResult;
+        cout << "Client getaddrinfo failed with error: \n" << iResult;
         WSACleanup();
         return;
     }
@@ -172,9 +172,9 @@ PortableClient::PortableClient(const char* serverIP) {
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
             ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
-            std::cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
+            cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
             WSACleanup();
-            std::exit(0);
+            exit(0);
             return;
         }
 
@@ -194,9 +194,9 @@ PortableClient::PortableClient(const char* serverIP) {
 
 void PortableClient::waitForServer() {
     if (ConnectSocket == INVALID_SOCKET) {
-        std::cout << "Client Unable to connect to server!\n";
+        cout << "Client Unable to connect to server!\n";
         WSACleanup();
-        std::exit(0);
+        exit(0);
         return;
     }
     connected = true;
@@ -211,27 +211,27 @@ void PortableClient::sendToServer(const char* message) {
         // Send an initial buffer
         iResult = send(ConnectSocket, message, (int)strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
-            std::cout << "Client send failed with error: \n" << WSAGetLastError();
+            cout << "Client send failed with error: \n" << WSAGetLastError();
             WSACleanup();
-            std::exit(0);
+            exit(0);
             return;
         }
         wait = true;
-        //  std::cout << "Client Message Sent: \n" << message;
+        //  cout << "Client Message Sent: \n" << message;
     }
 }
 
 void PortableClient::receiveMultithreaded() {
     while (true) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        this_thread::sleep_for(chrono::milliseconds(1));
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 
 
         if (iResult > 0) {
-            mutex->lock();//lock caus writing and reading message at the same time is not thread safe
+            mtx->lock();//lock caus writing and reading message at the same time is not thread safe
 
             if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new std::string();
+            lastMessage = new string();
             gotNewMessage = true;
 
             //save message
@@ -239,15 +239,15 @@ void PortableClient::receiveMultithreaded() {
                 lastMessage->push_back(recvbuf[i]);
             }
 
-            mutex->unlock();
+            mtx->unlock();
         }
 
-        // std::cout << "Client received message: " << *lastMessage;
+        // cout << "Client received message: " << *lastMessage;
         if (iResult < 0) {
-            std::cout << "Client recv failed with error: \n" << WSAGetLastError();
+            cout << "Client recv failed with error: \n" << WSAGetLastError();
             closesocket(ConnectSocket);
             WSACleanup();
-            std::exit(0);
+            exit(0);
             return;
         }
         wait = false;
@@ -256,10 +256,10 @@ void PortableClient::receiveMultithreaded() {
     // shutdown the connection since we're done
     iResult = shutdown(ConnectSocket, SD_SEND);
     if (iResult == SOCKET_ERROR) {
-        std::cout << "Client shutdown failed with error: \n" << WSAGetLastError();
+        cout << "Client shutdown failed with error: \n" << WSAGetLastError();
         closesocket(ConnectSocket);
         WSACleanup();
-        std::exit(0);
+        exit(0);
         return;
     }
 
@@ -268,12 +268,12 @@ void PortableClient::receiveMultithreaded() {
     WSACleanup();
 }
 
-std::string* PortableClient::getLastMessage() {
+string* PortableClient::getLastMessage() {
     return lastMessage;
 }
 
-std::mutex* PortableClient::getMutex() {
-    return mutex;
+mutex* PortableClient::getMutex() {
+    return mtx;
 }
 
 bool PortableClient::newMessage() {

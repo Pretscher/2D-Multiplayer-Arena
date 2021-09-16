@@ -1,13 +1,14 @@
 #pragma once
 #include "Renderer.hpp"
-#include <iostream>
+#include "iostream" 
+using namespace std;
 class Menu {
 public:
-	Button* host;
-	Button* connect;
+	unique_ptr<Button> host;
+	unique_ptr<Button> connect;
 	Menu() {
-		host = new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", sf::Color(255, 0, 0, 255));
-		connect = new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", sf::Color(255, 0, 0, 255));
+		host = unique_ptr<Button>(new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", sf::Color(255, 0, 0, 255)));
+		connect = unique_ptr<Button>(new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", sf::Color(255, 0, 0, 255)));
 		bHostServer = false;
 		bConnectAsClient = false;
 	}

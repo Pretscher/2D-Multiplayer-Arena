@@ -5,7 +5,7 @@
 #include <limits>
 #include "Renderer.hpp"
 int Algorithm::currentIteration = -1;
-bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[]>&& o_pathXs, int&& o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
+bool Algorithm::findPath(shared_ptr<int[]>&& o_pathYs, shared_ptr<int[]>&& o_pathXs, int&& o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
 	currentIteration++;
 	
 	int startIndex = graph->getIndexFromCoords(startY, startX, true);
@@ -21,7 +21,7 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 	int* previousIndex = new int[graphNodeCount];
 
 	for (int i = 0; i < graphNodeCount; i++) {
-		distanceTravelled[i] = std::numeric_limits<float>::max();//Theoretically infinity, not used nodes have no valuable info
+		distanceTravelled[i] = numeric_limits<float>::max();//Theoretically infinity, not used nodes have no valuable info
 	}
 
 	distanceTravelled[startIndex] = 0.0f;
@@ -75,7 +75,7 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 
 	if (foundPath == true) {
 
-		//std::cout << "time elapsed sind the algorithm started: " << Utils::endTimerGetTime();
+		//cout << "time elapsed sind the algorithm started: " << Utils::endTimerGetTime();
 
 		//get lenght of path array
 		int pathLenght = 0;//goal pos pushed back
@@ -88,8 +88,8 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 			}
 		}
 
-		o_pathXs = std::shared_ptr<int[]>(new int[pathLenght]);
-		o_pathYs = std::shared_ptr<int[]>(new int[pathLenght]);
+		o_pathXs = shared_ptr<int[]>(new int[pathLenght]);
+		o_pathYs = shared_ptr<int[]>(new int[pathLenght]);
 		o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
@@ -110,7 +110,7 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 		o_pathYs[pathLenght - 1] = goalY;
 
 		if (pathLenght == 0) {
-			std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
+			cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
 			delete heap;
 			delete[] distanceTravelled;
 			delete[] previousIndex;
@@ -124,7 +124,7 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 	delete heap;
 	delete[] distanceTravelled;
 	delete[] previousIndex;
-	std::cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
+	cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
 	return false;
 }
 

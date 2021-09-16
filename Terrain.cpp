@@ -1,11 +1,13 @@
 #include "Terrain.hpp"
 #include "GlobalRecources.hpp"
+#include "iostream" 
+using namespace std;
 
 sf::Texture wall;
 sf::Texture ground;
 
 Terrain::Terrain() {
-	objectsY = new std::vector<Rect*>();
+	objectsY = new vector<Rect*>();
 	wall = Renderer::loadTexture("Textures/cobble.jpg", true);
 	ground = Renderer::loadTexture("Textures/dirt.jpg", true);
 }
@@ -46,6 +48,6 @@ void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int p
 	}
 }
 
-std::vector<Rect*>* Terrain::getCollidables() {
+vector<Rect*>* Terrain::getCollidables() {
 	return objectsY;
 }

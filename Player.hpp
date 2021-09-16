@@ -1,17 +1,19 @@
 #pragma once
+#include "iostream" 
+using namespace std;
 #include "SFML/Graphics.hpp"
 class Player {
 public:
 	Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i_maxHp, int i_dmg);
-    void givePath(std::shared_ptr<int[]> pathX, std::shared_ptr<int[]> pathY, int pathLenght);
+    void givePath(shared_ptr<int[]> pathX, shared_ptr<int[]> pathY, int pathLenght);
     void deletePath();
     void move();
     void draw();
     void setTexture(int index);
 
     bool hasNewPath = false;
-    std::shared_ptr<int[]> pathXpositions;
-    std::shared_ptr<int[]> pathYpositions;
+    shared_ptr<int[]> pathXpositions;
+    shared_ptr<int[]> pathYpositions;
     int pathLenght;
     int cPathIndex;
 

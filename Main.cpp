@@ -1,5 +1,6 @@
 #include "SFML/Graphics.hpp"
-#include <iostream>
+#include "iostream" 
+using namespace std;
 #include <thread>
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
@@ -14,7 +15,7 @@ void initDrawing(sf::RenderWindow&& cWindow) {
         while (cWindow.pollEvent(events)) {
             if (events.type == sf::Event::Closed) {
                 cWindow.close();
-                std::exit(0);
+                exit(0);
             }
         }
         cWindow.clear();//clear with every iteration
@@ -33,6 +34,6 @@ int main() {
     sf::RenderWindow cWindow = {sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Mobatemplate", sf::Style::Titlebar | sf::Style::Close};
     Renderer::init(&cWindow);
     eventhandling::init();
-    initDrawing(std::move(cWindow));
+    initDrawing(move(cWindow));
     return 0;
 }

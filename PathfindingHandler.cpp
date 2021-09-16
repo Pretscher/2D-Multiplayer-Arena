@@ -7,9 +7,12 @@
 #include "Graph.hpp"
 #include "Algorithm.hpp"
 #include "GlobalRecources.hpp"
+#include "iostream" 
+using namespace std;
 
 void startPathfindingThread(Pathfinding* pathfinding) {
 	pathfinding->startPathFinding();
+	
 }
 
 Pathfinding::Pathfinding() {
@@ -24,12 +27,14 @@ Pathfinding::Pathfinding() {
 	players = GlobalRecources::players;
 	playerCount = GlobalRecources::playerCount;
 	findingPath = false;
-	this->goalXToFind = new std::vector<int>();
-	this->goalYToFind = new std::vector<int>();
-	this->indicesToFind = new std::vector<int>();
+	this->goalXToFind = new vector<int>();
+	this->goalYToFind = new vector<int>();
+	this->indicesToFind = new vector<int>();
+	this->newGoalXs = unique_ptr<vector<int>>(new vector<int>());
+	this->newGoalYs = unique_ptr<vector<int>>(new vector<int>());
 
-	pathFindingThread = new std::thread(&startPathfindingThread, this);
-	pfMtx = new std::mutex();
+	pathFindingThread = new thread(&startPathfindingThread, this);
+	pfMtx = new mutex();
 
 	pathfindingAccuracy = 0.025f;
 	//ys and xs are stretched to full screen anyway. Its just accuracy of rendering 
@@ -68,7 +73,7 @@ void Pathfinding::pathFindingOnClick() {
 		sameClick = true;
 		int mouseY = -1, mouseX = -1;
 		
-		Renderer::getMousePos(std::move(mouseX), std::move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(move(mouseX), move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseY != -1) {//stays at -1 if click is outside of window
 			if (mouseX - players[0]->getWidth() / 2 > 0) {
 				mouseX -= players[0]->getWidth() / 2;
@@ -181,8 +186,8 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 				if (cPlayer->hasPath() == true) {
 					//if paths cross each other, disable all crossing points and find new path. this is periodically called
 
-					std::vector<int>* disabledYs = nullptr;
-					std::vector<int>* disabledXs = nullptr;
+					vector<int>* disabledYs = nullptr;
+					vector<int>* disabledXs = nullptr;
 					for (int i = 0; i < cPlayer->pathLenght; i++) {
 						int x = cPlayer->pathXpositions[i];
 						int y = cPlayer->pathYpositions[i];
@@ -194,8 +199,8 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 								g->disableObjectBounds(y - players[0]->getHeight(), x - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 
 								if (disabledYs == nullptr) {
-									disabledYs = new std::vector<int>();
-									disabledXs = new std::vector<int>();
+									disabledYs = new vector<int>();
+									disabledXs = new vector<int>();
 								}
 								disabledYs->push_back(y);
 								disabledXs->push_back(x);
@@ -251,11 +256,11 @@ void Pathfinding::disablePlayer(int i_playerIndex) {
 
 void Pathfinding::startPathFinding() {
 	while (true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		this_thread::sleep_for(chrono::milliseconds(5));
 
 		if (this->getNewPathfinding() == true) {
-			std::shared_ptr<int[]> pathXs;
-			std::shared_ptr<int[]> pathYs;
+			shared_ptr<int[]> pathXs;
+			shared_ptr<int[]> pathYs;
 			int pathlenght = 0;
 			Player* player = players[cPlayerIndex];
 
@@ -273,7 +278,7 @@ void Pathfinding::startPathFinding() {
 				}
 			}
 
-			bool found = Algorithm::findPath(std::move(pathYs), std::move(pathXs), std::move(pathlenght), g, player->getY() + (player->getHeight() / 2),
+			bool found = Algorithm::findPath(move(pathYs), move(pathXs), move(pathlenght), g, player->getY() + (player->getHeight() / 2),
 															 player->getX() + (player->getWidth() / 2), cgoalY, cgoalX);
 
 			disablePlayer(cPlayerIndex);
@@ -285,7 +290,7 @@ void Pathfinding::startPathFinding() {
 			}
 
 			if (found == true) {
-				player->givePath(std::move(pathXs), std::move(pathYs), pathlenght);
+				player->givePath(move(pathXs), move(pathYs), pathlenght);
 			}
 			player->setFindingPath(false);
 			setNewPathfinding(false);

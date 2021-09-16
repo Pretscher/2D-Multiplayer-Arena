@@ -1,13 +1,14 @@
 #include "HeapNode.hpp"
 #include "Algorithm.hpp"
-
+#include "iostream" 
+using namespace std;
 float HeapNode::getKey() {
     return myKey;
 }
 
 unsigned int HeapNode::getIndexInGraph() {
     if (usedInIteration <= Algorithm::currentIteration && usedInIteration != -1) {//-1 means never used
-        myKey = std::numeric_limits<float>::max();
+        myKey = numeric_limits<float>::max();
         myIndexInGraph = -1;
         usedInIteration = Algorithm::currentIteration;
     }

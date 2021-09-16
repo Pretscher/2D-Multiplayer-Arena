@@ -1,5 +1,6 @@
 #pragma once
-
+#include <iostream>
+using namespace std;
 #include <SFML/Graphics.hpp>
 class Renderer {
 public:
@@ -17,23 +18,23 @@ public:
   
     static void getMousePos(int&& o_xs, int&& o_ys, bool factorInViewspace, bool factorInBorders);
     static void updateViewSpace();
-    static void linkViewSpace(std::shared_ptr<int[]> io_viewSpace, std::shared_ptr<const int[]> io_viewspaceLimits);
+    static void linkViewSpace(shared_ptr<int[]> io_viewSpace, shared_ptr<const int[]> io_viewspaceLimits);
 
     static void drawRectWithTexture(int y, int x, int width, int height, sf::Texture texture, bool solidWithViewspace);
 
-    static sf::Texture loadTexture(std::string path, bool repeat);
+    static sf::Texture loadTexture(string path, bool repeat);
 
-    static void drawText(std::string text, int y, int x, int width, int height, sf::Color color);
+    static void drawText(string text, int y, int x, int width, int height, sf::Color color);
 
-    static std::shared_ptr<int[]> viewSpace;
-    static std::shared_ptr<const int[]> viewSpaceLimits;
+    static shared_ptr<int[]> viewSpace;
+    static shared_ptr<const int[]> viewSpaceLimits;
 };
 
 
 //help button class
 class Button {
 public:
-    Button(int y, int x, int width, int height, sf::Color color, std::string text, sf::Color textColor) {
+    Button(int y, int x, int width, int height, sf::Color color, string text, sf::Color textColor) {
         this->y = y;
         this->x = x;
         this->width = width;
@@ -47,7 +48,7 @@ public:
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && sameClick == false) {
             sameClick = true;
             int mX, mY;
-            Renderer::getMousePos(std::move(mX), std::move(mY), false, true);
+            Renderer::getMousePos(move(mX), move(mY), false, true);
             if (mY > this->y && mY < this->y + this->height) {
                 if (mX > this->x && mX < this->x + this->width) {
                     return true;
@@ -79,5 +80,5 @@ public:
 private:
     int x, y, width, height;
     sf::Color color, textColor;
-    std::string text;
+    string text;
 };

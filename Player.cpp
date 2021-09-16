@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "Renderer.hpp"
-#include <iostream>
+#include "iostream" 
+using namespace std; 
 #include <chrono>
 #include <math.h>
 #include "GlobalRecources.hpp"
@@ -25,7 +26,7 @@ Player::Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i
 }
 
 
-void Player::givePath(std::shared_ptr<int[]> i_pathX, std::shared_ptr<int[]> i_pathY, int i_pathLenght) {
+void Player::givePath(shared_ptr<int[]> i_pathX, shared_ptr<int[]> i_pathY, int i_pathLenght) {
 	GlobalRecources::pfMtx->lock();
 	//free memory in case of reassigning path
 	pathXpositions = i_pathX;
@@ -38,15 +39,15 @@ void Player::givePath(std::shared_ptr<int[]> i_pathX, std::shared_ptr<int[]> i_p
 	}
 	GlobalRecources::pfMtx->unlock();
 
-	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	auto timePoint = chrono::system_clock::now().time_since_epoch();
+	lastMoveTime = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 
 }
 
 
 void Player::move() {
-	auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-	long long now = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+	auto timePoint = chrono::system_clock::now().time_since_epoch();
+	long long now = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 	long long diff = now - lastMoveTime;
 	float dueSteps = diff / velocity;
 	
@@ -114,8 +115,8 @@ void Player::move() {
 			this->x = nextX;
 			this->y = nextY;
 		}
-		auto timePoint = std::chrono::system_clock::now().time_since_epoch();
-		lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(timePoint).count();
+		auto timePoint = chrono::system_clock::now().time_since_epoch();
+		lastMoveTime = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 	}
 }
 
