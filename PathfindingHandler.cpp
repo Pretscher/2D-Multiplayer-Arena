@@ -68,7 +68,7 @@ void Pathfinding::pathFindingOnClick() {
 		sameClick = true;
 		int mouseY = -1, mouseX = -1;
 		
-		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
+		Renderer::getMousePos(std::move(mouseX), std::move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseY != -1) {//stays at -1 if click is outside of window
 			if (mouseX - players[0]->getWidth() / 2 > 0) {
 				mouseX -= players[0]->getWidth() / 2;

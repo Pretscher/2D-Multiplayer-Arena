@@ -25,8 +25,8 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 		samePress = true;
 
 
-		int mouseX = -1, mouseY = -1;
-		Renderer::getMousePos(&mouseX, &mouseY, true, true);//writes mouse coords into mouseX, mouseY
+		int mouseX, mouseY;
+		Renderer::getMousePos(std::move(mouseX), std::move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
 		Player* myPlayer = players[myPlayerI];

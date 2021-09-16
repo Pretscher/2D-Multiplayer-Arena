@@ -15,15 +15,18 @@ public:
     static void drawCircle(int y, int x, int radius, sf::Color c, bool fill, int outlineThickness, bool solidWithViewspace);
     static void drawLine(int y1, int x1, int y2, int x2, sf::Color c, int thickness);
   
-    static void getMousePos(int* o_Y, int* o_X, bool factorInViewspace, bool factorInBorders);
+    static void getMousePos(int&& o_xs, int&& o_ys, bool factorInViewspace, bool factorInBorders);
     static void updateViewSpace();
-    static void linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits);
+    static void linkViewSpace(std::shared_ptr<int[]> io_viewSpace, std::shared_ptr<const int[]> io_viewspaceLimits);
 
     static void drawRectWithTexture(int y, int x, int width, int height, sf::Texture texture, bool solidWithViewspace);
 
     static sf::Texture loadTexture(std::string path, bool repeat);
 
     static void drawText(std::string text, int y, int x, int width, int height, sf::Color color);
+
+    static std::shared_ptr<int[]> viewSpace;
+    static std::shared_ptr<const int[]> viewSpaceLimits;
 };
 
 
@@ -44,7 +47,7 @@ public:
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && sameClick == false) {
             sameClick = true;
             int mX, mY;
-            Renderer::getMousePos(&mX, &mY, false, true);
+            Renderer::getMousePos(std::move(mX), std::move(mY), false, true);
             if (mY > this->y && mY < this->y + this->height) {
                 if (mX > this->x && mX < this->x + this->width) {
                     return true;

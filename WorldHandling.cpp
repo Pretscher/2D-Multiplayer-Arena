@@ -8,12 +8,8 @@ WorldHandling::WorldHandling(int frameWidth, int frameHeight, int viewspaceLimit
 	worldHeight = frameHeight + viewspaceLimitsY;
 	worldWidth = frameWidth + viewspaceLimitsX;
 
-	viewSpaceLimits = new int[4];
-	viewSpaceLimits[0] = 0;//left
-	viewSpaceLimits[1] = viewspaceLimitsX;//right
-	viewSpaceLimits[2] = 0;//top
-	viewSpaceLimits[3] = viewspaceLimitsY;//bot
-	cViewSpace = new int[2];
+	viewSpaceLimits = std::shared_ptr<const int[]>(new int[4]{0, viewspaceLimitsX, 0, viewspaceLimitsY});
+	cViewSpace = std::shared_ptr<int[]>(new int[2]);
 	cViewSpace[0] = 0;//y (top to bot)
 	cViewSpace[1] = 0;//x (left to right)
 

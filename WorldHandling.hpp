@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 class Terrain;
 class WorldHandling {
 public:
@@ -30,8 +30,8 @@ private:
 	Terrain* terrain;//contains every non-moving object with colision
 
 	//Viewspace: value of 0 means left/top, limit value (from viewSpaceLimits) means right/bottom
-	int* cViewSpace;//current viewspace position.[0] is y (bot to top),[1] is x (left to right) 
-	int* viewSpaceLimits;//maximum viewspace. [0] = left,[1] = right,[2] = top,[3] = bottom
+	std::shared_ptr<int[]> cViewSpace;//current viewspace position.[0] is y (bot to top),[1] is x (left to right) 
+	std::shared_ptr<const int[]> viewSpaceLimits;//maximum viewspace. [0] = left,[1] = right,[2] = top,[3] = bottom
 
 	int frameHeight, frameWidth;//ys and xs you can see at a time, viewspace limits need to be added for worldSize
 };

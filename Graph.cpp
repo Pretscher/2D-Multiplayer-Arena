@@ -295,11 +295,11 @@ void Graph::disableObjectBounds(int y, int x, int width, int height) {
         minX = 0;
     }
 
-    int maxX = x + width;
+    int maxX = x + width - 1;
     if (maxX >= xCount) {
         maxX = xCount - 1;
     }
-    int maxY = y + height;
+    int maxY = y + height - 1;
     if (maxY >= yCount) {
         maxY = yCount - 1;
     }
@@ -335,11 +335,11 @@ void Graph::enableObjectBounds(int y, int x, int width, int height) {
         minX = 0;
     }   
 
-    int maxX = x + width;
+    int maxX = x + width - 1;
     if (maxX >= xCount) {
         maxX = xCount - 1;
     }
-    int maxY = y + height;
+    int maxY = y + height - 1;
     if (maxY >= yCount) {
         maxY = yCount - 1;
     }

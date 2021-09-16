@@ -114,7 +114,7 @@ void eventhandling::drawingloop() {
 		uiHandling->draw();//draw last, should be over every item ingame
 		abilityHandling->drawCDs();
 	}
-	GlobalRecources::pFinding->getGraph()->debugDrawing();
+	//GlobalRecources::pFinding->getGraph()->debugDrawing();
 }
 
 

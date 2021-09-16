@@ -3,16 +3,17 @@
 #include <math.h>
 #include "GlobalRecources.hpp"
 //Call this-----------------------------------------------------------------------------------------------------------
-static int* viewSpace;
-static int* viewSpaceLimits;
 
+std::shared_ptr<int[]> Renderer::viewSpace;
+std::shared_ptr<const int[]>  Renderer::viewSpaceLimits;
 sf::RenderWindow* Renderer::currentWindow;
+
 void Renderer::init(sf::RenderWindow* window) {
     Renderer::currentWindow = window;
     window->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
 }
 
-void Renderer::linkViewSpace(int* io_viewSpace, int* io_viewspaceLimits) {
+void Renderer::linkViewSpace(std::shared_ptr<int[]> io_viewSpace, std::shared_ptr<const int[]> io_viewspaceLimits) {
     viewSpace = io_viewSpace;
     viewSpaceLimits = io_viewspaceLimits;
 
@@ -151,7 +152,7 @@ void Renderer::drawLine(int x1, int y1, int x2, int y2, sf::Color c, int thickne
     Renderer::currentWindow->draw(line);
 }
 
-void Renderer::getMousePos(int* o_xs, int* o_ys, bool factorInViewspace, bool factorInBorders) {
+void Renderer::getMousePos(int&& o_xs, int&& o_ys, bool factorInViewspace, bool factorInBorders) {
     GlobalRecources::worldHeight = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
     GlobalRecources::worldWidth = getWorldXs();
 
@@ -167,23 +168,23 @@ void Renderer::getMousePos(int* o_xs, int* o_ys, bool factorInViewspace, bool fa
     if (factorInBorders == true) {
         if (x < normalResXs && y < normalResYs) {
             if (factorInViewspace == true) {
-                *o_xs = x + helpVsX;
-                *o_ys = y + helpVsY;
+                o_xs = x + helpVsX;
+                o_ys = y + helpVsY;
             }
             else {
-                *o_xs = x;
-                *o_ys = y;
+                o_xs = x;
+                o_ys = y;
             }
         }
     }
     else {
         if (factorInViewspace == true) {
-            *o_xs = x + helpVsX;
-            *o_ys = y + helpVsY;
+            o_xs = x + helpVsX;
+            o_ys = y + helpVsY;
         }
         else {
-            *o_xs = x;
-            *o_ys = y;
+            o_xs = x;
+            o_ys = y;
         }
     }
 }
@@ -193,9 +194,8 @@ void Renderer::updateViewSpace() {
 
     int moveSpeed = 30;
     
-    int mouseX = -1;
-    int mouseY = -1;
-    getMousePos(&mouseX, &mouseY, false, true);
+    int mouseX = -1, mouseY = -1;
+    getMousePos(std::move(mouseX), std::move(mouseY), false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];
@@ -245,8 +245,9 @@ void Renderer::updateViewSpace() {
             }
         }
     }
-    delete[] viewSpace;
-    viewSpace = helpViewSpace;
+    viewSpace[0] = helpViewSpace[0];
+    viewSpace[1] = helpViewSpace[1];
+    delete[] helpViewSpace;
 }
 
 
