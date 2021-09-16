@@ -37,7 +37,12 @@ Graph::~Graph() {
     for (int i = 0; i < graphNodeCount; i++) {
         delete[] neighbourIndices[i];
         delete[] neighbourCosts[i];
-        if (i < yCount) {
+        if (i < yCount) {//very unlikely to be bigger than graphnodecount, caus that would mean less than a single row of the graph is filled
+            delete[] rawIndices[i];
+        }
+    }
+    if (yCount > graphNodeCount) {//were catching the "yCount > graphnodecount" issue anyway caus mem leaks are evil
+        for (int i = graphNodeCount; i < yCount; i++) {
             delete[] rawIndices[i];
         }
     }
@@ -281,20 +286,20 @@ void Graph::disableObjectBounds(int y, int x, int width, int height) {
     width = (float) width * accuracy;
     height = (float) height * accuracy;
 
-    int minY = y;
+    int minY = y + 1;
     if (minY < 0) {
         minY = 0;
     }
-    int minX = x;
+    int minX = x + 1;
     if (minX < 0) {
         minX = 0;
     }
 
-    int maxX = x + width + 1;
+    int maxX = x + width;
     if (maxX >= xCount) {
         maxX = xCount - 1;
     }
-    int maxY = y + height + 1;
+    int maxY = y + height;
     if (maxY >= yCount) {
         maxY = yCount - 1;
     }
@@ -332,11 +337,11 @@ void Graph::enableObjectBounds(int y, int x, int width, int height) {
 
     int maxX = x + width;
     if (maxX >= xCount) {
-        maxX = xCount - 2;
+        maxX = xCount - 1;
     }
     int maxY = y + height;
     if (maxY >= yCount) {
-        maxY = yCount - 2;
+        maxY = yCount - 1;
     }
 
     for (int y = minY; y <= maxY; y ++) {

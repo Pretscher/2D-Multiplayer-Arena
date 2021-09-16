@@ -14,8 +14,6 @@ public:
 	std::vector<int>* newGoalYs = new std::vector<int>();
 	std::vector<int>* newGoalXs = new std::vector<int>();
 
-	void disableArea(int y, int x, int width, int height);
-	void enableArea(int y, int x, int width, int height);
 	void startPathFinding();
 	void findPath(int goalX, int goalY, int playerIndex);
 

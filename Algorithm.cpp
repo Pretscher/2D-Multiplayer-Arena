@@ -15,15 +15,6 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 
 	graph->resetHeapIndices();
 
-	//initialize GraphnodeHeuristics
-	for (int nodeIndex = 0; nodeIndex < graphNodeCount; nodeIndex++) {
-		for (int i = 0; i < graph->getIndexNeighbourCount()[nodeIndex]; i++) {
-			int currentNeighbourIndex = graph->getNeighbourIndices()[nodeIndex][i];
-			float heuristics = getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), graph->getIndexBoundXs(), currentNeighbourIndex, nodeIndex);
-			graph->setNeighbourCost(nodeIndex, i, heuristics);
-		}
-	}
-
 	int* graphIndices = graph->getGraph();
 
 	float* distanceTravelled = new float[graphNodeCount];
@@ -48,7 +39,13 @@ bool Algorithm::findPath(std::shared_ptr<int[]>&& o_pathYs, std::shared_ptr<int[
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;
 			break;
-		}	
+		}
+		for (int i = 0; i < graph->getIndexNeighbourCount()[cNodeIndex]; i++) {
+			int currentNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
+			float heuristics = getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), graph->getIndexBoundXs(), currentNeighbourIndex, cNodeIndex);
+			graph->setNeighbourCost(cNodeIndex, i, heuristics);
+		}
+
 		//we will look through graph->getNeighbourIndices() of this node
 		for (int i = 0; i < graph->getIndexNeighbourCount()[cNodeIndex]; i++) {
 			int cNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];

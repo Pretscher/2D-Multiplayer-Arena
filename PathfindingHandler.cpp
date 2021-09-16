@@ -154,9 +154,9 @@ void Pathfinding::moveObjects() {
 			if (players[i]->hasPath() == true) {
 				int tempY = players[i]->getY();
 				int tempX = players[i]->getX();
+				enablePlayer(i, true);
 				players[i]->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
-				this->enableArea(tempY, tempX, players[0]->getWidth() + 100, players[0]->getHeight() + 100);//enable old position
-				this->disableArea(players[i]->getY(), players[i]->getX(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+				disablePlayer(i);//disable new position
 				//for efficiency only find new path if you move next to a possibly moving object
 				//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
 				if (players[i]->getY() != tempY && players[i]->getX() != tempX) {//only having a path doesnt mean you moved on it
@@ -165,7 +165,7 @@ void Pathfinding::moveObjects() {
 				}
 			}
 			else {
-				this->disableArea(players[i]->getY(), players[i]->getX(), players[i]->getWidth(), players[i]->getHeight());
+				disablePlayer(i);
 			}
 		}
 	}
@@ -191,7 +191,7 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 								int x = cPlayer->getPathgoalX();
 								int y = cPlayer->getPathgoalY();
 								
-								this->disableArea(y - players[0]->getHeight(), x - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+								g->disableObjectBounds(y - players[0]->getHeight(), x - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
 
 								if (disabledYs == nullptr) {
 									disabledYs = new std::vector<int>();
@@ -207,7 +207,7 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 					if (disabledYs != nullptr) {
 						this->findPath(players[j]->getPathgoalX(), players[j]->getPathgoalY(), j);
 						for (int i = 0; i < disabledYs->size(); i++) {
-							this->enableArea(disabledYs->at(i) - players[0]->getHeight(), disabledXs->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
+							g->enableObjectBounds(disabledYs->at(i) - players[0]->getHeight(), disabledXs->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
 						}
 						delete disabledYs;
 						delete disabledXs;
@@ -219,30 +219,18 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 }
 
 
-void Pathfinding::disableArea(int y, int x, int width, int height) {
-	if (getFindingPath() == false) {
-		g->disableObjectBounds(y, x, width, height);
-	}
-}
-
-void Pathfinding::enableArea(int y, int x, int width, int height) {
-	if (getFindingPath() == false) {
-		g->enableObjectBounds(y, x, width, height);
-	}
-}
-
 //enables player coords and after that disables all coords of other movables again in case their area was affected by that.
 void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 	Player* player = players[i_playerIndex];
 
-	g->enableObjectBounds(player->getY() - 50, player->getX() - 50, player->getWidth() + 100, player->getHeight() + 100);
+	g->enableObjectBounds(player->getY() - 150, player->getX() - 150, player->getWidth() + 200, player->getHeight() + 200);
 
 	if (disableOthers == true) {
 		for (int i = 0; i < playerCount; i++) {
 			if (players[i]->getHp() > 0) {
 				if (i != i_playerIndex) {
 					Player* cPlayer = players[i];
-					g->disableObjectBounds(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight());
+					disablePlayer(i);
 				}
 			}
 		}
@@ -252,7 +240,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 //enables player coords and after that disables all coords of other movables 			setNewPathfinding(false);again in case their area was affected by that.
 void Pathfinding::disablePlayer(int i_playerIndex) {
 	Player* player = players[i_playerIndex];
-	g->disableObjectBounds(player->getY(), player->getX(), player->getWidth(), player->getHeight());
+	g->disableObjectBounds(player->getY() - 100, player->getX() - 100, player->getWidth() + 100, player->getHeight() + 100);
 }
 
 
