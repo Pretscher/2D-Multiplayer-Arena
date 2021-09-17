@@ -152,7 +152,7 @@ void Renderer::drawLine(int x1, int y1, int x2, int y2, sf::Color c, int thickne
     Renderer::currentWindow->draw(line);
 }
 
-void Renderer::getMousePos(int&& o_xs, int&& o_ys, bool factorInViewspace, bool factorInBorders) {
+void Renderer::getMousePos(int& o_xs, int& o_ys, bool factorInViewspace, bool factorInBorders) {
     GlobalRecources::worldHeight = getWorldYs();//Set this here caus mouse pos is always called and im too lazy to make a rendered update func
     GlobalRecources::worldWidth = getWorldXs();
 
@@ -195,7 +195,7 @@ void Renderer::updateViewSpace() {
     int moveSpeed = 30;
     
     int mouseX = -1, mouseY = -1;
-    getMousePos(move(mouseX), move(mouseY), false, true);
+     getMousePos(mouseX, mouseY, false, true);
     int* helpViewSpace = new int[2];
     helpViewSpace[0] = viewSpace[0];
     helpViewSpace[1] = viewSpace[1];

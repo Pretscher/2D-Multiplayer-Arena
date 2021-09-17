@@ -36,7 +36,7 @@ public:
                     if (c->getHp() > 0) {
 
                         int mouseX, mouseY;
-                        Renderer::getMousePos(move(mouseX), move(mouseY), true, true);
+                        Renderer:: getMousePos(mouseX, mouseY, true, true);
 
                         if (Utils::colisionCoordsRect(c->getX(), c->getY(), c->getWidth(),
                             c->getHeight(), mouseX, mouseY) == true) {
@@ -115,7 +115,7 @@ public:
 
     void update() {
         if (endWOaction == false) {
-            Renderer::getMousePos(move(cGoalX), move(cGoalY), true, false);
+            Renderer::getMousePos(cGoalX, cGoalY, true, false);
             limitGoalPosToRange();
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 fire = true;
@@ -221,7 +221,7 @@ public:
     void update() {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             int mouseX = 0, mouseY = 0;
-            Renderer::getMousePos(move(mouseX), move(mouseY), true, true);
+            Renderer:: getMousePos(mouseX, mouseY, true, true);
             targetDestinationX = mouseX;
             targetDestinationY = mouseY;
             destSelected = true;
@@ -236,7 +236,7 @@ public:
 
     void draw() {
         int mouseX, mouseY;
-        Renderer::getMousePos(move(mouseX), move(mouseY), true, true);
+        Renderer:: getMousePos(mouseX, mouseY, true, true);
         Renderer::drawCircle(mouseX - radius, mouseY - radius, radius, sf::Color(0, 255, 255, 100), false, 10, false);
         Renderer::drawCircle(mouseX - radius, mouseY - radius, radius, sf::Color(0, 255, 255, 25), true, 0, false);
 

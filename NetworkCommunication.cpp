@@ -30,14 +30,14 @@ void NetworkCommunication::addToken(int token) {
 	tokenCount++;
 }
 
-void NetworkCommunication::sendTokensToServer(unique_ptr<PortableServer>&& server) {
+void NetworkCommunication::sendTokensToServer(unique_ptr<PortableServer>& server) {
 	if(server->isConnected() == true) {
 		server->sendToClient(rawData.c_str());
 		rawData.clear();
 	}
 }
 
-void NetworkCommunication::sendTokensToClient(unique_ptr<PortableClient>&& client) {
+void NetworkCommunication::sendTokensToClient(unique_ptr<PortableClient>& client) {
 	if(client->isConnected() == true) {
 		client->sendToServer(rawData.c_str());
 		rawData.clear();
@@ -50,7 +50,7 @@ int NetworkCommunication::receiveNextToken() {
 	return out;
 }
 
-void NetworkCommunication::receiveTonkensFromServer(unique_ptr<PortableServer>&& server) {
+void NetworkCommunication::receiveTonkensFromServer(unique_ptr<PortableServer>& server) {
 	if(server->isConnected() == true) {
 		string* data;
 		bool copyAndParse = false;
@@ -72,7 +72,7 @@ void NetworkCommunication::receiveTonkensFromServer(unique_ptr<PortableServer>&&
 	}
 }
 
-void NetworkCommunication::receiveTonkensFromClient(unique_ptr<PortableClient>&& client) {
+void NetworkCommunication::receiveTonkensFromClient(unique_ptr<PortableClient>& client) {
 	if(client->isConnected() == true) {
 		string* data;
 		bool copyAndParse = false;

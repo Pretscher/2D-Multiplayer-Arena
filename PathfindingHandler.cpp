@@ -73,7 +73,7 @@ void Pathfinding::pathFindingOnClick() {
 		sameClick = true;
 		int mouseY = -1, mouseX = -1;
 		
-		Renderer::getMousePos(move(mouseX), move(mouseY), true, true);//writes mouse coords into mouseX, mouseY
+		Renderer:: getMousePos(mouseX, mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseY != -1) {//stays at -1 if click is outside of window
 			if (mouseX - players[0]->getWidth() / 2 > 0) {
 				mouseX -= players[0]->getWidth() / 2;
@@ -278,7 +278,7 @@ void Pathfinding::startPathFinding() {
 				}
 			}
 
-			bool found = Algorithm::findPath(move(pathYs), move(pathXs), move(pathlenght), g, player->getY() + (player->getHeight() / 2),
+			bool found = Algorithm::findPath(pathYs, pathXs, pathlenght, g, player->getY() + (player->getHeight() / 2),
 															 player->getX() + (player->getWidth() / 2), cgoalY, cgoalX);
 
 			disablePlayer(cPlayerIndex);
@@ -290,7 +290,7 @@ void Pathfinding::startPathFinding() {
 			}
 
 			if (found == true) {
-				player->givePath(move(pathXs), move(pathYs), pathlenght);
+				player->givePath(move(pathXs), move(pathYs), pathlenght);//move, we dont need this anymore in this func
 			}
 			player->setFindingPath(false);
 			setNewPathfinding(false);

@@ -144,10 +144,10 @@ static void sendData() {
 
 
 	if (playerHandling->getPlayerIndex() == 0) {
-		NetworkCommunication::sendTokensToServer(move(server));
+		NetworkCommunication::sendTokensToServer(server);
 	}
 	if (playerHandling->getPlayerIndex() == 1) {
-		NetworkCommunication::sendTokensToClient(move(client));
+		NetworkCommunication::sendTokensToClient(client);
 	}
 }
 
@@ -157,13 +157,13 @@ static void recvAndImplementData() {
 	if (playerHandling->getPlayerIndex() == 0) {
 		if (server->newMessage() == true) {
 			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromServer(move(server));
+			NetworkCommunication::receiveTonkensFromServer(server);
 		}
 	}
 	else {
 		if (client->newMessage() == true) {
 			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromClient(move(client));
+			NetworkCommunication::receiveTonkensFromClient(client);
 		}
 	}
 	if (receivedSth == true) {

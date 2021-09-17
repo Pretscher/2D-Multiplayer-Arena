@@ -12,12 +12,12 @@ public:
 	static void addToken(char* token);
 	static void addToken(int token);
 
-	static void sendTokensToServer(unique_ptr<PortableServer>&& server);
-	static void sendTokensToClient(unique_ptr<PortableClient>&& client);
+	static void sendTokensToServer(unique_ptr<PortableServer>& server);
+	static void sendTokensToClient(unique_ptr<PortableClient>& client);
 
 	static int receiveNextToken();
-	static void receiveTonkensFromServer(unique_ptr<PortableServer>&& server);
-	static void receiveTonkensFromClient(unique_ptr<PortableClient>&& client);
+	static void receiveTonkensFromServer(unique_ptr<PortableServer>& server);
+	static void receiveTonkensFromClient(unique_ptr<PortableClient>& client);
 
 	static int getTokenCount();
 

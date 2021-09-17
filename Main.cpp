@@ -5,7 +5,7 @@ using namespace std;
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
 
-void initDrawing(sf::RenderWindow&& cWindow) {
+void initDrawing(sf::RenderWindow& cWindow) {
 
     sf::Event events;
 
@@ -34,6 +34,6 @@ int main() {
     sf::RenderWindow cWindow = {sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Mobatemplate", sf::Style::Titlebar | sf::Style::Close};
     Renderer::init(&cWindow);
     eventhandling::init();
-    initDrawing(move(cWindow));
+    initDrawing(cWindow);
     return 0;
 }
