@@ -238,6 +238,9 @@ public:
                     hasNewAbility[i] = false;
                     newAbilities[i]->sendAbility();
                 }
+                else {
+                    NetworkCommunication::addToken(0);
+                }
             }
             else {
                 NetworkCommunication::addToken(0);
