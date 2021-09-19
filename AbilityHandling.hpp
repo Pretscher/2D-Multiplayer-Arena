@@ -109,7 +109,6 @@ private:
 class AbilityHandling {
 public:
     AbilityHandling(int i_myPlayerIndex) {
-        generalAbilities = new vector<Ability*>();
         this->myPlayerI = i_myPlayerIndex;
         
         abilityTriggering = new AbilityTriggering(abilityCount);
@@ -117,7 +116,7 @@ public:
         //ability declerations
         declareCustomAbilities();
 
-        newAbilities = new Ability *[abilityCount];
+        newAbilities = unique_ptr<unique_ptr<Ability>[]>(new unique_ptr<Ability>[abilityCount]);
         for (int i = 0; i < abilityCount; i++) {
             newAbilities[i] = nullptr;
         }
@@ -128,8 +127,8 @@ public:
 	void update() {
         abilityTriggering->update();
 
-        for (int i = 0; i < generalAbilities->size(); i++) {
-            generalAbilities->at(i)->update();
+        for (int i = 0; i < generalAbilities.size(); i++) {
+            generalAbilities.at(i)->update();
         }
 
         for (int i = 0; i < abilityCount; i++) {
@@ -143,7 +142,7 @@ public:
         }
 
         for (int i = 0; i < abilityCount; i++) {
-            Ability* cAbility = newAbilities[i];
+            Ability* cAbility = newAbilities[i].get();
             if (cAbility != nullptr) {
 
                 if (cAbility->wasPhaseInitialized(cAbility->getAddToNetworkPhase()) == true && cAbility->wasAddedToNetwork() == false) {
@@ -163,16 +162,15 @@ public:
 
                 //delete if not needed anymore
                 if (cAbility->finishedCompletely() == true) {
-                    for (int j = 0; j < generalAbilities->size(); j++) {
-                        if (generalAbilities->at(j) == cAbility) {
-                            generalAbilities->erase(generalAbilities->begin() + j);
+                    for (int j = 0; j < generalAbilities.size(); j++) {
+                        if (generalAbilities.at(j) == cAbility) {
+                            generalAbilities.erase(generalAbilities.begin() + j);
                         }
 
                     }
                     hasNewAbility[cAbility->getAbilityIndex()] = false;
-                    deleteAbility(cAbility);
+                    deleteAbility(*cAbility);
 
-                    delete cAbility;
                     newAbilities[i] = nullptr;
                     abilityTriggering->resetabilityStart(i);
                 }
@@ -180,10 +178,10 @@ public:
         }
 
         //add to network
-        for (int i = 0; i < generalAbilities->size(); i++) {
-            Ability* c = generalAbilities->at(i);
+        for (int i = 0; i < generalAbilities.size(); i++) {
+            Ability* c = generalAbilities.at(i);
             if (c->wasAddedToNetwork() == false) {
-                if (c->wasPhaseInitialized(c->getAddToNetworkPhase()) == true && c->getCastingPlayer() == myPlayerI 
+                if (c->wasPhaseInitialized(c->getAddToNetworkPhase()) == true && c->getCastingPlayer() == myPlayerI
                                                                             && c->wasAddedToNetwork() == false) {
                     c->addToNetwork();
                     hasNewAbility[c->getAbilityIndex()] = true;
@@ -193,8 +191,8 @@ public:
 	}
 
 	void drawAbilities() {
-        for (int i = 0; i < generalAbilities->size(); i++) {
-            generalAbilities->at(i)->draw();
+        for (int i = 0; i < generalAbilities.size(); i++) {
+            generalAbilities.at(i)->draw();
         }
 	}
 
@@ -246,9 +244,9 @@ public:
             NetworkCommunication::addToken(1);//check if new fireball is to be added
 
             Fireball* newFireball = nullptr;
-            for (int i = 0; i < fireballs->size(); i++) {
-                if (fireballs->at(i) == newAbilities[fireballIndex]) {
-                    newFireball = fireballs->at(i);
+            for (int i = 0; i < fireballs.size(); i++) {
+                if (&fireballs.at(i) == newAbilities[fireballIndex].get()) {
+                    newFireball = &fireballs.at(i);
                     break;
                 }
             }
@@ -269,9 +267,9 @@ public:
             hasNewAbility[transfusionIndex] = false;
 
             Transfusion* newTransfusion = nullptr;
-            for (int i = 0; i < transfusions->size(); i++) {
-                if (transfusions->at(i) == newAbilities[transfusionIndex]) {
-                    newTransfusion = transfusions->at(i);
+            for (int i = 0; i < transfusions.size(); i++) {
+                if (&transfusions.at(i) == newAbilities[transfusionIndex].get()) {
+                    newTransfusion = &transfusions.at(i);
                     break;
                 }
             }
@@ -287,9 +285,9 @@ public:
             hasNewAbility[vladEindex] = false;
 
             VladE* newE = nullptr;
-            for (int i = 0; i < vladEs->size(); i++) {
-                if (vladEs->at(i) == newAbilities[vladEindex]) {
-                    newE = vladEs->at(i);
+            for (int i = 0; i < vladEs.size(); i++) {
+                if (&vladEs.at(i) == newAbilities[vladEindex].get()) {
+                    newE = &vladEs.at(i);
                     break;
                 }
             }
@@ -309,9 +307,9 @@ public:
             hasNewAbility[vladWindex] = false;
 
             VladW* newW = nullptr;
-            for (int i = 0; i < vladWs->size(); i++) {
-                if (vladWs->at(i) == newAbilities[vladWindex]) {
-                    newW = vladWs->at(i);
+            for (int i = 0; i < vladWs.size(); i++) {
+                if (&vladWs.at(i) == newAbilities[vladWindex].get()) {
+                    newW = &vladWs.at(i);
                     break;
                 }
             }
@@ -330,9 +328,9 @@ public:
             hasNewAbility[vladRindex] = false;
 
             VladR* newR = nullptr;
-            for (int i = 0; i < vladRs->size(); i++) {
-                if (vladRs->at(i) == newAbilities[vladRindex]) {
-                    newR = vladRs->at(i);
+            for (int i = 0; i < vladRs.size(); i++) {
+                if (&vladRs.at(i) == newAbilities[vladRindex].get()) {
+                    newR = &vladRs.at(i);
                     break;
                 }
             }
@@ -368,9 +366,9 @@ public:
             int phase = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
 
-            Fireball* c = new Fireball(startY, startX, goalY, goalX, firingPlayerIndex, phase, timeSinceExplosionStart);
-            fireballs->push_back(c);
-            generalAbilities->push_back(c);
+            Fireball c = Fireball(startY, startX, goalY, goalX, firingPlayerIndex, phase, timeSinceExplosionStart);
+            fireballs.push_back(c);
+            generalAbilities.push_back(&c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -379,10 +377,10 @@ public:
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int tTargetPlayerIndex = NetworkCommunication::receiveNextToken();
 
-            Transfusion* c = new Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
+            Transfusion c = Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
 
-            transfusions->push_back(c);
-            generalAbilities->push_back(c);
+            transfusions.push_back(c);
+            generalAbilities.push_back(&c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -392,10 +390,10 @@ public:
             int phase = NetworkCommunication::receiveNextToken();
             int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
 
-            VladE* c = new VladE(tMyPlayerIndex, phase, timeSincePhaseStart);
+            VladE c = VladE(tMyPlayerIndex, phase, timeSincePhaseStart);
 
-            vladEs->push_back(c);
-            generalAbilities->push_back(c);
+            vladEs.push_back(c);
+            generalAbilities.push_back(&c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -404,10 +402,10 @@ public:
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
 
-            VladW* c = new VladW(tMyPlayerIndex, timeSincePhaseStart);
+            VladW c = VladW(tMyPlayerIndex, timeSincePhaseStart);
 
-            vladWs->push_back(c);
-            generalAbilities->push_back(c);
+            vladWs.push_back(c);
+            generalAbilities.push_back(&c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -418,10 +416,10 @@ public:
 
             int y = NetworkCommunication::receiveNextToken();
             int x = NetworkCommunication::receiveNextToken();
-            VladR* c = new VladR(tMyPlayerIndex, timeSincePhaseStart, y, x);
+            VladR c = VladR(tMyPlayerIndex, timeSincePhaseStart, y, x);
 
-            vladRs->push_back(c);
-            generalAbilities->push_back(c);
+            vladRs.push_back(c);
+            generalAbilities.push_back(&c);
         }
     }
 
@@ -438,42 +436,42 @@ public:
         switch (abIndex) {
         case 0: {
             //change this
-            Transfusion* newT = new Transfusion(myPlayerI);
-            transfusions->push_back(newT);
-            generalAbilities->push_back(newT);
-            newAbilities[abIndex] = newT;
+            Transfusion* newT = new Transfusion(myPlayerI);//has to be a pointer so that we can preserve it for newAbilities
+            transfusions.push_back(*newT);
+            generalAbilities.push_back(newT);
+            newAbilities[abIndex] = unique_ptr<Ability>(newT);
             break;
         }
         case 1: {
             //change this
             VladW* newW = new VladW(myPlayerI);
-            vladWs->push_back(newW);
-            generalAbilities->push_back(newW);
-            newAbilities[abIndex] = newW;
+            vladWs.push_back(*newW);
+            generalAbilities.push_back(newW);
+            newAbilities[abIndex] = unique_ptr<Ability>(newW);
             break;
         }
         case 2: {
             //change this
             VladE* newE = new VladE(myPlayerI);
-            vladEs->push_back(newE);
-            generalAbilities->push_back(newE);
-            newAbilities[abIndex] = newE;
+            vladEs.push_back(*newE);
+            generalAbilities.push_back(newE);
+            newAbilities[abIndex] = unique_ptr<Ability>(newE);
             break;
         }
         case 3: {
             //change this
             VladR* newR = new VladR(myPlayerI);
-            vladRs->push_back(newR);
-            generalAbilities->push_back(newR);
-            newAbilities[abIndex] = newR;
+            vladRs.push_back(*newR);
+            generalAbilities.push_back(newR);
+            newAbilities[abIndex] = unique_ptr<Ability>(newR);
             break;
         }
         case 4: {
             //change this
             Fireball* newFB = new Fireball(myPlayerI);
-            fireballs->push_back(newFB);
-            generalAbilities->push_back(newFB);
-            newAbilities[abIndex] = newFB;
+            fireballs.push_back(*newFB);
+            generalAbilities.push_back(newFB);
+            newAbilities[abIndex] = unique_ptr<Ability>(newFB);
             break;
 
         }
@@ -483,43 +481,43 @@ public:
     }
     
 
-    void deleteAbility(Ability* toDelete) {
+    void deleteAbility(Ability& toDelete) {
         //add abilities with respective indices
-        switch (toDelete->getAbilityIndex()) {
+        switch (toDelete.getAbilityIndex()) {
         case 0:
-            for (int c = 0; c < transfusions->size(); c++) {
-                if (transfusions->at(c) == toDelete) {
-                    transfusions->erase(transfusions->begin() + c);
+            for (int c = 0; c < transfusions.size(); c++) {
+                if (&transfusions.at(c) == &toDelete) {
+                    transfusions.erase(transfusions.begin() + c);
                 }
             }
             break;
         case 1:
-            for (int c = 0; c < vladWs->size(); c++) {
-                if (vladWs->at(c) == toDelete) {
-                    vladWs->erase(vladWs->begin() + c);
+            for (int c = 0; c < vladWs.size(); c++) {
+                if (&vladWs.at(c) == &toDelete) {
+                    vladWs.erase(vladWs.begin() + c);
                 }
             }
             break;
         case 2:
-            for (int c = 0; c < vladEs->size(); c++) {
-                if (vladEs->at(c) == toDelete) {
-                    vladEs->erase(vladEs->begin() + c);
+            for (int c = 0; c < vladEs.size(); c++) {
+                if (&vladEs.at(c) == &toDelete) {
+                    vladEs.erase(vladEs.begin() + c);
                 }
             }
             break;
         case 3:
 
-            for (int c = 0; c < vladRs->size(); c++) {
-                if (vladRs->at(c) == toDelete) {
-                    vladRs->erase(vladRs->begin() + c);
+            for (int c = 0; c < vladRs.size(); c++) {
+                if (&vladRs.at(c) == &toDelete) {
+                    vladRs.erase(vladRs.begin() + c);
                 }
             }
             break;
         case 4:
 
-            for (int c = 0; c < fireballs->size(); c++) {
-                if (fireballs->at(c) == toDelete) {
-                    fireballs->erase(fireballs->begin() + c);
+            for (int c = 0; c < fireballs.size(); c++) {
+                if (&fireballs.at(c) == &toDelete) {
+                    fireballs.erase(fireballs.begin() + c);
                 }
             }
             break;
@@ -546,8 +544,8 @@ public:
 private:
     bool samePress = false;
     int myPlayerI;
-    vector<Ability*>* generalAbilities;
-    Ability** newAbilities;
+    vector<Ability*> generalAbilities;
+    unique_ptr<unique_ptr<Ability>[]> newAbilities;//hehe this unique ptr deletes for all vectors
 
     AbilityTriggering* abilityTriggering;
 
@@ -556,12 +554,11 @@ private:
     int abilityCount = 5;
     bool* hasNewAbility = new bool[abilityCount];
 
-    vector<Fireball*>* fireballs = new vector<Fireball*>();
-    vector<Transfusion*>* transfusions = new vector<Transfusion*>();
-
-    vector<VladE*>* vladEs = new vector<VladE*>();
-    vector<VladW*>* vladWs = new vector<VladW*>();
-    vector<VladR*>* vladRs = new vector<VladR*>();
+    vector<Fireball> fireballs;
+    vector<Transfusion> transfusions;
+    vector<VladE> vladEs;
+    vector<VladW> vladWs;
+    vector<VladR> vladRs;
 
     //indices of abilities. Please set in "declareCustomAbilities()".
     int fireballIndex;
