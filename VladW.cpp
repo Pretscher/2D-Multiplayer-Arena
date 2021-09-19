@@ -13,8 +13,8 @@ VladW::VladW(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	GlobalRecources::players[myPlayerIndex]->targetAble = false;
 }
 //constructor through networking
-VladW::VladW(int i_myPlayerIndex, int i_timeInPhase) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	endPhaseAfterMS(2000 - i_timeInPhase);
+VladW::VladW() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	endPhaseAfterMS(2000 - NetworkCommunication::receiveNextToken());
 	GlobalRecources::players[myPlayerIndex]->inVladW = true;
 	GlobalRecources::players[myPlayerIndex]->targetAble = false;
 }
@@ -51,4 +51,11 @@ void VladW::init1() {
 	int x = current->getX();
 
 	GlobalRecources::pFinding->findPath(x, y, myPlayerIndex);
+}
+
+void VladW::send() {
+	NetworkCommunication::addToken(this->myPlayerIndex);
+	auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
+	int timeSinceStart = cTime - this->getStartTime(this->getPhase());
+	NetworkCommunication::addToken(timeSinceStart);
 }

@@ -12,10 +12,10 @@ VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	indicator = new AOEonRangeIndicator(i_myPlayerIndex, range, radius);
 }
 //constructor through networking
-VladR::VladR(int i_myPlayerIndex, int i_timeInPhase, int i_y, int i_x) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	this->y = i_y;
-	this->x = i_x;
-	networkingTimeInPhase = i_timeInPhase;
+VladR::VladR() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	this->networkingTimeInPhase = NetworkCommunication::receiveNextToken();
+	this->y = NetworkCommunication::receiveNextToken();
+	this->x = NetworkCommunication::receiveNextToken();
 	for (int i = 0; i < 1; i++) {
 		nextPhase();
 	}
@@ -209,4 +209,12 @@ void VladR::followPlayer() {
 		bloodBall = new Projectile(tempBBy + flyBackRadius, tempBBx + flyBackRadius, flyBackVelocity,
 			tempFlybackY + halfW, tempFlybackX + halfW, false, flyBackRadius, me);
 	}
+}
+
+void VladR::send() {
+	NetworkCommunication::addToken(1);//check if new transfusion is to be added
+	NetworkCommunication::addToken(this->myPlayerIndex);
+	NetworkCommunication::addToken(getTimeSincePhaseStart(2));
+	NetworkCommunication::addToken(this->y);
+	NetworkCommunication::addToken(this->x);
 }

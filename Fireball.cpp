@@ -14,20 +14,20 @@ Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCD
 }
 
 //create from network input(y is just current y so even with lag the start is always synced)
-Fireball::Fireball(int i_currentY, int i_currentX, int i_goalY, int i_goalX, int i_myPlayerIndex,
-    int i_phase, int i_timeSinceExplosionStart) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+Fireball::Fireball() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
 
-    this->startY = i_currentY;
-    this->startX = i_currentX;
-    this->goalY = i_goalY;
-    this->goalX = i_goalX;
-    this->tempTimeSinceExplosionStart = i_timeSinceExplosionStart;
+    this->startY = NetworkCommunication::receiveNextToken();
+    this->startX = NetworkCommunication::receiveNextToken();
+    this->goalY = NetworkCommunication::receiveNextToken();
+    this->goalX = NetworkCommunication::receiveNextToken();
+    skipToPhase(NetworkCommunication::receiveNextToken());
+    this->tempTimeSinceExplosionStart = NetworkCommunication::receiveNextToken();
     //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
     //after exploding or you connect after explosion
 
     this->helpProjectile = new Projectile(startY, startX, velocity, goalY, goalX, false, radius,
         GlobalRecources::players[myPlayerIndex]);
-    skipToPhase(i_phase);
+
 }
 
 void Fireball::execute0() {
@@ -152,4 +152,14 @@ void Fireball::limitGoalPosToRange() {
         goalX = startX + vecToGoal[0];
         goalY = startY + vecToGoal[1];
     }
+}
+
+void Fireball::send() {
+    NetworkCommunication::addToken(this->myPlayerIndex);
+    NetworkCommunication::addToken(this->helpProjectile->getY());
+    NetworkCommunication::addToken(this->helpProjectile->getX());
+    NetworkCommunication::addToken(this->goalX);
+    NetworkCommunication::addToken(this->goalY);
+    NetworkCommunication::addToken(this->getPhase());
+    NetworkCommunication::addToken(this->getStartTime(2));
 }

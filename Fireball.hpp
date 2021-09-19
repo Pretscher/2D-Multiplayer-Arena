@@ -8,8 +8,7 @@ public:
     //normal constructor if the ability is created on your network-side
     Fireball(int i_myPlayerIndex);
     //create from network input(y is just current y so even with lag the start is always synced)
-    Fireball(int i_currentY, int i_currentX, int i_goalY, int i_goalX, int i_myPlayerIndex,
-                                                        int i_phase, int i_timeSinceExplosionStart);
+    Fireball();
 
     //phase 0: Indicator. Select destination for fireball
     void execute0() override;
@@ -23,6 +22,7 @@ public:
     void execute2() override;
     void draw2() override;
 
+    void send() override;
     //If goal pos (indicator click) is outside of range, set goal pos to nearest point on range circle (through vector math)
     void limitGoalPosToRange();
 

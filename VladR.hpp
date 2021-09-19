@@ -7,7 +7,7 @@ public:
 
     VladR(int i_myPlayerIndex);
     //create from network input(y is just current y so even with lag the start is always synced)
-    VladR(int i_myPlayerIndex, int i_timeInPhase, int i_y, int i_x);
+    VladR();
 
     //Has only one phase: being in pool
     void execute0() override;
@@ -24,6 +24,8 @@ public:
     void init3() override;
     void execute3() override;
     void draw3() override;
+
+    void send() override;
 
     inline int getY() {
         return y;

@@ -239,113 +239,14 @@ public:
 
 
     void sendData() {
-        if (hasNewAbility[fireballIndex] == true) {
-            hasNewAbility[fireballIndex] = false;
-            NetworkCommunication::addToken(1);//check if new fireball is to be added
-
-            Fireball* newFireball = nullptr;
-            for (int i = 0; i < fireballs.size(); i++) {
-                if (fireballs.at(i) == newAbilities[fireballIndex]) {
-                    newFireball = fireballs.at(i).get();
-                    break;
-                }
+        for (int i = 0; i < abilityCount; i++) {
+            if (hasNewAbility[i] == true) {
+                hasNewAbility[i] = false;
+                newAbilities[i]->sendAbility();
             }
-
-            NetworkCommunication::addToken(newFireball->getProjectileY());
-            NetworkCommunication::addToken(newFireball->getProjectileX());
-            NetworkCommunication::addToken(newFireball->getGoalY());
-            NetworkCommunication::addToken(newFireball->getGoalX());
-            NetworkCommunication::addToken(newFireball->getCastingPlayer());
-            NetworkCommunication::addToken(newFireball->getPhase());
-            NetworkCommunication::addToken(newFireball->getStartTime(2));
-        }
-        else {
-            NetworkCommunication::addToken(0);
-        }
-
-        if (hasNewAbility[transfusionIndex] == true) {
-            hasNewAbility[transfusionIndex] = false;
-
-            Transfusion* newTransfusion = nullptr;
-            for (int i = 0; i < transfusions.size(); i++) {
-                if (transfusions.at(i) == newAbilities[transfusionIndex]) {
-                    newTransfusion = transfusions.at(i).get();
-                    break;
-                }
+            else {
+                NetworkCommunication::addToken(0);
             }
-            NetworkCommunication::addToken(1);//check if new transfusion is to be added
-            NetworkCommunication::addToken(newTransfusion->getCastingPlayer());
-            NetworkCommunication::addToken(newTransfusion->getTargetPlayer());
-        }
-        else {
-            NetworkCommunication::addToken(0);
-        }
-
-        if (hasNewAbility[vladEindex] == true) {
-            hasNewAbility[vladEindex] = false;
-
-            VladE* newE = nullptr;
-            for (int i = 0; i < vladEs.size(); i++) {
-                if (vladEs.at(i) == newAbilities[vladEindex]) {
-                    newE = vladEs.at(i).get();
-                    break;
-                }
-            }
-            NetworkCommunication::addToken(1);//check if new transfusion is to be added
-            NetworkCommunication::addToken(newE->getCastingPlayer());
-            NetworkCommunication::addToken(newE->getPhase());
-
-            auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
-            int timeSinceStart = cTime - newE->getStartTime(newE->getPhase());
-            NetworkCommunication::addToken(timeSinceStart);
-        }
-        else {
-            NetworkCommunication::addToken(0);
-        }
-
-        if (hasNewAbility[vladWindex] == true) {
-            hasNewAbility[vladWindex] = false;
-
-            VladW* newW = nullptr;
-            for (int i = 0; i < vladWs.size(); i++) {
-                if (vladWs.at(i) == newAbilities[vladWindex]) {
-                    newW = vladWs.at(i).get();
-                    break;
-                }
-            }
-            NetworkCommunication::addToken(1);//check if new transfusion is to be added
-            NetworkCommunication::addToken(newW->getCastingPlayer());
-
-            auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
-            int timeSinceStart = cTime - newW->getStartTime(newW->getPhase());
-            NetworkCommunication::addToken(timeSinceStart);
-        }
-        else {
-            NetworkCommunication::addToken(0);
-        }
-
-        if (hasNewAbility[vladRindex] == true) {
-            hasNewAbility[vladRindex] = false;
-
-            VladR* newR = nullptr;
-            for (int i = 0; i < vladRs.size(); i++) {
-                if (vladRs.at(i) == newAbilities[vladRindex]) {
-                    newR = vladRs.at(i).get();
-                    break;
-                }
-            }
-            NetworkCommunication::addToken(1);//check if new transfusion is to be added
-            NetworkCommunication::addToken(newR->getCastingPlayer());
-
-            int timeSinceStart = newR->getTimeSincePhaseStart(2);
-            NetworkCommunication::addToken(timeSinceStart);
-
-            NetworkCommunication::addToken(newR->getY());
-            NetworkCommunication::addToken(newR->getX());
-            
-        }
-        else {
-            NetworkCommunication::addToken(0);
         }
     }
 
@@ -357,63 +258,27 @@ public:
             otherPlayer = 1;
         }
         if (NetworkCommunication::receiveNextToken() == 1) {
-            //theyre already in the right order
-            int startY = NetworkCommunication::receiveNextToken();
-            int startX = NetworkCommunication::receiveNextToken();
-            int goalY = NetworkCommunication::receiveNextToken();
-            int goalX = NetworkCommunication::receiveNextToken();
-            int firingPlayerIndex = NetworkCommunication::receiveNextToken();
-            int phase = NetworkCommunication::receiveNextToken();
-            int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
-
-            Fireball* c = new Fireball(startY, startX, goalY, goalX, firingPlayerIndex, phase, timeSinceExplosionStart);
-            fireballs.push_back(shared_ptr<Fireball>(c));
+            Fireball* c = new Fireball();
             generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            //theyre already in the right order
-
-            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
-            int tTargetPlayerIndex = NetworkCommunication::receiveNextToken();
-
-            Transfusion* c = new Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
-
-            transfusions.push_back(shared_ptr<Transfusion>(c));
+            Transfusion* c = new Transfusion();
             generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            //theyre already in the right order
             VladE* c = new VladE();
-
-            vladEs.push_back(shared_ptr<VladE>(c));
             generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            //theyre already in the right order
-
-            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
-            int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
-
-            VladW* c = new VladW(tMyPlayerIndex, timeSincePhaseStart);
-
-            vladWs.push_back(shared_ptr<VladW>(c));
+            VladW* c = new VladW();
             generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            //theyre already in the right order
-
-            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
-            int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
-
-            int y = NetworkCommunication::receiveNextToken();
-            int x = NetworkCommunication::receiveNextToken();
-            VladR* c = new VladR(tMyPlayerIndex, timeSincePhaseStart, y, x);
-
-            vladRs.push_back(shared_ptr<VladR>(c));
+            VladR* c = new VladR();
             generalAbilities.push_back(c);
         }
     }
@@ -550,11 +415,6 @@ private:
     bool* hasNewAbility = new bool[abilityCount];
 
     //needed to push the abilities through the network with their individual values. TODO: Networking func for abilities
-    vector<shared_ptr<Fireball>> fireballs;
-    vector<shared_ptr<Transfusion>> transfusions;
-    vector<shared_ptr<VladE>> vladEs;
-    vector<shared_ptr<VladW>> vladWs;
-    vector<shared_ptr<VladR>> vladRs;
 
     //indices of abilities. Please set in "declareCustomAbilities()".
     int fireballIndex;

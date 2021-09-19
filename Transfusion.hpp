@@ -8,7 +8,7 @@ public:
     //normal constructor if the ability is created on your network-side
     Transfusion(int i_myPlayerIndex);
     //constructor through networking
-    Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex);
+    Transfusion();
 
     //Phase 0: Indicator. Select target with point and click. If selected
     void execute0() override;
@@ -21,6 +21,8 @@ public:
     void init2() override;
     void execute2() override;
     void draw2() override;
+
+    void send() override;
 
     //check if the bloodball colides with target player or you, depending if its flying to the enemy or you. 
     void checkBloodballCollision();

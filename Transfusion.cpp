@@ -18,8 +18,9 @@ Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, 
     }
 }
 //constructor through networking
-Transfusion::Transfusion(int i_myPlayerIndex, int i_targetPlayerIndex) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-    this->targetPlayerIndex = i_targetPlayerIndex;//we dont know the indicator so its target has to be passed
+Transfusion::Transfusion() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+    this->targetPlayerIndex = NetworkCommunication::receiveNextToken();//we dont know the indicator so its target has to be passed
+    
     lastYs = new int[positionsSavedCount];
     lastXs = new int[positionsSavedCount];
     for (int i = 0; i < positionsSavedCount; i++) {
@@ -203,4 +204,9 @@ Player* Transfusion::getBloodballTarget() {
         c = me;
     }
     return c;
+}
+
+void Transfusion::send() {
+    NetworkCommunication::addToken(this->myPlayerIndex);
+    NetworkCommunication::addToken(this->targetPlayerIndex);
 }
