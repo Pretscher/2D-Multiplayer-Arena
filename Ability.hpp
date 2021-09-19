@@ -95,8 +95,8 @@ public:
     }
 
     void sendAbility() {
-        if (wasSend == false) {
-            wasSend = true;
+        if (wasSent == false) {
+            wasSent = true;
             NetworkCommunication::addToken(1);
             send();
         }
@@ -106,7 +106,7 @@ public:
     }
 
 protected:
-    bool wasSend;
+    bool wasSent = false;
     bool finished;
     int myPlayerIndex;
 
