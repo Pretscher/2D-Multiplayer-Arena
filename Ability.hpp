@@ -99,6 +99,7 @@ public:
             wasSent = true;
             NetworkCommunication::addToken(1);
             send();
+            addedToNetwork = true;
         }
         else {
             NetworkCommunication::addToken(0);

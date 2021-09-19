@@ -146,13 +146,6 @@ public:
             Ability* cAbility = newAbilities[i].get();
             if (cAbility != nullptr) {
 
-                if (cAbility->wasPhaseInitialized(cAbility->getAddToNetworkPhase()) == true && cAbility->wasAddedToNetwork() == false) {
-                    if (cAbility->isFromNetwork() == false) {
-                        cAbility->addToNetwork();
-                        hasNewAbility[cAbility->getAbilityIndex()] = true;
-                    }
-                }
-
                 //start cooldown only after target has been selected
                 if (cAbility->wasPhaseInitialized(cAbility->getCDstartPhase()) == true) {
                     if (cAbility->isFromNetwork() == false) {
@@ -241,7 +234,7 @@ public:
     void sendData() {
         for (int i = 0; i < abilityCount; i++) {
             if (hasNewAbility[i] == true) {
-                if (newAbilities[i]->wasPhaseInitialized(newAbilities[i]->getAddToNetworkPhase())) {
+                if (newAbilities[i]->wasPhaseInitialized(newAbilities[i]->getAddToNetworkPhase()) && newAbilities[i]->wasAddedToNetwork() == false) {
                     hasNewAbility[i] = false;
                     newAbilities[i]->sendAbility();
                 }
