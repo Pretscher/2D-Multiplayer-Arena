@@ -257,10 +257,6 @@ public:
         if (myPlayerI == 0) {
             otherPlayer = 1;
         }
-        if (NetworkCommunication::receiveNextToken() == 1) {
-            Fireball* c = new Fireball();
-            generalAbilities.push_back(c);
-        }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
             Transfusion* c = new Transfusion();
@@ -281,6 +277,11 @@ public:
             VladR* c = new VladR();
             generalAbilities.push_back(c);
         }
+        if (NetworkCommunication::receiveNextToken() == 1) {
+            Fireball* c = new Fireball();
+            generalAbilities.push_back(c);
+        }
+
     }
 
 
