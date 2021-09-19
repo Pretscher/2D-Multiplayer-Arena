@@ -169,18 +169,6 @@ public:
                 }
             }
         }
-
-        //add to network
-        for (int i = 0; i < generalAbilities.size(); i++) {
-            Ability* c = generalAbilities.at(i);
-            if (c->wasAddedToNetwork() == false) {
-                if (c->wasPhaseInitialized(c->getAddToNetworkPhase()) == true && c->getCastingPlayer() == myPlayerI
-                                                                            && c->wasAddedToNetwork() == false) {
-                    c->addToNetwork();
-                    hasNewAbility[c->getAbilityIndex()] = true;
-                }
-            }
-        }
 	}
 
 	void drawAbilities() {
