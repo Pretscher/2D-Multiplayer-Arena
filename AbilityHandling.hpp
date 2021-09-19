@@ -264,12 +264,12 @@ public:
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            VladE* c = new VladE();
+            VladW* c = new VladW();
             generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            VladW* c = new VladW();
+            VladE* c = new VladE();
             generalAbilities.push_back(c);
         }
 
