@@ -291,7 +291,6 @@ void VladE::limitPosToRange(int* io_goalY, int* io_goalX) {
 }
 
 void VladE::send() {
-	NetworkCommunication::addToken(1);//check if new transfusion is to be added
 	NetworkCommunication::addToken(this->myPlayerIndex);
 	NetworkCommunication::addToken(this->getPhase());
 

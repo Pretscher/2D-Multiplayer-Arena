@@ -212,7 +212,6 @@ void VladR::followPlayer() {
 }
 
 void VladR::send() {
-	NetworkCommunication::addToken(1);//check if new transfusion is to be added
 	NetworkCommunication::addToken(this->myPlayerIndex);
 	NetworkCommunication::addToken(getTimeSincePhaseStart(2));
 	NetworkCommunication::addToken(this->y);
