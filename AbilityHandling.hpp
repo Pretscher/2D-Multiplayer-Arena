@@ -111,12 +111,12 @@ public:
     AbilityHandling(int i_myPlayerIndex) {
         this->myPlayerI = i_myPlayerIndex;
         
-        abilityTriggering = new AbilityTriggering(abilityCount);
+        abilityTriggering = unique_ptr<AbilityTriggering>(new AbilityTriggering(abilityCount));
 
         //ability declerations
         declareCustomAbilities();
 
-        newAbilities = unique_ptr<unique_ptr<Ability>[]>(new unique_ptr<Ability>[abilityCount]);
+        newAbilities = unique_ptr<shared_ptr<Ability>[]>(new shared_ptr<Ability>[abilityCount]);
         for (int i = 0; i < abilityCount; i++) {
             newAbilities[i] = nullptr;
         }
@@ -169,9 +169,9 @@ public:
 
                     }
                     hasNewAbility[cAbility->getAbilityIndex()] = false;
-                    deleteAbility(*cAbility);
 
                     newAbilities[i] = nullptr;
+                    deleteAbility(*cAbility);
                     abilityTriggering->resetabilityStart(i);
                 }
             }
@@ -245,8 +245,8 @@ public:
 
             Fireball* newFireball = nullptr;
             for (int i = 0; i < fireballs.size(); i++) {
-                if (&fireballs.at(i) == newAbilities[fireballIndex].get()) {
-                    newFireball = &fireballs.at(i);
+                if (fireballs.at(i) == newAbilities[fireballIndex]) {
+                    newFireball = fireballs.at(i).get();
                     break;
                 }
             }
@@ -268,8 +268,8 @@ public:
 
             Transfusion* newTransfusion = nullptr;
             for (int i = 0; i < transfusions.size(); i++) {
-                if (&transfusions.at(i) == newAbilities[transfusionIndex].get()) {
-                    newTransfusion = &transfusions.at(i);
+                if (transfusions.at(i) == newAbilities[transfusionIndex]) {
+                    newTransfusion = transfusions.at(i).get();
                     break;
                 }
             }
@@ -286,8 +286,8 @@ public:
 
             VladE* newE = nullptr;
             for (int i = 0; i < vladEs.size(); i++) {
-                if (&vladEs.at(i) == newAbilities[vladEindex].get()) {
-                    newE = &vladEs.at(i);
+                if (vladEs.at(i) == newAbilities[vladEindex]) {
+                    newE = vladEs.at(i).get();
                     break;
                 }
             }
@@ -308,8 +308,8 @@ public:
 
             VladW* newW = nullptr;
             for (int i = 0; i < vladWs.size(); i++) {
-                if (&vladWs.at(i) == newAbilities[vladWindex].get()) {
-                    newW = &vladWs.at(i);
+                if (vladWs.at(i) == newAbilities[vladWindex]) {
+                    newW = vladWs.at(i).get();
                     break;
                 }
             }
@@ -329,8 +329,8 @@ public:
 
             VladR* newR = nullptr;
             for (int i = 0; i < vladRs.size(); i++) {
-                if (&vladRs.at(i) == newAbilities[vladRindex].get()) {
-                    newR = &vladRs.at(i);
+                if (vladRs.at(i) == newAbilities[vladRindex]) {
+                    newR = vladRs.at(i).get();
                     break;
                 }
             }
@@ -366,9 +366,9 @@ public:
             int phase = NetworkCommunication::receiveNextToken();
             int timeSinceExplosionStart = NetworkCommunication::receiveNextToken();
 
-            Fireball c = Fireball(startY, startX, goalY, goalX, firingPlayerIndex, phase, timeSinceExplosionStart);
-            fireballs.push_back(c);
-            generalAbilities.push_back(&c);
+            Fireball* c = new Fireball(startY, startX, goalY, goalX, firingPlayerIndex, phase, timeSinceExplosionStart);
+            fireballs.push_back(shared_ptr<Fireball>(c));
+            generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -377,23 +377,18 @@ public:
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int tTargetPlayerIndex = NetworkCommunication::receiveNextToken();
 
-            Transfusion c = Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
+            Transfusion* c = new Transfusion(tMyPlayerIndex, tTargetPlayerIndex);
 
-            transfusions.push_back(c);
-            generalAbilities.push_back(&c);
+            transfusions.push_back(shared_ptr<Transfusion>(c));
+            generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
             //theyre already in the right order
+            VladE* c = new VladE();
 
-            int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
-            int phase = NetworkCommunication::receiveNextToken();
-            int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
-
-            VladE c = VladE(tMyPlayerIndex, phase, timeSincePhaseStart);
-
-            vladEs.push_back(c);
-            generalAbilities.push_back(&c);
+            vladEs.push_back(shared_ptr<VladE>(c));
+            generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -402,10 +397,10 @@ public:
             int tMyPlayerIndex = NetworkCommunication::receiveNextToken();
             int timeSincePhaseStart = NetworkCommunication::receiveNextToken();
 
-            VladW c = VladW(tMyPlayerIndex, timeSincePhaseStart);
+            VladW* c = new VladW(tMyPlayerIndex, timeSincePhaseStart);
 
-            vladWs.push_back(c);
-            generalAbilities.push_back(&c);
+            vladWs.push_back(shared_ptr<VladW>(c));
+            generalAbilities.push_back(c);
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
@@ -416,10 +411,10 @@ public:
 
             int y = NetworkCommunication::receiveNextToken();
             int x = NetworkCommunication::receiveNextToken();
-            VladR c = VladR(tMyPlayerIndex, timeSincePhaseStart, y, x);
+            VladR* c = new VladR(tMyPlayerIndex, timeSincePhaseStart, y, x);
 
-            vladRs.push_back(c);
-            generalAbilities.push_back(&c);
+            vladRs.push_back(shared_ptr<VladR>(c));
+            generalAbilities.push_back(c);
         }
     }
 
@@ -437,7 +432,7 @@ public:
         case 0: {
             //change this
             Transfusion* newT = new Transfusion(myPlayerI);//has to be a pointer so that we can preserve it for newAbilities
-            transfusions.push_back(*newT);
+            transfusions.push_back(shared_ptr<Transfusion>(newT));
             generalAbilities.push_back(newT);
             newAbilities[abIndex] = unique_ptr<Ability>(newT);
             break;
@@ -445,7 +440,7 @@ public:
         case 1: {
             //change this
             VladW* newW = new VladW(myPlayerI);
-            vladWs.push_back(*newW);
+            vladWs.push_back(shared_ptr<VladW>(newW));
             generalAbilities.push_back(newW);
             newAbilities[abIndex] = unique_ptr<Ability>(newW);
             break;
@@ -453,7 +448,7 @@ public:
         case 2: {
             //change this
             VladE* newE = new VladE(myPlayerI);
-            vladEs.push_back(*newE);
+            vladEs.push_back(shared_ptr<VladE>(newE));
             generalAbilities.push_back(newE);
             newAbilities[abIndex] = unique_ptr<Ability>(newE);
             break;
@@ -461,7 +456,7 @@ public:
         case 3: {
             //change this
             VladR* newR = new VladR(myPlayerI);
-            vladRs.push_back(*newR);
+            vladRs.push_back(shared_ptr<VladR>(newR));
             generalAbilities.push_back(newR);
             newAbilities[abIndex] = unique_ptr<Ability>(newR);
             break;
@@ -469,7 +464,7 @@ public:
         case 4: {
             //change this
             Fireball* newFB = new Fireball(myPlayerI);
-            fireballs.push_back(*newFB);
+            fireballs.push_back(shared_ptr<Fireball>(newFB));
             generalAbilities.push_back(newFB);
             newAbilities[abIndex] = unique_ptr<Ability>(newFB);
             break;
@@ -486,21 +481,21 @@ public:
         switch (toDelete.getAbilityIndex()) {
         case 0:
             for (int c = 0; c < transfusions.size(); c++) {
-                if (&transfusions.at(c) == &toDelete) {
+                if (transfusions.at(c).get() == &toDelete) {
                     transfusions.erase(transfusions.begin() + c);
                 }
             }
             break;
         case 1:
             for (int c = 0; c < vladWs.size(); c++) {
-                if (&vladWs.at(c) == &toDelete) {
+                if (vladWs.at(c).get() == &toDelete) {
                     vladWs.erase(vladWs.begin() + c);
                 }
             }
             break;
         case 2:
             for (int c = 0; c < vladEs.size(); c++) {
-                if (&vladEs.at(c) == &toDelete) {
+                if (vladEs.at(c).get() == &toDelete) {
                     vladEs.erase(vladEs.begin() + c);
                 }
             }
@@ -508,7 +503,7 @@ public:
         case 3:
 
             for (int c = 0; c < vladRs.size(); c++) {
-                if (&vladRs.at(c) == &toDelete) {
+                if (vladRs.at(c).get() == &toDelete) {
                     vladRs.erase(vladRs.begin() + c);
                 }
             }
@@ -516,7 +511,7 @@ public:
         case 4:
 
             for (int c = 0; c < fireballs.size(); c++) {
-                if (&fireballs.at(c) == &toDelete) {
+                if (fireballs.at(c).get() == &toDelete) {
                     fireballs.erase(fireballs.begin() + c);
                 }
             }
@@ -544,21 +539,22 @@ public:
 private:
     bool samePress = false;
     int myPlayerI;
-    vector<Ability*> generalAbilities;
-    unique_ptr<unique_ptr<Ability>[]> newAbilities;//hehe this unique ptr deletes for all vectors
+    vector<Ability*> generalAbilities;//gets deleted by shared-ptrs from Abilities
+    unique_ptr<shared_ptr<Ability>[]> newAbilities;
 
-    AbilityTriggering* abilityTriggering;
+    unique_ptr<AbilityTriggering> abilityTriggering;
 
     //NEW ABILITY ATTRIBUTES--------------------------------
     
     int abilityCount = 5;
     bool* hasNewAbility = new bool[abilityCount];
 
-    vector<Fireball> fireballs;
-    vector<Transfusion> transfusions;
-    vector<VladE> vladEs;
-    vector<VladW> vladWs;
-    vector<VladR> vladRs;
+    //needed to push the abilities through the network with their individual values. TODO: Networking func for abilities
+    vector<shared_ptr<Fireball>> fireballs;
+    vector<shared_ptr<Transfusion>> transfusions;
+    vector<shared_ptr<VladE>> vladEs;
+    vector<shared_ptr<VladW>> vladWs;
+    vector<shared_ptr<VladR>> vladRs;
 
     //indices of abilities. Please set in "declareCustomAbilities()".
     int fireballIndex;

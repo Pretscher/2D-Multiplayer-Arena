@@ -35,5 +35,5 @@ int main() {
     Renderer::init(&cWindow);
     eventhandling::init();
     initDrawing(cWindow);
-    return 0;
+    //return 0;
 }

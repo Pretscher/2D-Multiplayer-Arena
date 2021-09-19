@@ -14,15 +14,17 @@ VladE::VladE(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	endPhaseAfterMS(1500);
 }
 //constructor through networking
-VladE::VladE(int i_myPlayerIndex, int i_phase, int i_timeInPhase) : Ability(i_myPlayerIndex, true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	if (i_phase == 0) {
-		endPhaseAfterMS(1500 - i_timeInPhase);
+VladE::VladE() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	int phase = NetworkCommunication::receiveNextToken();
+	int timeInPhase = NetworkCommunication::receiveNextToken();
+	if (phase == 0) {
+		endPhaseAfterMS(1500 - timeInPhase);
 	}
-	if (i_phase == 1) {
+	if (phase == 1) {
 		nextPhase();
 		init1();//has to be called manually to use projectiles
 		for (int i = 0; i < projectileCount; i++) {
-			projectiles[i]->skipMovementTime(i_timeInPhase);
+			projectiles[i]->skipMovementTime(timeInPhase);
 		}
 	}
 }
@@ -286,4 +288,14 @@ void VladE::limitPosToRange(int* io_goalY, int* io_goalX) {
 		*io_goalX = myPlayer->getX() + vecToGoal[0] + radius;
 		*io_goalY = myPlayer->getY() + vecToGoal[1] + radius;
 	}
+}
+
+void VladE::send() {
+	NetworkCommunication::addToken(1);//check if new transfusion is to be added
+	NetworkCommunication::addToken(this->myPlayerIndex);
+	NetworkCommunication::addToken(this->getPhase());
+
+	auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
+	int timeSinceStart = cTime - this->getStartTime(this->getPhase());
+	NetworkCommunication::addToken(timeSinceStart);
 }

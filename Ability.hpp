@@ -3,6 +3,7 @@
 using namespace std;
 #include <math.h>
 #include <chrono>
+#include "NetworkCommunication.hpp"
 /*This is a base class for every ability. It has all the commonalities abilities need to be bound to this project
 to use you have to override methods. Every ability should be cut into different phases, every phase MUST have
 an initialization-, an update- and a draw-function. You can set if a phase should end after a certain amount
@@ -25,7 +26,6 @@ public:
     The ability goes absolutely idle if "finished" is set to true. Then you only have to delete it.
     */
     Ability(int i_myPlayerIndex, bool i_isFromNetwork, int i_startCdPhase, int i_addToNetworkPhase, int i_abilityIndex);
-
     void update();
     void draw();
     //call this from the init-function of the to-be-time-limited phase
@@ -94,7 +94,19 @@ public:
         return cTime - phaseStart[index];
     }
 
+    void sendAbility() {
+        if (wasSend == false) {
+            wasSend = true;
+            NetworkCommunication::addToken(1);
+            send();
+        }
+        else {
+            NetworkCommunication::addToken(0);
+        }
+    }
+
 protected:
+    bool wasSend;
     bool finished;
     int myPlayerIndex;
 
@@ -122,6 +134,8 @@ protected:
     virtual void draw2() { finished = true; }
     virtual void draw3() { finished = true; }
     virtual void draw4() { finished = true; }
+
+    virtual void send() { finished = true; };
 
 private:
 
