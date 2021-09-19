@@ -241,8 +241,10 @@ public:
     void sendData() {
         for (int i = 0; i < abilityCount; i++) {
             if (hasNewAbility[i] == true) {
-                hasNewAbility[i] = false;
-                newAbilities[i]->sendAbility();
+                if (newAbilities[i]->wasPhaseInitialized(newAbilities[i]->getAddToNetworkPhase())) {
+                    hasNewAbility[i] = false;
+                    newAbilities[i]->sendAbility();
+                }
             }
             else {
                 NetworkCommunication::addToken(0);
