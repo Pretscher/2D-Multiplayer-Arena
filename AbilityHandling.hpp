@@ -119,6 +119,7 @@ public:
         newAbilities = unique_ptr<shared_ptr<Ability>[]>(new shared_ptr<Ability>[abilityCount]);
         for (int i = 0; i < abilityCount; i++) {
             newAbilities[i] = nullptr;
+            hasNewAbility[i] = false;
         }
     }
 
@@ -132,8 +133,8 @@ public:
         }
 
         for (int i = 0; i < abilityCount; i++) {
-            if (newAbilities[i] == nullptr) {//dont double init
-                if (newAbilities[vladWindex] == nullptr) {//cant cast in w
+            if (hasNewAbility[i] == false) {//dont double init
+                if (hasNewAbility[vladWindex] == false) {//cant cast in w
                     if (abilityTriggering->startAbility(i) == true) {//cooldown is ok and button is pressed
                         initAbility(i);
                     }
@@ -171,7 +172,6 @@ public:
                     hasNewAbility[cAbility->getAbilityIndex()] = false;
 
                     newAbilities[i] = nullptr;
-                    deleteAbility(*cAbility);
                     abilityTriggering->resetabilityStart(i);
                 }
             }
@@ -291,13 +291,12 @@ public:
 
 
     void initAbility(int abIndex) {
-
+        hasNewAbility[abIndex] = true;
         //add abilities with respective indices
         switch (abIndex) {
         case 0: {
             //change this
             Transfusion* newT = new Transfusion(myPlayerI);//has to be a pointer so that we can preserve it for newAbilities
-            transfusions.push_back(shared_ptr<Transfusion>(newT));
             generalAbilities.push_back(newT);
             newAbilities[abIndex] = unique_ptr<Ability>(newT);
             break;
@@ -305,7 +304,6 @@ public:
         case 1: {
             //change this
             VladW* newW = new VladW(myPlayerI);
-            vladWs.push_back(shared_ptr<VladW>(newW));
             generalAbilities.push_back(newW);
             newAbilities[abIndex] = unique_ptr<Ability>(newW);
             break;
@@ -313,7 +311,6 @@ public:
         case 2: {
             //change this
             VladE* newE = new VladE(myPlayerI);
-            vladEs.push_back(shared_ptr<VladE>(newE));
             generalAbilities.push_back(newE);
             newAbilities[abIndex] = unique_ptr<Ability>(newE);
             break;
@@ -321,7 +318,6 @@ public:
         case 3: {
             //change this
             VladR* newR = new VladR(myPlayerI);
-            vladRs.push_back(shared_ptr<VladR>(newR));
             generalAbilities.push_back(newR);
             newAbilities[abIndex] = unique_ptr<Ability>(newR);
             break;
@@ -329,58 +325,11 @@ public:
         case 4: {
             //change this
             Fireball* newFB = new Fireball(myPlayerI);
-            fireballs.push_back(shared_ptr<Fireball>(newFB));
             generalAbilities.push_back(newFB);
             newAbilities[abIndex] = unique_ptr<Ability>(newFB);
             break;
 
         }
-        default:
-            break;
-        }
-    }
-    
-
-    void deleteAbility(Ability& toDelete) {
-        //add abilities with respective indices
-        switch (toDelete.getAbilityIndex()) {
-        case 0:
-            for (int c = 0; c < transfusions.size(); c++) {
-                if (transfusions.at(c).get() == &toDelete) {
-                    transfusions.erase(transfusions.begin() + c);
-                }
-            }
-            break;
-        case 1:
-            for (int c = 0; c < vladWs.size(); c++) {
-                if (vladWs.at(c).get() == &toDelete) {
-                    vladWs.erase(vladWs.begin() + c);
-                }
-            }
-            break;
-        case 2:
-            for (int c = 0; c < vladEs.size(); c++) {
-                if (vladEs.at(c).get() == &toDelete) {
-                    vladEs.erase(vladEs.begin() + c);
-                }
-            }
-            break;
-        case 3:
-
-            for (int c = 0; c < vladRs.size(); c++) {
-                if (vladRs.at(c).get() == &toDelete) {
-                    vladRs.erase(vladRs.begin() + c);
-                }
-            }
-            break;
-        case 4:
-
-            for (int c = 0; c < fireballs.size(); c++) {
-                if (fireballs.at(c).get() == &toDelete) {
-                    fireballs.erase(fireballs.begin() + c);
-                }
-            }
-            break;
         default:
             break;
         }
