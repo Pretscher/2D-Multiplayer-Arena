@@ -1,11 +1,13 @@
 #include "HeapNode.hpp"
 #include "BinaryHeap.hpp"
 
-	BinaryHeap::BinaryHeap(Graph* graphNodes, unsigned int graphNodeCount) {
+
+	BinaryHeap::BinaryHeap(shared_ptr<Graph> graphNodes, unsigned int graphNodeCount, int currentIteration) {
 		//heap has same size as graph
 		nodeCount = 0;
 		graph = graphNodes;
 		heap = new HeapNode*[graphNodeCount];
+		this->currentIteration = currentIteration;
 	}
 
 	int BinaryHeap::getCurrentNodeCount() {
@@ -13,7 +15,7 @@
 	}
 
 	void BinaryHeap::actualizeGraphIndex(int indexInHeap) {
-		unsigned int graphIndex = heap[indexInHeap]->getIndexInGraph();
+		unsigned int graphIndex = heap[indexInHeap]->getIndexInGraph(currentIteration);
 		graph->getHeapIndices()[graphIndex] = indexInHeap;
 	}
 

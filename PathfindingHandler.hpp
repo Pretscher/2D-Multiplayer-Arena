@@ -26,16 +26,16 @@ public:
 		myPlayerIndex = playerI;
 	}
 
-	mutex* getPathfingingMutex() {
+	shared_ptr<mutex> getPathfingingMutex() {
 		return pfMtx;
 	}
 
-	Graph* getGraph() {
+	shared_ptr<Graph> getGraph() {
 		return g;
 	}
 
 private:
-	Graph* g;
+	shared_ptr<Graph> g;
 	int cgoalX;
 	int cgoalY;
 	int cPlayerIndex;
@@ -44,7 +44,7 @@ private:
 	bool** colisionGrid;
 
 	thread* pathFindingThread;
-	mutex* pfMtx;
+	shared_ptr<mutex> pfMtx;
 	bool findingPath;
 	Player** players;
 	int playerCount;

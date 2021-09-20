@@ -6,11 +6,11 @@ float HeapNode::getKey() {
     return myKey;
 }
 
-unsigned int HeapNode::getIndexInGraph() {
-    if (usedInIteration <= Algorithm::currentIteration && usedInIteration != -1) {//-1 means never used
+unsigned int HeapNode::getIndexInGraph(int currentIteration) {
+    if (usedInIteration <= currentIteration && usedInIteration != -1) {//-1 means never used
         myKey = numeric_limits<float>::max();
         myIndexInGraph = -1;
-        usedInIteration = Algorithm::currentIteration;
+        usedInIteration = currentIteration;
     }
 
     return myIndexInGraph;

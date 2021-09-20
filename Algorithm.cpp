@@ -4,18 +4,17 @@
 #include "Algorithm.hpp"
 #include <limits>
 #include "Renderer.hpp"
-int Algorithm::currentIteration = -1;
-bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathXs, int& o_pathLenght, Graph* graph, int startY, int startX, int goalY, int goalX) {
-	currentIteration++;
-	
+
+
+bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathXs, int& o_pathLenght, int startY, int startX, int goalY, int goalX) {
+	nextIteration();
 	int startIndex = graph->getIndexFromCoords(startY, startX, true);
 	int goalIndex = graph->getIndexFromCoords(goalY, goalX, true);
 
 	int graphNodeCount = graph->getGraphNodeCount();
+	BinaryHeap* heap = new BinaryHeap(graph, graphNodeCount, currentIteration);
 
 	graph->resetHeapIndices();
-
-	int* graphIndices = graph->getGraph();
 
 	float* distanceTravelled = new float[graphNodeCount];
 	int* previousIndex = new int[graphNodeCount];
@@ -26,23 +25,22 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 
 	distanceTravelled[startIndex] = 0.0f;
 	previousIndex[startIndex] = startIndex;
-	BinaryHeap* heap = new BinaryHeap(graph, graphNodeCount);
+
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(graphIndices, graph->getIndexBoundYs(), graph->getIndexBoundXs(),
-		graphIndices[startIndex], graphIndices[goalIndex]), startIndex);
+	HeapNode* toInsert = new HeapNode(getHeuristic(graphIndices[startIndex], graphIndices[goalIndex]), startIndex);
 	heap->insert(toInsert);
 	bool foundPath = false;
 
 	while (heap->getCurrentNodeCount() > 0) {//while heap is not empty
 		HeapNode* helpNode = heap->extractMin();//extract best node
-		int cNodeIndex = graphIndices[helpNode->getIndexInGraph()];//get graphIndex of best node
+		int cNodeIndex = graphIndices[helpNode->getIndexInGraph(currentIteration)];//get graphIndex of best node
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;
 			break;
 		}
 		for (int i = 0; i < graph->getIndexNeighbourCount()[cNodeIndex]; i++) {
 			int currentNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
-			float heuristics = getHeuristic(graph->getGraph(), graph->getIndexBoundYs(), graph->getIndexBoundXs(), currentNeighbourIndex, cNodeIndex);
+			float heuristics = getHeuristic(currentNeighbourIndex, cNodeIndex);
 			graph->setNeighbourCost(cNodeIndex, i, heuristics);
 		}
 
@@ -56,8 +54,7 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 					distanceTravelled[cNeighbourIndex] = tempDistance;
 					previousIndex[cNeighbourIndex] = cNodeIndex;
 
-					float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(graph->getGraph(), graph->getIndexBoundYs(),
-						graph->getIndexBoundXs(), cNeighbourIndex, goalIndex);
+					float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(cNeighbourIndex, goalIndex);
 
 					//if graphnode has been inserted to heap (index in heap initialized to -1)
 					if (graph->getHeapIndices()[cNeighbourIndex] != -1) {
@@ -128,11 +125,11 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 	return false;
 }
 
-float Algorithm::getHeuristic(int* currentGraph, int* ys, int* xs, int startIndex, int goalIndex) {
-	float x1 = xs[currentGraph[startIndex]];
-	float x2 = xs[currentGraph[goalIndex]];
-	float y1 = ys[currentGraph[startIndex]];
-	float y2 = ys[currentGraph[goalIndex]];
+float Algorithm::getHeuristic(int startIndex, int goalIndex) {
+	float x1 = graphXs[graphIndices[startIndex]];
+	float x2 = graphXs[graphIndices[goalIndex]];
+	float y1 = graphYs[graphIndices[startIndex]];
+	float y2 = graphYs[graphIndices[goalIndex]];
 	float heuristics = (float)sqrt(abs(x2 - x1) * abs(x2 - x1) + abs(y2 - y1) * abs(y2 - y1));
 	return heuristics;
 }

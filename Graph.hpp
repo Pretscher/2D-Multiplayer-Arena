@@ -27,11 +27,11 @@ public:
 		return usedByMoveable[index];
 	}
 
-	int* getIndexBoundYs() {
+	shared_ptr<int[]> getIndexBoundYs() {
 		return indexBoundYs;
 	}
 
-	int* getIndexBoundXs() {
+	shared_ptr<int[]> getIndexBoundXs() {
 		return indexBoundXs;
 	}
 
@@ -43,23 +43,24 @@ public:
 		return neighbourIndices;
 	}
 
-	int* getIndexNeighbourCount() {
-		return neighbourCount;
-	}
-
-	int* getHeapIndices() {
-		return heapIndices;
-	}
 
 	int getGraphNodeCount() {
 		return graphNodeCount;
 	}
 
-	int* getGraph() {
+	shared_ptr<int[]> getGraph() {
 		return currentGraph;
 	}
 
-	bool* isUsedByMoveableObject() {
+	shared_ptr<int[]> getIndexNeighbourCount() {
+		return neighbourCount;
+	}
+
+	shared_ptr<int[]> getHeapIndices() {
+		return heapIndices;
+	}
+
+	shared_ptr<bool[]> isUsedByMoveableObject() {
 		return usedByMoveable;
 	}
 
@@ -79,18 +80,21 @@ private:
 	//for getIndexFromCoords() and getting coords of indices
 	int yCount;
 	int xCount;
-	int* indexBoundXs;
-	int* indexBoundYs;
-
-
-
 	float accuracy;
-	bool* usedByMoveable;
-	int* neighbourCount;
-	int** neighbourCosts;
-	int* heapIndices;
-	int** neighbourIndices;
-	int* currentGraph;
-	int graphNodeCount;
+
+
 	int** rawIndices;
+
+	int** neighbourCosts;
+	int** neighbourIndices;
+
+	int graphNodeCount;//lenght for all of these arrays
+	shared_ptr<bool[]> usedByMoveable;
+	shared_ptr<int[]> indexBoundXs;
+	shared_ptr<int[]> indexBoundYs;
+	shared_ptr<int[]> neighbourCount;
+	shared_ptr<int[]> heapIndices;
+	shared_ptr<int[]> currentGraph;
+
+
 };

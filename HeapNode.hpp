@@ -10,7 +10,7 @@ public:
         myIndexInGraph = indexInGraph;
     }
     float getKey();
-    unsigned int getIndexInGraph();
+    unsigned int getIndexInGraph(int currentIteration);
     void setIndex(unsigned int index);
     void setKey(float key);
 

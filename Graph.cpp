@@ -13,13 +13,13 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
     int lenght = this->yCount * xCount;
 
     //init everything with given sizes
-    neighbourCount = new int[lenght];
+    neighbourCount = shared_ptr<int[]>(new int[lenght]);
     neighbourIndices = new int*[lenght];//for every node there can be 8 neighbours, second dimension initialized in loop
-    indexBoundXs = new int[lenght];
-    indexBoundYs = new int[lenght];
-    currentGraph = new int[lenght];
-    heapIndices = new int[lenght];
-    usedByMoveable = new bool[lenght];
+    indexBoundXs = shared_ptr<int[]>(new int[lenght]);
+    indexBoundYs = shared_ptr<int[]>(new int[lenght]);
+    currentGraph = shared_ptr<int[]>(new int[lenght]);
+    heapIndices = shared_ptr<int[]>(new int[lenght]);
+    usedByMoveable = shared_ptr<bool[]>(new bool[lenght]);
 
     rawIndices = new int*[this->yCount];
     neighbourCosts = nullptr; //initialized later for every run of algorithm
@@ -29,11 +29,6 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
 }
 
 Graph::~Graph() {
-    delete[] indexBoundXs;
-    delete[] indexBoundYs;
-    delete[] neighbourCount;
-    delete[] heapIndices;
-    delete[] currentGraph;
     for (int i = 0; i < graphNodeCount; i++) {
         delete[] neighbourIndices[i];
         delete[] neighbourCosts[i];
@@ -49,7 +44,6 @@ Graph::~Graph() {
     delete[] neighbourCosts;
     delete[] neighbourIndices;
     delete[] rawIndices;
-    delete[] usedByMoveable;
 }
 
 /* MEMO:

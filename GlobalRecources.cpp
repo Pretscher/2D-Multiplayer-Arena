@@ -9,4 +9,4 @@ Terrain* GlobalRecources::terrain;
 Player** GlobalRecources::players;
 int GlobalRecources::playerCount;
 Pathfinding* GlobalRecources::pFinding;
-mutex* GlobalRecources::pfMtx;
+shared_ptr<mutex> GlobalRecources::pfMtx;

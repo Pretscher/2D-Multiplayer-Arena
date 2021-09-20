@@ -3,7 +3,9 @@
 #include "Graph.hpp"
 class BinaryHeap {
 public:
-	BinaryHeap(Graph* graphNodes, unsigned int graphNodeCount);
+	//needs current iteration for efficiency: heap nodes are not deleted, but if they are reinserted into the heap and they were
+	//initialized in another run of the algorithm, they reinitialize themselves.
+	BinaryHeap(shared_ptr<Graph> graphNodes, unsigned int graphNodeCount, int currentIteration);
 	int getCurrentNodeCount();
 	void actualizeGraphIndex(int indexInHeap);
 
@@ -27,8 +29,10 @@ public:
 		}
 		delete[] heap;
 	}
+
 private:
 	HeapNode** heap;
-	Graph* graph;
+	shared_ptr<Graph> graph;
 	unsigned int nodeCount;
+	int currentIteration;
 };

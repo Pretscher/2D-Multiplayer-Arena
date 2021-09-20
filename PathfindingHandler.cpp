@@ -15,6 +15,7 @@ void startPathfindingThread(Pathfinding* pathfinding) {
 	
 }
 
+unique_ptr<Algorithm> aStar;
 Pathfinding::Pathfinding() {
 	cgoalX = -1;
 	cgoalY = -1;
@@ -34,7 +35,7 @@ Pathfinding::Pathfinding() {
 	this->newGoalYs = unique_ptr<vector<int>>(new vector<int>());
 
 	pathFindingThread = new thread(&startPathfindingThread, this);
-	pfMtx = new mutex();
+	pfMtx = shared_ptr<mutex>(new mutex());
 
 	pathfindingAccuracy = 0.025f;
 	//ys and xs are stretched to full screen anyway. Its just accuracy of rendering 
@@ -55,11 +56,13 @@ Pathfinding::Pathfinding() {
 	//create graph from unmoving solids, can be changed dynamically
 	//all player widths and heights are the same so we can just look at index 0
 	GlobalRecources::terrain->addCollidablesToGrid(colisionGrid, pathfindingAccuracy, players[0]->getWidth(), players[0]->getHeight());
-	g = new Graph(wYs, wXs, pathfindingAccuracy);
+	g = shared_ptr<Graph>(new Graph(wYs, wXs, pathfindingAccuracy));
 	g->generateWorldGraph(colisionGrid);
 
 	GlobalRecources::pfMtx = pfMtx;
 	GlobalRecources::pFinding = this;
+
+	aStar = unique_ptr<Algorithm>(new Algorithm(g, pfMtx));
 }
 
 void Pathfinding::pathFindingOnClick() {
@@ -253,7 +256,6 @@ void Pathfinding::disablePlayer(int i_playerIndex) {
 
 
 
-
 void Pathfinding::startPathFinding() {
 	while (true) {
 		this_thread::sleep_for(chrono::milliseconds(5));
@@ -278,7 +280,7 @@ void Pathfinding::startPathFinding() {
 				}
 			}
 
-			bool found = Algorithm::findPath(pathYs, pathXs, pathlenght, g, player->getY() + (player->getHeight() / 2),
+			bool found = aStar->findPath(pathYs, pathXs, pathlenght, player->getY() + (player->getHeight() / 2),
 															 player->getX() + (player->getWidth() / 2), cgoalY, cgoalX);
 
 			disablePlayer(cPlayerIndex);
