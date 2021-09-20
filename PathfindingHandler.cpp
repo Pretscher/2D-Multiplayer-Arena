@@ -181,11 +181,11 @@ void Pathfinding::moveObjects() {
 
 void Pathfinding::playerInteraction(int movedPlayerIndex) {
 	//find new paths for players close to this player
-	Player* movedPlayer = players[movedPlayerIndex];
+	shared_ptr<Player> movedPlayer = players[movedPlayerIndex];
 	for (int j = 0; j < playerCount; j++) {
 		if (players[j]->getHp() > 0) {
 			if (j != movedPlayerIndex) {
-				Player* cPlayer = players[j];
+				shared_ptr<Player> cPlayer = players[j];
 				if (cPlayer->hasPath() == true) {
 					//if paths cross each other, disable all crossing points and find new path. this is periodically called
 
@@ -229,7 +229,7 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 
 //enables player coords and after that disables all coords of other movables again in case their area was affected by that.
 void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
-	Player* player = players[i_playerIndex];
+	shared_ptr<Player> player = players[i_playerIndex];
 
 	g->enableObjectBounds(player->getY() - 150, player->getX() - 150, player->getWidth() + 200, player->getHeight() + 200);
 
@@ -237,7 +237,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 		for (int i = 0; i < playerCount; i++) {
 			if (players[i]->getHp() > 0) {
 				if (i != i_playerIndex) {
-					Player* cPlayer = players[i];
+					shared_ptr<Player> cPlayer = players[i];
 					disablePlayer(i);
 				}
 			}
@@ -247,7 +247,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 
 //enables player coords and after that disables all coords of other movables 			setNewPathfinding(false);again in case their area was affected by that.
 void Pathfinding::disablePlayer(int i_playerIndex) {
-	Player* player = players[i_playerIndex];
+	shared_ptr<Player> player = players[i_playerIndex];
 	g->disableObjectBounds(player->getY() - 100, player->getX() - 100, player->getWidth() + 100, player->getHeight() + 100);
 }
 
@@ -264,7 +264,7 @@ void Pathfinding::startPathFinding() {
 			shared_ptr<int[]> pathXs;
 			shared_ptr<int[]> pathYs;
 			int pathlenght = 0;
-			Player* player = players[cPlayerIndex];
+			shared_ptr<Player> player = players[cPlayerIndex];
 
 			enablePlayer(cPlayerIndex, true);
 			for (int i = 0; i < playerCount; i++) {

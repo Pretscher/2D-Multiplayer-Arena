@@ -22,11 +22,11 @@ public:
 		return myPlayerI;
 	}
 
-	inline Player** getPlayers() {
+	inline shared_ptr<shared_ptr<Player>[]> getPlayers() {
 		return players;
 	}
 
-	inline Player* getMyPlayer() {
+	inline shared_ptr<Player> getMyPlayer() {
 		return players[myPlayerI];
 	}
 
@@ -37,7 +37,7 @@ public:
 
 
 private:
-	Player** players;//all players
+	shared_ptr<shared_ptr<Player>[]> players;//all players
 	int myPlayerI;
 	int playerCount;//number of players
 

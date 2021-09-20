@@ -12,7 +12,7 @@ public:
     static int worldWidth, worldHeight;
     static int frameWidth, frameHeight;
     static Terrain* terrain;
-    static Player** players;
+    static shared_ptr<shared_ptr<Player>[]> players;
     static int playerCount;
     static Pathfinding* pFinding;
     static shared_ptr<mutex> pfMtx;

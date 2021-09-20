@@ -30,7 +30,7 @@ public:
     //(Can fly through colidables so no pathfinding)
     void followPlayer();
     //get current bloodball target
-    Player* getBloodballTarget();
+    shared_ptr<Player> getBloodballTarget();
 
     //get target player selected with indicator/passed through network
     inline int getTargetPlayer() {
@@ -48,8 +48,8 @@ private:
 
     int abilityPathIndex;//needed to determine wether another path has been found ->ability should be stopped
 
-    Player* me;
-    Player* target;
+    shared_ptr<Player> me;
+    shared_ptr<Player> target;
     //hardcoded stuff
     int dmg = 25;
     int heal = 25;

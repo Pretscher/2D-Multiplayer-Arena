@@ -38,7 +38,7 @@ void VladR::draw0() {
 }
 
 void VladR::init1() {
-	Player* me = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
 	//if player out of range, run into range
 	int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
 	int halfH = me->getHeight() / 2;
@@ -66,7 +66,7 @@ void VladR::execute1() {
 		stop = true;
 	}
 	if (stop == false) {
-		Player* me = GlobalRecources::players[myPlayerIndex];
+		shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
 		int halfW = me->getWidth() / 2;
 		int halfH = me->getHeight() / 2;
 		if (Utils::calcDist2D(me->getX() + halfW, x, me->getY() + halfH, y) < range + radius) {
@@ -86,12 +86,12 @@ void VladR::draw1() {
 }
 
 void VladR::init2() {
-	affectedPlayers = new Player*[GlobalRecources::playerCount];//just init static array to max player count, theyre few
+	affectedPlayers = shared_ptr<shared_ptr<Player>[]>(new shared_ptr<Player>[GlobalRecources::playerCount]);//just init static array to max player count, theyre few
 
 	//save players who are still in range when this phase is activated as affected, damagin them after 4 seconds
 	for (int i = 0; i < GlobalRecources::playerCount; i++) {
 		if (i != myPlayerIndex) {
-			Player* cPlayer = GlobalRecources::players[i];
+			shared_ptr<Player> cPlayer = GlobalRecources::players[i];
 			if (cPlayer->targetAble == true) {
 				if (Utils::calcDist2D(x, cPlayer->getX(), y, cPlayer->getY()) < radius) {
 					affectedPlayers[affectedPlayerCount] = cPlayer;
@@ -110,7 +110,7 @@ void VladR::execute2() {
 
 void VladR::draw2() {
 	for (int i = 0; i < affectedPlayerCount; i++) {
-		Player* cPlayer = affectedPlayers[i];
+		shared_ptr<Player> cPlayer = affectedPlayers[i];
 		Renderer::drawCircle(cPlayer->getX(), cPlayer->getY(), 50, sf::Color(150, 0, 0, 255), false, 20, false);
 	}
 	float phaseFinishedPercent = (float)this->getTimeSincePhaseStart(this->getPhase()) / timeTillProc;
@@ -131,12 +131,12 @@ void VladR::draw2() {
 void VladR::init3() {
 	//deal damage to affected players
 	for (int i = 0; i < affectedPlayerCount; i++) {
-		Player* cPlayer = affectedPlayers[i];
+		shared_ptr<Player> cPlayer = affectedPlayers[i];
 		cPlayer->setHp(cPlayer->getHp() - damage);
 	}
 
 	//create projectile that flies to player and heals him
-	Player* me = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
 	int halfW = me->getWidth() / 2;
 	bloodBall = new Projectile(y, x, flyBackVelocity, me->getY() + halfW, me->getX() + halfW, false, flyBackRadius, me);
 
@@ -179,7 +179,7 @@ void VladR::draw3() {
 
 
 void VladR::checkBloodballCollision() {
-	Player* me = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
 	//blood ball got to enemy and should fly back
 	if (Utils::colisionRectCircle(me->getY(), me->getX(), me->getWidth(), me->getHeight(),
 		bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
@@ -196,7 +196,7 @@ void VladR::checkBloodballCollision() {
 }
 
 void VladR::followPlayer() {
-	Player* me = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
 	if (tempFlybackY != me->getY() || tempFlybackX != me->getX()) {
 		tempFlybackY = me->getY();
 		tempFlybackX = me->getX();

@@ -31,7 +31,7 @@ public:
         //if true, end next tick (if no player was selected just do nothing and end indicator)
         for (int i = 0; i < GlobalRecources::playerCount; i++) {
             if (i != this->myPlayerIndex) {
-                Player* c = GlobalRecources::players[i];
+                shared_ptr<Player> c = GlobalRecources::players[i];
                 if(c->targetAble == true) {
                     if (c->getHp() > 0) {
 
@@ -66,7 +66,7 @@ public:
     }
 
     void draw() {
-        Player* me = GlobalRecources::players[this->myPlayerIndex];
+        shared_ptr<Player> me = GlobalRecources::players[this->myPlayerIndex];
         //draw range indicator
         int indicatorY = me->getY() + me->getHeight() / 2 - this->range;//range = radius of circle
         int indicatorX = me->getX() + me->getWidth() / 2 - this->range;

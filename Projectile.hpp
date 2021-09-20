@@ -1,14 +1,15 @@
 #pragma once
 #include "Rect.hpp"
 #include "SFML/Graphics.hpp"
+#include <iostream>
+#include "Player.hpp"
 
-class Player;
 class Projectile {
 public:
 	/**Calculates a line from player to goal (and beyond the goal in the same direction). 
 	* @param playercoords, velocity of projectile, goalcoords, radius of projectile
 	**/
-	Projectile(int y, int x, float velocity, int goalY, int goalX, bool moveThroughGoal, int radius, Player* shootingPlayer);
+	Projectile(int y, int x, float velocity, int goalY, int goalX, bool moveThroughGoal, int radius, shared_ptr<Player> shootingPlayer);
 	/**Moves on the Line calculated in the constructor
 	* @param maximum ys/xs where movement is allowed, array of Rect* and its lenght which cannot be passed through by the projectile
 	**/
@@ -38,7 +39,7 @@ private:
 	float slope;
 	float yOffset;
 	bool up;
-	Player* player;
+	shared_ptr<Player> player;
 
 	float movementFunc(float x) {//used in constructor to calculate direction, f(x) = ax + b format
 		return this->slope * x + this->yOffset;
@@ -63,5 +64,5 @@ public:
 	inline int getRadius() { return radius; }
 	inline void setRadius(int radius) { this->radius = radius; }
 
-	inline Player* getPlayer() { return player; }
+	inline shared_ptr<Player> getPlayer() { return player; }
 };

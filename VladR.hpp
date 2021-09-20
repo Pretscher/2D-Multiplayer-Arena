@@ -51,7 +51,7 @@ private:
 
     int abilityPathIndex;//needed to determine wether another path has been found ->ability should be stopped
 
-    Player** affectedPlayers;
+    shared_ptr<shared_ptr<Player>[]> affectedPlayers;
     int affectedPlayerCount = 0;
 
     Projectile* bloodBall;

@@ -14,10 +14,10 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	int defaultDmg = 10;
 
 
-	players = new Player *[playerCount];
+	players = shared_ptr<shared_ptr<Player>[]>(new shared_ptr<Player>[playerCount]);
 	for (int i = 0; i < playerCount; i++) {
 		int startY = i * 1000 / playerCount + 200;//move players away from each other in y
-		players[i] = new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg);//places players on map, x dist depends on playercount
+		players[i] = shared_ptr<Player>(new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg));//places players on map, x dist depends on playercount
 	}
 	GlobalRecources::players = players;
 	GlobalRecources::playerCount = playerCount;
@@ -37,7 +37,7 @@ void PlayerHandling::sendPlayerData() {
 		otherPlayer = 1;
 	}
 
-	Player* me = players[myPlayerI];
+	shared_ptr<Player> me = players[myPlayerI];
 	if (me->hasPath() == false) {
 		NetworkCommunication::addToken(0);//bool if path should be interrupted
 		NetworkCommunication::addToken(me->getY());

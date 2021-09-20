@@ -37,7 +37,7 @@ void VladE::execute0() {
 
 void VladE::draw0() {
 	int innerCircleRadius = range * abs(1.0f - percentFinishedCharge);
-	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> myPlayer = GlobalRecources::players[myPlayerIndex];
 
 	int innerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - innerCircleRadius;
 	int innerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - innerCircleRadius;
@@ -64,7 +64,7 @@ void VladE::init1() {
 		int goalY;
 		int goalX;
 
-		Player* myPlayer = GlobalRecources::players[myPlayerIndex];
+		shared_ptr<Player> myPlayer = GlobalRecources::players[myPlayerIndex];
 		int pX = myPlayer->getX() - 20;//spawn a bit away from player, with 20 distance around him
 		int pY = myPlayer->getY() - 20;
 		int pWidth = myPlayer->getWidth() + 40;
@@ -216,7 +216,7 @@ void VladE::execute1() {
 		for (int i = 0; i < projectileCount; i++) {
 			if (projectiles[i]->getDead() == false) {
 				if (j != myPlayerIndex) {
-					Player* cPlayer = GlobalRecources::players[j];
+					shared_ptr<Player> cPlayer = GlobalRecources::players[j];
 					if (cPlayer->targetAble == true) {
 						if (Utils::colisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
 							projectiles[i]->getY(), projectiles[i]->getX(), projectiles[i]->getRadius(), 10) == true) {
@@ -251,7 +251,7 @@ void VladE::draw1() {
 			projectiles[i]->draw(sf::Color(150, 0, 0, 255));
 		}
 	}
-	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> myPlayer = GlobalRecources::players[myPlayerIndex];
 	int outerY = myPlayer->getY() + (myPlayer->getHeight() / 2) - range;
 	int outerX = myPlayer->getX() + (myPlayer->getWidth() / 2) - range;
 	Renderer::drawCircle(outerX, outerY, range, sf::Color(150, 0, 0, 255), false, 10, false);
@@ -270,7 +270,7 @@ void VladE::draw2() {
 }
 
 void VladE::limitPosToRange(int* io_goalY, int* io_goalX) {
-	Player* myPlayer = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> myPlayer = GlobalRecources::players[myPlayerIndex];
 
 	float* vecToGoal = new float[2];
 	vecToGoal[0] = *io_goalX + radius - (myPlayer->getX() + (myPlayer->getWidth() / 2));

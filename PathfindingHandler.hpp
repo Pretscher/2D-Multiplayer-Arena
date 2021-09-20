@@ -46,7 +46,7 @@ private:
 	thread* pathFindingThread;
 	shared_ptr<mutex> pfMtx;
 	bool findingPath;
-	Player** players;
+	shared_ptr<shared_ptr<Player>[]> players;
 	int playerCount;
 	float pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
 

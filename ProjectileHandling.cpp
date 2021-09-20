@@ -32,7 +32,7 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 		Renderer:: getMousePos(mouseX, mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
-		Player* myPlayer = players[myPlayerI];
+		shared_ptr<Player> myPlayer = players[myPlayerI];
 
 		int y = 0, x = 0;
 		int halfW = myPlayer->getWidth() / 2;
@@ -65,7 +65,7 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 		p->move(worldHeight, worldWidth, colidables, colidableSize);//give it the maximum ys so it know when it can stop moving
 
 		for (int j = 0; j < playerCount; j++) {
-			Player* cPlayer = players[j];
+			shared_ptr<Player> cPlayer = players[j];
 			if (cPlayer->targetAble == true) {
 				if (cPlayer != p->getPlayer()) {
 					if (players[j]->getHp() > 0) {

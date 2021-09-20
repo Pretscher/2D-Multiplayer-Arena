@@ -28,7 +28,7 @@ private:
 	vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
 	int worldHeight, worldWidth;
-	Player** players;
+	shared_ptr<shared_ptr<Player>[]> players;
 	int myPlayerI;
 	int playerCount;
 };

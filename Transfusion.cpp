@@ -156,7 +156,7 @@ void Transfusion::draw2() {
 }
 
 void Transfusion::checkBloodballCollision() {
-    Player* c = getBloodballTarget();
+    shared_ptr<Player> c = getBloodballTarget();
     //blood ball got to enemy and should fly back
     if (Utils::colisionRectCircle(c->getY(), c->getX(), c->getWidth(), c->getHeight(),
         bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
@@ -179,7 +179,7 @@ void Transfusion::checkBloodballCollision() {
 }
 
 void Transfusion::followPlayer() {
-    Player* c = getBloodballTarget();
+    shared_ptr<Player> c = getBloodballTarget();
 
     if (tempGoalY != c->getY() || tempGoalX != c->getX()) {
         tempGoalY = c->getY();
@@ -195,8 +195,8 @@ void Transfusion::followPlayer() {
     }
 }
 
-Player* Transfusion::getBloodballTarget() {
-    Player* c;
+shared_ptr<Player> Transfusion::getBloodballTarget() {
+    shared_ptr<Player> c;
     if (flyBack == false) {
         c = target;
     }

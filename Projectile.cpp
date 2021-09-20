@@ -2,13 +2,12 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include "Utils.hpp"
-#include "Player.hpp"
+
 #include <chrono>
-#include "iostream" 
 using namespace std;
 
 Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goalX, 
-		bool i_moveThroughGoal, int radius, Player* shootingPlayer) {
+		bool i_moveThroughGoal, int radius, shared_ptr<Player> shootingPlayer) {
 	
 	this->player = shootingPlayer;
 	this->y = i_y - radius;//not same as player position, changes with direction because player rotates

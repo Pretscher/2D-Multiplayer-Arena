@@ -78,7 +78,6 @@ private:
 	int xCount;
 	float accuracy;
 
-
 	int** rawIndices;
 
 	int** neighbourCosts;
