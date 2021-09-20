@@ -48,10 +48,6 @@ public:
 		return graphNodeCount;
 	}
 
-	shared_ptr<int[]> getGraph() {
-		return currentGraph;
-	}
-
 	shared_ptr<int[]> getIndexNeighbourCount() {
 		return neighbourCount;
 	}
@@ -94,7 +90,4 @@ private:
 	shared_ptr<int[]> indexBoundYs;
 	shared_ptr<int[]> neighbourCount;
 	shared_ptr<int[]> heapIndices;
-	shared_ptr<int[]> currentGraph;
-
-
 };

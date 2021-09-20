@@ -17,7 +17,6 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
     neighbourIndices = new int*[lenght];//for every node there can be 8 neighbours, second dimension initialized in loop
     indexBoundXs = shared_ptr<int[]>(new int[lenght]);
     indexBoundYs = shared_ptr<int[]>(new int[lenght]);
-    currentGraph = shared_ptr<int[]>(new int[lenght]);
     heapIndices = shared_ptr<int[]>(new int[lenght]);
     usedByMoveable = shared_ptr<bool[]>(new bool[lenght]);
 
@@ -113,8 +112,6 @@ void Graph::generateWorldGraph(bool** isUseable) {
                         neighbourCount[graphNodeCount]++;
                     }
                 }
-
-                currentGraph[graphNodeCount] = graphNodeCount;
                 graphNodeCount++;
             } //End one node
             else {

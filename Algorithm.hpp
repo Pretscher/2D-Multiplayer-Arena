@@ -5,7 +5,6 @@ class Algorithm {
 public:
 	Algorithm(shared_ptr<Graph> i_graph, shared_ptr<std::mutex> io_mutex) {
 		this->graph = i_graph;
-		this->graphIndices = graph->getGraph();
 		this->graphXs = graph->getIndexBoundXs();
 		this->graphYs = graph->getIndexBoundYs();
 		this->mutex = io_mutex;
@@ -29,7 +28,6 @@ public:
 private:
 
 	int currentIteration;//counts up with every pathfindings so that from outside the thread you can see if a pathfinding was completed
-	shared_ptr<int[]> graphIndices;
 	shared_ptr<int[]> graphYs;
 	shared_ptr<int[]> graphXs;
 	shared_ptr<std::mutex> mutex;

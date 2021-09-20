@@ -27,13 +27,13 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 	previousIndex[startIndex] = startIndex;
 
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(graphIndices[startIndex], graphIndices[goalIndex]), startIndex);
+	HeapNode* toInsert = new HeapNode(getHeuristic(startIndex, goalIndex), startIndex);
 	heap->insert(toInsert);
 	bool foundPath = false;
 
 	while (heap->getCurrentNodeCount() > 0) {//while heap is not empty
 		HeapNode* helpNode = heap->extractMin();//extract best node
-		int cNodeIndex = graphIndices[helpNode->getIndexInGraph(currentIteration)];//get graphIndex of best node
+		int cNodeIndex = helpNode->getIndexInGraph(currentIteration);//get graphIndex of best node
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;
 			break;
@@ -126,10 +126,11 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 }
 
 float Algorithm::getHeuristic(int startIndex, int goalIndex) {
-	float x1 = graphXs[graphIndices[startIndex]];
-	float x2 = graphXs[graphIndices[goalIndex]];
-	float y1 = graphYs[graphIndices[startIndex]];
-	float y2 = graphYs[graphIndices[goalIndex]];
+
+	float x1 = graphXs[startIndex];
+	float x2 = graphXs[goalIndex];
+	float y1 = graphYs[startIndex];
+	float y2 = graphYs[goalIndex];
 	float heuristics = (float)sqrt(abs(x2 - x1) * abs(x2 - x1) + abs(y2 - y1) * abs(y2 - y1));
 	return heuristics;
 }
