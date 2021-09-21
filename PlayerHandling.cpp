@@ -85,8 +85,8 @@ void PlayerHandling::receivePlayerData() {
 	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken();
 
-		shared_ptr<int[]> pathX = shared_ptr<int[]>(new int[pathLenght]);
-		shared_ptr<int[]> pathY = shared_ptr<int[]>(new int[pathLenght]);
+		vector<int> pathX(pathLenght);
+		vector<int> pathY(pathLenght);
 		for (int i = 0; i < pathLenght; i++) {
 			pathX[i] = NetworkCommunication::receiveNextToken();
 			pathY[i] = NetworkCommunication::receiveNextToken();

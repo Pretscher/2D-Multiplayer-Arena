@@ -6,7 +6,7 @@
 #include "Renderer.hpp"
 
 
-bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathXs, int& o_pathLenght, int startY, int startX, int goalY, int goalX) {
+bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pathLenght, int startY, int startX, int goalY, int goalX) {
 	nextIteration();
 	int startIndex = graph->getIndexFromCoords(startY, startX, true);
 	int goalIndex = graph->getIndexFromCoords(goalY, goalX, true);
@@ -85,8 +85,8 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 			}
 		}
 
-		o_pathXs = shared_ptr<int[]>(new int[pathLenght]);
-		o_pathYs = shared_ptr<int[]>(new int[pathLenght]);
+		o_pathXs = vector<int>(pathLenght);
+		o_pathYs = vector<int>(pathLenght);
 		o_pathLenght = pathLenght;
 
 		//put path indices into path array from end to front
@@ -103,8 +103,6 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 			}
 		}
 
-		o_pathXs[pathLenght - 1] = goalX;
-		o_pathYs[pathLenght - 1] = goalY;
 
 		if (pathLenght == 0) {
 			cout << "\nNo path possible!-----------------------------------------------------\n\n\n";
@@ -113,6 +111,8 @@ bool Algorithm::findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathX
 			delete[] previousIndex;
 			return false;
 		}
+		o_pathXs[pathLenght - 1] = goalX;//can now be written caus pathlenght is not 0
+		o_pathYs[pathLenght - 1] = goalY;
 		delete heap;
 		delete[] distanceTravelled;
 		delete[] previousIndex;

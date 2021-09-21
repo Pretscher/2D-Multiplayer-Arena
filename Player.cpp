@@ -15,9 +15,6 @@ Player::Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i
 	this->hp = i_maxHp;
 	this->maxHp = i_maxHp;
 	this->dmg = i_dmg;
-
-	pathXpositions = nullptr;
-	pathYpositions = nullptr;
 	pathLenght = -1;
 
 	this->initTextures();
@@ -26,11 +23,11 @@ Player::Player(int i_x, int i_y, int i_width, int i_height, float i_vel, float i
 }
 
 
-void Player::givePath(shared_ptr<int[]> i_pathX, shared_ptr<int[]> i_pathY, int i_pathLenght) {
+void Player::givePath(vector<int> i_pathX, vector<int> i_pathY, int i_pathLenght) {
 	GlobalRecources::pfMtx->lock();
 	//free memory in case of reassigning path
-	pathXpositions = i_pathX;
-	pathYpositions = i_pathY;
+	pathXpositions = std::move(i_pathX);
+	pathYpositions = std::move(i_pathY);
 	cPathIndex = 0;
 	pathLenght = i_pathLenght;
 	pathsFound++;
@@ -143,7 +140,7 @@ void Player::draw() {
 }
 
 void Player::initTextures() {
-	textures = new sf::Texture[4];
+	textures = vector<sf::Texture>(4);
 	textures[0] = Renderer::loadTexture("Textures/mageFromAboveLeft.png", false);
 	textures[1] = Renderer::loadTexture("Textures/mageFromAboveRight.png", false);
 	textures[2] = Renderer::loadTexture("Textures/mageFromAboveTop.png", false);

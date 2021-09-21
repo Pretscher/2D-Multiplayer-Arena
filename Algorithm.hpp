@@ -24,7 +24,7 @@ public:
 		this->mutex->unlock();
 	}
 
-	bool findPath(shared_ptr<int[]>& o_pathYs, shared_ptr<int[]>& o_pathXs, int& o_pathLenght, int startY, int startX, int goalY, int goalX);
+	bool findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pathLenght, int startY, int startX, int goalY, int goalX);
 private:
 
 	int currentIteration;//counts up with every pathfindings so that from outside the thread you can see if a pathfinding was completed

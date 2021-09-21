@@ -262,8 +262,8 @@ void Pathfinding::startPathFinding() {
 		this_thread::sleep_for(chrono::milliseconds(5));
 
 		if (this->getNewPathfinding() == true) {
-			shared_ptr<int[]> pathXs;
-			shared_ptr<int[]> pathYs;
+			vector<int> pathXs;
+			vector<int> pathYs;
 			int pathlenght = 0;
 			const Player* player = players->at(cPlayerIndex).get();
 
