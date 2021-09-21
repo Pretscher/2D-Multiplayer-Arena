@@ -41,7 +41,7 @@ Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goal
 	lastMoveTime = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 }
 
-void Projectile::move(int maxY, int maxX, Rect** colisionRects, int rectCount) {
+void Projectile::move(int maxY, int maxX, const unique_ptr<vector<Rect>>& collidables) {
 
 	auto timePoint = chrono::system_clock::now().time_since_epoch();
 	long long now = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
@@ -95,11 +95,13 @@ void Projectile::move(int maxY, int maxX, Rect** colisionRects, int rectCount) {
 				return;
 			}
 
-			for (unsigned int i = 0; i < rectCount; i++) {
-				Rect* cRect = colisionRects[i];
-				if (Utils::colisionRectCircleOnlyOutline(cRect->getX(), cRect->getY(), cRect->getWidth(), cRect->getHeight(), nextX, nextY, this->radius) == true) {
-					dead = true;
-					return;
+			if (collidables != nullptr) {
+				for (unsigned int i = 0; i < collidables->size(); i++) {
+					const Rect& cRect = collidables->at(i);
+					if (Utils::colisionRectCircleOnlyOutline(cRect.getX(), cRect.getY(), cRect.getWidth(), cRect.getHeight(), nextX, nextY, this->radius) == true) {
+						dead = true;
+						return;
+					}
 				}
 			}
 			//no colisiom => move on function
@@ -115,6 +117,6 @@ void Projectile::move(int maxY, int maxX, Rect** colisionRects, int rectCount) {
 		}
 }
 
-void Projectile::draw(sf::Color c) {
+void Projectile::draw(sf::Color c) const {
 	Renderer::drawCircle((int)this->x, (int)this->y, this->radius, c, true, 0, false);
 }

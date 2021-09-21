@@ -16,11 +16,11 @@ ProjectileHandling::ProjectileHandling() {
 	this->worldHeight = GlobalRecources::worldHeight;
 	this->worldWidth = GlobalRecources::worldWidth;
 	this->playerCount = GlobalRecources::playerCount;
-	newProjectiles = new vector<Projectile*>();
-	projectiles = new vector<Projectile*>();;//stores all projectiles for creation, drawing, moving and damage calculation. 
+	newProjectiles = vector<shared_ptr<Projectile>>();
+	projectiles = vector<shared_ptr<Projectile>>();//stores all projectiles for creation, drawing, moving and damage calculation. 
 }
 
-void ProjectileHandling::update(Rect** colidables, int colidableSize) {
+void ProjectileHandling::update(const unique_ptr<vector<Rect>>& collidables) {
 	//dont shoot a projectile for the same space-press
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == false) {
 		samePress = false;
@@ -55,25 +55,25 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 
 
 
-		Projectile* p = new Projectile(y, x, projectileVel, mouseY, mouseX, true, projectileRadius, myPlayer);
-		projectiles->push_back(p);
-		newProjectiles->push_back(p);
+		shared_ptr<Projectile> p(new Projectile(y, x, projectileVel, mouseY, mouseX, true, projectileRadius, myPlayer));
+		projectiles.push_back(p);
+		newProjectiles.push_back(p);
 	}
 
 	//move projectiles (we loop through em in drawingLoop too but later it will be in a different thread so we cant use the same loop)
-	for (int i = 0; i < projectiles->size(); i++) {
-		Projectile* p = projectiles->at(i);
-		p->move(worldHeight, worldWidth, colidables, colidableSize);//give it the maximum ys so it know when it can stop moving
+	for (int i = 0; i < projectiles.size(); i++) {
+		const Projectile* p = projectiles.at(i).get();
+		projectiles.at(i)->move(worldHeight, worldWidth, collidables);//give it the maximum ys so it know when it can stop moving
 
 		for (int j = 0; j < playerCount; j++) {
-			const Player* cPlayer = players->at(j).get();
+			const Player* cPlayer = players->at(j).get();//read only to shorten names
 			if (cPlayer->targetAble == true) {
 				if (cPlayer != p->getPlayer().get()) {
 					if (players->at(j)->getHp() > 0) {
 
 						if (Utils::colisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
 							p->getY(), p->getX(), p->getRadius(), 10) == true) {
-							p->setDead(true);
+							projectiles.at(i)->setDead(true);
 							players->at(j)->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());
 						}
 					}
@@ -82,19 +82,19 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 		}
 
 		if (p->isDead() == true) {
-			for (int k = 0; k < newProjectiles->size(); k++) {
-				if (newProjectiles->at(k) == projectiles->at(i)) {
-					newProjectiles->erase(newProjectiles->begin() + k);//delete projecile if dead
+			for (int k = 0; k < newProjectiles.size(); k++) {
+				if (newProjectiles.at(k) == projectiles.at(i)) {
+					newProjectiles.erase(newProjectiles.begin() + k);//delete projecile if dead
 				}
 			}
-			projectiles->erase(projectiles->begin() + i);//delete projecile if dead
+			projectiles.erase(projectiles.begin() + i);//delete projecile if dead
 		}
 	}
 }
 
 void ProjectileHandling::draw() {
-	for (int i = 0; i < projectiles->size(); i++) {
-		projectiles->at(i)->draw(sf::Color(100, 100, 100, 255));
+	for (int i = 0; i < projectiles.size(); i++) {
+		projectiles.at(i)->draw(sf::Color(100, 100, 100, 255));
 	}
 }
 
@@ -102,22 +102,22 @@ void ProjectileHandling::draw() {
 void ProjectileHandling::sendProjectiles() {
 	int networkingStart = NetworkCommunication::getTokenCount();
 	NetworkCommunication::addToken(networkingStart);
-	int networkingEnd = networkingStart + (4 * newProjectiles->size());
+	int networkingEnd = networkingStart + (4 * newProjectiles.size());
 	NetworkCommunication::addToken(networkingEnd);
 
-	for (int i = 0; i < newProjectiles->size(); i++) {
-		Projectile* current = newProjectiles->at(i);
+	for (int i = 0; i < newProjectiles.size(); i++) {
+		const Projectile* current = newProjectiles.at(i).get();
 
 		NetworkCommunication::addToken((int)current->getY());//natively floats for half movements smaller than a y/x
 		NetworkCommunication::addToken((int)current->getX());
 		NetworkCommunication::addToken(current->getGoalY());
 		NetworkCommunication::addToken(current->getGoalX());
 	}
-	if (newProjectiles->size() > 0) {
+	if (newProjectiles.size() > 0) {
 		int networkingEnd = NetworkCommunication::getTokenCount() - 1;
 		NetworkCommunication::addToken(networkingEnd);
 	}
-	newProjectiles->clear();
+	newProjectiles.clear();
 }
 
 void ProjectileHandling::receiveProjectiles() {
@@ -151,8 +151,8 @@ void ProjectileHandling::receiveProjectiles() {
 		}
 		counter++;
 		if (counter > 3) {
-			projectiles->push_back(new Projectile(y, x, projectileVel, goalY, goalX, true,
-				projectileRadius, players->at(otherPlayerI)));
+			projectiles.push_back(shared_ptr<Projectile>(new Projectile(y, x, projectileVel, goalY, goalX, true,
+				projectileRadius, players->at(otherPlayerI))));
 			counter = 0;
 		}
 	}

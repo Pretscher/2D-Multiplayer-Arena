@@ -16,16 +16,16 @@ private:
 	int height;
 
 public:
-	inline int getY() { return y; }
+	inline int getY() const { return y; }
 	inline void setY(int y) { this->y = y; }
 
-	inline int getX() { return x; }
+	inline int getX() const { return x; }
 	inline void setX(int x) { this->x = x; }
 
-	inline int getWidth() { return width; }
+	inline int getWidth() const { return width; }
 	inline void setWidth(int width) { this->width = width; }
 
-	inline int getHeight() { return height; }
+	inline int getHeight() const { return height; }
 	inline void setHeight(int height) { this->height = height; }
 
 };

@@ -12,7 +12,7 @@ public:
 	ProjectileHandling();
 	
 	void draw();
-	void update(Rect** colidables, int colidableSize);
+	void update(const unique_ptr<vector<Rect>>& colidables);
 	void sendProjectiles();
 	void receiveProjectiles();
 
@@ -24,8 +24,8 @@ private:
 	float projectileVel;
 	int projectileRadius;
 	bool samePress = false;
-	vector<Projectile*>* newProjectiles;
-	vector<Projectile*>* projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
+	vector<shared_ptr<Projectile>> newProjectiles;//needs to be shared ptr caus it gets pushed back to newProjectiles and projectiles.
+	vector<shared_ptr<Projectile>> projectiles;//stores all projectiles for creation, drawing, moving and damage calculation. 
 
 	int worldHeight, worldWidth;
 	shared_ptr<vector<shared_ptr<Player>>> players;

@@ -13,17 +13,14 @@ public:
 	/**Moves on the Line calculated in the constructor
 	* @param maximum ys/xs where movement is allowed, array of Rect* and its lenght which cannot be passed through by the projectile
 	**/
-	void move(int maxY, int maxX, Rect** colisionRects, int rectCount);
-	void draw(sf::Color c);
+	void move(int maxY, int maxX, const unique_ptr<vector<Rect>>& colisionRects);
+	void draw(sf::Color c) const;
 
 	//Call this to skip some steps in projectile movement based on time, useful for networking
 	void skipMovementTime(int i_skippedTime) {
 		lastMoveTime -= i_skippedTime;//will skip some steps to catch up with time
 	}
 
-	bool isDead() {
-		return this->dead;
-	}
 
 private:
 	bool moveThroughGoal;
@@ -41,28 +38,33 @@ private:
 	bool up;
 	shared_ptr<Player> player;
 
-	float movementFunc(float x) {//used in constructor to calculate direction, f(x) = ax + b format
+	float movementFunc(float x) const {//used in constructor to calculate direction, f(x) = ax + b format
 		return this->slope * x + this->yOffset;
 	}
 public:
-    inline float getY() { return y; }
+
+	bool isDead() const {
+		return this->dead;
+	}
+
+    inline float getY() const { return y; }
 	inline void setY(float y) { this->y = y; }
 
-	inline float getX() { return x; }
+	inline float getX() const { return x; }
 	inline void setX(float x) { this->x = x; }
 
-	inline int getGoalY() { return goalY; }
+	inline int getGoalY() const { return goalY; }
 	inline void setGoalY(int goalY) { this->goalY = goalY; }
 
-	inline int getGoalX() { return goalX; }
+	inline int getGoalX() const { return goalX; }
 	inline void setGoalX(int goalX) { this->goalX = goalX; }
 
 
-	inline bool getDead() { return dead; }
+	inline bool getDead() const { return dead; }
 	inline void setDead(bool dead) { this->dead = dead; }
 
-	inline int getRadius() { return radius; }
+	inline int getRadius() const { return radius; }
 	inline void setRadius(int radius) { this->radius = radius; }
 
-	inline shared_ptr<Player> getPlayer() { return player; }
+	inline shared_ptr<Player> getPlayer() const { return player; }
 };

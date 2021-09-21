@@ -87,8 +87,7 @@ void eventhandling::eventloop() {
 		abilityHandling->update();
 
 		//pass colidbales to projectile management every update so that projectiles can even be stopped by moving terrain
-		auto colidables = worldHandling->getTerrain()->getCollidables();
-		projectileHandling->update(colidables->data(), colidables->size());
+		projectileHandling->update(worldHandling->getTerrain()->getCollidables());
 
 		//pass game information back and forth through tcp sockets
 		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
