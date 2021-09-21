@@ -10,7 +10,7 @@ static int i_addToNetworkPhase = 2;
 static int i_abilityIndex = 4;
 
 Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {//both constructors are used
-    indicator = new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius);
+    indicator = unique_ptr<ProjectileIndicator>(new ProjectileIndicator(i_myPlayerIndex, this->range, this->radius));
 }
 
 //create from network input(y is just current y so even with lag the start is always synced)
@@ -25,21 +25,19 @@ Fireball::Fireball() : Ability(NetworkCommunication::receiveNextToken(), true, i
     //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
     //after exploding or you connect after explosion
 
-    this->helpProjectile = new Projectile(startY, startX, velocity, goalY, goalX, false, radius,
-        GlobalRecources::players->at(myPlayerIndex));
+    this->helpProjectile = unique_ptr<Projectile>(new Projectile(startY, startX, velocity, goalY, goalX, false, radius,
+        GlobalRecources::players->at(myPlayerIndex)));
 
 }
 
 void Fireball::execute0() {
     if (indicator->endWithoutAction() == true) {
-        delete indicator;
         finished = true;
         indicator = nullptr;
     }
     else if (indicator->destinationSelected() == true) {
         goalY = indicator->getDestinationY();
         goalX = indicator->getDestinationX();
-        delete indicator;
         indicator = nullptr;
         this->nextPhase();//init casting
     }
@@ -65,7 +63,7 @@ void Fireball::init1() {
     }
 
     limitGoalPosToRange();
-    this->helpProjectile = new Projectile(startY, startX, velocity, goalY, goalX, false, radius, myPlayer);
+    this->helpProjectile = unique_ptr<Projectile>(new Projectile(startY, startX, velocity, goalY, goalX, false, radius, myPlayer));
 }
 
 void Fireball::execute1() {

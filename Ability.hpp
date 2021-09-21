@@ -111,11 +111,11 @@ protected:
     bool finished;
     int myPlayerIndex;
 
-    bool* phaseInitialized;
+    vector<bool> phaseInitialized;
 
-    bool* timeBoundPhase;
-    long long* phaseStart;
-    int* phaseDuration;
+    vector<bool> timeBoundPhase;
+    vector<long long> phaseStart;
+    vector<int> phaseDuration;
 
     bool fromNetwork;
 

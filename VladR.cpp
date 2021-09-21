@@ -9,7 +9,7 @@ static int i_addToNetworkPhase = 2;
 static int i_abilityIndex = 3;
 
 VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	indicator = new AOEonRangeIndicator(i_myPlayerIndex, range, radius);
+	indicator = unique_ptr<AOEonRangeIndicator>(new AOEonRangeIndicator(i_myPlayerIndex, range, radius));
 }
 //constructor through networking
 VladR::VladR() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
@@ -86,7 +86,7 @@ void VladR::draw1() {
 }
 
 void VladR::init2() {
-	affectedPlayers = shared_ptr<shared_ptr<Player>[]>(new shared_ptr<Player>[GlobalRecources::playerCount]);//just init static array to max player count, theyre few
+	affectedPlayers = vector<shared_ptr<Player>>(GlobalRecources::playerCount);//just init static array to max player count, theyre few
 
 	//save players who are still in range when this phase is activated as affected, damagin them after 4 seconds
 	for (int i = 0; i < GlobalRecources::playerCount; i++) {
@@ -138,7 +138,8 @@ void VladR::init3() {
 	//create projectile that flies to player and heals him
 	const Player* me = GlobalRecources::players->at(myPlayerIndex).get();
 	int halfW = me->getWidth() / 2;
-	bloodBall = new Projectile(y, x, flyBackVelocity, me->getY() + halfW, me->getX() + halfW, false, flyBackRadius, GlobalRecources::players->at(myPlayerIndex));
+	bloodBall = unique_ptr<Projectile>(new Projectile(y, x, flyBackVelocity, me->getY() + halfW, me->getX() + halfW, 
+												false, flyBackRadius, GlobalRecources::players->at(myPlayerIndex)));
 
 	lastYs = new int[positionsSavedCount];
 	lastXs = new int[positionsSavedCount];
@@ -205,9 +206,8 @@ void VladR::followPlayer() {
 
 
 		int halfW = me->getWidth() / 2;
-		delete bloodBall;//definitly exists at this point so we can delete it
-		bloodBall = new Projectile(tempBBy + flyBackRadius, tempBBx + flyBackRadius, flyBackVelocity,
-			tempFlybackY + halfW, tempFlybackX + halfW, false, flyBackRadius, me);
+		bloodBall = unique_ptr<Projectile>(new Projectile(tempBBy + flyBackRadius, tempBBx + flyBackRadius, flyBackVelocity,
+													tempFlybackY + halfW, tempFlybackX + halfW, false, flyBackRadius, me));
 	}
 }
 

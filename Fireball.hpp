@@ -58,8 +58,8 @@ private:
     int range = 700;
     float velocity = 15.0f;
 
-    Projectile* helpProjectile;
-    ProjectileIndicator* indicator;
+    unique_ptr<Projectile> helpProjectile;
+    unique_ptr<ProjectileIndicator> indicator;
 
     //they have getters
     int startY;

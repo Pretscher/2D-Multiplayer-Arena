@@ -47,14 +47,14 @@ private:
 
     int y; 
     int x;
-    AOEonRangeIndicator* indicator;
+    unique_ptr<AOEonRangeIndicator> indicator;
 
     int abilityPathIndex;//needed to determine wether another path has been found ->ability should be stopped
 
-    shared_ptr<shared_ptr<Player>[]> affectedPlayers;
+    vector<shared_ptr<Player>> affectedPlayers;
     int affectedPlayerCount = 0;
 
-    Projectile* bloodBall;
+    unique_ptr<Projectile> bloodBall;
     int positionsSavedCount = 10;//amount of blood balls flowing around
     int* lastYs;
     int* lastXs;

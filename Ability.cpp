@@ -16,10 +16,10 @@ Ability::Ability(int i_myPlayerIndex, bool i_isFromNetwork, int i_cdStartPhase, 
     this->phaseCount = 5;
     this->currentPhase = 0;
 
-    this->phaseInitialized = new bool[this->phaseCount];
-    this->phaseStart = new long long[this->phaseCount];
-    this->phaseDuration = new int[this->phaseCount];
-    this->timeBoundPhase = new bool[this->phaseCount];
+    this->phaseInitialized = vector<bool>(this->phaseCount);
+    this->phaseStart = vector<long long>(this->phaseCount);
+    this->phaseDuration = vector<int>(this->phaseCount);
+    this->timeBoundPhase = vector<bool>(this->phaseCount);
     for (int i = 0; i < phaseCount; i++) {
         this->phaseInitialized[i] = false;
         this->timeBoundPhase[i] = false;

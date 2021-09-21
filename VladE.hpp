@@ -31,7 +31,7 @@ private:
     int range = 300;
     float velocity = 15.0f;
 
-    Projectile** projectiles;
+    vector<unique_ptr<Projectile>> projectiles;
     int projectileCount;
 
     float percentFinishedCharge;
