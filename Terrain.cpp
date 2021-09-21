@@ -48,6 +48,6 @@ void Terrain::addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int p
 	}
 }
 
-const unique_ptr<vector<Rect>>& Terrain::getCollidables() {
+const shared_ptr<vector<Rect>> Terrain::getCollidables() {
 	return objects;
 }

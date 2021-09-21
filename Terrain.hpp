@@ -10,8 +10,8 @@ public:
 	void addRect(int y, int x, int width, int height);
 	void draw();
 	void addCollidablesToGrid(bool** grid, float pathfindingAccuracy, int playerWidth, int playerHeight);
-	const unique_ptr<vector<Rect>>& getCollidables();
+	const shared_ptr<vector<Rect>> getCollidables();
 
 private:
-	unique_ptr<vector<Rect>> objects;
+	shared_ptr<vector<Rect>> objects;
 };

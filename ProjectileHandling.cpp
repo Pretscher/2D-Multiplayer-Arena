@@ -20,7 +20,7 @@ ProjectileHandling::ProjectileHandling() {
 	projectiles = vector<shared_ptr<Projectile>>();//stores all projectiles for creation, drawing, moving and damage calculation. 
 }
 
-void ProjectileHandling::update(const unique_ptr<vector<Rect>>& collidables) {
+void ProjectileHandling::update(const shared_ptr<vector<Rect>> collidables) {
 	//dont shoot a projectile for the same space-press
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) == false) {
 		samePress = false;

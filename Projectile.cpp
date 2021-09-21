@@ -41,7 +41,7 @@ Projectile::Projectile(int i_y, int i_x, float velocity, int i_goalY, int i_goal
 	lastMoveTime = chrono::duration_cast<chrono::milliseconds>(timePoint).count();
 }
 
-void Projectile::move(int maxY, int maxX, const unique_ptr<vector<Rect>>& collidables) {
+void Projectile::move(int maxY, int maxX, const shared_ptr<vector<Rect>> collidables) {
 
 	auto timePoint = chrono::system_clock::now().time_since_epoch();
 	long long now = chrono::duration_cast<chrono::milliseconds>(timePoint).count();

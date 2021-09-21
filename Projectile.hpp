@@ -13,7 +13,7 @@ public:
 	/**Moves on the Line calculated in the constructor
 	* @param maximum ys/xs where movement is allowed, array of Rect* and its lenght which cannot be passed through by the projectile
 	**/
-	void move(int maxY, int maxX, const unique_ptr<vector<Rect>>& colisionRects);
+	void move(int maxY, int maxX, const shared_ptr<vector<Rect>> colisionRects);
 	void draw(sf::Color c) const;
 
 	//Call this to skip some steps in projectile movement based on time, useful for networking

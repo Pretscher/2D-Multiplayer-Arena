@@ -12,7 +12,7 @@ public:
 	ProjectileHandling();
 	
 	void draw();
-	void update(const unique_ptr<vector<Rect>>& colidables);
+	void update(const shared_ptr<vector<Rect>> colidables);
 	void sendProjectiles();
 	void receiveProjectiles();
 
