@@ -26,7 +26,7 @@ Fireball::Fireball() : Ability(NetworkCommunication::receiveNextToken(), true, i
     //after exploding or you connect after explosion
 
     this->helpProjectile = new Projectile(startY, startX, velocity, goalY, goalX, false, radius,
-        GlobalRecources::players[myPlayerIndex]);
+        GlobalRecources::players->at(myPlayerIndex));
 
 }
 
@@ -49,7 +49,7 @@ void Fireball::execute0() {
 }
 
 void Fireball::init1() {
-    shared_ptr<Player> myPlayer = GlobalRecources::players[myPlayerIndex];
+    shared_ptr<Player> myPlayer = GlobalRecources::players->at(myPlayerIndex);
     //Turn player to mouse coords and set mouse coords as goal coords
     //if projectile destination is above player
     if (this->goalY < myPlayer->getY()) {
@@ -103,7 +103,7 @@ void Fireball::init2() {
 
 void Fireball::execute2() {
     for (int i = 0; i < GlobalRecources::playerCount; i++) {
-        shared_ptr<Player> c = GlobalRecources::players[i];
+        shared_ptr<Player> c = GlobalRecources::players->at(i);
         if (c->targetAble == true) {
             bool colision = Utils::colisionRectCircle(c->getX(), c->getY(), c->getWidth(), c->getHeight(),
                 this->explosionX, this->explosionY, this->explosionRange, 10);

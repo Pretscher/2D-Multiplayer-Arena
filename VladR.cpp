@@ -2,7 +2,7 @@
 #include "VladR.hpp"
 #include "GlobalRecources.hpp"
 #include "Utils.hpp"
-
+#include <iostream>
 
 static int i_onCDPhase = 2;
 static int i_addToNetworkPhase = 2;
@@ -38,14 +38,14 @@ void VladR::draw0() {
 }
 
 void VladR::init1() {
-	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
+	const Player* me = GlobalRecources::players->at(myPlayerIndex).get();
 	//if player out of range, run into range
 	int halfW = me->getWidth() / 2;//we need this to calc the range between the player's coord centers
 	int halfH = me->getHeight() / 2;
 	float dist = Utils::calcDist2D(me->getX() + halfW, x + halfW, me->getY() + halfH, y + halfH);
 	if (dist > range + radius) {//if player is too far away
 		GlobalRecources::pFinding->findPath(x, y, myPlayerIndex); //find a path to him
-		abilityPathIndex = GlobalRecources::players[myPlayerIndex]->pathsFound;
+		abilityPathIndex = GlobalRecources::players->at(myPlayerIndex)->pathsFound;
 	}
 	else {
 		nextPhase();//if already in range, just start casting without moving
@@ -62,16 +62,16 @@ void VladR::execute1() {
 	//as when it was saved) and if its one higher the path was found. if its 2 higher a new path
 	//was found and we interrupt.
 	bool stop = false;
-	if (GlobalRecources::players[myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
+	if (GlobalRecources::players->at(myPlayerIndex)->pathsFound > abilityPathIndex + 1) {
 		stop = true;
 	}
 	if (stop == false) {
-		shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
+		const Player* me = GlobalRecources::players->at(myPlayerIndex).get();
 		int halfW = me->getWidth() / 2;
 		int halfH = me->getHeight() / 2;
 		if (Utils::calcDist2D(me->getX() + halfW, x, me->getY() + halfH, y) < range + radius) {
 			//got into range, stop going on path an cast ability
-			GlobalRecources::players[myPlayerIndex]->deletePath();
+			GlobalRecources::players->at(myPlayerIndex)->deletePath();
 			nextPhase();
 		}
 	}
@@ -91,7 +91,7 @@ void VladR::init2() {
 	//save players who are still in range when this phase is activated as affected, damagin them after 4 seconds
 	for (int i = 0; i < GlobalRecources::playerCount; i++) {
 		if (i != myPlayerIndex) {
-			shared_ptr<Player> cPlayer = GlobalRecources::players[i];
+			shared_ptr<Player> cPlayer = GlobalRecources::players->at(i);
 			if (cPlayer->targetAble == true) {
 				if (Utils::calcDist2D(x, cPlayer->getX(), y, cPlayer->getY()) < radius) {
 					affectedPlayers[affectedPlayerCount] = cPlayer;
@@ -110,7 +110,7 @@ void VladR::execute2() {
 
 void VladR::draw2() {
 	for (int i = 0; i < affectedPlayerCount; i++) {
-		shared_ptr<Player> cPlayer = affectedPlayers[i];
+		const Player* cPlayer = affectedPlayers[i].get();
 		Renderer::drawCircle(cPlayer->getX(), cPlayer->getY(), 50, sf::Color(150, 0, 0, 255), false, 20, false);
 	}
 	float phaseFinishedPercent = (float)this->getTimeSincePhaseStart(this->getPhase()) / timeTillProc;
@@ -136,9 +136,9 @@ void VladR::init3() {
 	}
 
 	//create projectile that flies to player and heals him
-	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
+	const Player* me = GlobalRecources::players->at(myPlayerIndex).get();
 	int halfW = me->getWidth() / 2;
-	bloodBall = new Projectile(y, x, flyBackVelocity, me->getY() + halfW, me->getX() + halfW, false, flyBackRadius, me);
+	bloodBall = new Projectile(y, x, flyBackVelocity, me->getY() + halfW, me->getX() + halfW, false, flyBackRadius, GlobalRecources::players->at(myPlayerIndex));
 
 	lastYs = new int[positionsSavedCount];
 	lastXs = new int[positionsSavedCount];
@@ -179,7 +179,7 @@ void VladR::draw3() {
 
 
 void VladR::checkBloodballCollision() {
-	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> me = GlobalRecources::players->at(myPlayerIndex);
 	//blood ball got to enemy and should fly back
 	if (Utils::colisionRectCircle(me->getY(), me->getX(), me->getWidth(), me->getHeight(),
 		bloodBall->getY(), bloodBall->getX(), bloodBall->getRadius(), 10) == true) {
@@ -196,7 +196,7 @@ void VladR::checkBloodballCollision() {
 }
 
 void VladR::followPlayer() {
-	shared_ptr<Player> me = GlobalRecources::players[myPlayerIndex];
+	shared_ptr<Player> me = GlobalRecources::players->at(myPlayerIndex);
 	if (tempFlybackY != me->getY() || tempFlybackX != me->getX()) {
 		tempFlybackY = me->getY();
 		tempFlybackX = me->getX();

@@ -160,7 +160,7 @@ void Player::setFindingPath(bool i_findingPath) {
 	GlobalRecources::pfMtx->unlock();
 }
 
-bool Player::isFindingPath() {
+bool Player::isFindingPath() const {
 	bool temp;
 	GlobalRecources::pfMtx->lock();
 	temp = findingPath;

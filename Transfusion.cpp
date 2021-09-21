@@ -29,8 +29,8 @@ Transfusion::Transfusion() : Ability(NetworkCommunication::receiveNextToken(), t
     }
 
     //normally initialized in init1, but we have to skip this
-    me = GlobalRecources::players[myPlayerIndex];
-    target = GlobalRecources::players[targetPlayerIndex];
+    me = GlobalRecources::players->at(myPlayerIndex);
+    target = GlobalRecources::players->at(targetPlayerIndex);
 
     skipToPhase(2);
 }
@@ -56,8 +56,8 @@ void Transfusion::draw0() {
 }
 
 void Transfusion::init1() {
-    me = GlobalRecources::players[myPlayerIndex];
-    target = GlobalRecources::players[targetPlayerIndex];
+    me = GlobalRecources::players->at(myPlayerIndex);
+    target = GlobalRecources::players->at(targetPlayerIndex);
 
 
     //if player out of range, run into range
@@ -69,7 +69,7 @@ void Transfusion::init1() {
         tempGoalY = target->getY() + halfW;//find a path to his center because thats better than left top coords
         tempGoalX = target->getX() + halfH;
         GlobalRecources::pFinding->findPath(tempGoalX, tempGoalY, myPlayerIndex); //find a path to him
-        abilityPathIndex = GlobalRecources::players[myPlayerIndex]->pathsFound;
+        abilityPathIndex = GlobalRecources::players->at(myPlayerIndex)->pathsFound;
     }
     else {
         nextPhase();//if already in range, just start casting without moving
@@ -83,7 +83,7 @@ void Transfusion::execute1() {
         tempGoalY = target->getY() + halfW;
         tempGoalX = target->getX() + halfW;
         GlobalRecources::pFinding->findPath(tempGoalX, tempGoalY, myPlayerIndex);
-        abilityPathIndex = GlobalRecources::players[myPlayerIndex]->pathsFound;
+        abilityPathIndex = GlobalRecources::players->at(myPlayerIndex)->pathsFound;
     }
 
     //multithreading problem: we want, if another path is found for the player (e.g. through clicking)
@@ -93,7 +93,7 @@ void Transfusion::execute1() {
     //as when it was saved) and if its one higher the path was found. if its 2 higher a new path
     //was found and we interrupt.
     bool stop = false;
-    if (GlobalRecources::players[myPlayerIndex]->pathsFound > abilityPathIndex + 1) {
+    if (GlobalRecources::players->at(myPlayerIndex)->pathsFound > abilityPathIndex + 1) {
         stop = true;
     }
     if (stop == false) {
@@ -102,7 +102,7 @@ void Transfusion::execute1() {
         if (Utils::calcDist2D(me->getX() + halfW, target->getX() + halfW,
             me->getY() + halfH, target->getY() + halfH) < range) {
             //got into range, stop going on path an cast ability
-            GlobalRecources::players[myPlayerIndex]->deletePath();
+            GlobalRecources::players->at(myPlayerIndex)->deletePath();
             nextPhase();
         }
     }

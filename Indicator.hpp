@@ -31,7 +31,7 @@ public:
         //if true, end next tick (if no player was selected just do nothing and end indicator)
         for (int i = 0; i < GlobalRecources::playerCount; i++) {
             if (i != this->myPlayerIndex) {
-                shared_ptr<Player> c = GlobalRecources::players[i];
+                shared_ptr<Player> c = GlobalRecources::players->at(i);
                 if(c->targetAble == true) {
                     if (c->getHp() > 0) {
 
@@ -66,7 +66,7 @@ public:
     }
 
     void draw() {
-        shared_ptr<Player> me = GlobalRecources::players[this->myPlayerIndex];
+        shared_ptr<Player> me = GlobalRecources::players->at(this->myPlayerIndex);
         //draw range indicator
         int indicatorY = me->getY() + me->getHeight() / 2 - this->range;//range = radius of circle
         int indicatorX = me->getX() + me->getWidth() / 2 - this->range;
@@ -130,8 +130,8 @@ public:
     }
 
     void limitGoalPosToRange() {
-        int playerCenterY = GlobalRecources::players[this->myPlayerIndex]->getY() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
-        int playerCenterX = GlobalRecources::players[this->myPlayerIndex]->getX() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
+        int playerCenterY = GlobalRecources::players->at(this->myPlayerIndex)->getY() + GlobalRecources::players->at(this->myPlayerIndex)->getHeight() / 2;
+        int playerCenterX = GlobalRecources::players->at(this->myPlayerIndex)->getX() + GlobalRecources::players->at(this->myPlayerIndex)->getWidth() / 2;
         float* vecToGoal = new float[2];
         vecToGoal[0] = cGoalX - playerCenterX;
         vecToGoal[1] = cGoalY - playerCenterY;
@@ -151,8 +151,8 @@ public:
     }
 
     void draw() {
-        int playerCenterY = GlobalRecources::players[this->myPlayerIndex]->getY() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
-        int playerCenterX = GlobalRecources::players[this->myPlayerIndex]->getX() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
+        int playerCenterY = GlobalRecources::players->at(this->myPlayerIndex)->getY() + GlobalRecources::players->at(this->myPlayerIndex)->getHeight() / 2;
+        int playerCenterX = GlobalRecources::players->at(this->myPlayerIndex)->getX() + GlobalRecources::players->at(this->myPlayerIndex)->getWidth() / 2;
         //draw range indicator
         int indicatorY = playerCenterY - this->range;//range = radius of circle
         int indicatorX = playerCenterX - this->range;
@@ -240,8 +240,8 @@ public:
         Renderer::drawCircle(mouseX - radius, mouseY - radius, radius, sf::Color(0, 255, 255, 100), false, 10, false);
         Renderer::drawCircle(mouseX - radius, mouseY - radius, radius, sf::Color(0, 255, 255, 25), true, 0, false);
 
-        int playerCenterY = GlobalRecources::players[this->myPlayerIndex]->getY() + GlobalRecources::players[this->myPlayerIndex]->getHeight() / 2;
-        int playerCenterX = GlobalRecources::players[this->myPlayerIndex]->getX() + GlobalRecources::players[this->myPlayerIndex]->getWidth() / 2;
+        int playerCenterY = GlobalRecources::players->at(this->myPlayerIndex)->getY() + GlobalRecources::players->at(this->myPlayerIndex)->getHeight() / 2;
+        int playerCenterX = GlobalRecources::players->at(this->myPlayerIndex)->getX() + GlobalRecources::players->at(this->myPlayerIndex)->getWidth() / 2;
         Renderer::drawCircle(playerCenterX - range, playerCenterY - range, range, sf::Color(0, 255, 255, 100), false, 10, false);
         Renderer::drawCircle(playerCenterX - range, playerCenterY - range, range, sf::Color(0, 255, 255, 25), true, 0, false);
     }

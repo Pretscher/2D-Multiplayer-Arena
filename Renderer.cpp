@@ -6,11 +6,11 @@
 
 shared_ptr<int[]> Renderer::viewSpace;
 shared_ptr<const int[]>  Renderer::viewSpaceLimits;
-sf::RenderWindow* Renderer::currentWindow;
+shared_ptr<sf::RenderWindow> Renderer::currentWindow;
 
-void Renderer::init(sf::RenderWindow* window) {
-    Renderer::currentWindow = window;
-    window->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
+void Renderer::init(shared_ptr<sf::RenderWindow> window) {
+    currentWindow = window;
+    currentWindow->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
 }
 
 void Renderer::linkViewSpace(shared_ptr<int[]> io_viewSpace, shared_ptr<const int[]> io_viewspaceLimits) {

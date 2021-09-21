@@ -12,6 +12,7 @@ ProjectileHandling::ProjectileHandling() {
 	projectileRadius = 20;
 
 	this->players = GlobalRecources::players;
+
 	this->worldHeight = GlobalRecources::worldHeight;
 	this->worldWidth = GlobalRecources::worldWidth;
 	this->playerCount = GlobalRecources::playerCount;
@@ -32,7 +33,7 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 		Renderer:: getMousePos(mouseX, mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		//calculates a function between these points and moves on it
 
-		shared_ptr<Player> myPlayer = players[myPlayerI];
+		shared_ptr<Player> myPlayer = players->at(myPlayerI);//we will modify this pointer here. 
 
 		int y = 0, x = 0;
 		int halfW = myPlayer->getWidth() / 2;
@@ -65,15 +66,15 @@ void ProjectileHandling::update(Rect** colidables, int colidableSize) {
 		p->move(worldHeight, worldWidth, colidables, colidableSize);//give it the maximum ys so it know when it can stop moving
 
 		for (int j = 0; j < playerCount; j++) {
-			shared_ptr<Player> cPlayer = players[j];
+			const Player* cPlayer = players->at(j).get();
 			if (cPlayer->targetAble == true) {
-				if (cPlayer != p->getPlayer()) {
-					if (players[j]->getHp() > 0) {
+				if (cPlayer != p->getPlayer().get()) {
+					if (players->at(j)->getHp() > 0) {
 
 						if (Utils::colisionRectCircle(cPlayer->getY(), cPlayer->getX(), cPlayer->getWidth(), cPlayer->getHeight(),
 							p->getY(), p->getX(), p->getRadius(), 10) == true) {
 							p->setDead(true);
-							cPlayer->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());
+							players->at(j)->setHp(cPlayer->getHp() - p->getPlayer()->getDmg());
 						}
 					}
 				}
@@ -151,7 +152,7 @@ void ProjectileHandling::receiveProjectiles() {
 		counter++;
 		if (counter > 3) {
 			projectiles->push_back(new Projectile(y, x, projectileVel, goalY, goalX, true,
-				projectileRadius, players[otherPlayerI]));
+				projectileRadius, players->at(otherPlayerI)));
 			counter = 0;
 		}
 	}

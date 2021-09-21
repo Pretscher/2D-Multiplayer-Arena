@@ -4,9 +4,9 @@ using namespace std;
 #include <SFML/Graphics.hpp>
 class Renderer {
 public:
-    static sf::RenderWindow* currentWindow;
+    static shared_ptr<sf::RenderWindow> currentWindow;
 
-    static void init(sf::RenderWindow* window);
+    static void init(shared_ptr<sf::RenderWindow> window);
 
     static int getWorldYs();
     static int getWorldXs();

@@ -28,9 +28,9 @@ Pathfinding::Pathfinding() {
 	players = GlobalRecources::players;
 	playerCount = GlobalRecources::playerCount;
 	findingPath = false;
-	this->goalXToFind = new vector<int>();
-	this->goalYToFind = new vector<int>();
-	this->indicesToFind = new vector<int>();
+	this->goalXToFind = vector<int>();
+	this->goalYToFind = vector<int>();
+	this->indicesToFind = vector<int>();
 	this->newGoalXs = unique_ptr<vector<int>>(new vector<int>());
 	this->newGoalYs = unique_ptr<vector<int>>(new vector<int>());
 
@@ -55,7 +55,7 @@ Pathfinding::Pathfinding() {
 
 	//create graph from unmoving solids, can be changed dynamically
 	//all player widths and heights are the same so we can just look at index 0
-	GlobalRecources::terrain->addCollidablesToGrid(colisionGrid, pathfindingAccuracy, players[0]->getWidth(), players[0]->getHeight());
+	GlobalRecources::terrain->addCollidablesToGrid(colisionGrid, pathfindingAccuracy, players->at(0)->getWidth(), players->at(0)->getHeight());
 	g = shared_ptr<Graph>(new Graph(wYs, wXs, pathfindingAccuracy));
 	g->generateWorldGraph(colisionGrid);
 
@@ -78,11 +78,11 @@ void Pathfinding::pathFindingOnClick() {
 		
 		Renderer:: getMousePos(mouseX, mouseY, true, true);//writes mouse coords into mouseX, mouseY
 		if (mouseY != -1) {//stays at -1 if click is outside of window
-			if (mouseX - players[0]->getWidth() / 2 > 0) {
-				mouseX -= players[0]->getWidth() / 2;
+			if (mouseX - players->at(0)->getWidth() / 2 > 0) {
+				mouseX -= players->at(0)->getWidth() / 2;
 			}
-			if (mouseY - players[0]->getHeight() / 2 > 0) {
-				mouseY -= players[0]->getHeight() / 2;
+			if (mouseY - players->at(0)->getHeight() / 2 > 0) {
+				mouseY -= players->at(0)->getHeight() / 2;
 			}
 			findPath(mouseX, mouseY, myPlayerIndex);
 		}
@@ -98,7 +98,7 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 
 	enablePlayer(myPlayerIndex, true);
 	for (int i = 0; i < playerCount; i++) {
-		if (players[i]->targetAble == false) {
+		if (players->at(i)->targetAble == false) {
 			if (i == myPlayerIndex) {
 				for (int j = 0; j < playerCount; j++) {
 					enablePlayer(j, false);//untargetable players walk through everyone
@@ -109,11 +109,11 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 			}
 		}
 	}
-	int pY = players[playerIndex]->getY();
-	int pX = players[playerIndex]->getX();
+	int pY = players->at(playerIndex)->getY();
+	int pX = players->at(playerIndex)->getX();
 	g->findNextUseableCoords(&pX, &pY, true);
-	players[playerIndex]->setY(pY);
-	players[playerIndex]->setX(pX);
+	players->at(playerIndex)->setY(pY);
+	players->at(playerIndex)->setX(pX);
 
 	g->findNextUseableCoords(&goalX, &goalY, true);
 	disablePlayer(myPlayerIndex);
@@ -124,9 +124,9 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 
 	if (getFindingPath() == false) {
 		setFindingPath(true);
-		players[playerIndex]->setFindingPath(true);
-		if (players[playerIndex]->hasPath() == true) {
-			players[playerIndex]->deletePath();
+		players->at(playerIndex)->setFindingPath(true);
+		if (players->at(playerIndex)->hasPath() == true) {
+			players->at(playerIndex)->deletePath();
 		}
 		setNewPathfinding(true);
 		cgoalX = goalX;
@@ -135,19 +135,19 @@ void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 		cPlayerIndex = playerIndex;
 	}
 	else {
-		goalXToFind->push_back(goalX);
-		goalYToFind->push_back(goalY);
-		indicesToFind->push_back(playerIndex);
+		goalXToFind.push_back(goalX);
+		goalYToFind.push_back(goalY);
+		indicesToFind.push_back(playerIndex);
 	}
 }
 
 void Pathfinding::workThroughPathfindingQueue() {
-	if (goalXToFind->size() > 0) {
+	if (goalXToFind.size() > 0) {
 		if (getFindingPath() == false) {
-			findPath(goalXToFind->at(0), goalYToFind->at(0), indicesToFind->at(0));
-			goalXToFind->erase(goalXToFind->begin());
-			goalYToFind->erase(goalYToFind->begin());
-			indicesToFind->erase(indicesToFind->begin());
+			findPath(goalXToFind.at(0), goalYToFind.at(0), indicesToFind.at(0));
+			goalXToFind.erase(goalXToFind.begin());
+			goalYToFind.erase(goalYToFind.begin());
+			indicesToFind.erase(indicesToFind.begin());
 		}
 	}
 }
@@ -158,16 +158,16 @@ void Pathfinding::moveObjects() {
 	workThroughPathfindingQueue();
 	//this->enableArea(0, 0, wXs - 1, wYs - 1);//enable all
 	for (int i = 0; i < playerCount; i++) {
-		if (players[i]->getHp() > 0) {
-			if (players[i]->hasPath() == true) {
-				int tempY = players[i]->getY();
-				int tempX = players[i]->getX();
+		if (players->at(i)->getHp() > 0) {
+			if (players->at(i)->hasPath() == true) {
+				int tempY = players->at(i)->getY();
+				int tempX = players->at(i)->getX();
 				enablePlayer(i, true);
-				players[i]->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
+				players->at(i)->move();//if he has a path, he moves on this path every 1 / velocity iterations of eventloop
 				disablePlayer(i);//disable new position
 				//for efficiency only find new path if you move next to a possibly moving object
 				//IF PLAYER POSITION CHANGED THIS FRAME and players are close to each other find new paths for other players
-				if (players[i]->getY() != tempY && players[i]->getX() != tempX) {//only having a path doesnt mean you moved on it
+				if (players->at(i)->getY() != tempY && players->at(i)->getX() != tempX) {//only having a path doesnt mean you moved on it
 					//find new paths for players close to this player
 					this->playerInteraction(i);
 				}
@@ -181,11 +181,11 @@ void Pathfinding::moveObjects() {
 
 void Pathfinding::playerInteraction(int movedPlayerIndex) {
 	//find new paths for players close to this player
-	shared_ptr<Player> movedPlayer = players[movedPlayerIndex];
+	const Player* movedPlayer = players->at(movedPlayerIndex).get();
 	for (int j = 0; j < playerCount; j++) {
-		if (players[j]->getHp() > 0) {
+		if (players->at(j)->getHp() > 0) {
 			if (j != movedPlayerIndex) {
-				shared_ptr<Player> cPlayer = players[j];
+				const Player* cPlayer = players->at(j).get();
 				if (cPlayer->hasPath() == true) {
 					//if paths cross each other, disable all crossing points and find new path. this is periodically called
 
@@ -194,12 +194,13 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 					for (int i = 0; i < cPlayer->pathLenght; i++) {
 						int x = cPlayer->pathXpositions[i];
 						int y = cPlayer->pathYpositions[i];
-						if (y > movedPlayer->getY() - players[0]->getHeight() && y < movedPlayer->getY() + players[0]->getHeight()) {
-							if (x > movedPlayer->getX() - players[0]->getWidth() && x < movedPlayer->getX() + players[0]->getWidth()) {
+						if (y > movedPlayer->getY() - players->at(0)->getHeight() && y < movedPlayer->getY() + players->at(0)->getHeight()) {
+							if (x > movedPlayer->getX() - players->at(0)->getWidth() && x < movedPlayer->getX() + players->at(0)->getWidth()) {
 								int x = cPlayer->getPathgoalX();
 								int y = cPlayer->getPathgoalY();
 								
-								g->disableObjectBounds(y - players[0]->getHeight(), x - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//disable new position
+								g->disableObjectBounds(y - players->at(0)->getHeight(), x - players->at(0)->getWidth(), 
+										players->at(0)->getWidth(), players->at(0)->getHeight());//disable new position
 
 								if (disabledYs == nullptr) {
 									disabledYs = new vector<int>();
@@ -213,9 +214,10 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 					}
 					
 					if (disabledYs != nullptr) {
-						this->findPath(players[j]->getPathgoalX(), players[j]->getPathgoalY(), j);
+						this->findPath(players->at(j)->getPathgoalX(), players->at(j)->getPathgoalY(), j);
 						for (int i = 0; i < disabledYs->size(); i++) {
-							g->enableObjectBounds(disabledYs->at(i) - players[0]->getHeight(), disabledXs->at(i) - players[0]->getWidth(), players[0]->getWidth(), players[0]->getHeight());//enable old position
+							g->enableObjectBounds(disabledYs->at(i) - players->at(0)->getHeight(), disabledXs->at(i) - players->at(0)->getWidth(),
+									players->at(0)->getWidth(), players->at(0)->getHeight());//enable old position
 						}
 						delete disabledYs;
 						delete disabledXs;
@@ -229,15 +231,14 @@ void Pathfinding::playerInteraction(int movedPlayerIndex) {
 
 //enables player coords and after that disables all coords of other movables again in case their area was affected by that.
 void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
-	shared_ptr<Player> player = players[i_playerIndex];
+	const Player* player = players->at(i_playerIndex).get();
 
 	g->enableObjectBounds(player->getY() - 150, player->getX() - 150, player->getWidth() + 200, player->getHeight() + 200);
 
 	if (disableOthers == true) {
 		for (int i = 0; i < playerCount; i++) {
-			if (players[i]->getHp() > 0) {
+			if (players->at(i)->getHp() > 0) {
 				if (i != i_playerIndex) {
-					shared_ptr<Player> cPlayer = players[i];
 					disablePlayer(i);
 				}
 			}
@@ -247,7 +248,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 
 //enables player coords and after that disables all coords of other movables 			setNewPathfinding(false);again in case their area was affected by that.
 void Pathfinding::disablePlayer(int i_playerIndex) {
-	shared_ptr<Player> player = players[i_playerIndex];
+	const Player* player = players->at(i_playerIndex).get();
 	g->disableObjectBounds(player->getY() - 100, player->getX() - 100, player->getWidth() + 100, player->getHeight() + 100);
 }
 
@@ -264,11 +265,11 @@ void Pathfinding::startPathFinding() {
 			shared_ptr<int[]> pathXs;
 			shared_ptr<int[]> pathYs;
 			int pathlenght = 0;
-			shared_ptr<Player> player = players[cPlayerIndex];
+			const Player* player = players->at(cPlayerIndex).get();
 
 			enablePlayer(cPlayerIndex, true);
 			for (int i = 0; i < playerCount; i++) {
-				if (players[i]->targetAble == false) {
+				if (players->at(i)->targetAble == false) {
 					if (i == cPlayerIndex) {
 						for (int j = 0; j < playerCount; j++) {
 							enablePlayer(j, false);//untargetable players walk through everyone
@@ -292,9 +293,9 @@ void Pathfinding::startPathFinding() {
 			}
 
 			if (found == true) {
-				player->givePath(move(pathXs), move(pathYs), pathlenght);//move, we dont need this anymore in this func
+				players->at(cPlayerIndex)->givePath(move(pathXs), move(pathYs), pathlenght);//move, we dont need this anymore in this func
 			}
-			player->setFindingPath(false);
+			players->at(cPlayerIndex)->setFindingPath(false);
 			setNewPathfinding(false);
 			setFindingPath(false);
 		}

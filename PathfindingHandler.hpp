@@ -46,15 +46,15 @@ private:
 	thread* pathFindingThread;
 	shared_ptr<mutex> pfMtx;
 	bool findingPath;
-	shared_ptr<shared_ptr<Player>[]> players;
+	shared_ptr<vector<shared_ptr<Player>>> players;
 	int playerCount;
 	float pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
 
 	bool sameClick = false;//dont do two pathfindings on the same click
 
-	vector<int>* goalXToFind;
-	vector<int>* goalYToFind;
-	vector<int>* indicesToFind;
+	vector<int> goalXToFind;
+	vector<int> goalYToFind;
+	vector<int> indicesToFind;
 	int myPlayerIndex = 0;
 
 	void playerInteraction(int movedPlayerIndex);

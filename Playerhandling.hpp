@@ -22,12 +22,12 @@ public:
 		return myPlayerI;
 	}
 
-	inline shared_ptr<shared_ptr<Player>[]> getPlayers() {
+	inline shared_ptr<vector<shared_ptr<Player>>> getPlayers() {
 		return players;
 	}
 
 	inline shared_ptr<Player> getMyPlayer() {
-		return players[myPlayerI];
+		return players->at(myPlayerI);
 	}
 
 	inline int getPlayerCount() {
@@ -37,7 +37,7 @@ public:
 
 
 private:
-	shared_ptr<shared_ptr<Player>[]> players;//all players
+	shared_ptr<vector<shared_ptr<Player>>> players;//all players
 	int myPlayerI;
 	int playerCount;//number of players
 

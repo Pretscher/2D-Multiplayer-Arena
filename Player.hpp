@@ -45,51 +45,51 @@ private:
 public:
     //used in pathfinding threads => mutices are locked and unlocked----------
     void setFindingPath(bool i_findingPath);
-    bool isFindingPath();
+    bool isFindingPath() const;
 
     //------------------------------------------------------------------------
 
 
     int pathsFound = 0;
-    inline int getY() { return y; }
+    inline int getY() const { return y; }
     inline void setY(int y) { this->y = y; }
 
-    inline int getX() { return x; }
+    inline int getX() const { return x; }
     inline void setX(int x) { this->x = x; }
 
-    inline float getVelocity() { return velocity; }
+    inline float getVelocity() const { return velocity; }
     inline void setVelocity(float velocity) { this->velocity = velocity; }
 
-    inline int getWidth() { return width; }
+    inline int getWidth() const { return width; }
     inline void setwidth(int width) { this->width = width; }
 
-    inline int getHeight() { return height; }
+    inline int getHeight() const { return height; }
     inline void setheight(int height) { this->height = height; }
 
-    inline float getHp() { return hp; }
+    inline float getHp() const { return hp; }
     inline void setHp(float hp) { this->hp = hp; }
 
-    inline float getMaxHp() { return maxHp; }
+    inline float getMaxHp() const { return maxHp; }
     inline void setMaxHp(float maxHp) { this->maxHp = maxHp; }
 
-    inline int getDmg() { return dmg; }
+    inline int getDmg() const { return dmg; }
     inline void setDmg(int dmg) { this->dmg = dmg; }
 
-    inline bool hasPath() {
+    inline bool hasPath() const {
         if (pathLenght == -1) return false;
         return true;
     }
 
 
-    inline int getPathgoalX() {
+    inline int getPathgoalX() const {
         return pathXpositions[pathLenght - 1];
     }
 
-    inline int getPathgoalY() {
+    inline int getPathgoalY() const {
         return pathYpositions[pathLenght - 1];
     }
 
-    inline int getTextureIndex() {
+    inline int getTextureIndex() const {
         return cTextureI;
     }
 };
