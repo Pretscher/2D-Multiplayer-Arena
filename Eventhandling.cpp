@@ -1,45 +1,22 @@
 #include "Eventhandling.hpp"
-#include "Renderer.hpp"
-#include "Player.hpp"
-#include "Terrain.hpp"
-#include "Projectile.hpp"
-#include "PathfindingHandler.hpp"
-#include "Utils.hpp"
-#include "PortableClient.hpp"
-#include "PortableServer.hpp"
-#include "Menu.hpp"
-#include "WorldHandling.hpp"
-#include "UiHandling.hpp"
-#include "ProjectileHandling.hpp"
-#include "NetworkCommunication.hpp"
-#include "Playerhandling.hpp"
-#include "AbilityHandling.hpp"
-#include "GlobalRecources.hpp"
-#include "Graph.hpp"
 using namespace std;
 
-static unique_ptr<Menu> menu;
-static bool menuActive = true;
 
-static shared_ptr<PortableServer> server;
-static shared_ptr<PortableClient> client;
 
-static bool received = true;
+void initServer(shared_ptr<PortableServer> server) {
+	server = shared_ptr<PortableServer>(new PortableServer());
+	server->waitForClient();
+	server->receiveMultithreaded();
+}
 
-static void initServer();
-static void initClient();
-static void sendData();
-static void recvAndImplementData();
-static thread* networkThread;
+void initClient(shared_ptr<PortableClient> client) {
+	string s = "192.168.178.28";//TODO: typeable ip
+	client = shared_ptr<PortableClient>(new PortableClient(s.c_str()));
+	client->waitForServer();
+	client->receiveMultithreaded();
+}
 
-static unique_ptr<PlayerHandling> playerHandling;
-static unique_ptr<WorldHandling> worldHandling;
-static unique_ptr<UiHandling> uiHandling;
-static unique_ptr<Pathfinding> pathfinding;
-static unique_ptr<ProjectileHandling> projectileHandling;
-
-static unique_ptr<AbilityHandling> abilityHandling;
-void eventhandling::init() {
+Eventhandling::Eventhandling() {
 	int worldWidth = 1920, worldHeight = 1080, vsWidth = 2000, vsHeight = 2000;
 	//be sure to not change the order, they depend on each other heavily
 	playerHandling = unique_ptr<PlayerHandling>(new PlayerHandling());
@@ -50,7 +27,7 @@ void eventhandling::init() {
 	menu = unique_ptr<Menu>(new Menu());
 }
 
-void eventhandling::eventloop() {
+void Eventhandling::eventloop() {
 	//if host or client has not been selected, wait for it to happen
 	if (menuActive == true) {
 		menu->update();
@@ -59,13 +36,13 @@ void eventhandling::eventloop() {
 		if (menu->hostServer() == true) {
 			playerIndex = 0;
 			initIndex = true;
-			networkThread = new thread(&initServer);
+			networkThread = new thread(&initServer, server);
 			menuActive = false;//go to game
 		}
 		if (menu->connectAsClient() == true) {
 			playerIndex = 1;
 			initIndex = true;
-			networkThread = new thread(&initClient);
+			networkThread = new thread(&initClient, client);
 			menuActive = false;//go to game
 		}
 		if (initIndex == true) {
@@ -101,7 +78,7 @@ void eventhandling::eventloop() {
 }
 
 
-void eventhandling::drawingloop() {
+void Eventhandling::drawingloop() {
 	if (menuActive == true) {
 		menu->drawMenu();
 	}
@@ -120,21 +97,8 @@ void eventhandling::drawingloop() {
 //Neworking part-----------------------------------------------------------------------------------------------------------------
 
 
-static void initServer() {
-	server = unique_ptr<PortableServer>(new PortableServer());
-	server->waitForClient();
-	server->receiveMultithreaded();
-}
 
-static void initClient() {
-	string s = "192.168.178.28";//TODO: typeable ip
-	client = unique_ptr<PortableClient>(new PortableClient(s.c_str()));
-	client->waitForServer();
-	client->receiveMultithreaded();
-}
-
-
-static void sendData() {
+void Eventhandling::sendData() {
 	NetworkCommunication::initNewCommunication();
 
 	abilityHandling->sendData();
@@ -150,7 +114,7 @@ static void sendData() {
 	}
 }
 
-static void recvAndImplementData() {
+void Eventhandling::recvAndImplementData() {
 
 	bool receivedSth = false;
 	if (playerHandling->getPlayerIndex() == 0) {

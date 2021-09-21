@@ -5,7 +5,7 @@ using namespace std;
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
 
-void initDrawing(shared_ptr<sf::RenderWindow> cWindow) {
+void initDrawing(shared_ptr<sf::RenderWindow> cWindow, Eventhandling eventhandling) {
 
     sf::Event events;
 
@@ -21,8 +21,8 @@ void initDrawing(shared_ptr<sf::RenderWindow> cWindow) {
         cWindow->clear();//clear with every iteration
 
         //draw here-------------------------------------------------------
-        eventhandling::eventloop();
-        eventhandling::drawingloop();
+        eventhandling.eventloop();
+        eventhandling.drawingloop();
 
         //\draw here------------------------------------------------------
         cWindow->display();//display things drawn since clear() was called
@@ -34,7 +34,7 @@ int main() {
     shared_ptr<sf::RenderWindow> cWindow = shared_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(sf::VideoMode::getDesktopMode().width,
                                                 sf::VideoMode::getDesktopMode().height), "Mobatemplate", sf::Style::Titlebar | sf::Style::Close));
     Renderer::init(cWindow);
-    eventhandling::init();
-    initDrawing(cWindow);
+    Eventhandling eventhandling;
+    initDrawing(std::move(cWindow), std::move(eventhandling));
     //return 0;
 }
