@@ -116,7 +116,7 @@ public:
         //ability declerations
         declareCustomAbilities();
 
-        newAbilities = unique_ptr<shared_ptr<Ability>[]>(new shared_ptr<Ability>[abilityCount]);
+        newAbilities = vector<shared_ptr<Ability>>(abilityCount);
         for (int i = 0; i < abilityCount; i++) {
             newAbilities[i] = nullptr;
             hasNewAbility[i] = false;
@@ -143,7 +143,7 @@ public:
         }
 
         for (int i = 0; i < abilityCount; i++) {
-            Ability* cAbility = newAbilities[i].get();
+            const Ability* cAbility = newAbilities[i].get();
             if (cAbility != nullptr) {
 
                 //start cooldown only after target has been selected
@@ -157,7 +157,7 @@ public:
                 //delete if not needed anymore
                 if (cAbility->finishedCompletely() == true) {
                     for (int j = 0; j < generalAbilities.size(); j++) {
-                        if (generalAbilities.at(j) == cAbility) {
+                        if (generalAbilities.at(j) == newAbilities[i]) {
                             generalAbilities.erase(generalAbilities.begin() + j);
                         }
 
@@ -245,27 +245,22 @@ public:
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            Transfusion* c = new Transfusion();
-            generalAbilities.push_back(c);
+            generalAbilities.push_back(shared_ptr<Transfusion>(new Transfusion()));
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            VladW* c = new VladW();
-            generalAbilities.push_back(c);
+            generalAbilities.push_back(shared_ptr<VladW>(new VladW()));
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            VladE* c = new VladE();
-            generalAbilities.push_back(c);
+            generalAbilities.push_back(shared_ptr<VladE>(new VladE()));
         }
 
         if (NetworkCommunication::receiveNextToken() == 1) {
-            VladR* c = new VladR();
-            generalAbilities.push_back(c);
+            generalAbilities.push_back(shared_ptr<VladR>(new VladR()));
         }
         if (NetworkCommunication::receiveNextToken() == 1) {
-            Fireball* c = new Fireball();
-            generalAbilities.push_back(c);
+           generalAbilities.push_back(shared_ptr<Fireball>(new Fireball()));
         }
 
     }
@@ -283,37 +278,34 @@ public:
         switch (abIndex) {
         case 0: {
             //change this
-            Transfusion* newT = new Transfusion(myPlayerI);//has to be a pointer so that we can preserve it for newAbilities
-            generalAbilities.push_back(newT);
-            newAbilities[abIndex] = unique_ptr<Ability>(newT);
+
+            shared_ptr<Transfusion> newA(new Transfusion(myPlayerI));
+            generalAbilities.push_back(newA);//has to be a pointer so that we can preserve it for newAbilities
+            newAbilities[abIndex] = newA;
             break;
         }
         case 1: {
-            //change this
-            VladW* newW = new VladW(myPlayerI);
-            generalAbilities.push_back(newW);
-            newAbilities[abIndex] = unique_ptr<Ability>(newW);
+            shared_ptr<VladW> newA(new VladW(myPlayerI));
+            generalAbilities.push_back(newA);
+            newAbilities[abIndex] = newA;
             break;
         }
         case 2: {
-            //change this
-            VladE* newE = new VladE(myPlayerI);
-            generalAbilities.push_back(newE);
-            newAbilities[abIndex] = unique_ptr<Ability>(newE);
+            shared_ptr<VladE> newA(new VladE(myPlayerI));
+            generalAbilities.push_back(newA);
+            newAbilities[abIndex] = newA;
             break;
         }
         case 3: {
-            //change this
-            VladR* newR = new VladR(myPlayerI);
-            generalAbilities.push_back(newR);
-            newAbilities[abIndex] = unique_ptr<Ability>(newR);
+            shared_ptr<VladR> newA(new VladR(myPlayerI));
+            generalAbilities.push_back(newA);
+            newAbilities[abIndex] = newA;
             break;
         }
         case 4: {
-            //change this
-            Fireball* newFB = new Fireball(myPlayerI);
-            generalAbilities.push_back(newFB);
-            newAbilities[abIndex] = unique_ptr<Ability>(newFB);
+            shared_ptr<Fireball> newA(new Fireball(myPlayerI));
+            generalAbilities.push_back(newA);
+            newAbilities[abIndex] = newA;
             break;
 
         }
@@ -340,8 +332,8 @@ public:
 private:
     bool samePress = false;
     int myPlayerI;
-    vector<Ability*> generalAbilities;//gets deleted by shared-ptrs from Abilities
-    unique_ptr<shared_ptr<Ability>[]> newAbilities;
+    vector<shared_ptr<Ability>> generalAbilities;//gets deleted by shared-ptrs from Abilities
+    vector<shared_ptr<Ability>> newAbilities;
 
     unique_ptr<AbilityTriggering> abilityTriggering;
 

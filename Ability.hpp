@@ -41,23 +41,23 @@ public:
 
 
     //getters/setters
-    inline int getPhase() {
+    inline int getPhase() const {
         return currentPhase;
     }
 
-    inline bool finishedPhase(int index) {
+    inline bool finishedPhase(int index) const {
         return index < currentPhase;//if current Phase is higher than index, phase with index was finished
     }
     
-    inline bool wasPhaseInitialized(int index) {
+    inline bool wasPhaseInitialized(int index) const {
         return phaseInitialized[index];
     }
 
-    inline bool finishedCompletely() {
+    inline bool finishedCompletely() const {
         return finished;
     }
 
-    inline bool wasAddedToNetwork() {
+    inline bool wasAddedToNetwork() const {
         return addedToNetwork;
     }
 
@@ -65,31 +65,31 @@ public:
         addedToNetwork = true;
     }
 
-    inline long long getStartTime(int index) {
+    inline long long getStartTime(int index) const {
         return phaseStart[index];
     }
 
-    inline int getCastingPlayer() {
+    inline int getCastingPlayer() const {
         return myPlayerIndex;
     }
 
-    inline bool isFromNetwork() {
+    inline bool isFromNetwork() const {
         return fromNetwork;
     }
 
-    inline int getCDstartPhase() {
+    inline int getCDstartPhase() const {
         return cdStartPhase;
     }
 
-    inline int getAddToNetworkPhase() {
+    inline int getAddToNetworkPhase() const {
         return cdStartPhase;
     }
 
-    inline int getAbilityIndex() {
+    inline int getAbilityIndex() const {
         return abilityIndex;
     }
 
-    inline int getTimeSincePhaseStart(int index) {
+    inline int getTimeSincePhaseStart(int index) const {
         auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
         return cTime - phaseStart[index];
     }
