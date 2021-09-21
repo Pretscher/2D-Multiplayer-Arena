@@ -12,8 +12,8 @@ public:
     void receiveMultithreaded();
     void sendToClient(const char* message);
 
-    string* getLastMessage();
-    bool isConnected();
-    mutex* getMutex();
-    bool newMessage();
+    shared_ptr<string> getLastMessage() const;
+    bool isConnected() const;
+    shared_ptr<mutex> getMutex() const;
+    bool newMessage() const;
 };

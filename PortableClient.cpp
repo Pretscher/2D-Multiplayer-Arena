@@ -89,19 +89,19 @@ void PortableClient::sendToServer(const char* message) {
     }
 }
 
-string* PortableClient::getLastMessage() {
+string* PortableClient::getLastMessage() const {
     return lastMessage;
 }
 
-bool PortableClient::isConnected() {
+bool PortableClient::isConnected() const {
     return connected;
 }
 
-mutex* PortableClient::getMutex() {
+mutex* PortableClient::getMutex() const {
     return writingMessage;
 }
 
-bool PortableClient::newMessage() {
+bool PortableClient::newMessage() const {
     bool temp = gotNewMessage;
     gotNewMessage = false;
     return temp;
@@ -114,6 +114,7 @@ bool PortableClient::newMessage() {
 #include <stdlib.h>
 #include <stdio.h>
 #include <mutex>
+#include <vector>
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
@@ -125,22 +126,21 @@ bool PortableClient::newMessage() {
 
 static int iResult;
 static SOCKET ConnectSocket;
-static char* recvbuf;
+static vector<char> recvbuf;
 static int recvbuflen;
-static string* lastMessage;
+static shared_ptr<string> lastMessage = shared_ptr<string>(new string());
 static bool connected = false;
 static bool wait = false;
-static std::mutex* mtx = new  std::mutex();
+static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 static bool gotNewMessage = false;
 
 PortableClient::PortableClient(const char* serverIP) {
-    lastMessage = nullptr;
     WSADATA wsaData;
     ConnectSocket = INVALID_SOCKET;
     struct addrinfo* result = NULL,
         * ptr = NULL,
         hints;
-    recvbuf = new char[DEFAULT_BUFLEN];
+    recvbuf = vector<char>(DEFAULT_BUFLEN);
 
     recvbuflen = DEFAULT_BUFLEN;
 
@@ -202,9 +202,6 @@ void PortableClient::waitForServer() {
     connected = true;
 }
 
-bool PortableClient::isConnected() {
-    return connected;
-}
 
 void PortableClient::sendToServer(const char* message) {
     if (wait == false) {
@@ -224,14 +221,12 @@ void PortableClient::sendToServer(const char* message) {
 void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+        iResult = recv(ConnectSocket, recvbuf.data(), recvbuflen, 0);
 
 
         if (iResult > 0) {
             mtx->lock();//lock caus writing and reading message at the same time is not thread safe
-
-            if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new string();
+            lastMessage->clear();
             gotNewMessage = true;
 
             //save message
@@ -268,15 +263,19 @@ void PortableClient::receiveMultithreaded() {
     WSACleanup();
 }
 
-string* PortableClient::getLastMessage() {
+shared_ptr<string> PortableClient::getLastMessage() const {
     return lastMessage;
 }
 
-mutex* PortableClient::getMutex() {
+shared_ptr<mutex> PortableClient::getMutex() const {
     return mtx;
 }
 
-bool PortableClient::newMessage() {
+bool PortableClient::isConnected() const {
+    return connected;
+}
+
+bool PortableClient::newMessage() const {
     bool temp = gotNewMessage;
     gotNewMessage = false;
     return temp;

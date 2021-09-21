@@ -30,14 +30,14 @@ void NetworkCommunication::addToken(int token) {
 	tokenCount++;
 }
 
-void NetworkCommunication::sendTokensToServer(unique_ptr<PortableServer>& server) {
+void NetworkCommunication::sendTokensToServer(shared_ptr<PortableServer> server) {
 	if(server->isConnected() == true) {
 		server->sendToClient(rawData.c_str());
 		rawData.clear();
 	}
 }
 
-void NetworkCommunication::sendTokensToClient(unique_ptr<PortableClient>& client) {
+void NetworkCommunication::sendTokensToClient(shared_ptr<PortableClient> client) {
 	if(client->isConnected() == true) {
 		client->sendToServer(rawData.c_str());
 		rawData.clear();
@@ -50,12 +50,13 @@ int NetworkCommunication::receiveNextToken() {
 	return out;
 }
 
-void NetworkCommunication::receiveTonkensFromServer(unique_ptr<PortableServer>& server) {
+void NetworkCommunication::receiveTonkensFromServer(shared_ptr<const PortableServer> server) {
 	if(server->isConnected() == true) {
-		string* data;
+
 		bool copyAndParse = false;
+		const string* data;
 		server->getMutex()->lock();//gets locked before writing message
-		data = server->getLastMessage();
+		data = server->getLastMessage().get();
 		if (data != nullptr && data->size() > 0) {
 			copyAndParse = true;
 		}
@@ -72,12 +73,12 @@ void NetworkCommunication::receiveTonkensFromServer(unique_ptr<PortableServer>& 
 	}
 }
 
-void NetworkCommunication::receiveTonkensFromClient(unique_ptr<PortableClient>& client) {
+void NetworkCommunication::receiveTonkensFromClient(shared_ptr<const PortableClient> client) {
 	if(client->isConnected() == true) {
-		string* data;
+		const string* data;
 		bool copyAndParse = false;
 		client->getMutex()->lock();//gets locked before writing message
-		data = client->getLastMessage();
+		data = client->getLastMessage().get();
 		if (data != nullptr && data->size() > 0) {
 			copyAndParse = true;
 		}

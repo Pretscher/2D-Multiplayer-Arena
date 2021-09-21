@@ -107,19 +107,19 @@ void PortableServer::sendToClient(const char* message) {
     }
 }
 
-string* PortableServer::getLastMessage() {
+string* PortableServer::getLastMessage() const {
     return lastMessage;
 }
 
-bool PortableServer::isConnected() {
+bool PortableServer::isConnected() const {
     return connected;
 }
 
-mutex* PortableServer::getMutex() {
+mutex* PortableServer::getMutex() const {
     return writingMessage;
 }
 
-bool PortableServer::newMessage() {
+bool PortableServer::newMessage() const {
     bool temp = gotNewMessage;
     gotNewMessage = false;
     return temp;
@@ -147,20 +147,19 @@ bool PortableServer::newMessage() {
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "8080"
 
-static int iResult;
-static int iSendResult;
-static char* recvbuf;
-static int recvbuflen;
-static SOCKET ClientSocket;
-static SOCKET ListenSocket;
-static string* lastMessage;
-static bool connected = false;
-static bool wait = false;
-static bool gotNewMessage = false;
-static mutex* mtx = new mutex();
+int iResult;
+int iSendResult;
+vector<char> recvbuf;
+int recvbuflen;
+SOCKET ClientSocket;
+SOCKET ListenSocket;
+shared_ptr<string> lastMessage = shared_ptr<string>(new string());;
+bool connected = false;
+bool wait = false;
+bool gotNewMessage = false;
+shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 
 PortableServer::PortableServer() {
-    lastMessage = nullptr;
     WSADATA wsaData;
 
     ListenSocket = INVALID_SOCKET;
@@ -170,7 +169,7 @@ PortableServer::PortableServer() {
     struct addrinfo hints;
 
 
-    recvbuf = new char[DEFAULT_BUFLEN];
+    recvbuf = vector<char>(DEFAULT_BUFLEN);
     recvbuflen = DEFAULT_BUFLEN;
 
     // Initialize Winsock
@@ -267,14 +266,13 @@ void PortableServer::receiveMultithreaded() {
     // Receive until the peer shuts down the connection
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+        iResult = recv(ClientSocket, recvbuf.data(), recvbuflen, 0);
 
 
         //save message
         if (iResult > 0) {
             mtx->lock();//lock caus writing and reading message at the same time is not thread safe
-            if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new string();
+            lastMessage->clear();
             gotNewMessage = true;
             //save message
             for (int i = 0; i < iResult; i++) {
@@ -297,20 +295,20 @@ void PortableServer::receiveMultithreaded() {
     exit(0);
 }
 
-string* PortableServer::getLastMessage() {
+shared_ptr<string> PortableServer::getLastMessage() const {
     return lastMessage;
 }
 
-bool PortableServer::isConnected() {
+bool PortableServer::isConnected() const {
     return connected;
 }
 
-mutex* PortableServer::getMutex() {
+shared_ptr<mutex> PortableServer::getMutex() const {
     return mtx;
 }
 
 
-bool PortableServer::newMessage() {
+bool PortableServer::newMessage() const {
     bool temp = gotNewMessage;
     gotNewMessage = false;
     return temp;

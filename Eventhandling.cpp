@@ -21,8 +21,8 @@ using namespace std;
 static unique_ptr<Menu> menu;
 static bool menuActive = true;
 
-static unique_ptr<PortableServer> server;
-static unique_ptr<PortableClient> client;
+static shared_ptr<PortableServer> server;
+static shared_ptr<PortableClient> client;
 
 static bool received = true;
 
