@@ -16,7 +16,7 @@ WorldHandling::WorldHandling(int frameWidth, int frameHeight, int viewspaceLimit
 	cViewSpace[1] = 0;//x (left to right)
 
 	Renderer::linkViewSpace(cViewSpace, viewSpaceLimits);
-	terrain = new Terrain();
+	terrain = shared_ptr<Terrain>(new Terrain());
 	hardCodeTerrain();
 
 	GlobalRecources::terrain = terrain;

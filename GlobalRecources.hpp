@@ -11,7 +11,7 @@ class GlobalRecources {
 public:
     static int worldWidth, worldHeight;
     static int frameWidth, frameHeight;
-    static Terrain* terrain;
+    static shared_ptr<Terrain> terrain;
     static  shared_ptr<vector<shared_ptr<Player>>> players;
     static int playerCount;
     static Pathfinding* pFinding;

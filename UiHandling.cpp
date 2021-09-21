@@ -4,7 +4,7 @@
 #include "Terrain.hpp"
 #include "GlobalRecources.hpp"
 
-sf::Texture* orb;
+vector<sf::Texture> orb;
 sf::Texture uiPanel;
 UiHandling::UiHandling() {
 	uiHeight = 1080;
@@ -14,7 +14,7 @@ UiHandling::UiHandling() {
 	sf::Texture wall;
 	sf::Texture ground;
 
-	orb = new sf::Texture[6];
+	orb = vector<sf::Texture>(6);
 
 	orb[0] = Renderer::loadTexture("Textures/Stat orb/itsmars_orb_fill.png", false);
 	orb[1] = Renderer::loadTexture("Textures/UI/Uipanel.png", false);
