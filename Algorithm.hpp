@@ -1,6 +1,7 @@
 #pragma once
 #include "Graph.hpp"
 #include <mutex>
+#include <memory>
 class Algorithm {
 public:
 	Algorithm(shared_ptr<Graph> i_graph, shared_ptr<std::mutex> io_mutex) {

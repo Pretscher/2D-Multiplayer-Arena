@@ -1,6 +1,7 @@
 #pragma once
 #include "iostream" 
 using namespace std;
+#include <memory>
 #include <math.h>
 #include <chrono>
 #include "NetworkCommunication.hpp"

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 #include "PathfindingHandler.hpp"
 #include "Player.hpp"
 

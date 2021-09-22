@@ -7,7 +7,7 @@ using namespace std;
 #include "Ability.hpp"
 #include <vector>
 #include <chrono>
-
+#include <memory>
 #include "VladW.hpp"
 #include "VladE.hpp"
 #include "VladR.hpp"

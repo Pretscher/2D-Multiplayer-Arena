@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Player.hpp"
 #include "Terrain.hpp"
 #include "PathfindingHandler.hpp"

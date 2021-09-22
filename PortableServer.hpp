@@ -3,7 +3,7 @@
 using namespace std;
 #include <string>
 #include <mutex>
-
+#include <memory>
 class PortableServer {
 public:
     PortableServer();

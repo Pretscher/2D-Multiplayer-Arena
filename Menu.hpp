@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderer.hpp"
 #include "iostream" 
+#include <memory>
+
 using namespace std;
 class Menu {
 public:

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Ability.hpp"
 #include "Indicator.hpp"
 #include "Projectile.hpp"

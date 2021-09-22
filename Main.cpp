@@ -4,6 +4,7 @@ using namespace std;
 #include <thread>
 #include "Renderer.hpp"
 #include "Eventhandling.hpp"
+#include <memory>
 
 void initDrawing(shared_ptr<sf::RenderWindow> cWindow, Eventhandling eventhandling) {
 

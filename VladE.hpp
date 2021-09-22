@@ -1,6 +1,7 @@
 #pragma once
 #include "Ability.hpp"
 #include "Projectile.hpp"
+#include <memory>
 
 class VladE : public Ability {
 public:

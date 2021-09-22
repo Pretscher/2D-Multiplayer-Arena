@@ -12,6 +12,7 @@ using namespace std;
 #include <string.h>
 #include <mutex>
 #include <thread>
+#include <vector>
 
 #define PORT 8080
 
@@ -22,11 +23,11 @@ static struct sockaddr_in serv_addr;
 static int addrlen;
 static int inputLenght = 0;
 static int bufferMaxLenght = 512;
-static char* inputBuffer = new char[bufferMaxLenght];
+static vector<char> inputBuffer(bufferMaxLenght);
 
 static bool gotNewMessage = false;
-static string* lastMessage;
-static mutex* writingMessage = new mutex();
+static shared_ptr<string> lastMessage(new string());
+static shared_ptr<mutex> writingMessage(new mutex());
 static bool waitHandShaking = false;
 
 PortableClient::PortableClient(const char* serverIP) {
@@ -60,12 +61,11 @@ void PortableClient::waitForServer() {
 void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        inputLenght = read(serverSocket, inputBuffer, bufferMaxLenght);
+        inputLenght = read(serverSocket, inputBuffer.data(), bufferMaxLenght);
         //received a valid message
         if (inputLenght > 0) {
             writingMessage->lock();
-            if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new string();
+            lastMessage->clear();
             gotNewMessage = true;
             //save message
             for (int i = 0; i < inputLenght; i++) {
@@ -89,15 +89,14 @@ void PortableClient::sendToServer(const char* message) {
     }
 }
 
-string* PortableClient::getLastMessage() const {
-    return lastMessage;
-}
-
 bool PortableClient::isConnected() const {
     return connected;
 }
+shared_ptr<string> PortableClient::getLastMessage() const {
+    return lastMessage;
+}
 
-mutex* PortableClient::getMutex() const {
+shared_ptr<mutex> PortableClient::getMutex() const {
     return writingMessage;
 }
 

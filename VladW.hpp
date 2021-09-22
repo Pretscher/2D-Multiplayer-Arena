@@ -1,5 +1,6 @@
 #pragma once
 #include "Ability.hpp"
+#include <memory>
 
 class VladW : public Ability {
 public:
