@@ -5,7 +5,7 @@ using namespace std;
 #include "Projectile.hpp"
 #include "Rect.hpp"
 #include "Player.hpp"
-
+#include <memory>
 class ProjectileHandling {
 public:
 

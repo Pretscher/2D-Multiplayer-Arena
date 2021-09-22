@@ -1,6 +1,7 @@
 #pragma once
 #include "HeapNode.hpp"
 #include "Graph.hpp"
+#include <memory>
 class BinaryHeap {
 public:
 	//needs current iteration for efficiency: heap nodes are not deleted, but if they are reinserted into the heap and they were

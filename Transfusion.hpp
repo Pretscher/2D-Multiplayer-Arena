@@ -2,6 +2,7 @@
 #include "Ability.hpp"
 #include "Projectile.hpp"
 #include "Indicator.hpp"
+#include <memory>
 
 class Transfusion : public Ability {
 public:

@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory>
 using namespace std;
 #include <SFML/Graphics.hpp>
 class Renderer {

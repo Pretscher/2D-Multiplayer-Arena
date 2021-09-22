@@ -2,6 +2,8 @@
 #include "Ability.hpp"
 #include "Indicator.hpp"
 #include "Projectile.hpp"
+#include <memory>
+
 class VladR : public Ability {
 public:
 

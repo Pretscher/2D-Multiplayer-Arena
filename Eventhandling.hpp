@@ -16,6 +16,7 @@
 #include "AbilityHandling.hpp"
 #include "GlobalRecources.hpp"
 #include "Graph.hpp"
+#include <memory>
 
 class Eventhandling {
 public:

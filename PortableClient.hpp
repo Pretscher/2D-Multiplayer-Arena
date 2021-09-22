@@ -4,7 +4,7 @@
 using namespace std;
 #include <string>
 #include <mutex>
-
+#include <memory>
 class PortableClient {
 public:
     PortableClient(const char* serverIP);

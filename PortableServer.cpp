@@ -10,10 +10,9 @@ using namespace std;
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-#include <string.h>
-
+#include <vector>
 #include <mutex>
-
+#include <string.h>
 #define PORT 8080
 
 static bool connected = false;
@@ -23,10 +22,10 @@ static struct sockaddr_in address;
 static int addrlen;
 static int inputLenght;
 static int bufferMaxLenght = 512;
-static char* inputBuffer = new char[bufferMaxLenght];
+static vector<char> inputBuffer(bufferMaxLenght);
 static bool gotNewMessage = false;
-static string* lastMessage;
-static mutex* writingMessage = new mutex();
+static shared_ptr<string> lastMessage(new string());
+static shared_ptr<mutex> mtx(new mutex());
 static bool waitHandShaking = false;
 
 PortableServer::PortableServer() {
@@ -78,18 +77,17 @@ void PortableServer::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
         //received something
-        inputLenght = read(clientSocket, inputBuffer, bufferMaxLenght);
+        inputLenght = read(clientSocket, inputBuffer.data(), bufferMaxLenght);
         //received a valid message
         if (inputLenght > 0) {
-            writingMessage->lock();
-            if (lastMessage != nullptr) delete lastMessage;
-            lastMessage = new string();
+            mtx->lock();
+            lastMessage->clear();
             gotNewMessage = true;
             //save message
             for (int i = 0; i < inputLenght; i++) {
                 lastMessage->push_back(inputBuffer[i]);
             }
-            writingMessage->unlock();
+            mtx->unlock();
             waitHandShaking = false;
         }
 
@@ -107,7 +105,7 @@ void PortableServer::sendToClient(const char* message) {
     }
 }
 
-string* PortableServer::getLastMessage() const {
+shared_ptr<string> PortableServer::getLastMessage() const {
     return lastMessage;
 }
 
@@ -115,9 +113,10 @@ bool PortableServer::isConnected() const {
     return connected;
 }
 
-mutex* PortableServer::getMutex() const {
-    return writingMessage;
+shared_ptr<mutex> PortableServer::getMutex() const {
+    return mtx;
 }
+
 
 bool PortableServer::newMessage() const {
     bool temp = gotNewMessage;

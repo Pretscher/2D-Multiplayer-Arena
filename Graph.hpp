@@ -1,9 +1,9 @@
 #pragma once
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace std;
 #include <mutex>
+#include <memory>
 
 class Graph {
 public:
