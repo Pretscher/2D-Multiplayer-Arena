@@ -56,11 +56,13 @@ bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pa
 					float heuristicOfCurrentNeighbour = tempDistance + getHeuristic(cNeighbourIndex, goalIndex);
 
 					//if graphnode has been inserted to heap (index in heap initialized to -1)
-					if (graph->getHeapIndices()[cNeighbourIndex] != -1) {
-						heap->decrease(graph->getHeapIndices()[cNeighbourIndex], heuristicOfCurrentNeighbour);
-					}
-					else {
-						heap->insert(shared_ptr<HeapNode>(new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex)));
+					if (graph->getHeapIndices()[cNeighbourIndex] != -2) {//in that case dont insert or decrease
+						if (graph->getHeapIndices()[cNeighbourIndex] != -1) {//-1 = not yet visited, insert
+							heap->decrease(graph->getHeapIndices()[cNeighbourIndex], heuristicOfCurrentNeighbour);
+						}
+						else {
+							heap->insert(shared_ptr<HeapNode>(new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex)));
+						}
 					}
 				}
 			}

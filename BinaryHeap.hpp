@@ -24,10 +24,9 @@ public:
 	void bubbleUp(int indexOfNodeInHeap);
 
 	void bubbleDown(int indexOfNodeInHeap);
-
+	void dontReinsert(int indexInHeap);
 private:
 	vector<shared_ptr<HeapNode>> heap;
 	shared_ptr<Graph> graph;
-	unsigned int nodeCount;
 	int currentIteration;
 };

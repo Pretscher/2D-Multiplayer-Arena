@@ -4,14 +4,13 @@
 
 	BinaryHeap::BinaryHeap(shared_ptr<Graph> graphNodes, unsigned int graphNodeCount, int currentIteration) {
 		//heap has same size as graph
-		nodeCount = 0;
 		graph = graphNodes;
-		heap = vector<shared_ptr<HeapNode>>(graphNodeCount);
+		//heap = vector<shared_ptr<HeapNode>>(graphNodeCount);
 		this->currentIteration = currentIteration;
 	}
 
 	int BinaryHeap::getCurrentNodeCount() {
-		return nodeCount;
+		return heap.size();
 	}
 
 	void BinaryHeap::actualizeGraphIndex(int indexInHeap) {
@@ -19,29 +18,41 @@
 		graph->getHeapIndices()[graphIndex] = indexInHeap;
 	}
 
+	void BinaryHeap::dontReinsert(int indexInHeap) {
+		unsigned int graphIndex = heap[indexInHeap]->getIndexInGraph(currentIteration);
+		graph->getHeapIndices()[graphIndex] = -2;
+	}
 	//-------------------------------------------
 	//Heap methods
 
 	void BinaryHeap::insert(shared_ptr<HeapNode> node) {
-		int newIndex = nodeCount;
-		nodeCount++;
-		heap[newIndex] = node;
-		actualizeGraphIndex(newIndex);
-		bubbleUp(newIndex);
+		int tempSize = heap.size();
+		heap.push_back(node);
+		actualizeGraphIndex(tempSize);
+		bubbleUp(tempSize);
 	}
 
 	HeapNode BinaryHeap::extractMin() {
 		HeapNode copy = *heap[0];
-		nodeCount--;
 		//overwrite with last leaf of heap
-		heap[0] = heap[nodeCount];
-
-		actualizeGraphIndex(0);
-		bubbleDown(0);
+		dontReinsert(0);
+		if (heap.size() > 1) {
+			heap[0] = heap[heap.size() - 1];//copy pointer
+			heap.pop_back();//one of the two identical shared pointers in vector goes out of scope
+			actualizeGraphIndex(0);
+			bubbleDown(0);
+		}
+		else {
+			heap.pop_back();
+		}
 		return std::move(copy);
 	}
 
 	void BinaryHeap::decrease(int heapIndex, float newKey) {
+		if (heapIndex >= heap.size()) {
+			std::cout << "decrease failed, index out of bounds";
+			std::exit(0);
+		}
 		if (heap[heapIndex] != nullptr) {
 			heap[heapIndex]->setKey(newKey);
 			bubbleUp(heapIndex);
@@ -73,7 +84,7 @@
 	}
 
 	bool BinaryHeap::isLeaf(int indexOfNodeInHeap) {
-		if (indexOfNodeInHeap + 1 > nodeCount / 2) {
+		if (indexOfNodeInHeap + 1 > heap.size() / 2) {
 			return true;
 		}
 		else {
@@ -119,7 +130,7 @@
 			int rightChildIndex = getRightChildIndex(tempIndex);
 			//if leftKey > rightKey swap
 			//there does not need to be a right child for every non-leaf => check if there is
-			if (rightChildIndex < nodeCount) {
+			if (rightChildIndex < heap.size()) {
 				if ((*heap[tempChildIndex]).getKey() > (*heap[rightChildIndex]).getKey()) {
 					tempChildIndex = rightChildIndex;
 				}
