@@ -154,7 +154,6 @@
     <ClCompile Include="Eventhandling.cpp" />
     <ClCompile Include="Fireball.cpp" />
     <ClCompile Include="Graph.cpp" />
-    <ClCompile Include="HeapNode.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NetworkCommunication.cpp" />
     <ClCompile Include="PathfindingHandler.cpp" />

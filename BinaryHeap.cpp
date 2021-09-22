@@ -32,7 +32,7 @@
 		bubbleUp(tempSize);
 	}
 
-	HeapNode BinaryHeap::extractMin() {
+	HeapNode&& BinaryHeap::extractMin() {
 		HeapNode copy = *heap[0];
 		//overwrite with last leaf of heap
 		dontReinsert(0);
@@ -131,14 +131,14 @@
 			//if leftKey > rightKey swap
 			//there does not need to be a right child for every non-leaf => check if there is
 			if (rightChildIndex < heap.size()) {
-				if ((*heap[tempChildIndex]).getKey() > (*heap[rightChildIndex]).getKey()) {
+				if (heap[tempChildIndex]->getKey() > heap[rightChildIndex]->getKey()) {
 					tempChildIndex = rightChildIndex;
 				}
 			}
 			//tempChildIndex can be the left or the right Childindex now
 			tempChild = heap[tempChildIndex];
 			//if heap has the right structure end this method
-			if ((*tempChild).getKey() >= (*tempNode).getKey()) {
+			if (tempChild->getKey() >= tempNode->getKey()) {
 				break;
 			}
 			//swap node and parent

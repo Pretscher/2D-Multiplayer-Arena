@@ -31,7 +31,7 @@ bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pa
 	bool foundPath = false;
 
 	while (heap->getCurrentNodeCount() > 0) {//while heap is not empty
-		HeapNode helpNode = std::move(heap->extractMin());//extract best node
+		HeapNode helpNode(heap->extractMin());//extract best node
 		int cNodeIndex = helpNode.getIndexInGraph(currentIteration);//get graphIndex of best node
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;

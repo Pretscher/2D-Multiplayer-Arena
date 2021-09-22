@@ -9,11 +9,32 @@ public:
         myKey = key;
         myIndexInGraph = indexInGraph;
     }
-    float getKey();
-    unsigned int getIndexInGraph(int currentIteration);
-    void setIndex(unsigned int index);
-    void setKey(float key);
 
+    inline float getKey() {
+        return myKey;
+    }
+
+    inline unsigned int getIndexInGraph(int currentIteration) {
+        if (usedInIteration <= currentIteration && usedInIteration != -1) {//-1 means never used
+            myKey = numeric_limits<float>::max();
+            myIndexInGraph = -1;
+            usedInIteration = currentIteration;
+        }
+
+        return myIndexInGraph;
+    }
+
+    inline void getIndex(unsigned int index) {
+        myIndexInGraph = index;
+    }
+
+    inline void setKey(float key) {
+        myKey = key;
+    }
+
+    inline int getIteration() {
+        return usedInIteration;
+    }
 private:
     int usedInIteration = -1;
     float myKey = numeric_limits<float>::max();
