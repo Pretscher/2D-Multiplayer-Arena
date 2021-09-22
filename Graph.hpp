@@ -4,6 +4,7 @@
 using namespace std;
 #include <mutex>
 #include <memory>
+#include <2Darray.hpp>
 
 class Graph {
 public:
@@ -11,7 +12,6 @@ public:
 
 	void generateWorldGraph(bool** isUseable);
 	int getIndexFromCoords(int y, int x, bool moveableRelevant);
-	~Graph();
 	void disableObjectBounds(int y, int x, int width, int height);
 	void moveObject(int y, int x, int oldY, int oldX, int width, int height);
 	void enableObjectBounds(int y, int x, int width, int height);
@@ -35,11 +35,11 @@ public:
 		return indexBoundXs;
 	}
 
-	int** getIndexNeighbourCosts() {
+	array2D<int> getIndexNeighbourCosts() {
 		return neighbourCosts;
 	}
 
-	int** getNeighbourIndices() {
+	array2D<int> getNeighbourIndices() {
 		return neighbourIndices;
 	}
 
@@ -78,10 +78,9 @@ private:
 	int xCount;
 	float accuracy;
 
-	int** rawIndices;
-
-	int** neighbourCosts;
-	int** neighbourIndices;
+	array2D<int> rawIndices;
+	array2D<int> neighbourCosts;
+	array2D<int> neighbourIndices;
 
 	int graphNodeCount;//lenght for all of these arrays
 	shared_ptr<bool[]> usedByMoveable;

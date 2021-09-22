@@ -14,35 +14,16 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
 
     //init everything with given sizes
     neighbourCount = shared_ptr<int[]>(new int[lenght]);
-    neighbourIndices = new int*[lenght];//for every node there can be 8 neighbours, second dimension initialized in loop
+    neighbourIndices = array2D<int>(lenght, 8);//for every node there can be 8 neighbours, second dimension initialized in loop
     indexBoundXs = shared_ptr<int[]>(new int[lenght]);
     indexBoundYs = shared_ptr<int[]>(new int[lenght]);
     heapIndices = shared_ptr<int[]>(new int[lenght]);
     usedByMoveable = shared_ptr<bool[]>(new bool[lenght]);
 
-    rawIndices = new int*[this->yCount];
-    neighbourCosts = nullptr; //initialized later for every run of algorithm
+    rawIndices = array2D<int>(yCount, xCount);
 
     deactivatedX = vector<int>();
     deactivatedY = vector<int>();
-}
-
-Graph::~Graph() {
-    for (int i = 0; i < graphNodeCount; i++) {
-        delete[] neighbourIndices[i];
-        delete[] neighbourCosts[i];
-        if (i < yCount) {//very unlikely to be bigger than graphnodecount, caus that would mean less than a single row of the graph is filled
-            delete[] rawIndices[i];
-        }
-    }
-    if (yCount > graphNodeCount) {//were catching the "yCount > graphnodecount" issue anyway caus mem leaks are evil
-        for (int i = graphNodeCount; i < yCount; i++) {
-            delete[] rawIndices[i];
-        }
-    }
-    delete[] neighbourCosts;
-    delete[] neighbourIndices;
-    delete[] rawIndices;
 }
 
 /* MEMO:
@@ -54,10 +35,7 @@ for (int y = 0; y < this->yCount; y++) {
 void Graph::generateWorldGraph(bool** isUseable) {
     for (int y = 0; y < yCount; y++) {
         //one y
-        rawIndices[y] = new int[xCount];
-
         for (int x = 0; x < xCount; x++) {
-            neighbourIndices[graphNodeCount] = new int[8];
             //all yCount and xCount have been created
 
             //this should be initialized in "makeRectNodesUnusable()" if it was declared unusable
@@ -120,10 +98,7 @@ void Graph::generateWorldGraph(bool** isUseable) {
         } //end one y
     } //end all yCount
 
-    neighbourCosts = new int* [graphNodeCount];
-    for (int i = 0; i < graphNodeCount; i++) {
-        neighbourCosts[i] = new int[8];
-    }
+    neighbourCosts = array2D<int>(graphNodeCount, 8);
 }
 
 struct IntPoint{

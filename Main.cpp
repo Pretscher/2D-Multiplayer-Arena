@@ -32,10 +32,11 @@ void initDrawing(shared_ptr<sf::RenderWindow> cWindow, Eventhandling eventhandli
 }
 
 int main() {
+
     shared_ptr<sf::RenderWindow> cWindow = shared_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(sf::VideoMode::getDesktopMode().width,
                                                 sf::VideoMode::getDesktopMode().height), "Mobatemplate", sf::Style::Titlebar | sf::Style::Close));
     Renderer::init(cWindow);
     Eventhandling eventhandling;
     initDrawing(std::move(cWindow), std::move(eventhandling));
-    //return 0;
+    return 0;
 }

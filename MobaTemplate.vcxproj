@@ -182,6 +182,7 @@
     <ClInclude Include="Eventhandling.hpp" />
     <ClInclude Include="Fireball.hpp" />
     <ClInclude Include="Graph.hpp" />
+    <ClInclude Include="2Darray.hpp" />
     <ClInclude Include="HeapNode.hpp" />
     <ClInclude Include="Indicator.hpp" />
     <ClInclude Include="PortableClient.hpp" />

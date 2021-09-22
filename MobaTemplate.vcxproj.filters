@@ -185,5 +185,8 @@
     <ClInclude Include="VladR.hpp">
       <Filter>GameObjects\Abilities</Filter>
     </ClInclude>
+    <ClInclude Include="2Darray.hpp">
+      <Filter>A%2a-Algorithmus</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
