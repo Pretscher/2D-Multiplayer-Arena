@@ -9,8 +9,8 @@ public:
 	int getCurrentNodeCount();
 	void actualizeGraphIndex(int indexInHeap);
 
-	void insert(HeapNode* node);
-	HeapNode* extractMin();
+	void insert(shared_ptr<HeapNode> node);
+	HeapNode extractMin();
 	void decrease(int heapIndex, float newKey);
 
 	unsigned int getLeftChildIndex(int indexOfNodeInHeap);
@@ -23,15 +23,9 @@ public:
 	void bubbleUp(int indexOfNodeInHeap);
 
 	void bubbleDown(int indexOfNodeInHeap);
-	~BinaryHeap() {
-		for (int i = 0; i < nodeCount; i++) {
-			delete[] heap[i];
-		}
-		delete[] heap;
-	}
 
 private:
-	HeapNode** heap;
+	vector<shared_ptr<HeapNode>> heap;
 	shared_ptr<Graph> graph;
 	unsigned int nodeCount;
 	int currentIteration;

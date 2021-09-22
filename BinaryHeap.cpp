@@ -6,7 +6,7 @@
 		//heap has same size as graph
 		nodeCount = 0;
 		graph = graphNodes;
-		heap = new HeapNode*[graphNodeCount];
+		heap = vector<shared_ptr<HeapNode>>(graphNodeCount);
 		this->currentIteration = currentIteration;
 	}
 
@@ -22,7 +22,7 @@
 	//-------------------------------------------
 	//Heap methods
 
-	void BinaryHeap::insert(HeapNode* node) {
+	void BinaryHeap::insert(shared_ptr<HeapNode> node) {
 		int newIndex = nodeCount;
 		nodeCount++;
 		heap[newIndex] = node;
@@ -30,16 +30,15 @@
 		bubbleUp(newIndex);
 	}
 
-	HeapNode* BinaryHeap::extractMin() {
-
-		HeapNode* tempRoot = heap[0];
+	HeapNode BinaryHeap::extractMin() {
+		HeapNode copy = *heap[0];
 		nodeCount--;
 		//overwrite with last leaf of heap
 		heap[0] = heap[nodeCount];
 
 		actualizeGraphIndex(0);
 		bubbleDown(0);
-		return tempRoot;
+		return std::move(copy);
 	}
 
 	void BinaryHeap::decrease(int heapIndex, float newKey) {
@@ -87,9 +86,9 @@
 			return;
 		}
 		int tempParentIndex = getParentIndex(indexOfNodeInHeap);
-		HeapNode* parent = heap[tempParentIndex];
+		shared_ptr<HeapNode> parent = heap[tempParentIndex];
 		int tempIndex = indexOfNodeInHeap;
-		HeapNode* tempNode = heap[indexOfNodeInHeap];
+		shared_ptr<HeapNode> tempNode = heap[indexOfNodeInHeap];
 
 		while (isRoot(tempIndex) == false && parent->getKey() > tempNode->getKey()) {
 			//swap node and parent
@@ -107,10 +106,10 @@
 
 	void BinaryHeap::bubbleDown(int indexOfNodeInHeap) {
 		int tempChildIndex;
-		HeapNode* tempChild;
+		shared_ptr<HeapNode> tempChild;
 
 		int tempIndex = indexOfNodeInHeap;
-		HeapNode* tempNode = heap[indexOfNodeInHeap];
+		shared_ptr<HeapNode> tempNode = heap[indexOfNodeInHeap];
 
 		while (isLeaf(tempIndex) == false) {
 

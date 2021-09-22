@@ -27,13 +27,12 @@ bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pa
 	previousIndex[startIndex] = startIndex;
 
 	//insert start node with the value 0
-	HeapNode* toInsert = new HeapNode(getHeuristic(startIndex, goalIndex), startIndex);
-	heap->insert(toInsert);
+	heap->insert(shared_ptr<HeapNode>(new HeapNode(getHeuristic(startIndex, goalIndex), startIndex)));
 	bool foundPath = false;
 
 	while (heap->getCurrentNodeCount() > 0) {//while heap is not empty
-		HeapNode* helpNode = heap->extractMin();//extract best node
-		int cNodeIndex = helpNode->getIndexInGraph(currentIteration);//get graphIndex of best node
+		HeapNode helpNode = std::move(heap->extractMin());//extract best node
+		int cNodeIndex = helpNode.getIndexInGraph(currentIteration);//get graphIndex of best node
 		if (cNodeIndex == goalIndex) {
 			foundPath = true;
 			break;
@@ -61,13 +60,11 @@ bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pa
 						heap->decrease(graph->getHeapIndices()[cNeighbourIndex], heuristicOfCurrentNeighbour);
 					}
 					else {
-						HeapNode* nodeToInsert = new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex);
-						heap->insert(nodeToInsert);
+						heap->insert(shared_ptr<HeapNode>(new HeapNode(heuristicOfCurrentNeighbour, cNeighbourIndex)));
 					}
 				}
 			}
 		}
-		delete helpNode;
 	}
 
 	if (foundPath == true) {
