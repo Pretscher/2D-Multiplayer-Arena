@@ -124,10 +124,10 @@ bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pa
 
 float Algorithm::getHeuristic(int startIndex, int goalIndex) {
 
-	float x1 = graphXs[startIndex];
-	float x2 = graphXs[goalIndex];
-	float y1 = graphYs[startIndex];
-	float y2 = graphYs[goalIndex];
+	float x1 = graph->getIndexBoundXs()[startIndex];
+	float x2 = graph->getIndexBoundXs()[goalIndex];
+	float y1 = graph->getIndexBoundYs()[startIndex];
+	float y2 = graph->getIndexBoundYs()[goalIndex];
 	float heuristics = (float)sqrt(abs(x2 - x1) * abs(x2 - x1) + abs(y2 - y1) * abs(y2 - y1));
 	return heuristics;
 }

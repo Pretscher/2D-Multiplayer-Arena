@@ -27,11 +27,11 @@ public:
 		return usedByMoveable[index];
 	}
 
-	inline const shared_ptr<int[]> getIndexBoundYs() const {
+	inline const vector<int> getIndexBoundYs() const {
 		return indexBoundYs;
 	}
 
-	inline const shared_ptr<int[]> getIndexBoundXs() const {
+	inline const vector<int> getIndexBoundXs() const {
 		return indexBoundXs;
 	}
 
@@ -48,11 +48,11 @@ public:
 		return graphNodeCount;
 	}
 
-	inline shared_ptr<int[]> getIndexNeighbourCount() {
+	inline const vector<int> getIndexNeighbourCount() {
 		return neighbourCount;
 	}
 
-	inline shared_ptr<int[]> getHeapIndices() {
+	inline const vector<int> getHeapIndices() {
 		return heapIndices;
 	}
 
@@ -60,7 +60,7 @@ public:
 		heapIndices[index] = heapIndex;
 	}
 
-	inline shared_ptr<const bool[]> isUsedByMoveableObject() {
+	inline const vector<bool> isUsedByMoveableObject() {
 		return usedByMoveable;
 	}
 
@@ -87,9 +87,9 @@ private:
 	shared_ptr<array2D<int>> neighbourIndices;
 
 	int graphNodeCount;//lenght for all of these arrays
-	shared_ptr<bool[]> usedByMoveable;
-	shared_ptr<int[]> indexBoundXs;
-	shared_ptr<int[]> indexBoundYs;
-	shared_ptr<int[]> neighbourCount;
-	shared_ptr<int[]> heapIndices;
+	vector<bool> usedByMoveable;
+	vector<int> indexBoundXs;
+	vector<int> indexBoundYs;
+	vector<int> neighbourCount;
+	vector<int> heapIndices;
 };

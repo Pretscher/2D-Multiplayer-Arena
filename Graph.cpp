@@ -13,12 +13,12 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
     int lenght = this->yCount * xCount;
 
     //init everything with given sizes
-    neighbourCount = shared_ptr<int[]>(new int[lenght]);
+    neighbourCount = vector<int>(lenght);
     neighbourIndices = shared_ptr<array2D<int>>(new array2D<int>(lenght, 8));//for every node there can be 8 neighbours, second dimension initialized in loop
-    indexBoundXs = shared_ptr<int[]>(new int[lenght]);
-    indexBoundYs = shared_ptr<int[]>(new int[lenght]);
-    heapIndices = shared_ptr<int[]>(new int[lenght]);
-    usedByMoveable = shared_ptr<bool[]>(new bool[lenght]);
+    indexBoundXs = vector<int>(lenght);
+    indexBoundYs = vector<int>(lenght);
+    heapIndices = vector<int>(lenght);
+    usedByMoveable = vector<bool>(lenght);
 
     rawIndices = shared_ptr<array2D<int>>(new array2D<int>(yCount, xCount));
 

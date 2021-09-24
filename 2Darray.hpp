@@ -41,16 +41,16 @@ public:
 		return rowCount * colCount;
 	}
 
+	//&data[somewhere] returns a pointer to the memory address of the int at [somewhere]. This address is in our one-dimensional "data" array,
+	//which means that if you call [] on the returned pointer, the pointer starts at [somewhere] in our "data" array. This allows us to call
+	//another [somewhere2] to go somewhere2 steps further in the "data" array, which would then be the column amount. The array is mapped
+	//[rows][cols], so in order to get the row we need to multiply the index with the column count to get to the right row. 
 	inline T* operator[](unsigned int index) {
-		//&data[somewhere] returns a pointer to the memory address of the int at [somewhere]. This address is in our one-dimensional "data" array,
-		//which means that if you call [] on the returned pointer, the pointer starts at [somewhere] in our "data" array. This allows us to call
-		//another [somewhere2] to go somewhere2 steps further in the "data" array, which would then be the column amount. The array is mapped
-		//[rows][cols], so in order to get the row we need to multiply the index with the column count to get to the right row. 
 		return &(data[index * colCount]);
 	}
 
+	//you can only get from constant object, not change any values in the returned pointer
 	const inline T* operator[](unsigned int index) const {// (automatically chosen func if object is constant)
-		//you can only get from constant object, not change any values in the returned pointer
 		return &(data[index * colCount]);
 	}
 
