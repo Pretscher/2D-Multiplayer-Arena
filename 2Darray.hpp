@@ -4,12 +4,22 @@
 
 template<class T> class array2D {
 public:
-	array2D() {};
+	array2D<T>() {
+		initialized = false;
+	}
 
-	array2D(unsigned int rows, unsigned int cols) {
-		this->rowCount = rows;
-		this->colCount = cols;
-		this->data = vector<int>(rowCount * colCount);
+	array2D<T>(unsigned int rows, unsigned int cols) {
+		rowCount = rows;
+		colCount = cols;
+		data = new T[rowCount * colCount];
+
+		initialized = true;
+	}
+
+	~array2D<T>() {
+		if (initialized == true) {
+			delete[] data;
+		}
 	}
 
 	inline unsigned int getRows() const {
@@ -19,27 +29,63 @@ public:
 		return colCount;
 	}
 
-	inline T getData(int row, int col) const {
-		return data.data()[row * colCount + col];
+	inline T getData(unsigned int row, unsigned int col) const {
+		return data[row * colCount + col];
+	}
+
+	inline void setData(unsigned int row, unsigned int col, T value) {
+		data[row * colCount + col] = value;
 	}
 
 	inline int getFlattenedDataSize() const {
 		return rowCount * colCount;
 	}
 
-	inline T* operator[](std::size_t index) {
-		if (index >= rowCount) {
-			std::cout << "Row out of bounds for 2D-Array";
-			std::exit(0);
-		}
-		return &(data.data()[index * colCount]);
+	inline T* operator[](unsigned int index) {
+		//&data[somewhere] returns a pointer to the memory address of the int at [somewhere]. This address is in our one-dimensional "data" array,
+		//which means that if you call [] on the returned pointer, the pointer starts at [somewhere] in our "data" array. This allows us to call
+		//another [somewhere2] to go somewhere2 steps further in the "data" array, which would then be the column amount. The array is mapped
+		//[rows][cols], so in order to get the row we need to multiply the index with the column count to get to the right row. 
+		return &(data[index * colCount]);
+	}
+
+	const inline T* operator[](unsigned int index) const {// (automatically chosen func if object is constant)
+		//you can only get from constant object, not change any values in the returned pointer
+		return &(data[index * colCount]);
 	}
 
 	inline T* getFlattenedData() {
-		return data.data();
+		return data;
+	}
+
+	array2D<T>(const array2D<T>& toCopy) {
+		if (toCopy.initialized == true) {
+			initialized = true;
+			data = toCopy.data;
+			rowCount = toCopy.rowCount;
+			colCount = toCopy.colCount;
+		}
+		else {
+			initialized = false;
+		}
+	}
+
+	array2D<T>(array2D<T>&& toMove) {
+		if (toMove.initialized == true) {
+			initialized = true;
+			data = toMove.data;
+			rowCount = toMove.rowCount;
+			colCount = toMove.colCount;
+		}
+		else {
+			initialized = false;
+		}
 	}
 
 private:
+
+
 	unsigned int rowCount, colCount;
-	vector<T> data;
+	T* data;
+	bool initialized;
 };

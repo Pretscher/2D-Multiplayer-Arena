@@ -14,13 +14,13 @@ Graph::Graph(int i_ys, int i_xs, float i_accuracy) {
 
     //init everything with given sizes
     neighbourCount = shared_ptr<int[]>(new int[lenght]);
-    neighbourIndices = array2D<int>(lenght, 8);//for every node there can be 8 neighbours, second dimension initialized in loop
+    neighbourIndices = shared_ptr<array2D<int>>(new array2D<int>(lenght, 8));//for every node there can be 8 neighbours, second dimension initialized in loop
     indexBoundXs = shared_ptr<int[]>(new int[lenght]);
     indexBoundYs = shared_ptr<int[]>(new int[lenght]);
     heapIndices = shared_ptr<int[]>(new int[lenght]);
     usedByMoveable = shared_ptr<bool[]>(new bool[lenght]);
 
-    rawIndices = array2D<int>(yCount, xCount);
+    rawIndices = shared_ptr<array2D<int>>(new array2D<int>(yCount, xCount));
 
     deactivatedX = vector<int>();
     deactivatedY = vector<int>();
@@ -41,7 +41,7 @@ void Graph::generateWorldGraph(bool** isUseable) {
             //this should be initialized in "makeRectNodesUnusable()" if it was declared unusable
             //we have to do one less iteration through everything if we ask that here :)
             if (isUseable[y][x] == true) {
-                rawIndices[y][x] = graphNodeCount;
+                (*rawIndices)[y][x] = graphNodeCount;
                 usedByMoveable[graphNodeCount] = false;
                 indexBoundXs[graphNodeCount] = x;
                 indexBoundYs[graphNodeCount] = y;
@@ -54,51 +54,45 @@ void Graph::generateWorldGraph(bool** isUseable) {
                     xIndex = x - 1;
                     yIndex = y;
                     if (isUseable[yIndex][xIndex] == true) {
-                        neighbourIndices[rawIndices[yIndex][xIndex]][neighbourCount[rawIndices[yIndex][xIndex]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yIndex][xIndex]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yIndex][xIndex];
-                        neighbourCount[graphNodeCount]++;
+                        bindNeighbour(yIndex, xIndex);
                     }
                 }
                 if (y > 0) {
                     xIndex = x;
                     yIndex = y - 1;
                     if (isUseable[yIndex][xIndex] == true) {
-                        neighbourIndices[rawIndices[yIndex][xIndex]][neighbourCount[rawIndices[yIndex][xIndex]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yIndex][xIndex]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yIndex][xIndex];
-                        neighbourCount[graphNodeCount]++;
+                        bindNeighbour(yIndex, xIndex);
                     }
                 }
                 if (y > 0 && x > 0) {
                     xIndex = x - 1;
                     yIndex = y - 1;
                     if (isUseable[yIndex][xIndex] == true) {
-                        neighbourIndices[rawIndices[yIndex][xIndex]][neighbourCount[rawIndices[yIndex][xIndex]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yIndex][xIndex]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yIndex][xIndex];
-                        neighbourCount[graphNodeCount]++;
+                        bindNeighbour(yIndex, xIndex);
                     }
                 }
                 if (y > 0 && x < xCount - 1) {
                     xIndex = x + 1;
                     yIndex = y - 1;
                     if (isUseable[yIndex][xIndex] == true) {
-                        neighbourIndices[rawIndices[yIndex][xIndex]][neighbourCount[rawIndices[yIndex][xIndex]]] = graphNodeCount;
-                        neighbourCount[rawIndices[yIndex][xIndex]]++;
-                        neighbourIndices[graphNodeCount][neighbourCount[graphNodeCount]] = rawIndices[yIndex][xIndex];
-                        neighbourCount[graphNodeCount]++;
+                        bindNeighbour(yIndex, xIndex);
                     }
                 }
                 graphNodeCount++;
             } //End one node
             else {
-                rawIndices[y][x] = -1;
+                (*rawIndices)[y][x] = -1;
             }
         } //end one y
     } //end all yCount
+    neighbourCosts = shared_ptr<array2D<int>>(new array2D<int>(graphNodeCount, 8));
+}
 
-    neighbourCosts = array2D<int>(graphNodeCount, 8);
+void Graph::bindNeighbour(int yIndex, int xIndex) {
+    (*neighbourIndices)[(*rawIndices)[yIndex][xIndex]][neighbourCount[(*rawIndices)[yIndex][xIndex]]] = graphNodeCount;
+    neighbourCount[(*rawIndices)[yIndex][xIndex]]++;
+    (*neighbourIndices)[graphNodeCount][neighbourCount[graphNodeCount]] = (*rawIndices)[yIndex][xIndex];
+    neighbourCount[graphNodeCount]++;
 }
 
 struct IntPoint{
@@ -110,7 +104,7 @@ struct IntPoint{
     }
 };
 
-int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) {
+int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) const {
     //do (basically) breathfirstsearch: add 1 to yCount, then 1 to xCount. then add minus 1 to yCount and xCount. then +2 -2 etc. Till you 
     //found the next best useable node, which is also the nearest. 
 
@@ -168,7 +162,7 @@ int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) {
 
        
 
-        cIndex = rawIndices[cY][cX];//check if index is valid now
+        cIndex = (*rawIndices)[cY][cX];//check if index is valid now
         if (cIndex != -1) {
             if (moveableRelevant == true) {
                 if (usedByMoveable[cIndex] == true) {
@@ -192,11 +186,11 @@ int Graph::findNextUseableVertex(int y, int x, bool moveableRelevant) {
     }
 }
 
-void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
+void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) const {
     float x = (float) *io_x * accuracy;
     float y = (float) *io_y * accuracy;
 
-    int cIndex = rawIndices[(int)y][(int)x];//check if index is valid now
+    int cIndex = (*rawIndices)[(int)y][(int)x];//check if index is valid now
     if (cIndex != -1) {
         if (moveableRelevant == true) {
             if (usedByMoveable[cIndex] == true) {
@@ -213,22 +207,22 @@ void Graph::findNextUseableCoords(int* io_x, int* io_y, bool moveableRelevant) {
     *io_y = (float)indexBoundYs[index] / accuracy;
 }
 
-int Graph::getIndexFromCoords(int y, int x, bool moveableRelevant) {
+int Graph::getIndexFromCoords(int y, int x, bool moveableRelevant) const {
     y = round(((float)y * accuracy));
     x = round(((float)x * accuracy));
 
     if (y < yCount && x < xCount) {
         if (moveableRelevant == true) {
-            if (rawIndices[y][x] >= 0 && usedByMoveable[rawIndices[y][x]] == false) {
-                return rawIndices[y][x];
+            if ((*rawIndices)[y][x] >= 0 && usedByMoveable[(*rawIndices)[y][x]] == false) {
+                return (*rawIndices)[y][x];
             }
             else {
                 return findNextUseableVertex(y, x, moveableRelevant);
             }
         }
         else {
-            if (rawIndices[y][x] >= 0) {
-                return rawIndices[y][x];
+            if ((*rawIndices)[y][x] >= 0) {
+                return (*rawIndices)[y][x];
             }
             else {
                 return findNextUseableVertex(y, x, moveableRelevant);

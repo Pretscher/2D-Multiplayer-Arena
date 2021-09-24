@@ -38,17 +38,15 @@ bool Algorithm::findPath(vector<int>& o_pathYs, vector<int>& o_pathXs, int& o_pa
 			break;
 		}
 		for (int i = 0; i < graph->getIndexNeighbourCount()[cNodeIndex]; i++) {
-			int currentNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
+			int currentNeighbourIndex = (*graph->getNeighbourIndices())[cNodeIndex][i];
 			float heuristics = getHeuristic(currentNeighbourIndex, cNodeIndex);
 			graph->setNeighbourCost(cNodeIndex, i, heuristics);
 		}
-
 		//we will look through graph->getNeighbourIndices() of this node
 		for (int i = 0; i < graph->getIndexNeighbourCount()[cNodeIndex]; i++) {
-			int cNeighbourIndex = graph->getNeighbourIndices()[cNodeIndex][i];
+			int cNeighbourIndex = (*graph->getNeighbourIndices())[cNodeIndex][i];
 			if (graph->isUsedByMoveableObject()[cNeighbourIndex] == false) {//efficient method to exclude moveable colision objects from graph
-				
-				float tempDistance = distanceTravelled[cNodeIndex] + graph->getIndexNeighbourCosts()[cNodeIndex][i];
+				float tempDistance = distanceTravelled[cNodeIndex] + (*graph->getIndexNeighbourCosts())[cNodeIndex][i];
 				if (tempDistance < distanceTravelled[cNeighbourIndex]) {
 					distanceTravelled[cNeighbourIndex] = tempDistance;
 					previousIndex[cNeighbourIndex] = cNodeIndex;

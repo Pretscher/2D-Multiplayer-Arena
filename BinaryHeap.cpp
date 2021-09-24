@@ -15,12 +15,12 @@
 
 	void BinaryHeap::actualizeGraphIndex(int indexInHeap) {
 		unsigned int graphIndex = heap[indexInHeap]->getIndexInGraph(currentIteration);
-		graph->getHeapIndices()[graphIndex] = indexInHeap;
+		graph->setHeapIndices(graphIndex, indexInHeap);
 	}
 
 	void BinaryHeap::dontReinsert(int indexInHeap) {
 		unsigned int graphIndex = heap[indexInHeap]->getIndexInGraph(currentIteration);
-		graph->getHeapIndices()[graphIndex] = -2;
+		graph->setHeapIndices(graphIndex, -2);
 	}
 	//-------------------------------------------
 	//Heap methods
