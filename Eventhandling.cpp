@@ -2,14 +2,15 @@
 using namespace std;
 
 
-
-void initServer(shared_ptr<PortableServer> server) {
+shared_ptr<PortableServer> server;
+shared_ptr<PortableClient> client;
+void initServer() {
 	server = shared_ptr<PortableServer>(new PortableServer());
 	server->waitForClient();
 	server->receiveMultithreaded();
 }
 
-void initClient(shared_ptr<PortableClient> client) {
+void initClient() {
 	string s = "192.168.178.28";//TODO: typeable ip
 	client = shared_ptr<PortableClient>(new PortableClient(s.c_str()));
 	client->waitForServer();
@@ -36,13 +37,13 @@ void Eventhandling::eventloop() {
 		if (menu->hostServer() == true) {
 			playerIndex = 0;
 			initIndex = true;
-			networkThread = new thread(&initServer, server);
+			networkThread = new thread(&initServer);
 			menuActive = false;//go to game
 		}
 		if (menu->connectAsClient() == true) {
 			playerIndex = 1;
 			initIndex = true;
-			networkThread = new thread(&initClient, client);
+			networkThread = new thread(&initClient);
 			menuActive = false;//go to game
 		}
 		if (initIndex == true) {

@@ -32,9 +32,6 @@ private:
 	unique_ptr<Menu> menu;
 	bool menuActive = true;
 
-	shared_ptr<PortableServer> server;
-	shared_ptr<PortableClient> client;
-
 	bool received = true;
 	thread* networkThread;
 

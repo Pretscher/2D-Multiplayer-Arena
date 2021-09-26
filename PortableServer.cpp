@@ -243,8 +243,8 @@ void PortableServer::waitForClient() {
 
     connected = true;
 
-    int iplenght = 14;
-    getsockname(ListenSocket, ip, &iplenght);
+   // int iplenght = 14;
+   // getsockname(ListenSocket, ip, &iplenght);
     // No long longer need server socket
     closesocket(ListenSocket);
     cout << "Server successfully connected to client. Ready to receive messages.\n";
