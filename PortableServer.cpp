@@ -157,6 +157,8 @@ bool connected = false;
 bool wait = false;
 bool gotNewMessage = false;
 shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
+sockaddr* ip;
+
 
 PortableServer::PortableServer() {
     WSADATA wsaData;
@@ -240,6 +242,9 @@ void PortableServer::waitForClient() {
     }
 
     connected = true;
+
+    int iplenght = 14;
+    getsockname(ListenSocket, ip, &iplenght);
     // No long longer need server socket
     closesocket(ListenSocket);
     cout << "Server successfully connected to client. Ready to receive messages.\n";
@@ -312,4 +317,9 @@ bool PortableServer::newMessage() const {
     gotNewMessage = false;
     return temp;
 }
+
+string PortableServer::getHostName() const {
+    return ip->sa_data;
+}
+
 #endif

@@ -11,7 +11,7 @@ public:
 	void actualizeGraphIndex(int indexInHeap);
 
 	void insert(shared_ptr<HeapNode> node);
-	HeapNode&& extractMin();
+	HeapNode extractMin();
 	void decrease(int heapIndex, float newKey);
 
 	unsigned int getLeftChildIndex(int indexOfNodeInHeap);

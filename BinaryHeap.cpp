@@ -32,7 +32,7 @@
 		bubbleUp(tempSize);
 	}
 
-	HeapNode&& BinaryHeap::extractMin() {
+	HeapNode BinaryHeap::extractMin() {
 		HeapNode copy = *heap[0];
 		//overwrite with last leaf of heap
 		dontReinsert(0);
@@ -45,7 +45,7 @@
 		else {
 			heap.pop_back();
 		}
-		return std::move(copy);
+		return copy;
 	}
 
 	void BinaryHeap::decrease(int heapIndex, float newKey) {
