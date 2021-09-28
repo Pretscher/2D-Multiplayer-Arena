@@ -154,7 +154,6 @@ PortableClient::PortableClient() {
     }
     connected = true;
     cout << "Client successfully connected to server!\n";
-    freeaddrinfo(result);
 }
 
 
