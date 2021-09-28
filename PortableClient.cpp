@@ -162,32 +162,6 @@ PortableClient::PortableClient() {
         std::cout << "No host found";
         std::exit(0);
     }
-    // Resolve the server address and port
-    iResult = getaddrinfo(copy.c_str(), DEFAULT_PORT, &hints, &result);
-    if (iResult != 0) {
-        cout << "Client getaddrinfo failed with error: \n" << iResult;
-        WSACleanup();
-        return;
-    }
-
-    // Attempt to connect to an address until one succeeds
-
-    // Create a SOCKET for connecting to server
-    ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-    if (ConnectSocket == INVALID_SOCKET) {
-        cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
-        WSACleanup();
-        exit(0);
-        return;
-    }
-
-    // Connect to server.
-    iResult = connect(ConnectSocket, result->ai_addr, (int) result->ai_addrlen);
-    if (iResult == SOCKET_ERROR) {
-        closesocket(ConnectSocket);
-        ConnectSocket = INVALID_SOCKET;
-        cout << "Client Unable to connect to server!\n";
-    }
     connected = true;
     cout << "Client successfully connected to server!\n";
     freeaddrinfo(result);
@@ -306,7 +280,7 @@ mutex finishAll;
 bool finishAllThreads = false;
 
 void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, int index) {
-    SOCKET ConnectSocket;
+    SOCKET tempConnectSocket;
     int res;
     res = getaddrinfo(myIP, DEFAULT_PORT, hints, &result);
     if (result != nullptr) {
@@ -319,18 +293,18 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
         // Create a SOCKET for connecting to server
 
     
-        ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-        if (ConnectSocket == INVALID_SOCKET) {
+        tempConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+        if (tempConnectSocket == INVALID_SOCKET) {
             cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
             WSACleanup();
         }
 
-        res = connect(ConnectSocket, result->ai_addr, (int) result->ai_addrlen);
+        res = connect(tempConnectSocket, result->ai_addr, (int) result->ai_addrlen);
         if (res == SOCKET_ERROR) {
-            closesocket(ConnectSocket);
+            closesocket(tempConnectSocket);
         }
         else {
-            iResult = send(ConnectSocket, "12345", (int) strlen("12345"), 0);
+            iResult = send(tempConnectSocket, "12345", (int) strlen("12345"), 0);
             if (iResult == SOCKET_ERROR) {
                 cout << "Client send failed with error: \n" << WSAGetLastError();
                 WSACleanup();
@@ -350,9 +324,10 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                 }
                 finishAll.unlock();
 
-                iResult = recv(ConnectSocket, recvbuf.data(), recvbuflen, 0);
+                iResult = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
 
                 if (iResult > 0) {
+                    ConnectSocket = tempConnectSocket;
                     foundIP = myIP;
                     return;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
                 }
@@ -360,7 +335,7 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                 // cout << "Client received message: " << *lastMessage;
                 if (iResult < 0) {
                     cout << "Client recv failed with error: \n" << WSAGetLastError();
-                    closesocket(ConnectSocket);
+                    closesocket(tempConnectSocket);
                     WSACleanup();
                     exit(0);
                     return;
