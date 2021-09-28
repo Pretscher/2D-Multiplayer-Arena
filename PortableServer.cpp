@@ -1,6 +1,8 @@
 #include "PortableServer.hpp"
 #include <thread>
-#include "iostream" 
+#include "iostream"
+
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 using namespace std;
 
 #ifdef __linux__ 
@@ -157,7 +159,6 @@ bool connected = false;
 bool wait = false;
 bool gotNewMessage = false;
 shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
-sockaddr* ip;
 
 
 PortableServer::PortableServer() {
@@ -232,6 +233,7 @@ PortableServer::PortableServer() {
 
 void PortableServer::waitForClient() {
     // Accept a client socket
+
     ClientSocket = accept(ListenSocket, nullptr, nullptr);
     if (ClientSocket == INVALID_SOCKET) {
         cout << "Server accept failed with error: \n" << WSAGetLastError();
@@ -243,8 +245,6 @@ void PortableServer::waitForClient() {
 
     connected = true;
 
-   // int iplenght = 14;
-   // getsockname(ListenSocket, ip, &iplenght);
     // No long longer need server socket
     closesocket(ListenSocket);
     cout << "Server successfully connected to client. Ready to receive messages.\n";
@@ -318,8 +318,27 @@ bool PortableServer::newMessage() const {
     return temp;
 }
 
-string PortableServer::getHostName() const {
-    return ip->sa_data;
+
+string PortableServer::getIP() const {
+    char hostname[255];
+    struct hostent* he;
+    struct in_addr** addr_list;
+
+    WSAData data;
+    WSAStartup(MAKEWORD(2, 2), &data);
+
+    gethostname(hostname, 255);
+    std::cout << "Host name: " << hostname << std::endl;
+
+    if ((he = gethostbyname(hostname)) == NULL) {
+        std::cout << "gethostbyname error" << std::endl;
+        return string();
+    }
+    else {
+        addr_list = (struct in_addr**) he->h_addr_list;
+        return string(inet_ntoa(*addr_list[0]));
+    }
+
 }
 
 #endif

@@ -1,5 +1,7 @@
 #include "PortableClient.hpp"
 #include <iostream>
+
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 using namespace std;
 
 #ifdef __linux__ 
@@ -133,7 +135,7 @@ static bool wait = false;
 static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 static bool gotNewMessage = false;
 
-PortableClient::PortableClient(const char* serverIP) {
+PortableClient::PortableClient() {
     WSADATA wsaData;
     ConnectSocket = INVALID_SOCKET;
     struct addrinfo* result = NULL,
@@ -156,8 +158,9 @@ PortableClient::PortableClient(const char* serverIP) {
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
 
+    string copy = searchHost();
     // Resolve the server address and port
-    iResult = getaddrinfo(serverIP, DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(copy.c_str(), DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
         cout << "Client getaddrinfo failed with error: \n" << iResult;
         WSACleanup();
@@ -168,8 +171,7 @@ PortableClient::PortableClient(const char* serverIP) {
     for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
 
         // Create a SOCKET for connecting to server
-        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
-            ptr->ai_protocol);
+        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
             cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
             WSACleanup();
@@ -188,7 +190,7 @@ PortableClient::PortableClient(const char* serverIP) {
     }
 
     freeaddrinfo(result);
-
+    
 }
 
 void PortableClient::waitForServer() {
@@ -279,5 +281,114 @@ bool PortableClient::newMessage() const {
     gotNewMessage = false;
     return temp;
 }
+
+string PortableClient::getIP() const {
+    char hostname[255];
+    struct hostent* he;
+    struct in_addr** addr_list;
+
+    WSAData data;
+    WSAStartup(MAKEWORD(2, 2), &data);
+
+    gethostname(hostname, 255);
+    std::cout << "Host name: " << hostname << std::endl;
+
+    if ((he = gethostbyname(hostname)) == NULL) {
+        std::cout << "gethostbyname error" << std::endl;
+        return string();
+    }
+    else {
+        addr_list = (struct in_addr**) he->h_addr_list;
+        return string(inet_ntoa(*addr_list[0]));
+    }
+
+}
+
+
+
+
+string foundIP = "";
+void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints) {
+    SOCKET ConnectSocket;
+    int res;
+    res = getaddrinfo(myIP, DEFAULT_PORT, hints, &result);
+    if (iResult != 0) {
+        cout << "Client getaddrinfo failed with error: \n" << res;
+        WSACleanup();
+    }
+
+    // Attempt to connect to an address until one succeeds
+    // Create a SOCKET for connecting to server
+    ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    if (ConnectSocket == INVALID_SOCKET) {
+        cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
+        WSACleanup();
+    }
+
+    res = connect(ConnectSocket, result->ai_addr, (int) result->ai_addrlen);
+    if (res == SOCKET_ERROR) {
+        closesocket(ConnectSocket);
+    }
+    else {
+        foundIP = myIP;
+    }
+}
+
+vector<thread> threads;
+string PortableClient::searchHost() const {
+    string myIP = this->getIP();
+    for (int i = 0; i < 2; i++) {
+        myIP.pop_back();
+    }
+    for (int i = 1; i < 255; i++) {
+        //set i as (possibly 3) last digits of iü
+        int prevSize = myIP.size();
+        myIP.append(to_string(i));
+
+        WSADATA wsaData;
+        ConnectSocket = INVALID_SOCKET;
+        
+        recvbuf = vector<char>(DEFAULT_BUFLEN);
+
+        recvbuflen = DEFAULT_BUFLEN;
+
+
+        // Initialize Winsock
+        iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+        if (iResult != 0) {
+            cout << "Client WSAStartup failed with error: \n" << iResult;
+            return "";
+        }
+
+        struct addrinfo* result = nullptr;
+        struct addrinfo* hints = new addrinfo();
+
+        ZeroMemory(hints, sizeof(*hints));
+        hints->ai_family = AF_UNSPEC;
+        hints->ai_socktype = SOCK_STREAM;
+        hints->ai_protocol = IPPROTO_TCP;
+
+        string copy = myIP;
+        threads.push_back(std::thread(&testIP, copy.c_str(), result, hints));
+
+        freeaddrinfo(result);
+
+
+        //delete appended numbers
+        for (int i = myIP.size(); i > prevSize; i--) {
+            myIP.pop_back();
+        }
+        if (foundIP != "") {
+            break;
+        }
+    }
+    while (true) {
+        if (foundIP != "") {
+            break;
+        }
+    }
+    return foundIP;
+}
+
 
 #endif

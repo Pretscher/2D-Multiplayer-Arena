@@ -17,5 +17,5 @@ public:
     shared_ptr<mutex> getMutex() const;
     bool newMessage() const;
 
-    string getHostName() const;
+    string getIP() const;
 };

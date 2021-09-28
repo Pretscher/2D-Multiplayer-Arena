@@ -7,7 +7,7 @@ using namespace std;
 #include <memory>
 class PortableClient {
 public:
-    PortableClient(const char* serverIP);
+    PortableClient();
     void waitForServer();
     void receiveMultithreaded();
     void sendToServer(const char* message);
@@ -16,4 +16,7 @@ public:
     bool isConnected() const;
     shared_ptr<mutex> getMutex() const;
     bool newMessage() const;
+
+    string getIP() const;
+    string searchHost() const;
 };
