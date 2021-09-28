@@ -8,7 +8,6 @@ using namespace std;
 class PortableClient {
 public:
     PortableClient();
-    void waitForServer();
     void receiveMultithreaded();
     void sendToServer(const char* message);
 

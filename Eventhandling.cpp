@@ -13,7 +13,6 @@ void initServer() {
 void initClient() {
 	string s = "192.168.178.28";//TODO: typeable ip
 	client = shared_ptr<PortableClient>(new PortableClient());
-	client->waitForServer();
 	client->receiveMultithreaded();
 }
 

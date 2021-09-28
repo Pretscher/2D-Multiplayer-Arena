@@ -138,9 +138,8 @@ static bool gotNewMessage = false;
 PortableClient::PortableClient() {
     WSADATA wsaData;
     ConnectSocket = INVALID_SOCKET;
-    struct addrinfo* result = NULL,
-        * ptr = NULL,
-        hints;
+    struct addrinfo* result = nullptr, hints;
+
     recvbuf = vector<char>(DEFAULT_BUFLEN);
 
     recvbuflen = DEFAULT_BUFLEN;
@@ -172,39 +171,26 @@ PortableClient::PortableClient() {
     }
 
     // Attempt to connect to an address until one succeeds
-    for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
 
-        // Create a SOCKET for connecting to server
-        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-        if (ConnectSocket == INVALID_SOCKET) {
-            cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
-            WSACleanup();
-            exit(0);
-            return;
-        }
-
-        // Connect to server.
-        iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
-        if (iResult == SOCKET_ERROR) {
-            closesocket(ConnectSocket);
-            ConnectSocket = INVALID_SOCKET;
-            continue;
-        }
-        break;
-    }
-
-    freeaddrinfo(result);
-    
-}
-
-void PortableClient::waitForServer() {
+    // Create a SOCKET for connecting to server
+    ConnectSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (ConnectSocket == INVALID_SOCKET) {
-        cout << "Client Unable to connect to server!\n";
+        cout << "Client socket connection failed with error: %ld\n" << WSAGetLastError();
         WSACleanup();
         exit(0);
         return;
     }
+
+    // Connect to server.
+    iResult = connect(ConnectSocket, result->ai_addr, (int) result->ai_addrlen);
+    if (iResult == SOCKET_ERROR) {
+        closesocket(ConnectSocket);
+        ConnectSocket = INVALID_SOCKET;
+        cout << "Client Unable to connect to server!\n";
+    }
     connected = true;
+    cout << "Client successfully connected to server!\n";
+    freeaddrinfo(result);
 }
 
 
@@ -315,6 +301,10 @@ thread** threads;
 mutex** mutices;
 bool* threadFinished;
 string foundIP = "";
+
+mutex finishAll;
+bool finishAllThreads = false;
+
 void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, int index) {
     SOCKET ConnectSocket;
     int res;
@@ -349,6 +339,17 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
             long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
             while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 1000) {
                 this_thread::sleep_for(chrono::milliseconds(1));
+
+                finishAll.lock();
+                if (finishAllThreads == true) {
+                    mutices[index]->lock();
+                    threadFinished[index] = true;
+                    mutices[index]->unlock();
+                    finishAll.unlock();
+                    return;
+                }
+                finishAll.unlock();
+
                 iResult = recv(ConnectSocket, recvbuf.data(), recvbuflen, 0);
 
                 if (iResult > 0) {
@@ -428,6 +429,9 @@ string PortableClient::searchHost() const {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(5));
         if (foundIP != "") {
+            finishAll.lock();
+            finishAllThreads = true;
+            finishAll.unlock();
             break;
         }
 
