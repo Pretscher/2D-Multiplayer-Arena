@@ -138,12 +138,8 @@ static bool gotNewMessage = false;
 PortableClient::PortableClient() {
     WSADATA wsaData;
     ConnectSocket = INVALID_SOCKET;
-    struct addrinfo* result = nullptr, hints;
-
     recvbuf = vector<char>(DEFAULT_BUFLEN);
-
     recvbuflen = DEFAULT_BUFLEN;
-
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -151,12 +147,6 @@ PortableClient::PortableClient() {
         cout << "Client WSAStartup failed with error: \n" << iResult;
         return;
     }
-
-    ZeroMemory(&hints, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-
     string copy = searchHost();
     if (copy == "") {
         std::cout << "No host found";
@@ -329,6 +319,7 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                 if (iResult > 0) {
                     ConnectSocket = tempConnectSocket;
                     foundIP = myIP;
+                    freeaddrinfo(result);
                     return;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
                 }
 
@@ -343,6 +334,7 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
             }
         }
     }
+    freeaddrinfo(result);
     mutices[index]->lock();
     threadFinished[index] = true;
     mutices[index]->unlock();
@@ -364,10 +356,7 @@ string PortableClient::searchHost() const {
         myIP.append(to_string(i));
 
         WSADATA wsaData;
-        ConnectSocket = INVALID_SOCKET;
-        
         recvbuf = vector<char>(DEFAULT_BUFLEN);
-
         recvbuflen = DEFAULT_BUFLEN;
 
 
