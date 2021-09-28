@@ -340,7 +340,7 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
             closesocket(ConnectSocket);
         }
         else {
-            iResult = send(ConnectSocket, "areyouhost", (int) strlen("areyouhost"), 0);
+            iResult = send(ConnectSocket, "12345", (int) strlen("12345"), 0);
             if (iResult == SOCKET_ERROR) {
                 cout << "Client send failed with error: \n" << WSAGetLastError();
                 WSACleanup();

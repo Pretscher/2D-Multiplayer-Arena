@@ -282,6 +282,13 @@ void PortableServer::receiveMultithreaded() {
             for (int i = 0; i < iResult; i++) {
                 lastMessage->push_back(recvbuf[i]);
             }
+            //connection setup
+            if (lastMessage->compare("12345") == 0) {
+                sendToClient("12345");
+                lastMessage->clear();
+                gotNewMessage = false;
+            }
+
             mtx->unlock();
         }
 
