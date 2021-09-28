@@ -265,9 +265,6 @@ mutex** mutices;
 bool* threadFinished;
 string foundIP = "";
 
-mutex finishAll;
-bool finishAllThreads = false;
-
 void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, int index) {
     SOCKET tempConnectSocket;
     int res;
@@ -302,16 +299,6 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
             long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
             while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 1000) {
                 this_thread::sleep_for(chrono::milliseconds(1));
-
-                finishAll.lock();
-                if (finishAllThreads == true) {
-                    mutices[index]->lock();
-                    threadFinished[index] = true;
-                    mutices[index]->unlock();
-                    finishAll.unlock();
-                    return;
-                }
-                finishAll.unlock();
 
                 iResult = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
 
@@ -392,9 +379,6 @@ string PortableClient::searchHost() const {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(5));
         if (foundIP != "") {
-            finishAll.lock();
-            finishAllThreads = true;
-            finishAll.unlock();
             break;
         }
 
