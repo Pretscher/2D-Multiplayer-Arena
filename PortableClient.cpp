@@ -126,7 +126,8 @@ bool PortableClient::newMessage() const {
 #define DEFAULT_PORT "8080"
 
 static int iResult;
-static SOCKET ConnectSocket;
+static vector<SOCKET> ConnectSockets;
+static SOCKET chosenSocket;
 static vector<char> recvbuf;
 static int recvbuflen;
 static shared_ptr<string> lastMessage = shared_ptr<string>(new string());
@@ -137,7 +138,6 @@ static bool gotNewMessage = false;
 
 PortableClient::PortableClient() {
     WSADATA wsaData;
-    ConnectSocket = INVALID_SOCKET;
     recvbuf = vector<char>(DEFAULT_BUFLEN);
     recvbuflen = DEFAULT_BUFLEN;
 
@@ -147,20 +147,27 @@ PortableClient::PortableClient() {
         cout << "Client WSAStartup failed with error: \n" << iResult;
         return;
     }
-    string copy = searchHost();
-    if (copy == "") {
-        std::cout << "No host found";
-        std::exit(0);
+}
+
+void PortableClient::connectToHost(string ip) {
+
+    for (int i = 0; i < avHosts->size(); i++) {
+        if (avHosts->at(i).compare(ip) == 0) {
+            chosenSocket = ConnectSockets.at(i);//same index, pushed back simultanioisly
+        }
+        else {
+            closesocket(ConnectSockets.at(i));
+        }
     }
+    ConnectSockets.clear();
     connected = true;
     cout << "Client successfully connected to server!\n";
 }
 
-
 void PortableClient::sendToServer(const char* message) {
     if (wait == false) {
         // Send an initial buffer
-        iResult = send(ConnectSocket, message, (int)strlen(message), 0);
+        iResult = send(chosenSocket, message, (int)strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
             cout << "Client send failed with error: \n" << WSAGetLastError();
             WSACleanup();
@@ -175,7 +182,7 @@ void PortableClient::sendToServer(const char* message) {
 void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        iResult = recv(ConnectSocket, recvbuf.data(), recvbuflen, 0);
+        iResult = recv(chosenSocket, recvbuf.data(), recvbuflen, 0);
 
 
         if (iResult > 0) {
@@ -194,7 +201,7 @@ void PortableClient::receiveMultithreaded() {
         // cout << "Client received message: " << *lastMessage;
         if (iResult < 0) {
             cout << "Client recv failed with error: \n" << WSAGetLastError();
-            closesocket(ConnectSocket);
+            closesocket(chosenSocket);
             WSACleanup();
             exit(0);
             return;
@@ -203,17 +210,17 @@ void PortableClient::receiveMultithreaded() {
     }
 
     // shutdown the connection since we're done
-    iResult = shutdown(ConnectSocket, SD_SEND);
+    iResult = shutdown(chosenSocket, SD_SEND);
     if (iResult == SOCKET_ERROR) {
         cout << "Client shutdown failed with error: \n" << WSAGetLastError();
-        closesocket(ConnectSocket);
+        closesocket(chosenSocket);
         WSACleanup();
         exit(0);
         return;
     }
 
     // cleanup
-    closesocket(ConnectSocket);
+    closesocket(chosenSocket);
     WSACleanup();
 }
 
@@ -303,8 +310,8 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                 iResult = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
 
                 if (iResult > 0) {
-                    ConnectSocket = tempConnectSocket;
-                    foundIP = myIP;
+                    ConnectSockets.push_back(std::move(tempConnectSocket));
+                    foundIP = myIP;//this will be pushed back to string. 
                     freeaddrinfo(result);
                     return;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
                 }
@@ -327,7 +334,7 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
 }
 
 
-string PortableClient::searchHost() const {
+void PortableClient::searchHosts() const {
     threads = new thread * [checkedIpCount];
     mutices = new mutex * [checkedIpCount];
     threadFinished = new bool[checkedIpCount];
@@ -350,7 +357,7 @@ string PortableClient::searchHost() const {
         iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (iResult != 0) {
             cout << "Client WSAStartup failed with error: \n" << iResult;
-            return "";
+            return;
         }
 
         struct addrinfo* result = nullptr;
@@ -379,7 +386,8 @@ string PortableClient::searchHost() const {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(5));
         if (foundIP != "") {
-            break;
+            avHosts->push_back(foundIP);
+            foundIP = "";
         }
 
         //check if finished without connecting
@@ -390,11 +398,9 @@ string PortableClient::searchHost() const {
             }
         }
         if (finished == true) {
-            return "";
+            return;
         }
     }
-    return foundIP;
 }
-
 
 #endif

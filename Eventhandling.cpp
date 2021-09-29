@@ -10,9 +10,15 @@ void initServer() {
 	server->receiveMultithreaded();
 }
 
+shared_ptr<vector<string>> availableHosts = nullptr;
+
 void initClient() {
 	string s = "192.168.178.28";//TODO: typeable ip
 	client = shared_ptr<PortableClient>(new PortableClient());
+	client->getAvailableHosts();
+	while (client->isConnected() == false) {
+		availableHosts = client->getAvailableHosts();
+	}
 	client->receiveMultithreaded();
 }
 
@@ -91,6 +97,12 @@ void Eventhandling::drawingloop() {
 		abilityHandling->drawCDs();
 	}
 	//GlobalRecources::pFinding->getGraph()->debugDrawing();
+
+	if (availableHosts != nullptr) {
+		for (int i = 0; i < availableHosts->size(); i++) {
+			Renderer::drawRect(400, 200 + (i * 250), 200, 100, sf::Color(255, 0, 255, 255), true);
+		}
+	}
 }
 
 
