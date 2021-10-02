@@ -13,8 +13,8 @@ public:
 	vector<Button> avHostButtons;
 	bool selectHost = false;
 	Menu() {
-		host = unique_ptr<Button>(new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", 150, sf::Color(255, 0, 0, 255)));
-		connect = unique_ptr<Button>(new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", 150, sf::Color(255, 0, 0, 255)));
+		host = unique_ptr<Button>(new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", 80, sf::Color(255, 0, 0, 255)));
+		connect = unique_ptr<Button>(new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", 80, sf::Color(255, 0, 0, 255)));
 		bHostServer = false;
 		bConnectAsClient = false;
 	}
