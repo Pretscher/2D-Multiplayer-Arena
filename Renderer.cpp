@@ -281,7 +281,7 @@ void Renderer::drawRectWithTexture(int x, int y, int width, int height, sf::Text
     Renderer::currentWindow->draw(square);
 }
 
-void Renderer::drawText(string i_text, int x, int y, int width, int height, sf::Color color) {
+void Renderer::drawText(string i_text, int x, int y, int width, int height, int charSize, sf::Color color) {
     fromYXBounds(width, height);
     fromYX(y, x);
 
@@ -300,7 +300,7 @@ void Renderer::drawText(string i_text, int x, int y, int width, int height, sf::
 
 
     text.setFillColor(color);
-    text.setCharacterSize(width / 4);
+    text.setCharacterSize(charSize);
 
     size_t CharacterSize = text.getCharacterSize();
 

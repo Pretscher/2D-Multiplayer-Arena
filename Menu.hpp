@@ -13,8 +13,8 @@ public:
 	vector<Button> avHostButtons;
 	bool selectHost = false;
 	Menu() {
-		host = unique_ptr<Button>(new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", sf::Color(255, 0, 0, 255)));
-		connect = unique_ptr<Button>(new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", sf::Color(255, 0, 0, 255)));
+		host = unique_ptr<Button>(new Button(850, 200, 300, 150, sf::Color(200, 200, 200, 255), "Host", 150, sf::Color(255, 0, 0, 255)));
+		connect = unique_ptr<Button>(new Button(850, 1450, 300, 150, sf::Color(200, 200, 200, 255), "Connect", 150, sf::Color(255, 0, 0, 255)));
 		bHostServer = false;
 		bConnectAsClient = false;
 	}
@@ -43,7 +43,7 @@ public:
 		else {
 			avHostButtons.clear();//has to be cleared eitherway if connection has been lost and availablehosts is nullptr again
 			for (int i = 0; i < avHosts.size(); i++) {
-				avHostButtons.push_back(Button(200 + (i * 150), 310, 1610, 100, sf::Color(50, 255, 50, 255), avHosts.at(i), sf::Color(255, 255, 255, 255)));
+				avHostButtons.push_back(Button(200 + (i * 150), 310, 1310, 100, sf::Color(50, 50, 50, 100), avHosts.at(i), 60, sf::Color(255, 255, 255, 255)));
 			}
 		}
 	}

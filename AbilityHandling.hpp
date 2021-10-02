@@ -214,7 +214,7 @@ public:
             else if (i == 4) {
                 abilityLetter = string("T");
             }
-            Renderer::drawText(abilityLetter, x - size / 2.2f, y - size / 2.2f, size * 2.0f, size * 2.0f, sf::Color(0, 0, 0, 255));
+            Renderer::drawText(abilityLetter, x - size / 2.2f, y - size / 2.2f, size * 2.0f, size * 2.0f, 15, sf::Color(0, 0, 0, 255));
         }
     }
 

@@ -25,7 +25,7 @@ public:
 
     static sf::Texture loadTexture(string path, bool repeat);
 
-    static void drawText(string text, int y, int x, int width, int height, sf::Color color);
+    static void drawText(string text, int y, int x, int width, int height, int charSize, sf::Color color);
 
     static shared_ptr<int[]> viewSpace;
     static shared_ptr<const int[]> viewSpaceLimits;
@@ -35,7 +35,7 @@ public:
 //help button class
 class Button {
 public:
-    Button(int y, int x, int width, int height, sf::Color color, string text, sf::Color textColor) {
+    Button(int y, int x, int width, int height, sf::Color color, string text, int charSize, sf::Color textColor) {
         this->y = y;
         this->x = x;
         this->width = width;
@@ -43,6 +43,7 @@ public:
         this->text = text;
         this->color = color;
         this->textColor = textColor;
+        this->charSize = charSize;
     }
     bool sameClick = false;
     bool isPressed() {
@@ -69,16 +70,17 @@ public:
             newColor.r += 50;
             newColor.g += 50;
             newColor.b += 50;
-            Renderer::drawRectOutline(x, y, width, height, newColor, 10, true);
+            Renderer::drawRectOutline(x, y, width, height, newColor, 3, true);
         }
         else {
             Renderer::drawRectOutline(x, y, width, height, newColor, 3, true);
         }
         Renderer::drawRect(x, y, width, height, newColor, true);
 
-        Renderer::drawText(text, x, y, width, height, textColor);
+        Renderer::drawText(text, x, y, width, height, charSize, textColor);
     }
 private:
+    int charSize;
     int x, y, width, height;
     sf::Color color, textColor;
     string text;

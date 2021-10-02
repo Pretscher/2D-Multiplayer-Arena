@@ -21,7 +21,6 @@ public:
 
     vector<string> avHosts;
 
-
     inline vector<string> getAvailableHosts() {
         vector<string> copy = avHosts;
         return std::move(copy);

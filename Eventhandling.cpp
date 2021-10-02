@@ -2,12 +2,14 @@
 using namespace std;
 
 
-shared_ptr<PortableServer> server;
-shared_ptr<PortableClient> client;
+shared_ptr<PortableServer> server = nullptr;
+shared_ptr<PortableClient> client = nullptr;
 void initServer() {
 	server = shared_ptr<PortableServer>(new PortableServer());
-	server->waitForClient();
-	server->receiveMultithreaded();
+	while (true) {
+		server->waitForClient();
+		server->receiveMultithreaded();//if connection is lost (exits this method) wait for client again
+	}
 }
 
 vector<string> availableHosts;
@@ -18,7 +20,6 @@ void initClient() {
 	client->searchHosts();
 	while (true) {
 		this_thread::sleep_for(chrono::milliseconds(1));
-		availableHosts = client->getAvailableHosts();//shown in menu
 		if (client->isConnected() == true) {
 			client->receiveMultithreaded();
 		}
@@ -50,13 +51,14 @@ void Eventhandling::eventloop() {
 				networkThread = new thread(&initServer);
 				menuActive = false;//go to game
 				triesToConnect = true;
+				menu->selectHostMenu();
 			}
 			if (menu->connectAsClient() == true) {
 				playerIndex = 1;
 				initIndex = true;
 				networkThread = new thread(&initClient);
 				triesToConnect = true;
-
+				menu->selectHostMenu();
 			}
 		}
 		if (initIndex == true) {
@@ -66,13 +68,15 @@ void Eventhandling::eventloop() {
 			abilityHandling = unique_ptr<AbilityHandling>(new AbilityHandling(playerIndex));
 		}
 
-		if (triesToConnect == true && menu->connectAsClient() == true) {
-			//host selection
-			menu->selectHostMenu();
-			menu->giveAvailableHosts(std::move(availableHosts));
-			if (menu->getSelectedHost() != nullptr) {
-				client->connectToHost(*menu->getSelectedHost());
-				menuActive = false;//go to game
+		if (client != nullptr) {
+			if (triesToConnect == true && menu->connectAsClient() == true) {
+				//host selection
+				availableHosts = client->getAvailableHosts();//shown in menu
+				menu->giveAvailableHosts(std::move(availableHosts));
+				if (menu->getSelectedHost() != nullptr) {
+					client->connectToHost(*menu->getSelectedHost());
+					menuActive = false;//go to game
+				}
 			}
 		}
 	}

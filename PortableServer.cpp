@@ -155,7 +155,22 @@ int recvbuflen;
 SOCKET ClientSocket;
 SOCKET ListenSocket;
 shared_ptr<string> lastMessage = shared_ptr<string>(new string());;
+
 bool connected = false;
+
+mutex connectedMtx;
+void setConnected(bool c) {
+    connectedMtx.lock();
+    connected = c;
+    connectedMtx.unlock();
+}
+bool getConnected() {
+    connectedMtx.lock();
+    bool temp = connected;
+    connectedMtx.unlock();
+    return connected;
+}
+
 bool wait = false;
 bool gotNewMessage = false;
 shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
@@ -243,7 +258,7 @@ void PortableServer::waitForClient() {
         return;
     }
 
-    connected = true;
+    setConnected(true);
 
     // No long longer need server socket
     closesocket(ListenSocket);
@@ -254,24 +269,20 @@ void PortableServer::waitForClient() {
 
 void PortableServer::sendToClient(const char* message) {
     if (wait == false) {
-        iResult = send(ClientSocket, message, (int)strlen(message), 0);
+        iResult = send(ClientSocket, message, (int) strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
             cout << "Server Message Sending Error: \n" << message;
-            WSACleanup();
-            exit(0);
             return;
-            }
-        wait = true;
-        //    cout << "Server Message Sent: \n" << string(message);
         }
+        wait = true;
     }
+}
 
 void PortableServer::receiveMultithreaded() {
     // Receive until the peer shuts down the connection
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
         iResult = recv(ClientSocket, recvbuf.data(), recvbuflen, 0);
-
 
         //save message
         if (iResult > 0) {
@@ -293,17 +304,14 @@ void PortableServer::receiveMultithreaded() {
         }
 
         if (iResult < 0) {
-            cout << "Server recv failed with error: \n" << WSAGetLastError();
+            cout << "Lost connection to client.";
             closesocket(ClientSocket);
-            WSACleanup();
-            exit(0);
+            setConnected(false);
             return;
         }
         wait = false;
         //   cout << "Server received message: " << *lastMessage;
     }
-
-    exit(0);
 }
 
 shared_ptr<string> PortableServer::getLastMessage() const {
@@ -311,7 +319,7 @@ shared_ptr<string> PortableServer::getLastMessage() const {
 }
 
 bool PortableServer::isConnected() const {
-    return connected;
+    return getConnected();
 }
 
 shared_ptr<mutex> PortableServer::getMutex() const {
@@ -347,5 +355,7 @@ string PortableServer::getIP() const {
     }
 
 }
+
+
 
 #endif
