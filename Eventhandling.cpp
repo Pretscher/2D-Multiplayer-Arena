@@ -10,16 +10,19 @@ void initServer() {
 	server->receiveMultithreaded();
 }
 
-shared_ptr<vector<string>> availableHosts = nullptr;
+vector<string> availableHosts;
 
 void initClient() {
-	string s = "192.168.178.28";//TODO: typeable ip
+	//string ip = "192.168.178.28";//TODO: typeable ip
 	client = shared_ptr<PortableClient>(new PortableClient());
-	client->getAvailableHosts();
-	while (client->isConnected() == false) {
-		availableHosts = client->getAvailableHosts();
+	client->searchHosts();
+	while (true) {
+		this_thread::sleep_for(chrono::milliseconds(1));
+		availableHosts = client->getAvailableHosts();//shown in menu
+		if (client->isConnected() == true) {
+			client->receiveMultithreaded();
+		}
 	}
-	client->receiveMultithreaded();
 }
 
 Eventhandling::Eventhandling() {
@@ -33,29 +36,44 @@ Eventhandling::Eventhandling() {
 	menu = unique_ptr<Menu>(new Menu());
 }
 
+static bool triesToConnect = false;
 void Eventhandling::eventloop() {
 	//if host or client has not been selected, wait for it to happen
 	if (menuActive == true) {
 		menu->update();
 		bool initIndex = false;
 		int playerIndex;
-		if (menu->hostServer() == true) {
-			playerIndex = 0;
-			initIndex = true;
-			networkThread = new thread(&initServer);
-			menuActive = false;//go to game
-		}
-		if (menu->connectAsClient() == true) {
-			playerIndex = 1;
-			initIndex = true;
-			networkThread = new thread(&initClient);
-			menuActive = false;//go to game
+		if (triesToConnect == false) {
+			if (menu->hostServer() == true) {
+				playerIndex = 0;
+				initIndex = true;
+				networkThread = new thread(&initServer);
+				menuActive = false;//go to game
+				triesToConnect = true;
+			}
+			if (menu->connectAsClient() == true) {
+				playerIndex = 1;
+				initIndex = true;
+				networkThread = new thread(&initClient);
+				triesToConnect = true;
+
+			}
 		}
 		if (initIndex == true) {
 			playerHandling->setPlayerIndex(playerIndex);//right now there are only two players so the client just has index 1
 			pathfinding->setPlayerIndex(playerIndex);
 			projectileHandling->setPlayerIndex(playerIndex);
 			abilityHandling = unique_ptr<AbilityHandling>(new AbilityHandling(playerIndex));
+		}
+
+		if (triesToConnect == true && menu->connectAsClient() == true) {
+			//host selection
+			menu->selectHostMenu();
+			menu->giveAvailableHosts(std::move(availableHosts));
+			if (menu->getSelectedHost() != nullptr) {
+				client->connectToHost(*menu->getSelectedHost());
+				menuActive = false;//go to game
+			}
 		}
 	}
 
@@ -98,11 +116,10 @@ void Eventhandling::drawingloop() {
 	}
 	//GlobalRecources::pFinding->getGraph()->debugDrawing();
 
-	if (availableHosts != nullptr) {
-		for (int i = 0; i < availableHosts->size(); i++) {
-			Renderer::drawRect(400, 200 + (i * 250), 200, 100, sf::Color(255, 0, 255, 255), true);
-		}
+	for (int i = 0; i < availableHosts.size(); i++) {
+		Renderer::drawRect(400, 200 + (i * 250), 200, 100, sf::Color(255, 0, 255, 255), true);
 	}
+	
 }
 
 

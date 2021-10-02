@@ -19,14 +19,15 @@ public:
 
     string getIP() const;
 
-    shared_ptr<vector<string>> avHosts = nullptr;
+    vector<string> avHosts;
 
 
-    inline shared_ptr<vector<string>> getAvailableHosts() {
-        return avHosts;
+    inline vector<string> getAvailableHosts() {
+        vector<string> copy = avHosts;
+        return std::move(copy);
     }
 
     void connectToHost(string ip);
 
-    void searchHosts() const;
+    void searchHosts();
 };

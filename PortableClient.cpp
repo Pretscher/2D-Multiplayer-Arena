@@ -151,8 +151,8 @@ PortableClient::PortableClient() {
 
 void PortableClient::connectToHost(string ip) {
 
-    for (int i = 0; i < avHosts->size(); i++) {
-        if (avHosts->at(i).compare(ip) == 0) {
+    for (int i = 0; i < avHosts.size(); i++) {
+        if (avHosts.at(i).compare(ip) == 0) {
             chosenSocket = ConnectSockets.at(i);//same index, pushed back simultanioisly
         }
         else {
@@ -183,7 +183,6 @@ void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
         iResult = recv(chosenSocket, recvbuf.data(), recvbuflen, 0);
-
 
         if (iResult > 0) {
             mtx->lock();//lock caus writing and reading message at the same time is not thread safe
@@ -261,24 +260,25 @@ string PortableClient::getIP() const {
         addr_list = (struct in_addr**) he->h_addr_list;
         return string(inet_ntoa(*addr_list[0]));
     }
-
 }
 
 
 
-const unsigned int checkedIpCount = 256;
+const unsigned int checkedIpCount = 128;
 thread** threads;
 mutex** mutices;
 bool* threadFinished;
 string foundIP = "";
 
 void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, int index) {
+    threadFinished[index] = false;
+    mutices[index] = new mutex();
     SOCKET tempConnectSocket;
     int res;
     res = getaddrinfo(myIP, DEFAULT_PORT, hints, &result);
     if (result != nullptr) {
-        if (iResult != 0) {
-            cout << "Client getaddrinfo failed with error: \n" << res;
+        if (res != 0) {
+            cout << "Client getaddrinfo failed with error: \n";
             WSACleanup();
         }
 
@@ -297,44 +297,44 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
             closesocket(tempConnectSocket);
         }
         else {
-            iResult = send(tempConnectSocket, "12345", (int) strlen("12345"), 0);
-            if (iResult == SOCKET_ERROR) {
+            res = send(tempConnectSocket, "12345", (int) strlen("12345"), 0);
+            if (res == SOCKET_ERROR) {
                 cout << "Client send failed with error: \n" << WSAGetLastError();
                 WSACleanup();
             }
 
             long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
-            while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 1000) {
-                this_thread::sleep_for(chrono::milliseconds(1));
+            while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 200) {
+                this_thread::sleep_for(chrono::milliseconds(5));
 
-                iResult = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
+                recvbuf.clear();
+                recvbuf = vector<char>(DEFAULT_BUFLEN);
+                recvbuflen = DEFAULT_BUFLEN;
+                res = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
 
-                if (iResult > 0) {
+                if (res > 0) {
                     ConnectSockets.push_back(std::move(tempConnectSocket));
                     foundIP = myIP;//this will be pushed back to string. 
-                    freeaddrinfo(result);
-                    return;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
+                    break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
                 }
 
                 // cout << "Client received message: " << *lastMessage;
-                if (iResult < 0) {
+                if (res < 0) {
                     cout << "Client recv failed with error: \n" << WSAGetLastError();
                     closesocket(tempConnectSocket);
                     WSACleanup();
                     exit(0);
-                    return;
+                    break;
                 }
             }
         }
     }
     freeaddrinfo(result);
-    mutices[index]->lock();
     threadFinished[index] = true;
-    mutices[index]->unlock();
 }
 
 
-void PortableClient::searchHosts() const {
+void PortableClient::searchHosts() {
     threads = new thread * [checkedIpCount];
     mutices = new mutex * [checkedIpCount];
     threadFinished = new bool[checkedIpCount];
@@ -349,9 +349,6 @@ void PortableClient::searchHosts() const {
         myIP.append(to_string(i));
 
         WSADATA wsaData;
-        recvbuf = vector<char>(DEFAULT_BUFLEN);
-        recvbuflen = DEFAULT_BUFLEN;
-
 
         // Initialize Winsock
         iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -368,8 +365,6 @@ void PortableClient::searchHosts() const {
         hints->ai_socktype = SOCK_STREAM;
         hints->ai_protocol = IPPROTO_TCP;
 
-        threadFinished[i] = false;
-        mutices[i] = new mutex();
         threads[i] = new std::thread(&testIP, (new string(myIP))->c_str(), result, hints, i);
 
         freeaddrinfo(result);
@@ -383,10 +378,11 @@ void PortableClient::searchHosts() const {
             break;
         }
     }
+
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(5));
         if (foundIP != "") {
-            avHosts->push_back(foundIP);
+            avHosts.push_back(std::move(foundIP));
             foundIP = "";
         }
 
@@ -401,6 +397,8 @@ void PortableClient::searchHosts() const {
             return;
         }
     }
+    delete[] mutices;
+    delete[] threads;
 }
 
 #endif
