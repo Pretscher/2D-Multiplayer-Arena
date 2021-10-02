@@ -19,13 +19,9 @@ public:
 
     string getIP() const;
 
-    vector<string> avHosts;
-
-    inline vector<string> getAvailableHosts() {
-        vector<string> copy = avHosts;
-        return std::move(copy);
-    }
-
+    void pushToAvailableHosts(string s);
+    vector<string> getAvailableHosts();
+        
     void connectToHost(string ip);
 
     void searchHosts();

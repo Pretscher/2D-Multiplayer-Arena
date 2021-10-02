@@ -136,6 +136,21 @@ static bool wait = false;
 static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 static bool gotNewMessage = false;
 
+mutex avHostsMtx;
+vector<string> avHosts;
+void PortableClient::pushToAvailableHosts(string s) {
+    avHostsMtx.lock();
+    avHosts.push_back(s);
+    avHostsMtx.unlock();
+}
+
+vector<string> PortableClient::getAvailableHosts() {
+    avHostsMtx.lock();
+    vector<string> copy = avHosts;
+    avHostsMtx.unlock();
+    return std::move(copy);
+}
+
 PortableClient::PortableClient() {
     WSADATA wsaData;
     recvbuf = vector<char>(DEFAULT_BUFLEN);
@@ -334,12 +349,12 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
 }
 
 
-void PortableClient::searchHosts() {
+void searchHostsMultiThreaded(PortableClient* client) {
     threads = new thread * [checkedIpCount];
     mutices = new mutex * [checkedIpCount];
     threadFinished = new bool[checkedIpCount];
 
-    string myIP = this->getIP();
+    string myIP = client->getIP();
     for (int i = 0; i < 2; i++) {
         myIP.pop_back();
     }
@@ -382,7 +397,7 @@ void PortableClient::searchHosts() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(5));
         if (foundIP != "") {
-            avHosts.push_back(std::move(foundIP));
+            client->pushToAvailableHosts(std::move(foundIP));
             foundIP = "";
         }
 
@@ -399,6 +414,11 @@ void PortableClient::searchHosts() {
     }
     delete[] mutices;
     delete[] threads;
+}
+
+thread* searchingHosts;
+void PortableClient::searchHosts() {
+     searchingHosts = new std::thread(&searchHostsMultiThreaded, this);
 }
 
 #endif
