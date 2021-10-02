@@ -154,9 +154,9 @@ vector<char> recvbuf;
 int recvbuflen;
 SOCKET ClientSocket;
 SOCKET ListenSocket;
-shared_ptr<string> lastMessage = shared_ptr<string>(new string());;
+shared_ptr<string> lastMessage;
 
-bool connected = false;
+bool connected;
 
 mutex connectedMtx;
 void setConnected(bool c) {
@@ -171,12 +171,17 @@ bool getConnected() {
     return connected;
 }
 
-bool wait = false;
-bool gotNewMessage = false;
+bool wait;
+bool gotNewMessage;
 shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 
 
 PortableServer::PortableServer() {
+    wait = false;
+    gotNewMessage = false;
+    connected = false;
+    lastMessage = shared_ptr<string>(new string());
+
     WSADATA wsaData;
 
     ListenSocket = INVALID_SOCKET;
