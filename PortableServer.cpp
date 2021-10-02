@@ -211,13 +211,6 @@ PortableServer::PortableServer() {
         return;
     }
 
-
-    cout << "Server successfully set up.\n";
-}
-
-void PortableServer::waitForClient() {
-    // Accept a client socket
-
     // Create a SOCKET for connecting to server
     ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (ListenSocket == INVALID_SOCKET) {
@@ -229,7 +222,7 @@ void PortableServer::waitForClient() {
     }
 
     // Setup the TCP listening socket
-    iResult = bind(ListenSocket, result->ai_addr, (int) result->ai_addrlen);
+    iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
     if (iResult == SOCKET_ERROR) {
         cout << "Server bind failed with error: \n" << WSAGetLastError();
         freeaddrinfo(result);
@@ -249,6 +242,12 @@ void PortableServer::waitForClient() {
         exit(0);
         return;
     }
+
+    cout << "Server successfully set up.\n";
+}
+
+void PortableServer::waitForClient() {
+    // Accept a client socket
 
     ClientSocket = accept(ListenSocket, nullptr, nullptr);
     if (ClientSocket == INVALID_SOCKET) {

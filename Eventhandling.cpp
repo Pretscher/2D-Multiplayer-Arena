@@ -5,8 +5,8 @@ using namespace std;
 shared_ptr<PortableServer> server = nullptr;
 shared_ptr<PortableClient> client = nullptr;
 void initServer() {
-	server = shared_ptr<PortableServer>(new PortableServer());
 	while (true) {
+		server = shared_ptr<PortableServer>(new PortableServer());
 		server->waitForClient();
 		server->receiveMultithreaded();//if connection is lost (exits this method) wait for client again
 	}
