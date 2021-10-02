@@ -304,7 +304,7 @@ void Renderer::drawText(string i_text, int x, int y, int width, int height, int 
 
     size_t CharacterSize = text.getCharacterSize();
     int unusedHelp = 0;
-    fromYXBounds(charSize, unusedHelp);
+    toYXBounds(charSize, unusedHelp);
 
     string String = text.getString().toAnsiString();
     bool bold = (text.getStyle() == sf::Text::Bold);
