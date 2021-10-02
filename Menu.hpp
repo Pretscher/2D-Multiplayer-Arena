@@ -44,6 +44,9 @@ public:
 			avHostButtons.clear();//has to be cleared eitherway if connection has been lost and availablehosts is nullptr again
 			for (int i = 0; i < avHosts.size(); i++) {
 				avHostButtons.push_back(Button(200 + (i * 150), 310, 1310, 100, sf::Color(50, 50, 50, 100), avHosts.at(i), 60, sf::Color(255, 255, 255, 255)));
+				if (avHostButtons[i].isPressed() == true) {
+					selectedHost = shared_ptr<string>(new string(avHosts[i]));
+				}
 			}
 		}
 	}
