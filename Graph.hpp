@@ -4,7 +4,7 @@
 using namespace std;
 #include <mutex>
 #include <memory>
-#include <2Darray.hpp>
+#include "2Darray.hpp"
 
 class Graph {
 public:
