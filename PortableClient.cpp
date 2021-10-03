@@ -328,8 +328,16 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                 res = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
 
                 if (res > 0) {
-                    ConnectSockets.push_back(std::move(tempConnectSocket));
-                    foundIP = myIP;//this will be pushed back to string. 
+                    string msg;
+                    //save message
+                    for (int i = 0; i < res; i++) {
+                        msg.push_back(recvbuf[i]);
+                    }
+                    //connection setup
+                    if (msg.compare("12345") == 0) {
+                        ConnectSockets.push_back(std::move(tempConnectSocket));
+                        foundIP = myIP;//this will be pushed back to string. 
+                    }
                     break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
                 }
 
