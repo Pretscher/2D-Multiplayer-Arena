@@ -27,8 +27,7 @@ using namespace std;
 static bool connected = false;
 static int serverSocket;
 static int server_fd;
-static int recvbuflen = 512;
-static vector<char> recvbuf(recvbuflen);
+static int recvbuflen = 50;
 static vector<int> ConnectSockets;
 
 static bool gotNewMessage = false;
@@ -275,23 +274,20 @@ void PortableClient::searchHosts() {
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
+static string port = "8080";
 
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "8080"
-
-static int iResult;
 static vector<SOCKET> ConnectSockets;
 static SOCKET chosenSocket;
-static vector<char> recvbuf;
-static int recvbuflen;
+static int recvbuflen = 50;
 static shared_ptr<string> lastMessage = shared_ptr<string>(new string());
 static bool connected = false;
 static bool wait = false;
 static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 static bool gotNewMessage = false;
-
 mutex avHostsMtx;
 vector<string> avHosts;
+
+
 void PortableClient::pushToAvailableHosts(string s) {
     avHostsMtx.lock();
     avHosts.push_back(s);
@@ -307,11 +303,8 @@ vector<string> PortableClient::getAvailableHosts() {
 
 PortableClient::PortableClient() {
     WSADATA wsaData;
-    recvbuf = vector<char>(DEFAULT_BUFLEN);
-    recvbuflen = DEFAULT_BUFLEN;
-
     // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         cout << "Client WSAStartup failed with error: \n" << iResult;
         return;
@@ -336,7 +329,7 @@ void PortableClient::connectToHost(string ip) {
 void PortableClient::sendToServer(const char* message) {
     if (wait == false) {
         // Send an initial buffer
-        iResult = send(chosenSocket, message, (int)strlen(message), 0);
+        int iResult = send(chosenSocket, message, (int)strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
             cout << "Client send failed with error: \n" << WSAGetLastError();
             WSACleanup();
@@ -351,7 +344,9 @@ void PortableClient::sendToServer(const char* message) {
 void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        iResult = recv(chosenSocket, recvbuf.data(), recvbuflen, 0);
+
+        char* recvBuf = new char[recvbuflen];
+        int iResult = recv(chosenSocket, recvBuf, recvbuflen, 0);
 
         if (iResult > 0) {
             mtx->lock();//lock caus writing and reading message at the same time is not thread safe
@@ -360,12 +355,11 @@ void PortableClient::receiveMultithreaded() {
 
             //save message
             for (int i = 0; i < iResult; i++) {
-                lastMessage->push_back(recvbuf[i]);
+                lastMessage->push_back(recvBuf[i]);
             }
-
             mtx->unlock();
         }
-
+        delete[] recvBuf;
         // cout << "Client received message: " << *lastMessage;
         if (iResult < 0) {
             cout << "Client recv failed with error: \n" << WSAGetLastError();
@@ -378,7 +372,7 @@ void PortableClient::receiveMultithreaded() {
     }
 
     // shutdown the connection since we're done
-    iResult = shutdown(chosenSocket, SD_SEND);
+    int iResult = shutdown(chosenSocket, SD_SEND);
     if (iResult == SOCKET_ERROR) {
         cout << "Client shutdown failed with error: \n" << WSAGetLastError();
         closesocket(chosenSocket);
@@ -436,13 +430,14 @@ thread** threads;
 mutex** mutices;
 bool* threadFinished;
 string foundIP = "";
+const unsigned int checkedIpCount = 128;
 
 void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, int index) {
     threadFinished[index] = false;
     mutices[index] = new mutex();
     SOCKET tempConnectSocket;
     int res;
-    res = getaddrinfo(myIP, DEFAULT_PORT, hints, &result);
+    res = getaddrinfo(myIP, port.c_str(), hints, &result);
     if (result != nullptr) {
         if (res != 0) {
             cout << "Client getaddrinfo failed with error: \n";
@@ -474,17 +469,16 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
             while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 200) {
                 this_thread::sleep_for(chrono::milliseconds(5));
 
-                recvbuf.clear();
-                recvbuf = vector<char>(DEFAULT_BUFLEN);
-                recvbuflen = DEFAULT_BUFLEN;
-                res = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
+                char* recvBuf = new char[recvbuflen];
+                res = recv(tempConnectSocket, recvBuf, recvbuflen, 0);
 
                 if (res > 0) {
                     string msg;
                     //save message
                     for (int i = 0; i < res; i++) {
-                        msg.push_back(recvbuf[i]);
+                        msg.push_back(recvBuf[i]);
                     }
+                    delete[] recvBuf;
                     //connection setup
                     if (msg.compare("12345") == 0) {
                         ConnectSockets.push_back(std::move(tempConnectSocket));
@@ -526,7 +520,7 @@ void searchHostsMultiThreaded(PortableClient* client) {
         WSADATA wsaData;
 
         // Initialize Winsock
-        iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+        int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (iResult != 0) {
             cout << "Client WSAStartup failed with error: \n" << iResult;
             return;
@@ -580,7 +574,6 @@ thread* searchingHosts;
 void PortableClient::searchHosts() {
      searchingHosts = new std::thread(&searchHostsMultiThreaded, this);
 }
-const unsigned int checkedIpCount = 128;
 
 
 #endif

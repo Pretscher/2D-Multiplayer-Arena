@@ -15,7 +15,7 @@ using namespace std;
 #include <vector>
 #include <mutex>
 #include <string.h>
-#define PORT 8080
+string port = "8080"
 
 static bool connected = false;
 static int clientSocket;
@@ -23,8 +23,8 @@ static int server_fd;
 static struct sockaddr_in address;
 static int addrlen;
 static int inputLenght;
-static int bufferMaxLenght = 512;
-static vector<char> inputBuffer(bufferMaxLenght);
+static int bufferMaxLenght = 50;
+
 static bool gotNewMessage = false;
 static shared_ptr<string> lastMessage(new string());
 static shared_ptr<mutex> mtx(new mutex());
@@ -151,20 +151,15 @@ bool PortableServer::newMessage() const {
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "8080"
+static string port = "8080";
+static int recvbuflen = 50;
+static SOCKET ClientSocket;
+static SOCKET ListenSocket;
+static shared_ptr<string> lastMessage;
 
-int iResult;
-int iSendResult;
-vector<char> recvbuf;
-int recvbuflen;
-SOCKET ClientSocket;
-SOCKET ListenSocket;
-shared_ptr<string> lastMessage;
+static bool connected;
 
-bool connected;
-
-mutex connectedMtx;
+static mutex connectedMtx;
 void setConnected(bool c) {
     connectedMtx.lock();
     connected = c;
@@ -177,9 +172,9 @@ bool getConnected() {
     return connected;
 }
 
-bool wait;
-bool gotNewMessage;
-shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
+static bool wait;
+static bool gotNewMessage;
+static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 
 
 PortableServer::PortableServer() {
@@ -196,12 +191,8 @@ PortableServer::PortableServer() {
     struct addrinfo* result = NULL;
     struct addrinfo hints;
 
-
-    recvbuf = vector<char>(DEFAULT_BUFLEN);
-    recvbuflen = DEFAULT_BUFLEN;
-
     // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         cout << "Server WSAStartup failed with error: \n" << iResult;
         return;
@@ -214,7 +205,7 @@ PortableServer::PortableServer() {
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(NULL, port.c_str(), &hints, &result);
     if (iResult != 0) {
         cout << "Server getaddrinfo failed with error: \n" << iResult;
         WSACleanup();
@@ -280,7 +271,7 @@ void PortableServer::waitForClient() {
 
 void PortableServer::sendToClient(const char* message) {
     if (wait == false) {
-        iResult = send(ClientSocket, message, (int) strlen(message), 0);
+        int iResult = send(ClientSocket, message, (int) strlen(message), 0);
         if (iResult == SOCKET_ERROR) {
             cout << "Server Message Sending Error: \n" << message;
             return;
@@ -293,7 +284,8 @@ void PortableServer::receiveMultithreaded() {
     // Receive until the peer shuts down the connection
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        iResult = recv(ClientSocket, recvbuf.data(), recvbuflen, 0);
+        char* recvBuffer = new char[recvbuflen];
+        int iResult = recv(ClientSocket, recvBuffer, recvbuflen, 0);
 
         //save message
         if (iResult > 0) {
@@ -302,8 +294,9 @@ void PortableServer::receiveMultithreaded() {
             gotNewMessage = true;
             //save message
             for (int i = 0; i < iResult; i++) {
-                lastMessage->push_back(recvbuf[i]);
+                lastMessage->push_back(recvBuffer[i]);
             }
+            delete[] recvBuffer;
             //connection setup
             if (lastMessage->compare("12345") == 0) {
                 sendToClient("12345");
@@ -321,7 +314,6 @@ void PortableServer::receiveMultithreaded() {
             return;
         }
         wait = false;
-        //   cout << "Server received message: " << *lastMessage;
     }
 }
 
