@@ -69,7 +69,8 @@ void PortableClient::connectToHost(string ip) {
 void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        int inputLenght = read(serverSocket, recvbuf.data(), recvbuflen);
+        char* recvbuf = new char[recvbuflen];
+        int inputLenght = read(serverSocket, recvbuf, recvbuflen);
         //received a valid message
         if (inputLenght > 0) {
             writingMessage->lock();
@@ -82,6 +83,7 @@ void PortableClient::receiveMultithreaded() {
             writingMessage->unlock();
             waitHandShaking = false;
         }
+        delete[] recvbuf;
 
         if (inputLenght < 0) {
             cout << "error, client received message with negative lenght";
@@ -184,8 +186,9 @@ void testIP(const char* serverIP, int index) {
         long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
         while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 200) {
             this_thread::sleep_for(chrono::milliseconds(5));
-            recvbuf.clear();
-            int inputLenght = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
+
+            char* recvbuf = new char[recvbuflen];
+            int inputLenght = read(tempConnectSocket, recvbuf, recvbuflen);
 
             if (inputLenght > 0) {
                 string msg;
@@ -193,11 +196,12 @@ void testIP(const char* serverIP, int index) {
                 for (int i = 0; i < inputLenght; i++) {
                     msg.push_back(recvbuf[i]);
                 }
+                delete[] recvbuf;
                 //connection setup
-                //if (msg.compare("12345") == 0) {
+                if (msg.compare("12345") == 0) {
                     ConnectSockets.push_back(std::move(tempConnectSocket));
                     foundIP = serverIP;//this will be pushed back to string. 
-                //}
+                }
                 break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
             }
             // cout << "Client received message: " << *lastMessage;

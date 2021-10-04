@@ -15,15 +15,14 @@ using namespace std;
 #include <vector>
 #include <mutex>
 #include <string.h>
-string port = "8080"
+#define PORT 8080
 
 static bool connected = false;
 static int clientSocket;
 static int server_fd;
 static struct sockaddr_in address;
 static int addrlen;
-static int inputLenght;
-static int bufferMaxLenght = 50;
+static int recvbuflen = 50;
 
 static bool gotNewMessage = false;
 static shared_ptr<string> lastMessage(new string());
@@ -79,7 +78,8 @@ void PortableServer::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
         //received something
-        inputLenght = read(clientSocket, inputBuffer.data(), bufferMaxLenght);
+        char* recvbuf = new char[recvbuflen];
+        int inputLenght = read(clientSocket, recvbuf, recvbuflen);
         //received a valid message
         if (inputLenght > 0) {
             mtx->lock();
@@ -87,8 +87,9 @@ void PortableServer::receiveMultithreaded() {
             gotNewMessage = true;
             //save message
             for (int i = 0; i < inputLenght; i++) {
-                lastMessage->push_back(inputBuffer[i]);
+                lastMessage->push_back(recvbuf[i]);
             }
+            delete[] recvbuf;
             //connection setup
             if (lastMessage->compare("12345") == 0) {
                 sendToClient("12345");
