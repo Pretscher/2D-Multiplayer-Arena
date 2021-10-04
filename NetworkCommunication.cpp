@@ -75,18 +75,18 @@ void NetworkCommunication::receiveTonkensFromServer(shared_ptr<const PortableSer
 
 void NetworkCommunication::receiveTonkensFromClient(shared_ptr<const PortableClient> client) {
 	if(client->isConnected() == true) {
-		const string* data;
+		string data;
 		bool copyAndParse = false;
 		client->getMutex()->lock();//gets locked before writing message
-		data = client->getLastMessage().get();
-		if (data != nullptr && data->size() > 0) {
+		auto msg = client->getLastMessage().get();
+		if (msg != nullptr && msg->size() > 0) {
 			copyAndParse = true;
 		}
 
 		if (copyAndParse == true) {
-			data = new string(data->c_str());//copy so network can overwrite
+			string data = *msg;//copy so network can overwrite
 			client->getMutex()->unlock();
-			parseToIntsData = extractInts(*data);
+			parseToIntsData = extractInts(std::move(data));
 		}
 		else {
 			client->getMutex()->unlock();
