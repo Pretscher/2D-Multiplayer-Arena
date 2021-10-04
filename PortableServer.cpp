@@ -89,6 +89,12 @@ void PortableServer::receiveMultithreaded() {
             for (int i = 0; i < inputLenght; i++) {
                 lastMessage->push_back(inputBuffer[i]);
             }
+            //connection setup
+            if (lastMessage->compare("12345") == 0) {
+                sendToClient("12345");
+                lastMessage->clear();
+                gotNewMessage = false;
+            }
             mtx->unlock();
             waitHandShaking = false;
         }
