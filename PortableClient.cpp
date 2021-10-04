@@ -16,54 +16,61 @@ using namespace std;
 #include <thread>
 #include <vector>
 
+#include <string.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <net/if.h>
+
 #define PORT 8080
 
 static bool connected = false;
 static int serverSocket;
 static int server_fd;
-static struct sockaddr_in serv_addr;
-static int addrlen;
-static int inputLenght = 0;
-static int bufferMaxLenght = 512;
-static vector<char> inputBuffer(bufferMaxLenght);
+static int recvbuflen = 512;
+static vector<char> recvbuf(recvbuflen);
+static vector<int> ConnectSockets;
 
 static bool gotNewMessage = false;
 static shared_ptr<string> lastMessage(new string());
 static shared_ptr<mutex> writingMessage(new mutex());
 static bool waitHandShaking = false;
+mutex avHostsMtx;
 
-PortableClient::PortableClient(const char* serverIP) {
+vector<string> avHosts;
+void PortableClient::pushToAvailableHosts(string s) {
+    avHostsMtx.lock();
+    avHosts.push_back(s);
+    avHostsMtx.unlock();
+}
 
-    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        printf("\n Socket creation error \n");
-        exit(0);
+vector<string> PortableClient::getAvailableHosts() {
+    avHostsMtx.lock();
+    vector<string> copy = avHosts;
+    avHostsMtx.unlock();
+    return std::move(copy);
+}
+
+PortableClient::PortableClient() {
+
+}
+
+void PortableClient::connectToHost(string ip) {
+    auto copy = avHosts;
+    for (int i = 0; i < avHosts.size(); i++) {
+        if (avHosts.at(i).compare(ip) == 0) {
+            serverSocket = ConnectSockets.at(i);//same index, pushed back simultanioisly
+        }
     }
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-
-    // Convert IPv4 and IPv6 addresses from text to binary form
-    if (inet_pton(AF_INET, serverIP, &serv_addr.sin_addr) <= 0)
-    {
-        printf("\nInvalid address/ Address not supported \n");
-        exit(0);
-    }
-    }
-
-void PortableClient::waitForServer() {
-    if (connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        printf("\nConnection Failed \n");
-        exit(0);
-    }
+    ConnectSockets.clear();
     connected = true;
+    cout << "Client successfully connected to server!\n";
 }
 
 void PortableClient::receiveMultithreaded() {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        inputLenght = read(serverSocket, inputBuffer.data(), bufferMaxLenght);
+        int inputLenght = read(serverSocket, recvbuf.data(), recvbuflen);
         //received a valid message
         if (inputLenght > 0) {
             writingMessage->lock();
@@ -71,7 +78,7 @@ void PortableClient::receiveMultithreaded() {
             gotNewMessage = true;
             //save message
             for (int i = 0; i < inputLenght; i++) {
-                lastMessage->push_back(inputBuffer[i]);
+                lastMessage->push_back(recvbuf[i]);
             }
             writingMessage->unlock();
             waitHandShaking = false;
@@ -108,6 +115,153 @@ bool PortableClient::newMessage() const {
     return temp;
 }
 
+#include <ifaddrs.h>
+#include <netdb.h>
+
+string PortableClient::getIP() const {
+    struct ifaddrs *ifaddr, *ifa;
+    int family, s;
+    char host[265];
+
+    if (getifaddrs(&ifaddr) == -1)
+    {
+        perror("getifaddrs");
+        exit(EXIT_FAILURE);
+    }
+
+
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+    {
+        if (ifa->ifa_addr == NULL)
+            continue;
+
+        s=getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in),host, 265, NULL, 0, 1);
+
+        if( /*(strcmp(ifa->ifa_name,"wlan0")==0)&&( */ ifa->ifa_addr->sa_family==AF_INET) // )
+        {
+            if (s != 0)
+            {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                exit(EXIT_FAILURE);
+            }
+            printf("\tInterface : <%s>\n",ifa->ifa_name );
+            printf("\t  Address : <%s>\n", host);
+        }
+    }
+
+    freeifaddrs(ifaddr);
+    return string(host);
+}
+
+
+thread** threads;
+mutex** mutices;
+bool* threadFinished;
+string foundIP = "";
+const unsigned int checkedIpCount = 128;
+
+void testIP(const char* serverIP, int index) {
+    threadFinished[index] = false;
+    mutices[index] = new mutex();
+    int tempConnectSocket;
+        // Attempt to connect to an address until one succeeds
+        // Create a SOCKET for connecting to server
+     if ((tempConnectSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        printf("\n Socket creation error \n");
+        exit(0);
+    }
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+     // Convert IPv4 and IPv6 addresses from text to binary form
+    inet_pton(AF_INET, serverIP, &serv_addr.sin_addr);
+    if (connect(tempConnectSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        int a = 0;
+        //printf("\n Connection timed out \n");
+    }
+    else {
+        send(tempConnectSocket, "12345", (int) strlen("12345"), 0);
+        long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
+        while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 200) {
+            this_thread::sleep_for(chrono::milliseconds(5));
+            recvbuf.clear();
+            int inputLenght = recv(tempConnectSocket, recvbuf.data(), recvbuflen, 0);
+
+            if (inputLenght > 0) {
+                string msg;
+                //save message
+                for (int i = 0; i < inputLenght; i++) {
+                    msg.push_back(recvbuf[i]);
+                }
+                //connection setup
+                //if (msg.compare("12345") == 0) {
+                    ConnectSockets.push_back(std::move(tempConnectSocket));
+                    foundIP = serverIP;//this will be pushed back to string. 
+                //}
+                break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
+            }
+            // cout << "Client received message: " << *lastMessage;
+            if (inputLenght < 0) {
+                cout << "Client recv failed with error: \n";
+                exit(0);                
+            }
+        }
+    }
+    threadFinished[index] = true;
+}
+
+
+void searchHostsMultiThreaded(PortableClient* client) {
+    threads = new thread * [checkedIpCount];
+    mutices = new mutex * [checkedIpCount];
+    threadFinished = new bool[checkedIpCount];
+
+    string myIP = client->getIP();
+    for (int i = 0; i < 2; i++) {
+        myIP.pop_back();
+    }
+    for (int i = 1; i < checkedIpCount; i++) {
+        //set i as (possibly 3) last digits of iï¿½
+        int prevSize = myIP.size();
+        myIP.append(to_string(i));
+        threads[i] = new std::thread(&testIP, myIP.c_str(), i);
+
+        //delete appended numbers
+        for (int i = myIP.size(); i > prevSize; i--) {
+            myIP.pop_back();
+        }
+        if (foundIP != "") {
+            break;
+        }
+    }
+
+    while (true) {
+        this_thread::sleep_for(chrono::milliseconds(5));
+        if (foundIP != "") {
+            client->pushToAvailableHosts(std::move(foundIP));
+            foundIP = "";
+        }
+
+        //check if finished without connecting
+        bool finished = true;
+        for (int i = 0; i < checkedIpCount; i++) {
+            if (threadFinished[i] == false) {
+                finished = false;
+            }
+        }
+        if (finished == true) {
+            return;
+        }
+    }
+    delete[] mutices;
+    delete[] threads;
+}
+
+thread* searchingHosts;
+void PortableClient::searchHosts() {
+     searchingHosts = new std::thread(&searchHostsMultiThreaded, this);
+}
 
 #elif _WIN32
 
@@ -165,9 +319,9 @@ PortableClient::PortableClient() {
 }
 
 void PortableClient::connectToHost(string ip) {
-
-    for (int i = 0; i < avHosts.size(); i++) {
-        if (avHosts.at(i).compare(ip) == 0) {
+    auto copy = avHosts;
+    for (int i = 0; i < copy.size(); i++) {
+        if (copy.at(i).compare(ip) == 0) {
             chosenSocket = ConnectSockets.at(i);//same index, pushed back simultanioisly
         }
         else {
@@ -278,8 +432,6 @@ string PortableClient::getIP() const {
 }
 
 
-
-const unsigned int checkedIpCount = 128;
 thread** threads;
 mutex** mutices;
 bool* threadFinished;
@@ -367,7 +519,7 @@ void searchHostsMultiThreaded(PortableClient* client) {
         myIP.pop_back();
     }
     for (int i = 1; i < checkedIpCount; i++) {
-        //set i as (possibly 3) last digits of iü
+        //set i as (possibly 3) last digits of iï¿½
         int prevSize = myIP.size();
         myIP.append(to_string(i));
 
@@ -428,5 +580,7 @@ thread* searchingHosts;
 void PortableClient::searchHosts() {
      searchingHosts = new std::thread(&searchHostsMultiThreaded, this);
 }
+const unsigned int checkedIpCount = 128;
+
 
 #endif

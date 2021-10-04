@@ -1,4 +1,3 @@
-#pragma once
 #include "VladR.hpp"
 #include "GlobalRecources.hpp"
 #include "Utils.hpp"
