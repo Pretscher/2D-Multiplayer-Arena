@@ -90,8 +90,10 @@ void PortableServer::receiveMultithreaded() {
                 lastMessage->push_back(recvbuf[i]);
             }
             delete[] recvbuf;
+            wait = false;//sending to client before receiving again
             //connection setup
             if (lastMessage->compare("12345") == 0) {
+                wait = true;//set wait to true again, client has to make the first move
                 sendToClient("12345");
                 lastMessage->clear();
                 gotNewMessage = false;
@@ -179,7 +181,7 @@ static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 
 
 PortableServer::PortableServer() {
-    wait = false;
+    wait = true;
     gotNewMessage = false;
     connected = false;
     lastMessage = shared_ptr<string>(new string());
@@ -298,8 +300,10 @@ void PortableServer::receiveMultithreaded() {
                 lastMessage->push_back(recvBuffer[i]);
             }
             delete[] recvBuffer;
+            wait = false;
             //connection setup
             if (lastMessage->compare("12345") == 0) {
+                wait = true;
                 sendToClient("12345");
                 lastMessage->clear();
                 gotNewMessage = false;
