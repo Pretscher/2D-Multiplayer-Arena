@@ -27,7 +27,7 @@ static int recvbuflen = 512;
 static bool gotNewMessage = false;
 static shared_ptr<string> lastMessage(new string());
 static shared_ptr<mutex> mtx(new mutex());
-static bool waitHandShaking = false;
+static bool waitHandShaking = true;
 
 PortableServer::PortableServer() {
 
@@ -90,16 +90,15 @@ void PortableServer::receiveMultithreaded() {
                 lastMessage->push_back(recvbuf[i]);
             }
             delete[] recvbuf;
-            wait = false;//sending to client before receiving again
+            waitHandShaking = false;//sending to client before receiving again
             //connection setup
             if (lastMessage->compare("12345") == 0) {
-                wait = true;//set wait to true again, client has to make the first move
+                waitHandShaking = true;//set wait to true again, client has to make the first move
                 sendToClient("12345");
                 lastMessage->clear();
                 gotNewMessage = false;
             }
             mtx->unlock();
-            waitHandShaking = false;
         }
 
         if (inputLenght < 0) {
