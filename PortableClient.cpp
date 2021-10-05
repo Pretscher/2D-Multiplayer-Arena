@@ -471,7 +471,6 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                 cout << "Client send failed with error: \n" << WSAGetLastError();
                 WSACleanup();
             }
-            waitHandShaking = true;
 
             long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
             while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 200) {
@@ -491,7 +490,6 @@ void testIP(const char* myIP, struct addrinfo* result, struct addrinfo* hints, i
                     if (msg.compare("12345") == 0) {
                         ConnectSockets.push_back(std::move(tempConnectSocket));
                         foundIP = myIP;//this will be pushed back to string. 
-                        waitHandShaking = false;
                     }
                     break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
                 }

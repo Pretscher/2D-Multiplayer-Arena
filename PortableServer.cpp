@@ -302,8 +302,8 @@ void PortableServer::receiveMultithreaded() {
             wait = false;
             //connection setup
             if (lastMessage->compare("12345") == 0) {
-                wait = true;
-                sendToClient("12345");
+                sendToClient("12345");//sets wait to false
+                //wait = false;
                 lastMessage->clear();
                 gotNewMessage = false;
             }
@@ -317,7 +317,6 @@ void PortableServer::receiveMultithreaded() {
             setConnected(false);
             return;
         }
-        wait = false;
     }
 }
 
