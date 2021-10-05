@@ -93,8 +93,8 @@ void PortableServer::receiveMultithreaded() {
             waitHandShaking = false;//sending to client before receiving again
             //connection setup
             if (lastMessage->compare("12345") == 0) {
-                waitHandShaking = true;//set wait to true again, client has to make the first move
-                sendToClient("12345");
+                sendToClient("12345");//set wait to true again, client has to make the first move
+                //waitHandShaking = true;
                 lastMessage->clear();
                 gotNewMessage = false;
             }
