@@ -27,7 +27,7 @@ using namespace std;
 static bool connected = false;
 static int serverSocket;
 static int server_fd;
-static int recvbuflen = 50;
+static int recvbuflen = 512;
 static vector<int> ConnectSockets;
 
 static bool gotNewMessage = false;
@@ -285,7 +285,7 @@ static string port = "8080";
 
 static vector<SOCKET> ConnectSockets;
 static SOCKET chosenSocket;
-static int recvbuflen = 50;
+static int recvbuflen = 512;
 static shared_ptr<string> lastMessage = shared_ptr<string>(new string());
 static bool connected = false;
 static bool wait = false;

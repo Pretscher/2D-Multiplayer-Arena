@@ -22,7 +22,7 @@ static int clientSocket;
 static int server_fd;
 static struct sockaddr_in address;
 static int addrlen;
-static int recvbuflen = 50;
+static int recvbuflen = 512;
 
 static bool gotNewMessage = false;
 static shared_ptr<string> lastMessage(new string());
@@ -155,7 +155,7 @@ bool PortableServer::newMessage() const {
 // #pragma comment (lib, "Mswsock.lib")
 
 static string port = "8080";
-static int recvbuflen = 50;
+static int recvbuflen = 512;
 static SOCKET ClientSocket;
 static SOCKET ListenSocket;
 static shared_ptr<string> lastMessage;
