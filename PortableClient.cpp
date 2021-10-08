@@ -25,6 +25,20 @@ using namespace std;
 #define PORT 8080
 
 static bool connected = false;
+static mutex connectedMtx;
+static void setConnected(bool c) {
+    connectedMtx.lock();
+    connected = c;
+    connectedMtx.unlock();
+}
+static bool getConnected() {
+    connectedMtx.lock();
+    bool temp = connected;
+    connectedMtx.unlock();
+    return connected;
+}
+
+
 static int serverSocket;
 static int server_fd;
 static int recvbuflen = 512;
@@ -62,7 +76,7 @@ void PortableClient::connectToHost(string ip) {
         }
     }
     ConnectSockets.clear();
-    connected = true;
+    setConnected(true);
     cout << "Client successfully connected to server!\n";
 }
 
@@ -100,7 +114,7 @@ void PortableClient::sendToServer(const char* message) {
 }
 
 bool PortableClient::isConnected() const {
-    return connected;
+    return getConnected();
 }
 shared_ptr<string> PortableClient::getLastMessage() const {
     return lastMessage;
@@ -287,7 +301,21 @@ static vector<SOCKET> ConnectSockets;
 static SOCKET chosenSocket;
 static int recvbuflen = 512;
 static shared_ptr<string> lastMessage = shared_ptr<string>(new string());
+
 static bool connected = false;
+static mutex connectedMtx;
+static void setConnected(bool c) {
+    connectedMtx.lock();
+    connected = c;
+    connectedMtx.unlock();
+}
+static bool getConnected() {
+    connectedMtx.lock();
+    bool temp = connected;
+    connectedMtx.unlock();
+    return connected;
+}
+
 static bool wait = false;
 static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 static bool gotNewMessage = false;
@@ -329,7 +357,7 @@ void PortableClient::connectToHost(string ip) {
         }
     }
     ConnectSockets.clear();
-    connected = true;
+    setConnected(true);
     cout << "Client successfully connected to server!\n";
 }
 
@@ -402,7 +430,7 @@ shared_ptr<mutex> PortableClient::getMutex() const {
 }
 
 bool PortableClient::isConnected() const {
-    return connected;
+    return getConnected();
 }
 
 bool PortableClient::newMessage() const {

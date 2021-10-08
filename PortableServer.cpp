@@ -17,7 +17,20 @@ using namespace std;
 #include <string.h>
 #define PORT 8080
 
-static bool connected = false;
+static bool connected;
+static mutex connectedMtx;
+static void setConnected(bool c) {
+    connectedMtx.lock();
+    connected = c;
+    connectedMtx.unlock();
+}
+static bool getConnected() {
+    connectedMtx.lock();
+    bool temp = connected;
+    connectedMtx.unlock();
+    return connected;
+}
+
 static int clientSocket;
 static int server_fd;
 static struct sockaddr_in address;
@@ -71,7 +84,7 @@ void PortableServer::waitForClient() {
         cout << "accept";
         exit(EXIT_FAILURE);
     }
-    connected = true;
+    setConnected(true);
 }
 
 void PortableServer::receiveMultithreaded() {
@@ -121,7 +134,7 @@ shared_ptr<string> PortableServer::getLastMessage() const {
 }
 
 bool PortableServer::isConnected() const {
-    return connected;
+    return getConnected();
 }
 
 shared_ptr<mutex> PortableServer::getMutex() const {
@@ -160,15 +173,15 @@ static SOCKET ClientSocket;
 static SOCKET ListenSocket;
 static shared_ptr<string> lastMessage;
 
-static bool connected;
+static bool connected = false;
 
 static mutex connectedMtx;
-void setConnected(bool c) {
+static void setConnected(bool c) {
     connectedMtx.lock();
     connected = c;
     connectedMtx.unlock();
 }
-bool getConnected() {
+static bool getConnected() {
     connectedMtx.lock();
     bool temp = connected;
     connectedMtx.unlock();
@@ -183,7 +196,6 @@ static shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 PortableServer::PortableServer() {
     wait = true;
     gotNewMessage = false;
-    connected = false;
     lastMessage = shared_ptr<string>(new string());
 
     WSADATA wsaData;
