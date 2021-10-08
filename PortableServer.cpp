@@ -101,8 +101,9 @@ void PortableServer::receiveMultithreaded() {
         }
 
         if (inputLenght < 0) {
-            cout << "error, server received message with negative lenght";
-            exit(0);
+            cout << "Lost connection to client.";
+            setConnected(false);
+            return;
         }
     }
 }
