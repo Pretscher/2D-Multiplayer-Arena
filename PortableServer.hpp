@@ -51,16 +51,20 @@ public:
         return connected;
     }
 private:
+
+#ifdef  __linux__ 
     int addrlen;
     int linClientSocket;
     int server_fd;
     struct sockaddr_in address;
-
+#elif _WIN32
+    SOCKET winClientSocket;
+    SOCKET ListenSocket;
+#endif
 
     string port = "8080";
     int recvbuflen = 512;
-    SOCKET winClientSocket;
-    SOCKET ListenSocket;
+
     shared_ptr<string> lastMessage;
 
     bool connected = false;
