@@ -287,7 +287,7 @@ void PortableServer::portableConnect() {
     if ((linClientSocket = accept(server_fd, (struct sockaddr*) &address, (socklen_t*) &addrlen)) < 0) {
         cout << "Server accept failed";
     }
-
+    shutdown(server_fd, SHUT_RDWR);
 #elif _WIN32
     winClientSocket = accept(ListenSocket, nullptr, nullptr);
     if (winClientSocket == INVALID_SOCKET) {
@@ -297,6 +297,8 @@ void PortableServer::portableConnect() {
         exit(0);
         return;
     }
+
+    closesocket(ListenSocket);
 #endif
 }
 
