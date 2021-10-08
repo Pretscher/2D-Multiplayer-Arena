@@ -11,6 +11,8 @@ using namespace std;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <ifaddrs.h>
+#include <netdb.h>
 #define PORT 8080
 
 

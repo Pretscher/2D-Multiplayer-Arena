@@ -131,7 +131,9 @@ PortableServer::PortableServer() {
     wait = true;
     gotNewMessage = false;
     lastMessage = shared_ptr<string>(new string());
+#ifdef _WIN32
     winClientSocket = INVALID_SOCKET;
+#endif
 }
 
 void PortableServer::waitForClient() {
@@ -144,10 +146,6 @@ void PortableServer::waitForClient() {
 void PortableServer::sendToClient(const char* message) {
     if (wait == false) {
         int iResult = portableSend(message);
-        if (iResult == SOCKET_ERROR) {
-            cout << "Server Message Sending Error: \n" << message;
-            return;
-        }
         wait = true;
     }
 }
@@ -209,6 +207,7 @@ bool PortableServer::newMessage() {
 
 string PortableServer::getIP() const {
 #ifdef __linux__ 
+
     struct ifaddrs* ifaddr, * ifa;
     int family, s;
     char host[265];
@@ -264,15 +263,20 @@ string PortableServer::getIP() const {
 
 int PortableServer::portableSend(const char* message) const {
 #ifdef __linux__ 
-    return send(linClientSocket, message, strlen(message), 0);
+    int result = send(linClientSocket, message, strlen(message), 0);
+    return result;
 #elif _WIN32
-    return send(winClientSocket, message, (int) strlen(message), 0);
+    int result = send(winClientSocket, message, (int) strlen(message), 0);
+    if (result == SOCKET_ERROR) {
+        cout << "Server Message Sending Error: \n" << message;
+    }
+    return result;
 #endif
 }
 
 int PortableServer::portableRecv(char* recvBuffer) {
 #ifdef __linux__ 
-    return read(linClientSocket, recvbuf, recvbuflen);
+    return read(linClientSocket, recvBuffer, recvbuflen);
 #elif _WIN32
     return recv(winClientSocket, recvBuffer, recvbuflen, 0);
 #endif
