@@ -173,9 +173,10 @@ void PortableServer::receiveMultithreaded() {
             //connection setup
             if (lastMessage->compare("12345") == 0) {
                 sendToClient("12345");//sets wait to false
-                //wait = false;
+                wait = false;
                 lastMessage->clear();
                 gotNewMessage = false;
+                setConnected(true);
             }
 
             mtx->unlock();
@@ -293,8 +294,6 @@ void PortableServer::portableConnect() {
         return;
     }
 #endif
-
-    portableStartup();
 }
 
 void PortableServer::portableShutdown() {
@@ -346,7 +345,7 @@ void PortableServer::portableStartup() {
     WSADATA wsaData;
     ListenSocket = INVALID_SOCKET;
 
-    struct addrinfo* result = NULL;
+    struct addrinfo* result = nullptr;
     struct addrinfo hints;
 
     // Initialize Winsock
