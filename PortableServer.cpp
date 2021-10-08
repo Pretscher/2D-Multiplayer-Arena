@@ -82,7 +82,7 @@ PortableServer::PortableServer() {
 void PortableServer::waitForClient() {
     if ((clientSocket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0) {
         cout << "accept";
-        exit(EXIT_FAILURE);
+        shutdown(clientSocket, SHUT_RDWR);
     }
     setConnected(true);
 }
@@ -116,6 +116,7 @@ void PortableServer::receiveMultithreaded() {
 
         if (inputLenght < 0) {
             cout << "Lost connection to client.";
+            shutdown(clientSocket, SHUT_RDWR);
             setConnected(false);
             return;
         }
