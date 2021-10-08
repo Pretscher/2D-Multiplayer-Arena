@@ -161,7 +161,7 @@ bool* threadFinished;
 string foundIP = "";
 const unsigned int checkedIpCount = 128;
 
-void testIP(const char* serverIP, int index) {
+void testIP(string serverIP, int index) {
     threadFinished[index] = false;
     mutices[index] = new mutex();
     int tempConnectSocket;
@@ -175,16 +175,18 @@ void testIP(const char* serverIP, int index) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
      // Convert IPv4 and IPv6 addresses from text to binary form
-    inet_pton(AF_INET, serverIP, &serv_addr.sin_addr);
+    inet_pton(AF_INET, serverIP.c_str(), &serv_addr.sin_addr);
     if (connect(tempConnectSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        int a = 0;
+        //std::cout << serverIP  << "\n";
         //printf("\n Connection timed out \n");
+
     }
     else {
-        send(tempConnectSocket, "12345", (int) strlen("12345"), 0);
+        send(tempConnectSocket, "12345", strlen("12345"), 0);
+
         long long startTime = std::chrono::system_clock::now().time_since_epoch().count();
-        while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 200) {
+        while (std::chrono::system_clock::now().time_since_epoch().count() - startTime < 1000) {
             this_thread::sleep_for(chrono::milliseconds(5));
 
             char* recvbuf = new char[recvbuflen];
@@ -228,7 +230,8 @@ void searchHostsMultiThreaded(PortableClient* client) {
         //set i as (possibly 3) last digits of i�
         int prevSize = myIP.size();
         myIP.append(to_string(i));
-        threads[i] = new std::thread(&testIP, myIP.c_str(), i);
+        string copy = myIP;
+        threads[i] = new std::thread(&testIP, std::move(copy), i);
 
         //delete appended numbers
         for (int i = myIP.size(); i > prevSize; i--) {
