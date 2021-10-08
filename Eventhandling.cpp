@@ -95,7 +95,7 @@ void Eventhandling::eventloop() {
 		projectileHandling->update(worldHandling->getTerrain()->getCollidables());
 
 		//pass game information back and forth through tcp sockets
-		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
+		if ((server != nullptr && server->getConnected() == true) || (client != nullptr && client->isConnected() == true)) {
 			if (received == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 				sendData();
 				received = false;

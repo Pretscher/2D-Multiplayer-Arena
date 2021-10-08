@@ -17,8 +17,8 @@ public:
 	static void sendTokensToClient(shared_ptr<PortableClient> client);
 
 	static int receiveNextToken();
-	static void receiveTonkensFromServer(shared_ptr<const PortableServer> server);
-	static void receiveTonkensFromClient(shared_ptr<const PortableClient> client);
+	static void receiveTonkensFromServer(shared_ptr<PortableServer> server);
+	static void receiveTonkensFromClient(shared_ptr<PortableClient> client);
 
 	static int getTokenCount();
 

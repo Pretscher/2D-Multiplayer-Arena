@@ -25,4 +25,5 @@ public:
     void connectToHost(string ip);
 
     void searchHosts();
+
 };
