@@ -8,7 +8,7 @@
 using namespace std;
 /*
 static int linClientSocket;
-static int server_fd;
+static int listenSocket;
 static struct sockaddr_in address;
 static int addrlen;
 static int recvbuflen = 512;
@@ -24,14 +24,14 @@ PortableServer::PortableServer() {
     addrlen = sizeof(address);
 
     // Creating socket file descriptor
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    if ((listenSocket = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         cout << "socket failed";
         exit(EXIT_FAILURE);
     }
 
     // Forcefully attaching socket to the port 8080
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+    if (setsockopt(listenSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
         &opt, sizeof(opt)))
     {
         cout << "setsockopt";
@@ -42,13 +42,13 @@ PortableServer::PortableServer() {
     address.sin_port = htons(PORT);
 
     // Forcefully attaching socket to the port 8080
-    if (bind(server_fd, (struct sockaddr*)&address,
+    if (bind(listenSocket, (struct sockaddr*)&address,
         sizeof(address)) < 0)
     {
         cout << "bind failed";
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 3) < 0)
+    if (listen(listenSocket, 3) < 0)
     {
         cout << "listen";
         exit(EXIT_FAILURE);
@@ -56,7 +56,7 @@ PortableServer::PortableServer() {
 }
 
 void PortableServer::waitForClient() {
-    if ((linClientSocket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0) {
+    if ((linClientSocket = accept(listenSocket, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0) {
         cout << "accept";
         shutdown(linClientSocket, SHUT_RDWR);
     }
@@ -131,13 +131,12 @@ PortableServer::PortableServer() {
     wait = true;
     gotNewMessage = false;
     lastMessage = shared_ptr<string>(new string());
-#ifdef _WIN32
+#ifdef _WIN64
     winClientSocket = INVALID_SOCKET;
 #endif
 }
 
 void PortableServer::waitForClient() {
-    portableStartup();//make listen socket and stuff ready
     portableConnect();//listen for clients
 }
 
@@ -239,7 +238,7 @@ string PortableServer::getIP() const {
     }
     freeifaddrs(ifaddr);
     return string(host);
-#elif _WIN32
+#elif _WIN64
     char hostname[255];
     struct hostent* he;
     struct in_addr** addr_list;
@@ -265,7 +264,7 @@ int PortableServer::portableSend(const char* message) const {
 #ifdef __linux__ 
     int result = send(linClientSocket, message, strlen(message), 0);
     return result;
-#elif _WIN32
+#elif _WIN64
     int result = send(winClientSocket, message, (int) strlen(message), 0);
     if (result == SOCKET_ERROR) {
         cout << "Server Message Sending Error: \n" << message;
@@ -277,55 +276,27 @@ int PortableServer::portableSend(const char* message) const {
 int PortableServer::portableRecv(char* recvBuffer) {
 #ifdef __linux__ 
     return read(linClientSocket, recvBuffer, recvbuflen);
-#elif _WIN32
+#elif _WIN64
     return recv(winClientSocket, recvBuffer, recvbuflen, 0);
 #endif
 }
 
 void PortableServer::portableConnect() {
 #ifdef __linux__ 
-    if ((linClientSocket = accept(server_fd, (struct sockaddr*) &address, (socklen_t*) &addrlen)) < 0) {
-        cout << "Server accept failed";
-    }
-    shutdown(server_fd, SHUT_RDWR);
-#elif _WIN32
-    winClientSocket = accept(ListenSocket, nullptr, nullptr);
-    if (winClientSocket == INVALID_SOCKET) {
-        cout << "Server accept failed with error: \n" << WSAGetLastError();
-        closesocket(ListenSocket);
-        WSACleanup();
-        exit(0);
-        return;
-    }
 
-    closesocket(ListenSocket);
-#endif
-}
-
-void PortableServer::portableShutdown() {
-#ifdef __linux__ 
-    shutdown(linClientSocket, SHUT_RDWR);
-#elif _WIN32
-    closesocket(winClientSocket);
-#endif
-}
-
-//make ready for connecting to a new client (has to be called after connecting to a client aswell)
-void PortableServer::portableStartup() {
-#ifdef __linux__ 
-
+    int listenSocket = 0;
     int opt = 1;
     addrlen = sizeof(address);
 
     // Creating socket file descriptor
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    if ((listenSocket = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         cout << "socket failed";
         exit(EXIT_FAILURE);
     }
 
     // Forcefully attaching socket to the port 8080
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+    if (setsockopt(listenSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
         &opt, sizeof(opt)))
     {
         cout << "setsockopt";
@@ -336,20 +307,27 @@ void PortableServer::portableStartup() {
     address.sin_port = htons(PORT);
 
     // Forcefully attaching socket to the port 8080
-    if (bind(server_fd, (struct sockaddr*) &address,
+    if (bind(listenSocket, (struct sockaddr*) &address,
         sizeof(address)) < 0)
     {
         cout << "bind failed";
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 3) < 0)
+    if (listen(listenSocket, 3) < 0)
     {
         cout << "listen";
         exit(EXIT_FAILURE);
     }
-#elif _WIN32
+
+    cout << "Server successfully set up.\n";
+
+    if ((linClientSocket = accept(listenSocket, (struct sockaddr*) &address, (socklen_t*) &addrlen)) < 0) {
+        cout << "Server accept failed";
+    }
+    shutdown(listenSocket, SHUT_RDWR);
+#elif _WIN64
     WSADATA wsaData;
-    ListenSocket = INVALID_SOCKET;
+    SOCKET listenSocket = INVALID_SOCKET;
 
     struct addrinfo* result = nullptr;
     struct addrinfo hints;
@@ -377,8 +355,8 @@ void PortableServer::portableStartup() {
     }
 
     // Create a SOCKET for connecting to server
-    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-    if (ListenSocket == INVALID_SOCKET) {
+    listenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    if (listenSocket == INVALID_SOCKET) {
         cout << "Server socket failed with error: %ld\n" << WSAGetLastError();
         freeaddrinfo(result);
         WSACleanup();
@@ -387,11 +365,11 @@ void PortableServer::portableStartup() {
     }
 
     // Setup the TCP listening socket
-    iResult = bind(ListenSocket, result->ai_addr, (int) result->ai_addrlen);
+    iResult = bind(listenSocket, result->ai_addr, (int) result->ai_addrlen);
     if (iResult == SOCKET_ERROR) {
         cout << "Server bind failed with error: \n" << WSAGetLastError();
         freeaddrinfo(result);
-        closesocket(ListenSocket);
+        closesocket(listenSocket);
         WSACleanup();
         exit(0);
         return;
@@ -399,15 +377,33 @@ void PortableServer::portableStartup() {
 
     freeaddrinfo(result);
 
-    iResult = listen(ListenSocket, SOMAXCONN);
+    iResult = listen(listenSocket, SOMAXCONN);
     if (iResult == SOCKET_ERROR) {
         cout << "Server listen failed with error: \n" << WSAGetLastError();
-        closesocket(ListenSocket);
+        closesocket(listenSocket);
         WSACleanup();
         exit(0);
         return;
     }
 
     cout << "Server successfully set up.\n";
+
+    winClientSocket = accept(listenSocket, nullptr, nullptr);
+    if (winClientSocket == INVALID_SOCKET) {
+        cout << "Server accept failed with error: \n" << WSAGetLastError();
+        closesocket(listenSocket);
+        WSACleanup();
+        exit(0);
+        return;
+    }
+    closesocket(listenSocket);
+#endif
+}
+
+void PortableServer::portableShutdown() {
+#ifdef __linux__ 
+    shutdown(linClientSocket, SHUT_RDWR);
+#elif _WIN64
+    closesocket(winClientSocket);
 #endif
 }

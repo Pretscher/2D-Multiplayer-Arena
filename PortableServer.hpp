@@ -55,11 +55,9 @@ private:
 #ifdef  __linux__ 
     int addrlen;
     int linClientSocket;
-    int server_fd;
     struct sockaddr_in address;
 #elif _WIN32
     SOCKET winClientSocket;
-    SOCKET ListenSocket;
 #endif
 
     string port = "8080";
@@ -86,5 +84,4 @@ private:
     int portableRecv(char* recvBuffer);
     void portableConnect();
     void portableShutdown();
-    void portableStartup();
 };
