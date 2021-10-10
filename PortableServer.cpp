@@ -111,7 +111,7 @@ shared_ptr<string> PortableServer::getLastMessage() const {
 }
 
 bool PortableServer::isConnected() const {
-    return getConnected();
+    return isConnected();
 }
 
 shared_ptr<mutex> PortableServer::getMutex() const {
@@ -170,7 +170,6 @@ void PortableServer::receiveMultithreaded() {
             //connection setup
             if (lastMessage->compare("12345") == 0) {
                 sendToClient("12345");//sets wait to false
-                wait = false;
                 lastMessage->clear();
                 gotNewMessage = false;
                 setConnected(true);

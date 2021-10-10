@@ -31,7 +31,7 @@ void NetworkCommunication::addToken(int token) {
 }
 
 void NetworkCommunication::sendTokensToServer(shared_ptr<PortableServer> server) {
-	if(server->getConnected() == true) {
+	if(server->isConnected() == true) {
 		server->sendToClient(rawData.c_str());
 		rawData.clear();
 	}
@@ -51,7 +51,7 @@ int NetworkCommunication::receiveNextToken() {
 }
 
 void NetworkCommunication::receiveTonkensFromServer(shared_ptr<PortableServer> server) {
-	if(server->getConnected() == true) {
+	if(server->isConnected() == true) {
 
 		bool copyAndParse = false;
 		const string* data;

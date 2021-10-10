@@ -44,11 +44,11 @@ public:
 
     string getIP() const;
 
-    bool getConnected() {
+    bool isConnected() {
         connectedMtx.lock();
         bool temp = connected;
         connectedMtx.unlock();
-        return connected;
+        return temp;
     }
 private:
 
