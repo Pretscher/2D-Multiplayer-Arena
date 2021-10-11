@@ -56,8 +56,6 @@ int NetworkCommunication::receiveNextToken(int index) {
 
 void NetworkCommunication::receiveTonkensFromServer(int index, shared_ptr<PortableServer> server) {
 	for (int i = 0; i < server->getClientCount(); i++) {
-		server->sendToClient(i, string(rawData[i]));
-		rawData[index].clear();
 	
 		bool copyAndParse = false;
 		string data;
@@ -66,6 +64,10 @@ void NetworkCommunication::receiveTonkensFromServer(int index, shared_ptr<Portab
 		server->getMutex()->unlock();
 		if (data.size() > 0) {
 			copyAndParse = true;
+		}
+
+		if (parseToIntsData.size() == 0) {
+			parseToIntsData.push_back(vector<int>());
 		}
 
 		if (copyAndParse == true) {
@@ -106,7 +108,6 @@ void NetworkCommunication::initNewCommunication(int index) {
 		return;
 	}
 	else {
-		rawData[index].clear();
 		tokenIndex[index] = 0;
 		tokenCount[index] = 0;
 		parseToIntsData[index].clear();

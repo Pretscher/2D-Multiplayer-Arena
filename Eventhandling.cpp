@@ -107,9 +107,7 @@ void Eventhandling::eventloop() {
 					sendData(i);
 					received[i] = false;
 				}
-				else {
-					recvAndImplementData(i);
-				}
+				recvAndImplementData(i);
 			}
 		}
 		if (client != nullptr && client->isConnected() == true) {
@@ -123,9 +121,7 @@ void Eventhandling::eventloop() {
 				sendData(0);
 				received[0] = false;
 			}
-			else {
-				recvAndImplementData(0);
-			}
+			recvAndImplementData(0);
 		}
 	}
 }
@@ -170,21 +166,22 @@ void Eventhandling::sendData(int index) {
 }
 
 void Eventhandling::recvAndImplementData(int index) {
+	NetworkCommunication::initNewCommunication(index);
 	if (isClient == true) {
 		if (client->newMessage() == true) {
+			NetworkCommunication::receiveTonkensFromClient(client);
 			abilityHandling->receiveData(index);
 			playerHandling->receivePlayerData(index);
 			projectileHandling->receiveProjectiles(index);
-			NetworkCommunication::receiveTonkensFromClient(client);
 			received[index] = true;
 		}
 	}
 	else {
 		if (server->newMessage(index) == true) {
+			NetworkCommunication::receiveTonkensFromServer(index, server);
 			abilityHandling->receiveData(index);
 			playerHandling->receivePlayerData(index);
 			projectileHandling->receiveProjectiles(index);
-			NetworkCommunication::receiveTonkensFromServer(index, server);
 			received[index] = true;
 		}
 	}
