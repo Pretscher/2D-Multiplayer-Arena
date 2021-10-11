@@ -48,7 +48,7 @@ class PortableClient {
 public:
     PortableClient();
     void receiveMultithreaded();
-    void sendToServer(const char* message);
+    void sendToServer(string message);
 
     shared_ptr<string> getLastMessage() const;
     bool isConnected() const;

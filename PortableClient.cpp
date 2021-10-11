@@ -316,9 +316,9 @@ void PortableClient::connectToHost(string ip) {
     cout << "Client successfully connected to server!\n";
 }
 
-void PortableClient::sendToServer(const char* message) {
+void PortableClient::sendToServer(string message) {
     if (wait == false) {
-        portableSend(serverSocket, message);
+        portableSend(serverSocket, message.c_str());
         wait = true;
     }
 }

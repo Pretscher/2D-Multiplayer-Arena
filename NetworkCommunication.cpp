@@ -36,14 +36,14 @@ void NetworkCommunication::addToken(int token) {
 
 void NetworkCommunication::sendTokensToServer(int index, shared_ptr<PortableServer> server) {
 	for (int i = 0; i < server->getClientCount(); i++) {
-		server->sendToClient(i, rawData[i].c_str());
+		server->sendToClient(i, string(rawData[i]));
 		rawData[i].clear();
 	}
 }
 
 void NetworkCommunication::sendTokensToClient(shared_ptr<PortableClient> client) {
 	if(client->isConnected() == true) {
-		client->sendToServer(rawData[0].c_str());
+		client->sendToServer(string(rawData[0]));
 		rawData[0].clear();
 	}
 }
@@ -56,7 +56,7 @@ int NetworkCommunication::receiveNextToken(int index) {
 
 void NetworkCommunication::receiveTonkensFromServer(int index, shared_ptr<PortableServer> server) {
 	for (int i = 0; i < server->getClientCount(); i++) {
-		server->sendToClient(i, rawData[index].c_str());
+		server->sendToClient(i, string(rawData[i]));
 		rawData[index].clear();
 	
 		bool copyAndParse = false;

@@ -133,9 +133,9 @@ void PortableServer::waitForClient() {
 
 
 
-void PortableServer::sendToClient(int index, const char* message) {
+void PortableServer::sendToClient(int index, string message) {
     if (wait[index] == false) {
-        int iResult = portableSend(clientSockets[index], message);
+        int iResult = portableSend(clientSockets[index], message.c_str());
         wait[index] = true;
     }
 }

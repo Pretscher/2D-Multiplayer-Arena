@@ -36,7 +36,7 @@ public:
     void waitForClient();
   
     void receiveMultithreaded();
-    void sendToClient(int index, const char* message);
+    void sendToClient(int index, string message);
 
     vector<string> getLastMessages() const;
     shared_ptr<mutex> getMutex() const;
