@@ -1,6 +1,7 @@
 #pragma once
 #include "iostream" 
 using namespace std;
+#include <vector>
 #include <string>
 #include <mutex>
 #include <memory>
@@ -32,21 +33,20 @@ using namespace std;
 
 class PortableServer {
 public:
-    PortableServer();
     void waitForClient();
   
     void receiveMultithreaded();
-    void sendToClient(const char* message);
+    void sendToClient(int index, const char* message);
 
-    shared_ptr<string> getLastMessage() const;
+    vector<string> getLastMessages() const;
     shared_ptr<mutex> getMutex() const;
-    bool newMessage();
+    bool newMessage(int index);
 
     string getIP() const;
 
-    bool isConnected() {
+    inline int getClientCount() {
         connectedMtx.lock();
-        bool temp = connected;
+        int temp = clientSockets.size();
         connectedMtx.unlock();
         return temp;
     }
@@ -54,34 +54,30 @@ private:
 
 #ifdef  __linux__ 
     int addrlen;
-    int linClientSocket;
+    vector<int> clientSocket;
     struct sockaddr_in address;
+    int portableSend(int socket, const char* message) const;
+    int portableRecv(int socket, char* recvBuffer);
+    void portableShutdown(int socket);
 #elif _WIN32
-    SOCKET winClientSocket;
+    vector<SOCKET> clientSockets;
+
+    int portableSend(SOCKET socket, const char* message) const;
+    int portableRecv(SOCKET socket, char* recvBuffer);
+    void portableShutdown(SOCKET socket);
 #endif
 
     string port = "8080";
     int recvbuflen = 512;
 
-    shared_ptr<string> lastMessage;
+    vector<string> lastMessages;
 
     bool connected = false;
 
     mutex connectedMtx;
-    bool wait;
-    bool gotNewMessage;
+    vector<bool> wait;
+    vector<bool> gotNewMessage;
     shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
 
-    void setConnected(bool c) {
-        connectedMtx.lock();
-        connected = c;
-        connectedMtx.unlock();
-    }
-
-
-
-    int portableSend(const char* message) const;
-    int portableRecv(char* recvBuffer);
     void portableConnect();
-    void portableShutdown();
 };

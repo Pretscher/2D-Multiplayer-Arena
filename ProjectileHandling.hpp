@@ -13,8 +13,8 @@ public:
 	
 	void draw();
 	void update(const shared_ptr<vector<Rect>> colidables);
-	void sendProjectiles();
-	void receiveProjectiles();
+	void sendProjectiles(int socketIndex);
+	void receiveProjectiles(int index);
 
 	void setPlayerIndex(int playerIndex) {
 		myPlayerI = playerIndex;

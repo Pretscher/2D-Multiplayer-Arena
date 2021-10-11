@@ -99,8 +99,8 @@ void ProjectileHandling::draw() {
 }
 
 
-void ProjectileHandling::sendProjectiles() {
-	int networkingStart = NetworkCommunication::getTokenCount();
+void ProjectileHandling::sendProjectiles(int socketIndex) {
+	int networkingStart = NetworkCommunication::getTokenCount(socketIndex);
 	NetworkCommunication::addToken(networkingStart);
 	int networkingEnd = networkingStart + (4 * newProjectiles.size());
 	NetworkCommunication::addToken(networkingEnd);
@@ -114,13 +114,13 @@ void ProjectileHandling::sendProjectiles() {
 		NetworkCommunication::addToken(current->getGoalX());
 	}
 	if (newProjectiles.size() > 0) {
-		int networkingEnd = NetworkCommunication::getTokenCount() - 1;
+		int networkingEnd = NetworkCommunication::getTokenCount(socketIndex) - 1;
 		NetworkCommunication::addToken(networkingEnd);
 	}
 	newProjectiles.clear();
 }
 
-void ProjectileHandling::receiveProjectiles() {
+void ProjectileHandling::receiveProjectiles(int index) {
 	int otherPlayerI = 0;
 	if (myPlayerI == 0) {
 		otherPlayerI = 1;
@@ -131,21 +131,21 @@ void ProjectileHandling::receiveProjectiles() {
 	int goalY = 0;
 	int goalX = 0;
 
-	int networkingStart = NetworkCommunication::receiveNextToken();
-	int networkingEnd = NetworkCommunication::receiveNextToken();
+	int networkingStart = NetworkCommunication::receiveNextToken(index);
+	int networkingEnd = NetworkCommunication::receiveNextToken(index);
 	for (int i = networkingStart; i < networkingEnd; i++) {
 		switch (counter) {
 		case 0:
-			y = NetworkCommunication::receiveNextToken();
+			y = NetworkCommunication::receiveNextToken(index);
 			break;
 		case 1:
-			x = NetworkCommunication::receiveNextToken();
+			x = NetworkCommunication::receiveNextToken(index);
 			break;
 		case 2:
-			goalY = NetworkCommunication::receiveNextToken();//keep important decimal places through */ 10000
+			goalY = NetworkCommunication::receiveNextToken(index);//keep important decimal places through */ 10000
 			break;
 		case 3:
-			goalX = NetworkCommunication::receiveNextToken();
+			goalX = NetworkCommunication::receiveNextToken(index);
 			break;
 		default:;//do nothing on default, either all 4 cases are given or none, nothing else can happen
 		}

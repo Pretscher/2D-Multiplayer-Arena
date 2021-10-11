@@ -12,7 +12,7 @@ public:
 
 	/** Has to have pathfinding as a param so that we can update pathfinding-graph if player positions changed
 	**/
-	void receivePlayerData();
+	void receivePlayerData(int index);
 
 	inline void setPlayerIndex(int playerIndex) {
 		myPlayerI = playerIndex;

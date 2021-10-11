@@ -14,7 +14,7 @@ static int addrlen;
 static int recvbuflen = 512;
 
 static bool gotNewMessage = false;
-static shared_ptr<string> lastMessage(new string());
+static shared_ptr<string> lastMessages(new string());
 static shared_ptr<mutex> mtx(new mutex());
 static bool waitHandShaking = true;
 
@@ -72,19 +72,19 @@ void PortableServer::receiveMultithreaded() {
         //received a valid message
         if (inputLenght > 0) {
             mtx->lock();
-            lastMessage->clear();
+            lastMessages->clear();
             gotNewMessage = true;
             //save message
             for (int i = 0; i < inputLenght; i++) {
-                lastMessage->push_back(recvbuf[i]);
+                lastMessages->push_back(recvbuf[i]);
             }
             delete[] recvbuf;
             waitHandShaking = false;//sending to client before receiving again
             //connection setup
-            if (lastMessage->compare("12345") == 0) {
+            if (lastMessages->compare("12345") == 0) {
                 sendToClient("12345");//set wait to true again, client has to make the first move
                 //waitHandShaking = true;
-                lastMessage->clear();
+                lastMessages->clear();
                 gotNewMessage = false;
             }
             mtx->unlock();
@@ -107,7 +107,7 @@ void PortableServer::sendToClient(const char* message) {
 }
 
 shared_ptr<string> PortableServer::getLastMessage() const {
-    return lastMessage;
+    return lastMessages;
 }
 
 bool PortableServer::isConnected() const {
@@ -127,25 +127,16 @@ bool PortableServer::newMessage() const {
 
 */
 
-PortableServer::PortableServer() {
-    wait = true;
-    gotNewMessage = false;
-    lastMessage = shared_ptr<string>(new string());
-#ifdef _WIN64
-    winClientSocket = INVALID_SOCKET;
-#endif
-}
-
 void PortableServer::waitForClient() {
     portableConnect();//listen for clients
 }
 
 
 
-void PortableServer::sendToClient(const char* message) {
-    if (wait == false) {
-        int iResult = portableSend(message);
-        wait = true;
+void PortableServer::sendToClient(int index, const char* message) {
+    if (wait[index] == false) {
+        int iResult = portableSend(clientSockets[index], message);
+        wait[index] = true;
     }
 }
 
@@ -153,42 +144,41 @@ void PortableServer::receiveMultithreaded() {
     // Receive until the peer shuts down the connection
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        char* recvBuffer = new char[recvbuflen];
-        int iResult = portableRecv(recvBuffer);
-
-        //save message
-        if (iResult > 0) {
-            mtx->lock();//lock caus writing and reading message at the same time is not thread safe
-            lastMessage->clear();
-            gotNewMessage = true;
+        for (int i = 0; i < clientSockets.size(); i++) {
+            char* recvBuffer = new char[recvbuflen];
+            int iResult = portableRecv(clientSockets[i], recvBuffer);
             //save message
-            for (int i = 0; i < iResult; i++) {
-                lastMessage->push_back(recvBuffer[i]);
-            }
-            delete[] recvBuffer;
-            wait = false;
-            //connection setup
-            if (lastMessage->compare("12345") == 0) {
-                sendToClient("12345");//sets wait to false
-                lastMessage->clear();
-                gotNewMessage = false;
-                setConnected(true);
+            if (iResult > 0) {
+                mtx->lock();//lock caus writing and reading message at the same time is not thread safe
+                lastMessages[i].clear();
+                gotNewMessage[i] = true;
+                //save message
+                for (int i = 0; i < iResult; i++) {
+                    lastMessages[i].push_back(recvBuffer[i]);
+                }
+                delete[] recvBuffer;
+                wait[i] = false;
+                //connection setup
+                if (lastMessages[i].compare("12345") == 0) {
+                    sendToClient(clientSockets[i], "12345");//sets wait to false
+                    lastMessages[i].clear();
+                    gotNewMessage[i] = false;
+                }
+
+                mtx->unlock();
             }
 
-            mtx->unlock();
-        }
-
-        if (iResult < 0) {
-            cout << "Lost connection to client.";
-            portableShutdown();
-            setConnected(false);
-            return;
+            if (iResult < 0) {
+                cout << "Lost connection to client.";
+                portableShutdown(clientSockets[i]);
+                return;
+            }
         }
     }
 }
 
-shared_ptr<string> PortableServer::getLastMessage() const {
-    return lastMessage;
+vector<string> PortableServer::getLastMessages() const {
+    return lastMessages;
 }
 
 shared_ptr<mutex> PortableServer::getMutex() const {
@@ -196,9 +186,9 @@ shared_ptr<mutex> PortableServer::getMutex() const {
 }
 
 
-bool PortableServer::newMessage() {
-    bool temp = gotNewMessage;
-    gotNewMessage = false;
+bool PortableServer::newMessage(int index) {
+    bool temp = gotNewMessage[index];
+    gotNewMessage[index] = false;
     return temp;
 }
 
@@ -259,28 +249,41 @@ string PortableServer::getIP() const {
 #endif
 }
 
-int PortableServer::portableSend(const char* message) const {
 #ifdef __linux__ 
-    int result = send(linClientSocket, message, strlen(message), 0);
+int PortableServer::portableSend(int socket, const char* message) const {
+    int result = send(socket, message, strlen(message), 0);
     return result;
+}
+
+int PortableServer::portableRecv(int socket, char* recvBuffer) {
+    return read(socket, recvBuffer, recvbuflen);
+}
+
+void PortableServer::portableShutdown(int socket) {
+    shutdown(socket, SHUT_RDWR);
+}
+
 #elif _WIN64
-    int result = send(winClientSocket, message, (int) strlen(message), 0);
+int PortableServer::portableSend(SOCKET socket, const char* message) const {
+    int result = send(socket, message, (int) strlen(message), 0);
     if (result == SOCKET_ERROR) {
         cout << "Server Message Sending Error: \n" << message;
     }
     return result;
-#endif
 }
 
-int PortableServer::portableRecv(char* recvBuffer) {
-#ifdef __linux__ 
-    return read(linClientSocket, recvBuffer, recvbuflen);
-#elif _WIN64
-    return recv(winClientSocket, recvBuffer, recvbuflen, 0);
+void PortableServer::portableShutdown(SOCKET socket) {
+    closesocket(socket);
+}
 #endif
+
+int PortableServer::portableRecv(SOCKET socket, char* recvBuffer) {
+    return recv(socket, recvBuffer, recvbuflen, 0);
 }
 
 void PortableServer::portableConnect() {
+    wait.push_back(true);
+    gotNewMessage.push_back(false);
 #ifdef __linux__ 
 
     int listenSocket = 0;
@@ -320,9 +323,14 @@ void PortableServer::portableConnect() {
 
     cout << "Server successfully set up.\n";
 
-    if ((linClientSocket = accept(listenSocket, (struct sockaddr*) &address, (socklen_t*) &addrlen)) < 0) {
+    int tempClientSocket = accept(listenSocket, (struct sockaddr*) &address, (socklen_t*) &addrlen));
+    if (tempClientSocket < 0) {
         cout << "Server accept failed";
     }
+    connectedMtx.lock();
+    clientSockets.push_back(tempClientSocket);
+    connectedMtx.unlock();
+
     shutdown(listenSocket, SHUT_RDWR);
 #elif _WIN64
     WSADATA wsaData;
@@ -387,22 +395,19 @@ void PortableServer::portableConnect() {
 
     cout << "Server successfully set up.\n";
 
-    winClientSocket = accept(listenSocket, nullptr, nullptr);
-    if (winClientSocket == INVALID_SOCKET) {
+    SOCKET tempClientSocket = accept(listenSocket, nullptr, nullptr);
+    if (tempClientSocket == INVALID_SOCKET) {
         cout << "Server accept failed with error: \n" << WSAGetLastError();
         closesocket(listenSocket);
         WSACleanup();
         exit(0);
         return;
     }
-    closesocket(listenSocket);
-#endif
-}
 
-void PortableServer::portableShutdown() {
-#ifdef __linux__ 
-    shutdown(linClientSocket, SHUT_RDWR);
-#elif _WIN64
-    closesocket(winClientSocket);
+    connectedMtx.lock();
+    clientSockets.push_back(tempClientSocket);
+    connectedMtx.unlock();
+    
+    closesocket(listenSocket);
 #endif
 }

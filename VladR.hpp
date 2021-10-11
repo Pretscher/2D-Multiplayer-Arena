@@ -9,7 +9,7 @@ public:
 
     VladR(int i_myPlayerIndex);
     //create from network input(y is just current y so even with lag the start is always synced)
-    VladR();
+    VladR(bool createFromNetwork, int socketIndex);
 
     //Has only one phase: being in pool
     void execute0() override;

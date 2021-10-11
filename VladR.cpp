@@ -11,10 +11,10 @@ VladR::VladR(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	indicator = unique_ptr<AOEonRangeIndicator>(new AOEonRangeIndicator(i_myPlayerIndex, range, radius));
 }
 //constructor through networking
-VladR::VladR() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	this->networkingTimeInPhase = NetworkCommunication::receiveNextToken();
-	this->y = NetworkCommunication::receiveNextToken();
-	this->x = NetworkCommunication::receiveNextToken();
+VladR::VladR(bool createFromNetwork, int socketIndex) : Ability(NetworkCommunication::receiveNextToken(socketIndex), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	this->networkingTimeInPhase = NetworkCommunication::receiveNextToken(socketIndex);
+	this->y = NetworkCommunication::receiveNextToken(socketIndex);
+	this->x = NetworkCommunication::receiveNextToken(socketIndex);
 	for (int i = 0; i < 1; i++) {
 		nextPhase();
 	}

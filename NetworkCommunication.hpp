@@ -8,25 +8,25 @@ class PortableServer;
 class PortableClient;
 class NetworkCommunication {
 public:
-	static void initNewCommunication();
+	static void initNewCommunication(int index);
 
 	static void addToken(char* token);
 	static void addToken(int token);
 
 	static void sendTokensToServer(shared_ptr<PortableServer> server);
-	static void sendTokensToClient(shared_ptr<PortableClient> client);
+	static void sendTokensToClient(int index, shared_ptr<PortableClient> client);
 
-	static int receiveNextToken();
-	static void receiveTonkensFromServer(shared_ptr<PortableServer> server);
+	static int receiveNextToken(int index);
+	static void receiveTonkensFromServer(int index, shared_ptr<PortableServer> server);
 	static void receiveTonkensFromClient(shared_ptr<PortableClient> client);
 
-	static int getTokenCount();
+	static int getTokenCount(int index);
 
 private:
-	static int tokenCount;
-	static string rawData;
+	static vector<int> tokenCount;
+	static vector<string> rawData;
 	static vector<int> parseToIntsData;
-	static int tokenIndex;
+	static vector<int> tokenIndex;
 
 	static vector<int> extractInts(string str);
 };

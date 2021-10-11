@@ -1,7 +1,8 @@
 #include "Eventhandling.hpp"
 using namespace std;
 
-
+bool networkInitialized = false;
+bool isClient = false;
 shared_ptr<PortableServer> server = nullptr;
 shared_ptr<PortableClient> client = nullptr;
 void initServer() {
@@ -95,12 +96,32 @@ void Eventhandling::eventloop() {
 		projectileHandling->update(worldHandling->getTerrain()->getCollidables());
 
 		//pass game information back and forth through tcp sockets
-		if ((server != nullptr && server->isConnected() == true) || (client != nullptr && client->isConnected() == true)) {
-			if (received == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
-				sendData();
-				received = false;
+		if (server != nullptr && server->getClientCount() > 0) {
+			if (networkInitialized == false) {
+				networkInitialized = true;
+				received.push_back(true);
+				isClient = false;
 			}
-			recvAndImplementData();
+			for (int i = 0; i < server->getClientCount(); i++) {
+				if (received[i] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
+					sendData(i);
+					received[i] = false;
+				}
+				recvAndImplementData(i);
+			}
+		}
+		if (client != nullptr && client->isConnected() == true) {
+			if (networkInitialized == false) {
+				networkInitialized = true;
+				received.push_back(true);
+				isClient = true;
+			}
+			received.push_back(true);
+			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
+				sendData(0);
+				received[0] = false;
+			}
+			recvAndImplementData(0);
 		}
 	}
 }
@@ -131,42 +152,33 @@ void Eventhandling::drawingloop() {
 
 
 
-void Eventhandling::sendData() {
-	NetworkCommunication::initNewCommunication();
-
+void Eventhandling::sendData(int index) {
+	NetworkCommunication::initNewCommunication(index);
 	abilityHandling->sendData();
 	playerHandling->sendPlayerData();
-	projectileHandling->sendProjectiles();
-
-
-	if (playerHandling->getPlayerIndex() == 0) {
-		NetworkCommunication::sendTokensToServer(server);
+	projectileHandling->sendProjectiles(index);
+	if (isClient == false) {
+		NetworkCommunication::sendTokensToClient(index, client);
 	}
-	if (playerHandling->getPlayerIndex() == 1) {
-		NetworkCommunication::sendTokensToClient(client);
+	else {
+		NetworkCommunication::sendTokensToServer(server);
 	}
 }
 
-void Eventhandling::recvAndImplementData() {
+void Eventhandling::recvAndImplementData(int index) {
+	abilityHandling->receiveData(index);
+	playerHandling->receivePlayerData(index);
+	projectileHandling->receiveProjectiles(index);
+	received[index] = true;
 
-	bool receivedSth = false;
-	if (playerHandling->getPlayerIndex() == 0) {
-		if (server->newMessage() == true) {
-			receivedSth = true;
-			NetworkCommunication::receiveTonkensFromServer(server);
-		}
-	}
-	else {
+	if (isClient == true) {
 		if (client->newMessage() == true) {
-			receivedSth = true;
 			NetworkCommunication::receiveTonkensFromClient(client);
 		}
 	}
-	if (receivedSth == true) {
-		abilityHandling->receiveData();
-		playerHandling->receivePlayerData();
-		projectileHandling->receiveProjectiles();
-
-		received = true;
+	else {
+		if (server->newMessage(index) == true) {
+			NetworkCommunication::receiveTonkensFromServer(index, server);
+		}
 	}
 }

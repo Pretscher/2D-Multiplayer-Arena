@@ -14,14 +14,14 @@ Fireball::Fireball(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCD
 }
 
 //create from network input(y is just current y so even with lag the start is always synced)
-Fireball::Fireball() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+Fireball::Fireball(bool createFromNetwork, int socketIndex) : Ability(NetworkCommunication::receiveNextToken(socketIndex), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
 
-    this->startY = NetworkCommunication::receiveNextToken();
-    this->startX = NetworkCommunication::receiveNextToken();
-    this->goalY = NetworkCommunication::receiveNextToken();
-    this->goalX = NetworkCommunication::receiveNextToken();
-    skipToPhase(NetworkCommunication::receiveNextToken());
-    this->tempTimeSinceExplosionStart = NetworkCommunication::receiveNextToken();
+    this->startY = NetworkCommunication::receiveNextToken(socketIndex);
+    this->startX = NetworkCommunication::receiveNextToken(socketIndex);
+    this->goalY = NetworkCommunication::receiveNextToken(socketIndex);
+    this->goalX = NetworkCommunication::receiveNextToken(socketIndex);
+    skipToPhase(NetworkCommunication::receiveNextToken(socketIndex));
+    this->tempTimeSinceExplosionStart = NetworkCommunication::receiveNextToken(socketIndex);
     //start explosion, only useful if you have a big lag and the fireball gets transmitted only 
     //after exploding or you connect after explosion
 

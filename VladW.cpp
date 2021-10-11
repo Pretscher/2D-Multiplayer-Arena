@@ -13,8 +13,8 @@ VladW::VladW(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	GlobalRecources::players->at(myPlayerIndex)->targetAble = false;
 }
 //constructor through networking
-VladW::VladW() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	endPhaseAfterMS(2000 - NetworkCommunication::receiveNextToken());
+VladW::VladW(bool createFromNetwork, int socketIndex) : Ability(NetworkCommunication::receiveNextToken(socketIndex), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	endPhaseAfterMS(2000 - NetworkCommunication::receiveNextToken(socketIndex));
 	GlobalRecources::players->at(myPlayerIndex)->inVladW = true;
 	GlobalRecources::players->at(myPlayerIndex)->targetAble = false;
 }

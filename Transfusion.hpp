@@ -9,7 +9,7 @@ public:
     //normal constructor if the ability is created on your network-side
     Transfusion(int i_myPlayerIndex);
     //constructor through networking
-    Transfusion();
+    Transfusion(bool createFromNetwork, int socketIndex);
 
     //Phase 0: Indicator. Select target with point and click. If selected
     void execute0() override;

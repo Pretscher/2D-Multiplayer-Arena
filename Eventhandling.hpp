@@ -26,13 +26,13 @@ public:
 
 
 private:
-	void sendData();
-	void recvAndImplementData();
+	void sendData(int index);
+	void recvAndImplementData(int index);
 
 	unique_ptr<Menu> menu;
 	bool menuActive = true;
 
-	bool received = true;
+	vector<bool> received;
 	thread* networkThread;
 
 	unique_ptr<PlayerHandling> playerHandling;

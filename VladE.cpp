@@ -14,9 +14,9 @@ VladE::VladE(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, i_onCDPhase,
 	endPhaseAfterMS(1500);
 }
 //constructor through networking
-VladE::VladE() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-	int phase = NetworkCommunication::receiveNextToken();
-	int timeInPhase = NetworkCommunication::receiveNextToken();
+VladE::VladE(bool createFromNetwork, int socketIndex) : Ability(NetworkCommunication::receiveNextToken(socketIndex), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+	int phase = NetworkCommunication::receiveNextToken(socketIndex);
+	int timeInPhase = NetworkCommunication::receiveNextToken(socketIndex);
 	if (phase == 0) {
 		endPhaseAfterMS(1500 - timeInPhase);
 	}

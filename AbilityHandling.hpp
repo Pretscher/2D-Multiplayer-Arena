@@ -238,35 +238,32 @@ public:
 
     /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
     **/
-    void receiveData() {
+    void receiveData(int index) {
         int otherPlayer = 0;
         if (myPlayerI == 0) {
             otherPlayer = 1;
         }
 
-        if (NetworkCommunication::receiveNextToken() == 1) {
-            generalAbilities.push_back(shared_ptr<Transfusion>(new Transfusion()));
+        if (NetworkCommunication::receiveNextToken(index) == 1) {
+            generalAbilities.push_back(shared_ptr<Transfusion>(new Transfusion(true, index)));
         }
 
-        if (NetworkCommunication::receiveNextToken() == 1) {
-            generalAbilities.push_back(shared_ptr<VladW>(new VladW()));
+        if (NetworkCommunication::receiveNextToken(index) == 1) {
+            generalAbilities.push_back(shared_ptr<VladW>(new VladW(true, index)));
         }
 
-        if (NetworkCommunication::receiveNextToken() == 1) {
-            generalAbilities.push_back(shared_ptr<VladE>(new VladE()));
+        if (NetworkCommunication::receiveNextToken(index) == 1) {
+            generalAbilities.push_back(shared_ptr<VladE>(new VladE(true, index)));
         }
 
-        if (NetworkCommunication::receiveNextToken() == 1) {
-            generalAbilities.push_back(shared_ptr<VladR>(new VladR()));
+        if (NetworkCommunication::receiveNextToken(index) == 1) {
+            generalAbilities.push_back(shared_ptr<VladR>(new VladR(true, index)));
         }
-        if (NetworkCommunication::receiveNextToken() == 1) {
-           generalAbilities.push_back(shared_ptr<Fireball>(new Fireball()));
+        if (NetworkCommunication::receiveNextToken(index) == 1) {
+           generalAbilities.push_back(shared_ptr<Fireball>(new Fireball(true, index)));
         }
 
     }
-
-
-
 
 
 

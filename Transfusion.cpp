@@ -18,8 +18,8 @@ Transfusion::Transfusion(int i_myPlayerIndex) : Ability(i_myPlayerIndex, false, 
     }
 }
 //constructor through networking
-Transfusion::Transfusion() : Ability(NetworkCommunication::receiveNextToken(), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
-    this->targetPlayerIndex = NetworkCommunication::receiveNextToken();//we dont know the indicator so its target has to be passed
+Transfusion::Transfusion(bool createFromNetwork, int socketIndex) : Ability(NetworkCommunication::receiveNextToken(socketIndex), true, i_onCDPhase, i_addToNetworkPhase, i_abilityIndex) {
+    this->targetPlayerIndex = NetworkCommunication::receiveNextToken(socketIndex);//we dont know the indicator so its target has to be passed
     
     lastYs = new int[positionsSavedCount];
     lastXs = new int[positionsSavedCount];

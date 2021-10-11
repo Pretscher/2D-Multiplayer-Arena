@@ -9,7 +9,7 @@ public:
     //normal constructor if the ability is created on your network-side
     Fireball(int i_myPlayerIndex);
     //create from network input(y is just current y so even with lag the start is always synced)
-    Fireball();
+    Fireball(bool createFromNetwork, int socketIndex);
 
     //phase 0: Indicator. Select destination for fireball
     void execute0() override;
