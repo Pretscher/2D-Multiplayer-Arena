@@ -99,7 +99,7 @@ void Eventhandling::eventloop() {
 		if (server != nullptr && server->getClientCount() > 0) {
 			if (networkInitialized == false) {
 				networkInitialized = true;
-				received.push_back(true);
+				received.push_back(false);
 				isClient = false;
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
@@ -107,7 +107,9 @@ void Eventhandling::eventloop() {
 					sendData(i);
 					received[i] = false;
 				}
-				recvAndImplementData(i);
+				else {
+					recvAndImplementData(i);
+				}
 			}
 		}
 		if (client != nullptr && client->isConnected() == true) {
@@ -121,7 +123,9 @@ void Eventhandling::eventloop() {
 				sendData(0);
 				received[0] = false;
 			}
-			recvAndImplementData(0);
+			else {
+				recvAndImplementData(0);
+			}
 		}
 	}
 }
