@@ -172,19 +172,19 @@ void Eventhandling::sendData(int index) {
 void Eventhandling::recvAndImplementData(int index) {
 	if (isClient == true) {
 		if (client->newMessage() == true) {
-			NetworkCommunication::receiveTonkensFromClient(client);
 			abilityHandling->receiveData(index);
 			playerHandling->receivePlayerData(index);
 			projectileHandling->receiveProjectiles(index);
+			NetworkCommunication::receiveTonkensFromClient(client);
 			received[index] = true;
 		}
 	}
 	else {
 		if (server->newMessage(index) == true) {
-			NetworkCommunication::receiveTonkensFromServer(index, server);
 			abilityHandling->receiveData(index);
 			playerHandling->receivePlayerData(index);
 			projectileHandling->receiveProjectiles(index);
+			NetworkCommunication::receiveTonkensFromServer(index, server);
 			received[index] = true;
 		}
 	}
