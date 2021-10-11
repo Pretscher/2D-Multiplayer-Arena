@@ -3,7 +3,7 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 using namespace std;
-
+/*
 #ifdef __linux__ 
 
 
@@ -152,8 +152,7 @@ string PortableClient::getIP() const {
 
         s=getnameinfo(ifa->ifa_addr,sizeof(struct sockaddr_in),host, 265, NULL, 0, 1);
 
-        if( /*(strcmp(ifa->ifa_name,"wlan0")==0)&&( */ ifa->ifa_addr->sa_family==AF_INET) // )
-        {
+        if(ifa->ifa_addr->sa_family==AF_INET){
             if (s != 0)
             {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
@@ -284,16 +283,7 @@ void PortableClient::searchHosts() {
 }
 
 #elif _WIN32
-
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <mutex>
-#include <vector>
-// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
+*/
 
 const int recvbuflen = 512;
 shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
@@ -536,18 +526,6 @@ int PortableClient::portableSend(int socket, const char* message) const {
     return result;
 }
 
-string PortableClient::portableRecv(int socket) {
-    char* recvBuf = new char[recvbuflen];
-    int result = read(socket, recvBuf, recvbuflen);
-    string msg;
-    //save message
-    for (int i = 0; i < result; i++) {
-        msg.push_back(recvBuf[i]);
-    }
-    delete[] recvBuf;
-    return msg;
-}
-
 int PortableClient::portableConnect(const char* connectIP) {
     int listenSocket;
     // Attempt to connect to an address until one succeeds
@@ -560,7 +538,7 @@ int PortableClient::portableConnect(const char* connectIP) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
     // Convert IPv4 and IPv6 addresses from text to binary form
-    inet_pton(AF_INET, serverIP.c_str(), &serv_addr.sin_addr);
+    inet_pton(AF_INET, connectIP, &serv_addr.sin_addr);
     if (connect(listenSocket, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) >= 0) {
         return listenSocket;
     }
@@ -639,6 +617,4 @@ SOCKET PortableClient::portableConnect(const char* connectIP) {
     }
     return INVALID_SOCKET;
 }
-#endif
-
 #endif
