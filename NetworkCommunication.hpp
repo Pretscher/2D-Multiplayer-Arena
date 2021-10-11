@@ -13,8 +13,8 @@ public:
 	static void addToken(char* token);
 	static void addToken(int token);
 
-	static void sendTokensToServer(shared_ptr<PortableServer> server);
-	static void sendTokensToClient(int index, shared_ptr<PortableClient> client);
+	static void sendTokensToServer(int index, shared_ptr<PortableServer> server);
+	static void sendTokensToClient(shared_ptr<PortableClient> client);
 
 	static int receiveNextToken(int index);
 	static void receiveTonkensFromServer(int index, shared_ptr<PortableServer> server);

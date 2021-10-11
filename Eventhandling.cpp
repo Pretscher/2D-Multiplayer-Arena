@@ -157,11 +157,11 @@ void Eventhandling::sendData(int index) {
 	abilityHandling->sendData();
 	playerHandling->sendPlayerData();
 	projectileHandling->sendProjectiles(index);
-	if (isClient == false) {
-		NetworkCommunication::sendTokensToClient(index, client);
+	if (isClient == true) {
+		NetworkCommunication::sendTokensToClient(client);
 	}
 	else {
-		NetworkCommunication::sendTokensToServer(server);
+		NetworkCommunication::sendTokensToServer(index, server);
 	}
 }
 

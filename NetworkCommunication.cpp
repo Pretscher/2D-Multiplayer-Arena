@@ -34,17 +34,17 @@ void NetworkCommunication::addToken(int token) {
 	}
 }
 
-void NetworkCommunication::sendTokensToServer(shared_ptr<PortableServer> server) {
+void NetworkCommunication::sendTokensToServer(int index, shared_ptr<PortableServer> server) {
 	for (int i = 0; i < server->getClientCount(); i++) {
-		server->sendToClient(i, rawData[0].c_str());
-		rawData[0].clear();
+		server->sendToClient(i, rawData[i].c_str());
+		rawData[i].clear();
 	}
 }
 
-void NetworkCommunication::sendTokensToClient(int index, shared_ptr<PortableClient> client) {
+void NetworkCommunication::sendTokensToClient(shared_ptr<PortableClient> client) {
 	if(client->isConnected() == true) {
-		client->sendToServer(rawData[index].c_str());
-		rawData[index].clear();
+		client->sendToServer(rawData[0].c_str());
+		rawData[0].clear();
 	}
 }
 
