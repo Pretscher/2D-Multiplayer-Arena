@@ -153,14 +153,14 @@ void PortableServer::receiveMultithreaded() {
                 lastMessages[i].clear();
                 gotNewMessage[i] = true;
                 //save message
-                for (int i = 0; i < iResult; i++) {
-                    lastMessages[i].push_back(recvBuffer[i]);
+                for (int j = 0; j < iResult; j++) {
+                    lastMessages[i].push_back(recvBuffer[j]);
                 }
                 delete[] recvBuffer;
                 wait[i] = false;
                 //connection setup
                 if (lastMessages[i].compare("12345") == 0) {
-                    sendToClient(clientSockets[i], "12345");//sets wait to false
+                    sendToClient(i, "12345");//sets wait to false
                     lastMessages[i].clear();
                     gotNewMessage[i] = false;
                 }
@@ -284,6 +284,7 @@ int PortableServer::portableRecv(SOCKET socket, char* recvBuffer) {
 void PortableServer::portableConnect() {
     wait.push_back(true);
     gotNewMessage.push_back(false);
+    lastMessages.push_back(string());
 #ifdef __linux__ 
 
     int listenSocket = 0;

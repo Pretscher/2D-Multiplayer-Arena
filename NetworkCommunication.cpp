@@ -7,7 +7,7 @@ using namespace std;
 
 vector<int> NetworkCommunication::tokenCount;
 vector<string> NetworkCommunication::rawData;
-vector<int> NetworkCommunication::parseToIntsData;
+vector<vector<int>> NetworkCommunication::parseToIntsData;
 vector<int> NetworkCommunication::tokenIndex;
 
 void NetworkCommunication::addToken(char* token) {
@@ -49,7 +49,7 @@ void NetworkCommunication::sendTokensToClient(shared_ptr<PortableClient> client)
 }
 
 int NetworkCommunication::receiveNextToken(int index) {
-	int out = parseToIntsData.at(tokenIndex[index]);
+	int out = parseToIntsData[index].at(tokenIndex[index]);
 	tokenIndex[index]++;
 	return out;
 }
@@ -69,12 +69,9 @@ void NetworkCommunication::receiveTonkensFromServer(int index, shared_ptr<Portab
 		}
 
 		if (copyAndParse == true) {
-			parseToIntsData = extractInts(data);
+			parseToIntsData[index] = extractInts(data);
 		}
-		else {
-			server->getMutex()->unlock();
-		}
-		tokenIndex[0] = 0;
+		tokenIndex[index] = 0;
 	}
 }
 
@@ -91,7 +88,7 @@ void NetworkCommunication::receiveTonkensFromClient(shared_ptr<PortableClient> c
 		if (copyAndParse == true) {
 			string data = *msg;//copy so network can overwrite
 			client->getMutex()->unlock();
-			parseToIntsData = extractInts(std::move(data));
+			parseToIntsData[0] = extractInts(std::move(data));
 		}
 		else {
 			client->getMutex()->unlock();
@@ -105,12 +102,14 @@ void NetworkCommunication::initNewCommunication(int index) {
 		rawData.push_back(string());
 		tokenIndex.push_back(0);
 		tokenCount.push_back(0);
+		parseToIntsData.push_back(vector<int>());
 		return;
 	}
 	else {
 		rawData[index].clear();
 		tokenIndex[index] = 0;
 		tokenCount[index] = 0;
+		parseToIntsData[index].clear();
 		return;
 	}
 	std::cout << "Bad index in initNewCommunication (NetworkCommunication): " << index;

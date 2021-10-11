@@ -25,7 +25,7 @@ public:
 private:
 	static vector<int> tokenCount;
 	static vector<string> rawData;
-	static vector<int> parseToIntsData;
+	static vector<vector<int>> parseToIntsData;
 	static vector<int> tokenIndex;
 
 	static vector<int> extractInts(string str);
