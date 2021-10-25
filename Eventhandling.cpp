@@ -100,7 +100,7 @@ void Eventhandling::eventloop() {
 					server->players = GlobalRecources::players;
 					networkInitialized = true;
 				}
-				received.push_back(false);
+				received.push_back(true);
 				playerHandling->createPlayer();
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
