@@ -98,7 +98,7 @@ void Eventhandling::eventloop() {
 		if (server != nullptr && server->getClientCount() > 0) {
 			while (received.size() < server->getClientCount()) {
 				received.push_back(false);
-				playerHandling->getPlayers()->push_back(shared_ptr<Player>(new Player()));
+				playerHandling->createPlayer();
 				isClient = false;//ye i know this is set to false multiple times if there are more than 1 con but i cant be bothered
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
