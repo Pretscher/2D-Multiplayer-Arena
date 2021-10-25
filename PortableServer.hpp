@@ -35,7 +35,7 @@ class PortableServer {
 public:
     void waitForClient();
   
-    void receiveMultithreaded();
+    void receiveMultithreaded(int i);
     void sendToClient(int index, string message);
 
     vector<string> getLastMessages() const;
@@ -50,6 +50,7 @@ public:
         connectedMtx.unlock();
         return temp;
     }
+    void portableConnect();
 private:
 
 #ifdef  __linux__ 
@@ -78,6 +79,4 @@ private:
     vector<bool> wait;
     vector<bool> gotNewMessage;
     shared_ptr<mutex> mtx = shared_ptr<mutex>(new mutex());
-
-    void portableConnect();
 };

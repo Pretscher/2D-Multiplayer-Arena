@@ -9,7 +9,6 @@ void initServer() {
 	while (true) {
 		server = shared_ptr<PortableServer>(new PortableServer());
 		server->waitForClient();
-		server->receiveMultithreaded();//if connection is lost (exits this method) wait for client again
 	}
 }
 
@@ -97,10 +96,10 @@ void Eventhandling::eventloop() {
 
 		//pass game information back and forth through tcp sockets
 		if (server != nullptr && server->getClientCount() > 0) {
-			if (networkInitialized == false) {
-				networkInitialized = true;
+			while (received.size() < server->getClientCount()) {
 				received.push_back(false);
-				isClient = false;
+				playerHandling->getPlayers()->push_back(shared_ptr<Player>(new Player()));
+				isClient = false;//ye i know this is set to false multiple times if there are more than 1 con but i cant be bothered
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
 				if (received[i] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior

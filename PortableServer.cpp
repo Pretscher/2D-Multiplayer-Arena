@@ -140,39 +140,37 @@ void PortableServer::sendToClient(int index, string message) {
     }
 }
 
-void PortableServer::receiveMultithreaded() {
+void PortableServer::receiveMultithreaded(int i) {
     // Receive until the peer shuts down the connection
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
-        for (int i = 0; i < clientSockets.size(); i++) {
-            char* recvBuffer = new char[recvbuflen];
-            int iResult = portableRecv(clientSockets[i], recvBuffer);
+        char* recvBuffer = new char[recvbuflen];
+        int iResult = portableRecv(clientSockets[i], recvBuffer);
+        //save message
+        if (iResult > 0) {
+            mtx->lock();//lock caus writing and reading message at the same time is not thread safe
+            lastMessages[i].clear();
+            gotNewMessage[i] = true;
             //save message
-            if (iResult > 0) {
-                mtx->lock();//lock caus writing and reading message at the same time is not thread safe
+            for (int j = 0; j < iResult; j++) {
+                lastMessages[i].push_back(recvBuffer[j]);
+            }
+            delete[] recvBuffer;
+            wait[i] = false;
+            //connection setup
+            if (lastMessages[i].compare("12345") == 0) {
+                sendToClient(i, "12345");//sets wait to false
                 lastMessages[i].clear();
-                gotNewMessage[i] = true;
-                //save message
-                for (int j = 0; j < iResult; j++) {
-                    lastMessages[i].push_back(recvBuffer[j]);
-                }
-                delete[] recvBuffer;
-                wait[i] = false;
-                //connection setup
-                if (lastMessages[i].compare("12345") == 0) {
-                    sendToClient(i, "12345");//sets wait to false
-                    lastMessages[i].clear();
-                    gotNewMessage[i] = false;
-                }
-
-                mtx->unlock();
+                gotNewMessage[i] = false;
             }
 
-            if (iResult < 0) {
-                cout << "Lost connection to client.";
-                portableShutdown(clientSockets[i]);
-                return;
-            }
+            mtx->unlock();
+        }
+
+        if (iResult < 0) {
+            cout << "Lost connection to client.";
+            portableShutdown(clientSockets[i]);
+            return;
         }
     }
 }
@@ -281,6 +279,13 @@ int PortableServer::portableRecv(SOCKET socket, char* recvBuffer) {
     return recv(socket, recvBuffer, recvbuflen, 0);
 }
 
+
+
+void startNewConnect(PortableServer* server) {
+    server->portableConnect();
+}
+
+vector<thread> connectThreads;
 void PortableServer::portableConnect() {
     wait.push_back(true);
     gotNewMessage.push_back(false);
@@ -410,5 +415,7 @@ void PortableServer::portableConnect() {
     connectedMtx.unlock();
     
     closesocket(listenSocket);
+    connectThreads.push_back(thread(&startNewConnect, this));
+    this->receiveMultithreaded(connectThreads.size() - 1);//cant be called before pushing back cus loop so -1
 #endif
 }

@@ -6,7 +6,12 @@
 using namespace std;
 
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
-	playerCount = 2;
+	createPlayer();//Create hosting player
+	GlobalRecources::players = players;
+	GlobalRecources::playerCount = playerCount;
+}
+
+void PlayerHandling::createPlayer() {
 	float vel = 50;//velocity on path if path is given
 	int startX = 700;
 	int rectSize = 100;
@@ -15,12 +20,10 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 
 
 	players = shared_ptr<vector<shared_ptr<Player>>>(new vector<shared_ptr<Player>>(playerCount));
-	for (int i = 0; i < playerCount; i++) {
-		int startY = i * 1000 / playerCount + 200;//move players away from each other in y
-		players->at(i) = shared_ptr<Player>(new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg));//places players on map, x dist depends on playercount
-	}
-	GlobalRecources::players = players;
-	GlobalRecources::playerCount = playerCount;
+	int startY = playerCount * 1000 + 200;//move players away from each other in y
+	players->push_back(shared_ptr<Player>(new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg)));//places players on map, x dist depends on playercount
+
+	playerCount = players->size();
 }
 
 void PlayerHandling::draw() {
@@ -66,21 +69,17 @@ void PlayerHandling::sendPlayerData() {
 **/
 int hpSyncDelay = 0;
 void PlayerHandling::receivePlayerData(int index) {
-	int otherPlayer = 0;
-	if (myPlayerI == 0) {
-		otherPlayer = 1;
-	}
 
 	int actionIndex = NetworkCommunication::receiveNextToken(index);
 
 	if (actionIndex == 0) {//interrupt path/no path is there
-		if (players->at(otherPlayer)->hasPath() == true) {
-			players->at(otherPlayer)->deletePath();
+		if (players->at(index)->hasPath() == true) {
+			players->at(index)->deletePath();
 		}			
 		int y = NetworkCommunication::receiveNextToken(index);
 		int x = NetworkCommunication::receiveNextToken(index);
-		players->at(otherPlayer)->setY(y);
-		players->at(otherPlayer)->setX(x);
+		players->at(index)->setY(y);
+		players->at(index)->setX(x);
 	}
 	else if (actionIndex == 1) {//new path
 		int pathLenght = NetworkCommunication::receiveNextToken(index);
@@ -91,7 +90,7 @@ void PlayerHandling::receivePlayerData(int index) {
 			pathX[i] = NetworkCommunication::receiveNextToken(index);
 			pathY[i] = NetworkCommunication::receiveNextToken(index);
 		}
-		players->at(otherPlayer)->givePath(move(pathX), move(pathY), pathLenght);
+		players->at(index)->givePath(move(pathX), move(pathY), pathLenght);
 	}
 	else if (actionIndex == 2) {//follow the path given to you
 		//do nothing yet
