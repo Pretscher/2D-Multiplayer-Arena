@@ -100,7 +100,7 @@ void Eventhandling::eventloop() {
 					server->players = GlobalRecources::players;
 					networkInitialized = true;
 				}
-				received.push_back(false);
+				received.push_back(true);
 				playerHandling->createPlayer();
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
@@ -115,7 +115,7 @@ void Eventhandling::eventloop() {
 			if (networkInitialized == false) {
 				networkInitialized = true;
 				GlobalRecources::isServer = false;
-				received.push_back(true);
+				received.push_back(false);
 				playerHandling->setPlayerIndex(client->myPlayerIndex);//right now there are only two players so the client just has index 1
 			}
 			received.push_back(true);
