@@ -613,6 +613,17 @@ SOCKET PortableClient::portableConnect(const char* connectIP) {
         }
         freeaddrinfo(result);
         delete hints;
+
+        this->sendToServer("getPlayerCount");
+        char* recvBuf = new char[recvbuflen];
+        int len = this->portableRecv(listenSocket, recvBuf);
+        string msg;
+        for (int i = 0; i < len; i++) {
+            msg.push_back(recvBuf[i]);
+        }
+        delete[] recvBuf;
+        playerCount = std::stoi(msg);
+
         return listenSocket;
     }
     return INVALID_SOCKET;
