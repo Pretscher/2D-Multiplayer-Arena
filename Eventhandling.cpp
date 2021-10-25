@@ -114,7 +114,7 @@ void Eventhandling::eventloop() {
 		if (client != nullptr && client->isConnected() == true) {
 			if (networkInitialized == false) {
 				networkInitialized = true;
-				GlobalRecources::isServer = true;
+				GlobalRecources::isServer = false;
 				received.push_back(true);
 				playerHandling->setPlayerIndex(client->myPlayerIndex);//right now there are only two players so the client just has index 1
 			}

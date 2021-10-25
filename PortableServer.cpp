@@ -174,7 +174,7 @@ void PortableServer::respondToCommands(int index) {
         isCommand = true;
     }
     if (lastMessages[index].compare("getPlayerCount") == 0) {
-        sendToClient(index, to_string(this->players->size()));//sets wait to false
+        sendToClient(index, to_string(this->players->size() - 1));//sets wait to false
         isCommand = true;
     }
 
