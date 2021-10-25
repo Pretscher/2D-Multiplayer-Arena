@@ -2,7 +2,6 @@
 using namespace std;
 
 bool networkInitialized = false;
-bool isClient = false;
 shared_ptr<PortableServer> server = nullptr;
 shared_ptr<PortableClient> client = nullptr;
 void initServer() {
@@ -97,9 +96,12 @@ void Eventhandling::eventloop() {
 		//pass game information back and forth through tcp sockets
 		if (server != nullptr && server->getClientCount() > 0) {
 			while (received.size() < server->getClientCount()) {
+				if (networkInitialized == false) {
+					GlobalRecources::isServer = true;
+					networkInitialized = true;
+				}
 				received.push_back(false);
 				playerHandling->createPlayer();
-				isClient = false;//ye i know this is set to false multiple times if there are more than 1 con but i cant be bothered
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
 				if (received[i] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
@@ -112,8 +114,8 @@ void Eventhandling::eventloop() {
 		if (client != nullptr && client->isConnected() == true) {
 			if (networkInitialized == false) {
 				networkInitialized = true;
+				GlobalRecources::isServer = true;
 				received.push_back(true);
-				isClient = true;
 			}
 			received.push_back(true);
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
@@ -156,7 +158,7 @@ void Eventhandling::sendData(int index) {
 	abilityHandling->sendData();
 	playerHandling->sendPlayerData();
 	projectileHandling->sendProjectiles(index);
-	if (isClient == true) {
+	if (GlobalRecources::isServer == false) {
 		NetworkCommunication::sendTokensToClient(client);
 	}
 	else {
@@ -166,7 +168,7 @@ void Eventhandling::sendData(int index) {
 
 void Eventhandling::recvAndImplementData(int index) {
 	NetworkCommunication::initNewCommunication(index);
-	if (isClient == true) {
+	if (GlobalRecources::isServer == false) {
 		if (client->newMessage() == true) {
 			NetworkCommunication::receiveTonkensFromClient(client);
 			abilityHandling->receiveData(index);

@@ -35,70 +35,130 @@ void PlayerHandling::draw() {
 }
 
 void PlayerHandling::sendPlayerData() {
-	int otherPlayer = 0;
-	if (myPlayerI == 0) {
-		otherPlayer = 1;
-	}
+	if (GlobalRecources::isServer == true) {
+		NetworkCommunication::addToken(players->size());
+		for (int i = 0; i < players->size(); i++) {
+			const Player* c = players->at(i).get();
+			if (c->hasPath() == false) {
+				NetworkCommunication::addToken(0);//bool if path should be interrupted
+				NetworkCommunication::addToken(c->getY());
+				NetworkCommunication::addToken(c->getX());
+			}
+			else if (c->hasNewPath == true) {
+				players->at(myPlayerI)->hasNewPath = false;
+				NetworkCommunication::addToken(1);//bool if new bath was found
 
-	const Player* me = players->at(myPlayerI).get();
-	if (me->hasPath() == false) {
-		NetworkCommunication::addToken(0);//bool if path should be interrupted
-		NetworkCommunication::addToken(me->getY());
-		NetworkCommunication::addToken(me->getX());
-	}
-	else if (me->hasNewPath == true) {
-		players->at(myPlayerI)->hasNewPath = false;
-		NetworkCommunication::addToken(1);//bool if new bath was found
-
-		NetworkCommunication::addToken(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
-		for (int i = me->cPathIndex; i < me->pathLenght; i++) {
-			int x = me->pathXpositions[i];
-			NetworkCommunication::addToken(me->pathXpositions[i]);
-			NetworkCommunication::addToken(me->pathYpositions[i]);
+				NetworkCommunication::addToken(c->pathLenght - c->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				for (int i = c->cPathIndex; i < c->pathLenght; i++) {
+					int x = c->pathXpositions[i];
+					NetworkCommunication::addToken(c->pathXpositions[i]);
+					NetworkCommunication::addToken(c->pathYpositions[i]);
+				}
+			}
+			else {
+				NetworkCommunication::addToken(2);
+			}
+			NetworkCommunication::addToken(c->getHp());
 		}
 	}
 	else {
-		NetworkCommunication::addToken(2);
+		NetworkCommunication::addToken(myPlayerI);
+		const Player* me = players->at(myPlayerI).get();
+		if (me->hasPath() == false) {
+			NetworkCommunication::addToken(0);//bool if path should be interrupted
+			NetworkCommunication::addToken(me->getY());
+			NetworkCommunication::addToken(me->getX());
+		}
+		else if (me->hasNewPath == true) {
+			players->at(myPlayerI)->hasNewPath = false;
+			NetworkCommunication::addToken(1);//bool if new bath was found
+
+			NetworkCommunication::addToken(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+			for (int i = me->cPathIndex; i < me->pathLenght; i++) {
+				int x = me->pathXpositions[i];
+				NetworkCommunication::addToken(me->pathXpositions[i]);
+				NetworkCommunication::addToken(me->pathYpositions[i]);
+			}
+		}
+		else {
+			NetworkCommunication::addToken(2);
+		}
+		NetworkCommunication::addToken(me->getHp());
 	}
-
-
-	NetworkCommunication::addToken(players->at(otherPlayer)->getHp());
 }
 
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
 **/
 int hpSyncDelay = 0;
 void PlayerHandling::receivePlayerData(int index) {
+	if (GlobalRecources::isServer == true) {
+		int playerIndex = NetworkCommunication::receiveNextToken(index);
 
-	int actionIndex = NetworkCommunication::receiveNextToken(index);
-
-	if (actionIndex == 0) {//interrupt path/no path is there
-		if (players->at(index)->hasPath() == true) {
-			players->at(index)->deletePath();
-		}			
-		int y = NetworkCommunication::receiveNextToken(index);
-		int x = NetworkCommunication::receiveNextToken(index);
-		players->at(index)->setY(y);
-		players->at(index)->setX(x);
-	}
-	else if (actionIndex == 1) {//new path
-		int pathLenght = NetworkCommunication::receiveNextToken(index);
-
-		vector<int> pathX(pathLenght);
-		vector<int> pathY(pathLenght);
-		for (int i = 0; i < pathLenght; i++) {
-			pathX[i] = NetworkCommunication::receiveNextToken(index);
-			pathY[i] = NetworkCommunication::receiveNextToken(index);
+		int actionIndex = NetworkCommunication::receiveNextToken(index);
+		if (actionIndex == 0) {//interrupt path/no path is there
+			if (players->at(playerIndex)->hasPath() == true) {
+				players->at(playerIndex)->deletePath();
+			}
+			int y = NetworkCommunication::receiveNextToken(index);
+			int x = NetworkCommunication::receiveNextToken(index);
+			players->at(playerIndex)->setY(y);
+			players->at(playerIndex)->setX(x);
 		}
-		players->at(index)->givePath(move(pathX), move(pathY), pathLenght);
+		else if (actionIndex == 1) {//new path
+			int pathLenght = NetworkCommunication::receiveNextToken(index);
+
+			vector<int> pathX(pathLenght);
+			vector<int> pathY(pathLenght);
+			for (int i = 0; i < pathLenght; i++) {
+				pathX[i] = NetworkCommunication::receiveNextToken(index);
+				pathY[i] = NetworkCommunication::receiveNextToken(index);
+			}
+			players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
+		}
+		else if (actionIndex == 2) {//follow the path given to you
+			//do nothing yet
+		}
+		int hp = NetworkCommunication::receiveNextToken(index);
+		hpSyncDelay ++;
+		if (hpSyncDelay > 10) {
+			players->at(playerIndex)->setHp(hp);
+			hpSyncDelay = 0;
+		}
 	}
-	else if (actionIndex == 2) {//follow the path given to you
-		//do nothing yet
-	}
-	int hp = NetworkCommunication::receiveNextToken(index);
-	hpSyncDelay ++;
-	if (hpSyncDelay > 10) {
-		players->at(myPlayerI)->setHp(hp);
-		hpSyncDelay = 0;
+	else {
+		int playerCount = NetworkCommunication::receiveNextToken(index);
+
+		for (int i = 0; i < playerCount; i++) {
+			int actionIndex = NetworkCommunication::receiveNextToken(index);
+			if (actionIndex == 0) {//interrupt path/no path is there
+				if (players->at(i)->hasPath() == true) {
+					players->at(i)->deletePath();
+				}
+				int y = NetworkCommunication::receiveNextToken(index);
+				int x = NetworkCommunication::receiveNextToken(index);
+				players->at(i)->setY(y);
+				players->at(i)->setX(x);
+			}
+			else if (actionIndex == 1) {//new path
+				int pathLenght = NetworkCommunication::receiveNextToken(index);
+
+				vector<int> pathX(pathLenght);
+				vector<int> pathY(pathLenght);
+				for (int i = 0; i < pathLenght; i++) {
+					pathX[i] = NetworkCommunication::receiveNextToken(index);
+					pathY[i] = NetworkCommunication::receiveNextToken(index);
+				}
+				players->at(i)->givePath(move(pathX), move(pathY), pathLenght);
+			}
+			else if (actionIndex == 2) {//follow the path given to you
+				//do nothing yet
+			}
+			int hp = NetworkCommunication::receiveNextToken(index);
+			hpSyncDelay ++;
+			if (hpSyncDelay > 10) {
+				players->at(i)->setHp(hp);
+				hpSyncDelay = 0;
+			}
+		}
 	}
 }

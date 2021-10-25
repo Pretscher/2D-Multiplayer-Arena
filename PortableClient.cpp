@@ -325,7 +325,6 @@ void PortableClient::sendToServer(string message) {
 
 void PortableClient::receiveMultithreaded() {
     while (true) {
-        this_thread::sleep_for(chrono::milliseconds(1));
         char* recvbuf = new char[recvbuflen];
         int inputLenght = portableRecv(serverSocket, recvbuf);
         //received a valid message
@@ -345,6 +344,8 @@ void PortableClient::receiveMultithreaded() {
             cout << "error, client received message with negative lenght";
             exit(0);
         }
+
+        this_thread::sleep_for(chrono::milliseconds(1));
     }
     portableShutdown(serverSocket);
 }
@@ -459,17 +460,6 @@ void testIP(const char* myIP, int index, PortableClient* client) {
             if (msg.compare("12345") == 0) {
                 client->connectSockets.push_back(std::move(tempConnectSocket));
                 foundIP = myIP;//this will be pushed back to string. 
-
-                client->sendToServer("getPlayerCount");
-                char* recvBuf = new char[recvbuflen];
-                int len = client->portableRecv(client->serverSocket, recvBuf);
-                string msg;
-                for (int i = 0; i < len; i++) {
-                    msg.push_back(recvBuf[i]);
-                }
-                delete[] recvBuf;
-                client->playerCount = std::stoi(msg);
-
                 break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
             }
         }
