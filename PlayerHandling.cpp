@@ -127,6 +127,9 @@ void PlayerHandling::receivePlayerData(int index) {
 	}
 	else {
 		int playerCount = NetworkCommunication::receiveNextToken(index);
+		while (playerCount > players->size()) {
+			createPlayer();
+		}
 
 		for (int i = 0; i < playerCount; i++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(index);

@@ -61,7 +61,6 @@ void Eventhandling::eventloop() {
 			}
 		}
 		if (initIndex == true) {
-			playerHandling->setPlayerIndex(playerIndex);//right now there are only two players so the client just has index 1
 			pathfinding->setPlayerIndex(playerIndex);
 			projectileHandling->setPlayerIndex(playerIndex);
 			abilityHandling = unique_ptr<AbilityHandling>(new AbilityHandling(playerIndex));
@@ -84,7 +83,7 @@ void Eventhandling::eventloop() {
 	if (menuActive == false) {
 		worldHandling->update();
 		//pass current hp informations to uiHandling so that it can draw a proper life bar
-		uiHandling->updateLifeBar(playerHandling->getMyPlayer()->getHp(), playerHandling->getMyPlayer()->getMaxHp());
+
 		//does pathfinding on click and player colision
 		pathfinding->update();
 		//moves all abilities and ticks through their states (example projectile->explosion->buring etc.)
@@ -92,7 +91,7 @@ void Eventhandling::eventloop() {
 
 		//pass colidbales to projectile management every update so that projectiles can even be stopped by moving terrain
 		projectileHandling->update(worldHandling->getTerrain()->getCollidables());
-
+		uiHandling->updateLifeBar(playerHandling->getMyPlayer()->getHp(), playerHandling->getMyPlayer()->getMaxHp());
 		//pass game information back and forth through tcp sockets
 		if (server != nullptr && server->getClientCount() > 0) {
 			while (received.size() < server->getClientCount()) {
@@ -116,6 +115,7 @@ void Eventhandling::eventloop() {
 				networkInitialized = true;
 				GlobalRecources::isServer = true;
 				received.push_back(true);
+				playerHandling->setPlayerIndex(playerIndex);//right now there are only two players so the client just has index 1
 			}
 			received.push_back(true);
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior

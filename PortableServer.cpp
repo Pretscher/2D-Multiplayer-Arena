@@ -4,7 +4,7 @@
 #include <vector>
 #include <mutex>
 #include <stdlib.h>
-
+#include "GlobalRecources.hpp"
 using namespace std;
 /*
 static int linClientSocket;
@@ -177,7 +177,7 @@ void PortableServer::respondToCommands(int index) {
         isCommand = true;
     }
     if (lastMessages[index].compare("getPlayerCount") == 0) {
-        sendToClient(index, to_string(clientSockets.size()));//sets wait to false
+        sendToClient(index, to_string(GlobalRecources::players->size()));//sets wait to false
         isCommand = true;
     }
 

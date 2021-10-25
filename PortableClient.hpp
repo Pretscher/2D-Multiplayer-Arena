@@ -46,7 +46,7 @@ using namespace std;
 
 class PortableClient {
 public:
-    int playerCount;
+    int myPlayerIndex;
 
     PortableClient();
     void receiveMultithreaded();

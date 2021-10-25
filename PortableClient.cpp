@@ -306,6 +306,17 @@ void PortableClient::connectToHost(string ip) {
     for (int i = 0; i < copy.size(); i++) {
         if (copy.at(i).compare(ip) == 0) {
             serverSocket = connectSockets.at(i);//same index, pushed back simultanioisly
+
+            this->sendToServer("getPlayerCount");
+            char* recvBuf = new char[recvbuflen];
+            int len = this->portableRecv(this->serverSocket, recvBuf);
+            string msg;
+            for (int i = 0; i < len; i++) {
+                msg.push_back(recvBuf[i]);
+            }
+            delete[] recvBuf;
+            this->myPlayerIndex = std::stoi(msg);
+
         }
         else {
             portableShutdown(connectSockets.at(i));
