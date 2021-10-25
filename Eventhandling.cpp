@@ -97,6 +97,7 @@ void Eventhandling::eventloop() {
 			while (received.size() < server->getClientCount()) {
 				if (networkInitialized == false) {
 					GlobalRecources::isServer = true;
+					server->players = GlobalRecources::players;
 					networkInitialized = true;
 				}
 				received.push_back(false);

@@ -30,9 +30,10 @@ using namespace std;
 #pragma comment (lib, "Ws2_32.lib")
 #endif
 
-
+class Player;
 class PortableServer {
 public:
+    shared_ptr<vector<shared_ptr<Player>>> players;
     void waitForClient();
   
     void receiveMultithreaded(int i);
