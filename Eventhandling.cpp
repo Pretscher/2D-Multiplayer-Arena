@@ -115,7 +115,7 @@ void Eventhandling::eventloop() {
 				networkInitialized = true;
 				GlobalRecources::isServer = true;
 				received.push_back(true);
-				playerHandling->setPlayerIndex(playerIndex);//right now there are only two players so the client just has index 1
+				playerHandling->setPlayerIndex(client->myPlayerIndex);//right now there are only two players so the client just has index 1
 			}
 			received.push_back(true);
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
