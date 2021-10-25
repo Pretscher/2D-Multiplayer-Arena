@@ -181,6 +181,7 @@ void PortableServer::respondToCommands(int index) {
     if (isCommand == true) {
         lastMessages[index].clear();
         gotNewMessage[index] = false;
+        wait[index] = true;
     }
 }
 
