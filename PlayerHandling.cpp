@@ -6,6 +6,7 @@
 using namespace std;
 
 PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
+	players = shared_ptr<vector<shared_ptr<Player>>>(new vector<shared_ptr<Player>>());
 	createPlayer();//Create hosting player
 	GlobalRecources::players = players;
 	GlobalRecources::playerCount = playerCount;
@@ -19,7 +20,6 @@ void PlayerHandling::createPlayer() {
 	int defaultDmg = 10;
 
 
-	players = shared_ptr<vector<shared_ptr<Player>>>(new vector<shared_ptr<Player>>(playerCount));
 	int startY = playerCount * 1000 + 200;//move players away from each other in y
 	players->push_back(shared_ptr<Player>(new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg)));//places players on map, x dist depends on playercount
 
