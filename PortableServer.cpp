@@ -163,7 +163,7 @@ void PortableServer::receiveMultithreaded(int i) {
                 lastMessages[i].clear();
                 gotNewMessage[i] = false;
             }
-
+            this->respondToCommands(i);
             mtx->unlock();
         }
 
@@ -172,6 +172,23 @@ void PortableServer::receiveMultithreaded(int i) {
             portableShutdown(clientSockets[i]);
             return;
         }
+    }
+}
+
+void PortableServer::respondToCommands(int index) {
+    bool isCommand = false;//commands should not be used by handlers so we clear them at the end
+    if (lastMessages[index].compare("12345") == 0) {
+        sendToClient(index, "12345");//sets wait to false
+        isCommand = true;
+    }
+    if (lastMessages[index].compare("getPlayerCount") == 0) {
+        sendToClient(index, to_string(clientSockets.size()));//sets wait to false
+        isCommand = true;
+    }
+
+    if (isCommand == true) {
+        lastMessages[index].clear();
+        gotNewMessage[index] = false;
     }
 }
 

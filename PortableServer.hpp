@@ -67,7 +67,7 @@ private:
     int portableRecv(SOCKET socket, char* recvBuffer);
     void portableShutdown(SOCKET socket);
 #endif
-
+    void respondToCommands(int index);
     string port = "8080";
     int recvbuflen = 512;
 
