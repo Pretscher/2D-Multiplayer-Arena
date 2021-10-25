@@ -115,8 +115,8 @@ void Eventhandling::eventloop() {
 			if (networkInitialized == false) {
 				networkInitialized = true;
 				GlobalRecources::isServer = false;
-				received.push_back(true);
 			}
+			received.push_back(true);
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 				sendData(0);
 				received[0] = false;
