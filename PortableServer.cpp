@@ -158,11 +158,6 @@ void PortableServer::receiveMultithreaded(int i) {
             delete[] recvBuffer;
             wait[i] = false;
             //connection setup
-            if (lastMessages[i].compare("12345") == 0) {
-                sendToClient(i, "12345");//sets wait to false
-                lastMessages[i].clear();
-                gotNewMessage[i] = false;
-            }
             this->respondToCommands(i);
             mtx->unlock();
         }

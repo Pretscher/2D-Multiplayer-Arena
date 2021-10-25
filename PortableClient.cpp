@@ -459,6 +459,17 @@ void testIP(const char* myIP, int index, PortableClient* client) {
             if (msg.compare("12345") == 0) {
                 client->connectSockets.push_back(std::move(tempConnectSocket));
                 foundIP = myIP;//this will be pushed back to string. 
+
+                client->sendToServer("getPlayerCount");
+                char* recvBuf = new char[recvbuflen];
+                int len = client->portableRecv(client->serverSocket, recvBuf);
+                string msg;
+                for (int i = 0; i < len; i++) {
+                    msg.push_back(recvBuf[i]);
+                }
+                delete[] recvBuf;
+                client->playerCount = std::stoi(msg);
+
                 break;//dont set threadFinished to true so that no multithreading error can occur where the filled string is ignored
             }
         }
@@ -613,17 +624,6 @@ SOCKET PortableClient::portableConnect(const char* connectIP) {
         }
         freeaddrinfo(result);
         delete hints;
-
-        this->sendToServer("getPlayerCount");
-        char* recvBuf = new char[recvbuflen];
-        int len = this->portableRecv(listenSocket, recvBuf);
-        string msg;
-        for (int i = 0; i < len; i++) {
-            msg.push_back(recvBuf[i]);
-        }
-        delete[] recvBuf;
-        playerCount = std::stoi(msg);
-
         return listenSocket;
     }
     return INVALID_SOCKET;
