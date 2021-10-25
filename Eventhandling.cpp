@@ -99,8 +99,8 @@ void Eventhandling::eventloop() {
 					GlobalRecources::isServer = true;
 					server->players = GlobalRecources::players;
 					networkInitialized = true;
+					received.push_back(false);
 				}
-				received.push_back(true);
 				playerHandling->createPlayer();
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
@@ -115,14 +115,15 @@ void Eventhandling::eventloop() {
 			if (networkInitialized == false) {
 				networkInitialized = true;
 				GlobalRecources::isServer = false;
+				received.push_back(true);
 			}
-			received.push_back(true);
+
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 				sendData(0);
 				received[0] = false;
 			}
 			recvAndImplementData(0);
-			playerHandling->setPlayerIndex(client->myPlayerIndex);//right now there are only two players so the client just has index 1
+
 		}
 	}
 }
@@ -175,6 +176,8 @@ void Eventhandling::recvAndImplementData(int index) {
 			playerHandling->receivePlayerData(index);
 			projectileHandling->receiveProjectiles(index);
 			received[index] = true;
+
+			playerHandling->setPlayerIndex(client->myPlayerIndex);//right now there are only two players so the client just has index 1
 		}
 	}
 	else {
