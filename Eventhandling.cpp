@@ -99,7 +99,7 @@ void Eventhandling::eventloop() {
 					GlobalRecources::isServer = true;
 					server->players = GlobalRecources::players;
 					networkInitialized = true;
-					received.push_back(false);
+					received.push_back(true);
 				}
 				playerHandling->createPlayer();
 			}
@@ -115,15 +115,13 @@ void Eventhandling::eventloop() {
 			if (networkInitialized == false) {
 				networkInitialized = true;
 				GlobalRecources::isServer = false;
-				received.push_back(true);
+				received.push_back(false);
 			}
-
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 				sendData(0);
 				received[0] = false;
 			}
 			recvAndImplementData(0);
-
 		}
 	}
 }
