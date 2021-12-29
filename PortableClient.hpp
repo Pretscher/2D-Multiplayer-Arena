@@ -82,6 +82,10 @@ public:
         return std::move(copy);
     }
 
+    void setWait(bool i_wait) {
+        this->wait = i_wait;
+    }
+
 #ifdef  __linux__ 
     int addrlen;
     int serverSocket;

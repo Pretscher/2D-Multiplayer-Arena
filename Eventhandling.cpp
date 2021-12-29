@@ -124,6 +124,7 @@ void Eventhandling::eventloop() {
 					playerHandling->createPlayer();//all client connects should create a new player
 					ind++;
 				}
+				client->setWait(false);//has to initialize both first interaction and send data first so this has to be done
 			}
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 				sendData(0);
