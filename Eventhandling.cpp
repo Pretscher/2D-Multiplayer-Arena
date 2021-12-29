@@ -92,36 +92,44 @@ void Eventhandling::eventloop() {
 		//pass colidbales to projectile management every update so that projectiles can even be stopped by moving terrain
 		projectileHandling->update(worldHandling->getTerrain()->getCollidables());
 		uiHandling->updateLifeBar(playerHandling->getMyPlayer()->getHp(), playerHandling->getMyPlayer()->getMaxHp());
-		//pass game information back and forth through tcp sockets
+		//pass game information back and forth through sockets
 		if (server != nullptr && server->getClientCount() > 0) {
+			//server specific loop: checks if a new client was connected, clientcount goes up first when a new client connects in server class
 			while (received.size() < server->getClientCount()) {
-				if (networkInitialized == false) {
+				//new client was connected
+				if (networkInitialized == false) {//first client connection (only called once)
 					GlobalRecources::isServer = true;
 					server->players = GlobalRecources::players;
 					networkInitialized = true;
 					received.push_back(false);
 				}
-				playerHandling->createPlayer();
+				playerHandling->createPlayer();//all client connects should create a new player
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
 				if (received[i] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 					sendData(i);
-					received[i] = false;
+					received[i] = false;//only send to clients[i] again after receiving an answer
 				}
-				recvAndImplementData(i);
+				recvAndImplementData(i);//when completed (some readable data was recvd and parsed) sets received[i] to true
 			}
 		}
 		if (client != nullptr && client->isConnected() == true) {
-			if (networkInitialized == false) {
+			if (networkInitialized == false) {//initial connect (only called once)
 				networkInitialized = true;
 				GlobalRecources::isServer = false;
 				received.push_back(true);
+				int ind = playerHandling->getPlayerIndex();
+				int tempCount = playerHandling->getPlayerCount();
+				while (ind < tempCount) {
+					playerHandling->createPlayer();//all client connects should create a new player
+					ind++;
+				}
 			}
 			if (received[0] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 				sendData(0);
-				received[0] = false;
+				received[0] = false;//only send to server again after receiving an answer
 			}
-			recvAndImplementData(0);
+			recvAndImplementData(0);//when completed (some readable data was recvd and parsed) sets received[0] to true
 		}
 	}
 }
@@ -167,24 +175,27 @@ void Eventhandling::sendData(int index) {
 
 void Eventhandling::recvAndImplementData(int index) {
 	NetworkCommunication::initNewCommunication(index);
-	if (GlobalRecources::isServer == false) {
-		if (client->newMessage() == true) {
-			NetworkCommunication::receiveTonkensFromClient(client);
-			abilityHandling->receiveData(index);
-			playerHandling->receivePlayerData(index);
-			projectileHandling->receiveProjectiles(index);
-			received[index] = true;
-
-			playerHandling->setPlayerIndex(client->myPlayerIndex);//right now there are only two players so the client just has index 1
-		}
-	}
-	else {
+	if (GlobalRecources::isServer == true) {
+		//server receive
 		if (server->newMessage(index) == true) {
 			NetworkCommunication::receiveTonkensFromServer(index, server);
 			abilityHandling->receiveData(index);
 			playerHandling->receivePlayerData(index);
 			projectileHandling->receiveProjectiles(index);
-			received[index] = true;
+
+			received[index] = true;//ability to send again activated
+		}
+	}
+	else {
+		//client receive
+		if (client->newMessage() == true) {
+			NetworkCommunication::receiveTonkensFromClient(client);
+			abilityHandling->receiveData(index);
+			playerHandling->receivePlayerData(index);
+			projectileHandling->receiveProjectiles(index);
+			playerHandling->setPlayerIndex(client->myPlayerIndex);
+
+			received[index] = true;//ability to send again activated
 		}
 	}
 

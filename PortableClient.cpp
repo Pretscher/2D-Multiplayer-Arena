@@ -428,7 +428,6 @@ string PortableClient::getIP() const {
         addr_list = (struct in_addr**) he->h_addr_list;
         return string(inet_ntoa(*addr_list[0]));
     }
-    return string();//never reaches this
 #endif
   
 }

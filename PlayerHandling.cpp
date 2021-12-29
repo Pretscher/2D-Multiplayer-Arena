@@ -20,7 +20,7 @@ void PlayerHandling::createPlayer() {
 	int defaultDmg = 10;
 
 
-	int startY = playerCount * 1000 + 200;//move players away from each other in y
+	int startY = playerCount * 150 + 200;//move players away from each other in y
 	players->push_back(shared_ptr<Player>(new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg)));//places players on map, x dist depends on playercount
 
 	playerCount = players->size();
