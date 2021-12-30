@@ -57,7 +57,9 @@ void PlayerHandling::sendPlayerData() {
 			else {
 				NetworkCommunication::addTokenToAll(2);
 			}
-			NetworkCommunication::addTokenToClient(2, i);//dont tell current player to do anything with his own path
+			if (i != 0) {//host doesnt get a message from host (host has playerindex 0)
+				NetworkCommunication::addTokenToClient(2, i);//dont tell current player to do anything with his own path
+			}
 			NetworkCommunication::addTokenToAll(c->getHp());
 		}
 	}
