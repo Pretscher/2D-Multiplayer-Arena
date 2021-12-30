@@ -48,8 +48,8 @@ void PlayerHandling::sendPlayerData() {
 			else if (c->hasNewPath == true) {
 				players->at(i)->hasNewPath = false;
 				NetworkCommunication::addTokenToAllExceptClient(-2, i);//bool if new path was found
-
-				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex - 1, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				int count = 0;
+				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
 				for (int i = c->cPathIndex; i < c->pathLenght; i++) {
 					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
 					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
@@ -77,9 +77,8 @@ void PlayerHandling::sendPlayerData() {
 			players->at(myPlayerI)->hasNewPath = false;
 			NetworkCommunication::addTokenToAll(-2);//bool if new bath was found
 
-			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex - 1);//only the path that hasnt been walked yet (lag/connection built up while walking)
+			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
 			for (int i = me->cPathIndex; i < me->pathLenght; i++) {
-				int x = me->pathXpositions[i];
 				NetworkCommunication::addTokenToAll(me->pathXpositions[i]);
 				NetworkCommunication::addTokenToAll(me->pathYpositions[i]);
 			}
