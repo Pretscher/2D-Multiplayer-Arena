@@ -28,12 +28,20 @@ public:
 
 	static int getTokenCount(int index);
 
-	static string getData(int playerIndex) {
+	static string getSentData(int playerIndex) {
 		if (playerIndex <= 0) {
 			return string();
 		}
 		return rawData[playerIndex - 1];
 	}
+
+	static vector<int> getReceivedData(int playerIndex) {
+		if (playerIndex <= 0) {
+			return vector<int>();
+		}
+		return parseToIntsData[playerIndex];
+	}
+
 private:
 	static vector<int> tokenCount;
 	static vector<string> rawData;

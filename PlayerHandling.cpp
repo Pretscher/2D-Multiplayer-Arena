@@ -39,7 +39,7 @@ void PlayerHandling::sendPlayerData() {
 		NetworkCommunication::addTokenToAll(players->size());
 		for (int i = 0; i < players->size(); i++) {
 			const Player* c = players->at(i).get();
-			string s1 = NetworkCommunication::getData(i);
+			string s1 = NetworkCommunication::getSentData(i);
 			if (c->hasPath() == false) {
 				NetworkCommunication::addTokenToAllExceptClient(0, i);//bool if path should be interrupted
 				NetworkCommunication::addTokenToAllExceptClient(c->getY(), i);
@@ -62,7 +62,7 @@ void PlayerHandling::sendPlayerData() {
 				NetworkCommunication::addTokenToClient(2, i);//dont tell current player to do anything with his own path
 			}
 			NetworkCommunication::addTokenToAll(c->getHp());
-			string s2 = NetworkCommunication::getData(i);
+			string s2 = NetworkCommunication::getSentData(i);
 		}
 	}
 	else {
@@ -77,7 +77,7 @@ void PlayerHandling::sendPlayerData() {
 			players->at(myPlayerI)->hasNewPath = false;
 			NetworkCommunication::addTokenToAll(1);//bool if new bath was found
 
-			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex - 1);//only the path that hasnt been walked yet (lag/connection built up while walking)
 			for (int i = me->cPathIndex; i < me->pathLenght; i++) {
 				int x = me->pathXpositions[i];
 				NetworkCommunication::addTokenToAll(me->pathXpositions[i]);
@@ -135,7 +135,7 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 		while (playerCount > players->size()) {
 			createPlayer();
 		}
-
+		vector<int> v1 = NetworkCommunication::getReceivedData(clientIndex);
 		for (int i = 0; i < playerCount; i++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 			if (actionIndex == 0) {//interrupt path/no path is there
