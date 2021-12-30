@@ -78,8 +78,9 @@ void PlayerHandling::sendPlayerData() {
 			players->at(myPlayerI)->hasNewPath = false;
 			NetworkCommunication::addTokenToAll(-2);//bool if new bath was found
 
-			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
-			for (int i = me->cPathIndex; i < me->pathLenght; i++) {
+			int fixedIndex = me->cPathIndex;//so that the index doesnt change in another thread (NOT SAFE DO CHANGE LATER)
+			NetworkCommunication::addTokenToAll(me->pathLenght - fixedIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+			for (int i = fixedIndex; i < me->pathLenght; i++) {
 				NetworkCommunication::addTokenToAll(me->pathXpositions[i]);
 				NetworkCommunication::addTokenToAll(me->pathYpositions[i]);
 			}
@@ -137,8 +138,6 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			createPlayer();
 		}
 
-		string data = NetworkCommunication::getReceivedData(clientIndex);
-
 		for (int i = 0; i < playerCount; i++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 			if (actionIndex == -1) {//interrupt path/no path is there
@@ -174,7 +173,8 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 	}
 	int checkUp = NetworkCommunication::receiveNextToken(clientIndex);
 	if (checkUp != -11) {
-		cout << "Error, expected -11 as next token in PlayerHandling receive but received " + checkUp;
+		std::cout << "Error, expected -11 as next token in PlayerHandling receive but received " << checkUp;
+		std::cout << "\nfull data: " << NetworkCommunication::getReceivedData(1);
 		exit(0);
 	}
 }
