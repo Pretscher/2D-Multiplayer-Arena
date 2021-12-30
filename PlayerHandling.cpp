@@ -39,6 +39,7 @@ void PlayerHandling::sendPlayerData() {
 		NetworkCommunication::addTokenToAll(players->size());
 		for (int i = 0; i < players->size(); i++) {
 			const Player* c = players->at(i).get();
+			string s1 = NetworkCommunication::getData(i);
 			if (c->hasPath() == false) {
 				NetworkCommunication::addTokenToAllExceptClient(0, i);//bool if path should be interrupted
 				NetworkCommunication::addTokenToAllExceptClient(c->getY(), i);
@@ -61,6 +62,7 @@ void PlayerHandling::sendPlayerData() {
 				NetworkCommunication::addTokenToClient(2, i);//dont tell current player to do anything with his own path
 			}
 			NetworkCommunication::addTokenToAll(c->getHp());
+			string s2 = NetworkCommunication::getData(i);
 		}
 	}
 	else {
@@ -135,9 +137,6 @@ void PlayerHandling::receivePlayerData(int index) {
 		}
 
 		for (int i = 0; i < playerCount; i++) {
-			if (i == myPlayerI) {
-				
-			}
 			int actionIndex = NetworkCommunication::receiveNextToken(index);
 			if (actionIndex == 0) {//interrupt path/no path is there
 				if (players->at(i)->hasPath() == true) {

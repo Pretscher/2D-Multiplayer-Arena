@@ -27,6 +27,10 @@ public:
 	static void receiveTonkensFromClient(shared_ptr<PortableClient> client);
 
 	static int getTokenCount(int index);
+
+	static string getData(int playerIndex) {
+		return rawData[playerIndex];
+	}
 private:
 	static vector<int> tokenCount;
 	static vector<string> rawData;
