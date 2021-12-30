@@ -37,6 +37,7 @@ void NetworkCommunication::addTokenToAll(int token) {
 void NetworkCommunication::addTokenToAllExceptClient(char* token, int playerIndex) {
 	if (playerIndex == 0) {//host can be ignored
 		addTokenToAll(token);
+		return;
 	}
 	for (int i = 0; i < rawData.size(); i++) {
 		//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
@@ -57,6 +58,7 @@ void NetworkCommunication::addTokenToAllExceptClient(char* token, int playerInde
 void NetworkCommunication::addTokenToAllExceptClient(int token, int playerIndex) {
 	if (playerIndex == 0) {//host can be ignored
 		addTokenToAll(token);
+		return;
 	}
 	for (int i = 0; i < rawData.size(); i++) {
 		//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.

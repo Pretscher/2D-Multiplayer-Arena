@@ -94,35 +94,35 @@ void PlayerHandling::sendPlayerData() {
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
 **/
 int hpSyncDelay = 0;
-void PlayerHandling::receivePlayerData(int index) {
+void PlayerHandling::receivePlayerData(int clientIndex) {
 	if (GlobalRecources::isServer == true) {
-		int playerIndex = NetworkCommunication::receiveNextToken(index);
+		int playerIndex = NetworkCommunication::receiveNextToken(clientIndex);
 
-		int actionIndex = NetworkCommunication::receiveNextToken(index);
+		int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 		if (actionIndex == 0) {//interrupt path/no path is there
 			if (players->at(playerIndex)->hasPath() == true) {
 				players->at(playerIndex)->deletePath();
 			}
-			int y = NetworkCommunication::receiveNextToken(index);
-			int x = NetworkCommunication::receiveNextToken(index);
+			int y = NetworkCommunication::receiveNextToken(clientIndex);
+			int x = NetworkCommunication::receiveNextToken(clientIndex);
 			players->at(playerIndex)->setY(y);
 			players->at(playerIndex)->setX(x);
 		}
 		else if (actionIndex == 1) {//new path
-			int pathLenght = NetworkCommunication::receiveNextToken(index);
+			int pathLenght = NetworkCommunication::receiveNextToken(clientIndex);
 
 			vector<int> pathX(pathLenght);
 			vector<int> pathY(pathLenght);
 			for (int i = 0; i < pathLenght; i++) {
-				pathX[i] = NetworkCommunication::receiveNextToken(index);
-				pathY[i] = NetworkCommunication::receiveNextToken(index);
+				pathX[i] = NetworkCommunication::receiveNextToken(clientIndex);
+				pathY[i] = NetworkCommunication::receiveNextToken(clientIndex);
 			}
 			players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
 		}
 		else if (actionIndex == 2) {//follow the path given to you
 			//do nothing yet
 		}
-		int hp = NetworkCommunication::receiveNextToken(index);
+		int hp = NetworkCommunication::receiveNextToken(clientIndex);
 		hpSyncDelay ++;
 		if (hpSyncDelay > 10) {
 			players->at(playerIndex)->setHp(hp);
@@ -130,38 +130,38 @@ void PlayerHandling::receivePlayerData(int index) {
 		}
 	}
 	else {
-		int playerCount = NetworkCommunication::receiveNextToken(index);
+		int playerCount = NetworkCommunication::receiveNextToken(clientIndex);
 		//sync player count
 		while (playerCount > players->size()) {
 			createPlayer();
 		}
 
 		for (int i = 0; i < playerCount; i++) {
-			int actionIndex = NetworkCommunication::receiveNextToken(index);
+			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 			if (actionIndex == 0) {//interrupt path/no path is there
 				if (players->at(i)->hasPath() == true) {
 					players->at(i)->deletePath();
 				}
-				int y = NetworkCommunication::receiveNextToken(index);
-				int x = NetworkCommunication::receiveNextToken(index);
+				int y = NetworkCommunication::receiveNextToken(clientIndex);
+				int x = NetworkCommunication::receiveNextToken(clientIndex);
 				players->at(i)->setY(y);
 				players->at(i)->setX(x);
 			}
 			else if (actionIndex == 1) {//new path
-				int pathLenght = NetworkCommunication::receiveNextToken(index);
+				int pathLenght = NetworkCommunication::receiveNextToken(clientIndex);
 
 				vector<int> pathX(pathLenght);
 				vector<int> pathY(pathLenght);
 				for (int i = 0; i < pathLenght; i++) {
-					pathX[i] = NetworkCommunication::receiveNextToken(index);
-					pathY[i] = NetworkCommunication::receiveNextToken(index);
+					pathX[i] = NetworkCommunication::receiveNextToken(clientIndex);
+					pathY[i] = NetworkCommunication::receiveNextToken(clientIndex);
 				}
 				players->at(i)->givePath(move(pathX), move(pathY), pathLenght);
 			}
 			else if (actionIndex == 2) {//follow the path given to you
 				//do nothing yet
 			}
-			int hp = NetworkCommunication::receiveNextToken(index);
+			int hp = NetworkCommunication::receiveNextToken(clientIndex);
 			hpSyncDelay ++;
 			if (hpSyncDelay > 10) {
 				players->at(i)->setHp(hp);
