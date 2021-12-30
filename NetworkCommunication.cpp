@@ -34,9 +34,10 @@ void NetworkCommunication::addTokenToAll(int token) {
 	}
 }
 
-void NetworkCommunication::addTokenToAllExceptClient(char* token, int clientIndex) {
+void NetworkCommunication::addTokenToAllExceptClient(char* token, int playerIndex) {
 	for (int i = 0; i < rawData.size(); i++) {
-		if (i != clientIndex) {
+		//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
+		if (i != playerIndex - 1) {
 			if (token == nullptr) {
 				cout << "networkCommunication received nullptr as outgoing token";
 				exit(0);
@@ -50,9 +51,10 @@ void NetworkCommunication::addTokenToAllExceptClient(char* token, int clientInde
 	}
 }
 
-void NetworkCommunication::addTokenToAllExceptClient(int token, int clientIndex) {
+void NetworkCommunication::addTokenToAllExceptClient(int token, int playerIndex) {
 	for (int i = 0; i < rawData.size(); i++) {
-		if (i != clientIndex) {
+		//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
+		if (i != playerIndex - 1) {
 			if (rawData[i].size() > 0) {//dont start  or end with a comma
 				rawData[i].push_back(',');
 			}
@@ -62,25 +64,26 @@ void NetworkCommunication::addTokenToAllExceptClient(int token, int clientIndex)
 	}
 }
 
-void NetworkCommunication::addTokenToClient(char* token, int clientIndex) {
+void NetworkCommunication::addTokenToClient(char* token, int playerIndex) {
 	if (token == nullptr) {
 		cout << "networkCommunication received nullptr as outgoing token";
 		exit(0);
 	}
-	if (rawData[clientIndex].size() > 0) {//dont start with a comma
-		rawData[clientIndex].push_back(',');
+	//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
+	if (rawData[playerIndex - 1].size() > 0) {//dont start with a comma
+		rawData[playerIndex - 1].push_back(',');
 	}
-	rawData[clientIndex].append(token);
-	tokenCount[clientIndex]++;
+	rawData[playerIndex - 1].append(token);
+	tokenCount[playerIndex - 1]++;
 }
 
-void NetworkCommunication::addTokenToClient(int token, int clientIndex) {
-
-	if (rawData[clientIndex].size() > 0) {//dont start  or end with a comma
-		rawData[clientIndex].push_back(',');
+void NetworkCommunication::addTokenToClient(int token, int playerIndex) {
+	//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
+	if (rawData[playerIndex - 1].size() > 0) {//dont start  or end with a comma
+		rawData[playerIndex - 1].push_back(',');
 	}
-	rawData[clientIndex].append(to_string(token).c_str());
-	tokenCount[clientIndex]++;
+	rawData[playerIndex - 1].append(to_string(token).c_str());
+	tokenCount[playerIndex - 1]++;
 	
 }
 
