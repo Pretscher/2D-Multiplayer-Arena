@@ -29,7 +29,10 @@ public:
 	static int getTokenCount(int index);
 
 	static string getData(int playerIndex) {
-		return rawData[playerIndex];
+		if (playerIndex <= 0) {
+			return string();
+		}
+		return rawData[playerIndex - 1];
 	}
 private:
 	static vector<int> tokenCount;
