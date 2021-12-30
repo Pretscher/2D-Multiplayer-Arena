@@ -49,7 +49,7 @@ void PlayerHandling::sendPlayerData() {
 				players->at(i)->hasNewPath = false;
 				NetworkCommunication::addTokenToAllExceptClient(1, i);//bool if new bath was found
 
-				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex - 1, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
 				for (int i = c->cPathIndex; i < c->pathLenght; i++) {
 					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
 					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
