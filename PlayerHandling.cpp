@@ -45,12 +45,11 @@ void PlayerHandling::sendPlayerData() {
 				NetworkCommunication::addToken(c->getX());
 			}
 			else if (c->hasNewPath == true) {
-				players->at(myPlayerI)->hasNewPath = false;
+				players->at(i)->hasNewPath = false;
 				NetworkCommunication::addToken(1);//bool if new bath was found
 
 				NetworkCommunication::addToken(c->pathLenght - c->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
 				for (int i = c->cPathIndex; i < c->pathLenght; i++) {
-					int x = c->pathXpositions[i];
 					NetworkCommunication::addToken(c->pathXpositions[i]);
 					NetworkCommunication::addToken(c->pathYpositions[i]);
 				}
@@ -127,6 +126,7 @@ void PlayerHandling::receivePlayerData(int index) {
 	}
 	else {
 		int playerCount = NetworkCommunication::receiveNextToken(index);
+		//sync player count
 		while (playerCount > players->size()) {
 			createPlayer();
 		}
