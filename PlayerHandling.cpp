@@ -48,9 +48,11 @@ void PlayerHandling::sendPlayerData() {
 			else if (c->hasNewPath == true) {
 				players->at(i)->hasNewPath = false;
 				NetworkCommunication::addTokenToAllExceptClient(-2, i);//bool if new path was found
-				int count = 0;
-				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
-				for (int i = c->cPathIndex; i < c->pathLenght; i++) {
+				//NOT THREAD SAFE DO CHANGE LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-------------------------------------------------
+				int fixedIndex = c->cPathIndex;//so that the index doesnt change in another thread
+
+				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				for (int i = fixedIndex; i < c->pathLenght; i++) {
 					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
 					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
 				}
