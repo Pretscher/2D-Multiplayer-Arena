@@ -6,30 +6,30 @@ using namespace std;
 #include "PortableServer.hpp"
 
 vector<int> NetworkCommunication::tokenCount;
-vector<string> NetworkCommunication::rawData;
+vector<string> NetworkCommunication::rawSendData;
 vector<vector<int>> NetworkCommunication::parseToIntsData;
 vector<int> NetworkCommunication::tokenIndex;
 
 void NetworkCommunication::addTokenToAll(char* token) {
-	for (int i = 0; i < rawData.size(); i++) {
+	for (int i = 0; i < rawSendData.size(); i++) {
 		if (token == nullptr) {
 			cout << "networkCommunication received nullptr as outgoing token";
 			exit(0);
 		}
-		if (rawData[i].size() > 0) {//dont start with a comma
-			rawData[i].push_back(',');
+		if (rawSendData[i].size() > 0) {//dont start with a comma
+			rawSendData[i].push_back(',');
 		}
-		rawData[i].append(token);
+		rawSendData[i].append(token);
 		tokenCount[i]++;
 	}
 }
 
 void NetworkCommunication::addTokenToAll(int token) {
-	for (int i = 0; i < rawData.size(); i++) {
-		if (rawData[i].size() > 0) {//dont start  or end with a comma
-			rawData[i].push_back(',');
+	for (int i = 0; i < rawSendData.size(); i++) {
+		if (rawSendData[i].size() > 0) {//dont start  or end with a comma
+			rawSendData[i].push_back(',');
 		}
-		rawData[i].append(to_string(token).c_str());
+		rawSendData[i].append(to_string(token).c_str());
 		tokenCount[i]++;
 	}
 }
@@ -39,17 +39,17 @@ void NetworkCommunication::addTokenToAllExceptClient(char* token, int playerInde
 		addTokenToAll(token);
 		return;
 	}
-	for (int i = 0; i < rawData.size(); i++) {
+	for (int i = 0; i < rawSendData.size(); i++) {
 		//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
 		if (i != playerIndex - 1) {
 			if (token == nullptr) {
 				cout << "networkCommunication received nullptr as outgoing token";
 				exit(0);
 			}
-			if (rawData[i].size() > 0) {//dont start with a comma
-				rawData[i].push_back(',');
+			if (rawSendData[i].size() > 0) {//dont start with a comma
+				rawSendData[i].push_back(',');
 			}
-			rawData[i].append(token);
+			rawSendData[i].append(token);
 			tokenCount[i]++;
 		}
 	}
@@ -60,13 +60,13 @@ void NetworkCommunication::addTokenToAllExceptClient(int token, int playerIndex)
 		addTokenToAll(token);
 		return;
 	}
-	for (int i = 0; i < rawData.size(); i++) {
+	for (int i = 0; i < rawSendData.size(); i++) {
 		//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
 		if (i != playerIndex - 1) {
-			if (rawData[i].size() > 0) {//dont start  or end with a comma
-				rawData[i].push_back(',');
+			if (rawSendData[i].size() > 0) {//dont start  or end with a comma
+				rawSendData[i].push_back(',');
 			}
-			rawData[i].append(to_string(token).c_str());
+			rawSendData[i].append(to_string(token).c_str());
 			tokenCount[i]++;
 		}
 	}
@@ -78,19 +78,19 @@ void NetworkCommunication::addTokenToClient(char* token, int playerIndex) {
 		exit(0);
 	}
 	//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
-	if (rawData[playerIndex - 1].size() > 0) {//dont start with a comma
-		rawData[playerIndex - 1].push_back(',');
+	if (rawSendData[playerIndex - 1].size() > 0) {//dont start with a comma
+		rawSendData[playerIndex - 1].push_back(',');
 	}
-	rawData[playerIndex - 1].append(token);
+	rawSendData[playerIndex - 1].append(token);
 	tokenCount[playerIndex - 1]++;
 }
 
 void NetworkCommunication::addTokenToClient(int token, int playerIndex) {
 	//playerIndex is always clientIndex + 1 because host is also a player, dont think too much about how i could fix this and accept the -1.
-	if (rawData[playerIndex - 1].size() > 0) {//dont start  or end with a comma
-		rawData[playerIndex - 1].push_back(',');
+	if (rawSendData[playerIndex - 1].size() > 0) {//dont start  or end with a comma
+		rawSendData[playerIndex - 1].push_back(',');
 	}
-	rawData[playerIndex - 1].append(to_string(token).c_str());
+	rawSendData[playerIndex - 1].append(to_string(token).c_str());
 	tokenCount[playerIndex - 1]++;
 	
 }
@@ -98,15 +98,15 @@ void NetworkCommunication::addTokenToClient(int token, int playerIndex) {
 
 void NetworkCommunication::sendTokensToServer(int index, shared_ptr<PortableServer> server) {
 	for (int i = 0; i < server->getClientCount(); i++) {
-		server->sendToClient(i, string(rawData[i]));
-		rawData[i].clear();
+		server->sendToClient(i, string(rawSendData[i]));
+		rawSendData[i].clear();
 	}
 }
 
 void NetworkCommunication::sendTokensToClient(shared_ptr<PortableClient> client) {
 	if(client->isConnected() == true) {
-		client->sendToServer(string(rawData[0]));
-		rawData[0].clear();
+		client->sendToServer(string(rawSendData[0]));
+		rawSendData[0].clear();
 	}
 }
 
@@ -141,16 +141,15 @@ void NetworkCommunication::receiveTonkensFromServer(int index, shared_ptr<Portab
 
 void NetworkCommunication::receiveTonkensFromClient(shared_ptr<PortableClient> client) {
 	if(client->isConnected() == true) {
-		string data;
 		bool copyAndParse = false;
 		client->getMutex()->lock();//gets locked before writing message
-		auto msg = client->getLastMessage().get();
-		if (msg != nullptr && msg->size() > 0) {
+		rawReceivedData[0] = client->getLastMessage();
+		if (rawReceivedData[0] != nullptr && rawReceivedData[0]->size() > 0) {
 			copyAndParse = true;
 		}
-
 		if (copyAndParse == true) {
-			string data = *msg;//copy so network can overwrite
+			rawReceivedData[0] = shared_ptr<string>(new string(*rawReceivedData));//copy so received datais saved and network can overwrite string
+			string data = *rawReceivedData;//copy again to move and manipulate this string while keeping the data
 			client->getMutex()->unlock();
 			parseToIntsData[0] = extractInts(std::move(data));
 		}
@@ -162,8 +161,9 @@ void NetworkCommunication::receiveTonkensFromClient(shared_ptr<PortableClient> c
 }
 
 void NetworkCommunication::initNewCommunication(int index) {
-	if(index == rawData.size()) {
-		rawData.push_back(string());
+	if(index == rawSendData.size()) {
+		rawSendData.push_back(string());
+		rawReceivedData.push_back(shared_ptr<string>(new string()));
 		tokenIndex.push_back(0);
 		tokenCount.push_back(0);
 		parseToIntsData.push_back(vector<int>());

@@ -32,19 +32,20 @@ public:
 		if (playerIndex <= 0) {
 			return string();
 		}
-		return rawData[playerIndex - 1];
+		return rawSendData[playerIndex - 1];
 	}
 
-	static vector<int> getReceivedData(int playerIndex) {
+	static string getReceivedData(int playerIndex) {
 		if (playerIndex <= 0) {
-			return vector<int>();
+			return string();
 		}
-		return parseToIntsData[playerIndex];
+		return *rawReceivedData[playerIndex - 1];
 	}
 
 private:
+	static vector<shared_ptr<string>> rawReceivedData;
 	static vector<int> tokenCount;
-	static vector<string> rawData;
+	static vector<string> rawSendData;
 	static vector<vector<int>> parseToIntsData;
 	static vector<int> tokenIndex;
 

@@ -136,7 +136,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 		while (playerCount > players->size()) {
 			createPlayer();
 		}
-		vector<int> v1 = NetworkCommunication::getReceivedData(clientIndex - 1);
+
+		string data = NetworkCommunication::getReceivedData(clientIndex);
+
 		for (int i = 0; i < playerCount; i++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 			if (actionIndex == -1) {//interrupt path/no path is there
