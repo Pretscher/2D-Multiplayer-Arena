@@ -54,8 +54,8 @@ void VladW::init1() {
 }
 
 void VladW::send() {
-	NetworkCommunication::addToken(this->myPlayerIndex);
+	NetworkCommunication::addTokenToAll(this->myPlayerIndex);
 	auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
 	int timeSinceStart = cTime - this->getStartTime(this->getPhase());
-	NetworkCommunication::addToken(timeSinceStart);
+	NetworkCommunication::addTokenToAll(timeSinceStart);
 }

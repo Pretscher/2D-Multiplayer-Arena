@@ -207,6 +207,6 @@ shared_ptr<Player> Transfusion::getBloodballTarget() {
 }
 
 void Transfusion::send() {
-    NetworkCommunication::addToken(this->myPlayerIndex);
-    NetworkCommunication::addToken(this->targetPlayerIndex);
+    NetworkCommunication::addTokenToAll(this->myPlayerIndex);
+    NetworkCommunication::addTokenToAll(this->targetPlayerIndex);
 }

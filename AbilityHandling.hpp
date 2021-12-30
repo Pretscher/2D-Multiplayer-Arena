@@ -227,11 +227,11 @@ public:
                     newAbilities[i]->sendAbility();
                 }
                 else {
-                    NetworkCommunication::addToken(0);
+                    NetworkCommunication::addTokenToAll(0);
                 }
             }
             else {
-                NetworkCommunication::addToken(0);
+                NetworkCommunication::addTokenToAll(0);
             }
         }
     }

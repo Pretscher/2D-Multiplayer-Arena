@@ -10,8 +10,14 @@ class NetworkCommunication {
 public:
 	static void initNewCommunication(int index);
 
-	static void addToken(char* token);
-	static void addToken(int token);
+	static void addTokenToAll(int token);
+	static void addTokenToAll(char* token);
+
+	static void addTokenToAllExceptClient(int token, int clientIndex);
+	static void addTokenToAllExceptClient(char* token, int clientIndex);
+
+	static void addTokenToClient(int token, int clientIndex);
+	static void addTokenToClient(char* token, int clientIndex);
 
 	static void sendTokensToServer(int index, shared_ptr<PortableServer> server);
 	static void sendTokensToClient(shared_ptr<PortableClient> client);
@@ -21,7 +27,6 @@ public:
 	static void receiveTonkensFromClient(shared_ptr<PortableClient> client);
 
 	static int getTokenCount(int index);
-
 private:
 	static vector<int> tokenCount;
 	static vector<string> rawData;

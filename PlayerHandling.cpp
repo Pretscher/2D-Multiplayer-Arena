@@ -36,53 +36,54 @@ void PlayerHandling::draw() {
 
 void PlayerHandling::sendPlayerData() {
 	if (GlobalRecources::isServer == true) {
-		NetworkCommunication::addToken(players->size());
+		NetworkCommunication::addTokenToAll(players->size());
 		for (int i = 0; i < players->size(); i++) {
 			const Player* c = players->at(i).get();
 			if (c->hasPath() == false) {
-				NetworkCommunication::addToken(0);//bool if path should be interrupted
-				NetworkCommunication::addToken(c->getY());
-				NetworkCommunication::addToken(c->getX());
+				NetworkCommunication::addTokenToAllExceptClient(0, i);//bool if path should be interrupted
+				NetworkCommunication::addTokenToAllExceptClient(c->getY(), i);
+				NetworkCommunication::addTokenToAllExceptClient(c->getX(), i);
 			}
 			else if (c->hasNewPath == true) {
 				players->at(i)->hasNewPath = false;
-				NetworkCommunication::addToken(1);//bool if new bath was found
+				NetworkCommunication::addTokenToAllExceptClient(1, i);//bool if new bath was found
 
-				NetworkCommunication::addToken(c->pathLenght - c->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
 				for (int i = c->cPathIndex; i < c->pathLenght; i++) {
-					NetworkCommunication::addToken(c->pathXpositions[i]);
-					NetworkCommunication::addToken(c->pathYpositions[i]);
+					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
+					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
 				}
 			}
 			else {
-				NetworkCommunication::addToken(2);
+				NetworkCommunication::addTokenToAll(2);
 			}
-			NetworkCommunication::addToken(c->getHp());
+			NetworkCommunication::addTokenToClient(2, i);//dont tell current player to do anything with his own path
+			NetworkCommunication::addTokenToAll(c->getHp());
 		}
 	}
 	else {
-		NetworkCommunication::addToken(myPlayerI);
+		NetworkCommunication::addTokenToAll(myPlayerI);
 		const Player* me = players->at(myPlayerI).get();
 		if (me->hasPath() == false) {
-			NetworkCommunication::addToken(0);//bool if path should be interrupted
-			NetworkCommunication::addToken(me->getY());
-			NetworkCommunication::addToken(me->getX());
+			NetworkCommunication::addTokenToAll(0);//bool if path should be interrupted
+			NetworkCommunication::addTokenToAll(me->getY());
+			NetworkCommunication::addTokenToAll(me->getX());
 		}
 		else if (me->hasNewPath == true) {
 			players->at(myPlayerI)->hasNewPath = false;
-			NetworkCommunication::addToken(1);//bool if new bath was found
+			NetworkCommunication::addTokenToAll(1);//bool if new bath was found
 
-			NetworkCommunication::addToken(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
 			for (int i = me->cPathIndex; i < me->pathLenght; i++) {
 				int x = me->pathXpositions[i];
-				NetworkCommunication::addToken(me->pathXpositions[i]);
-				NetworkCommunication::addToken(me->pathYpositions[i]);
+				NetworkCommunication::addTokenToAll(me->pathXpositions[i]);
+				NetworkCommunication::addTokenToAll(me->pathYpositions[i]);
 			}
 		}
 		else {
-			NetworkCommunication::addToken(2);
+			NetworkCommunication::addTokenToAll(2);
 		}
-		NetworkCommunication::addToken(me->getHp());
+		NetworkCommunication::addTokenToAll(me->getHp());
 	}
 }
 
@@ -132,6 +133,9 @@ void PlayerHandling::receivePlayerData(int index) {
 		}
 
 		for (int i = 0; i < playerCount; i++) {
+			if (i == myPlayerI) {
+				
+			}
 			int actionIndex = NetworkCommunication::receiveNextToken(index);
 			if (actionIndex == 0) {//interrupt path/no path is there
 				if (players->at(i)->hasPath() == true) {

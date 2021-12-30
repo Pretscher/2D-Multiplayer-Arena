@@ -152,11 +152,11 @@ void Fireball::limitGoalPosToRange() {
 }
 
 void Fireball::send() {
-    NetworkCommunication::addToken(this->myPlayerIndex);
-    NetworkCommunication::addToken(this->helpProjectile->getY());
-    NetworkCommunication::addToken(this->helpProjectile->getX());
-    NetworkCommunication::addToken(this->goalX);
-    NetworkCommunication::addToken(this->goalY);
-    NetworkCommunication::addToken(this->getPhase());
-    NetworkCommunication::addToken(this->getStartTime(2));
+    NetworkCommunication::addTokenToAll(this->myPlayerIndex);
+    NetworkCommunication::addTokenToAll(this->helpProjectile->getY());
+    NetworkCommunication::addTokenToAll(this->helpProjectile->getX());
+    NetworkCommunication::addTokenToAll(this->goalX);
+    NetworkCommunication::addTokenToAll(this->goalY);
+    NetworkCommunication::addTokenToAll(this->getPhase());
+    NetworkCommunication::addTokenToAll(this->getStartTime(2));
 }

@@ -98,12 +98,12 @@ public:
     void sendAbility() {
         if (wasSent == false) {
             wasSent = true;
-            NetworkCommunication::addToken(1);
+            NetworkCommunication::addTokenToAll(1);
             send();
             addedToNetwork = true;
         }
         else {
-            NetworkCommunication::addToken(0);
+            NetworkCommunication::addTokenToAll(0);
         }
     }
 

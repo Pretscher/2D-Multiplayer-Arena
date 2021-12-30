@@ -1,5 +1,5 @@
 #include "NetworkCommunication.hpp"
-
+#include <string>
 #include "iostream" 
 using namespace std;
 #include "PortableClient.hpp"
@@ -10,7 +10,7 @@ vector<string> NetworkCommunication::rawData;
 vector<vector<int>> NetworkCommunication::parseToIntsData;
 vector<int> NetworkCommunication::tokenIndex;
 
-void NetworkCommunication::addToken(char* token) {
+void NetworkCommunication::addTokenToAll(char* token) {
 	for (int i = 0; i < rawData.size(); i++) {
 		if (token == nullptr) {
 			cout << "networkCommunication received nullptr as outgoing token";
@@ -24,7 +24,7 @@ void NetworkCommunication::addToken(char* token) {
 	}
 }
 
-void NetworkCommunication::addToken(int token) {
+void NetworkCommunication::addTokenToAll(int token) {
 	for (int i = 0; i < rawData.size(); i++) {
 		if (rawData[i].size() > 0) {//dont start  or end with a comma
 			rawData[i].push_back(',');
@@ -33,6 +33,57 @@ void NetworkCommunication::addToken(int token) {
 		tokenCount[i]++;
 	}
 }
+
+void NetworkCommunication::addTokenToAllExceptClient(char* token, int clientIndex) {
+	for (int i = 0; i < rawData.size(); i++) {
+		if (i != clientIndex) {
+			if (token == nullptr) {
+				cout << "networkCommunication received nullptr as outgoing token";
+				exit(0);
+			}
+			if (rawData[i].size() > 0) {//dont start with a comma
+				rawData[i].push_back(',');
+			}
+			rawData[i].append(token);
+			tokenCount[i]++;
+		}
+	}
+}
+
+void NetworkCommunication::addTokenToAllExceptClient(int token, int clientIndex) {
+	for (int i = 0; i < rawData.size(); i++) {
+		if (i != clientIndex) {
+			if (rawData[i].size() > 0) {//dont start  or end with a comma
+				rawData[i].push_back(',');
+			}
+			rawData[i].append(to_string(token).c_str());
+			tokenCount[i]++;
+		}
+	}
+}
+
+void NetworkCommunication::addTokenToClient(char* token, int clientIndex) {
+	if (token == nullptr) {
+		cout << "networkCommunication received nullptr as outgoing token";
+		exit(0);
+	}
+	if (rawData[clientIndex].size() > 0) {//dont start with a comma
+		rawData[clientIndex].push_back(',');
+	}
+	rawData[clientIndex].append(token);
+	tokenCount[clientIndex]++;
+}
+
+void NetworkCommunication::addTokenToClient(int token, int clientIndex) {
+
+	if (rawData[clientIndex].size() > 0) {//dont start  or end with a comma
+		rawData[clientIndex].push_back(',');
+	}
+	rawData[clientIndex].append(to_string(token).c_str());
+	tokenCount[clientIndex]++;
+	
+}
+
 
 void NetworkCommunication::sendTokensToServer(int index, shared_ptr<PortableServer> server) {
 	for (int i = 0; i < server->getClientCount(); i++) {

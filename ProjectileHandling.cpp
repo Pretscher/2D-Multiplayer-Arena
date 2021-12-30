@@ -101,21 +101,21 @@ void ProjectileHandling::draw() {
 
 void ProjectileHandling::sendProjectiles(int socketIndex) {
 	int networkingStart = NetworkCommunication::getTokenCount(socketIndex);
-	NetworkCommunication::addToken(networkingStart);
+	NetworkCommunication::addTokenToAll(networkingStart);
 	int networkingEnd = networkingStart + (4 * newProjectiles.size());
-	NetworkCommunication::addToken(networkingEnd);
+	NetworkCommunication::addTokenToAll(networkingEnd);
 
 	for (int i = 0; i < newProjectiles.size(); i++) {
 		const Projectile* current = newProjectiles.at(i).get();
 
-		NetworkCommunication::addToken((int)current->getY());//natively floats for half movements smaller than a y/x
-		NetworkCommunication::addToken((int)current->getX());
-		NetworkCommunication::addToken(current->getGoalY());
-		NetworkCommunication::addToken(current->getGoalX());
+		NetworkCommunication::addTokenToAll((int)current->getY());//natively floats for half movements smaller than a y/x
+		NetworkCommunication::addTokenToAll((int)current->getX());
+		NetworkCommunication::addTokenToAll(current->getGoalY());
+		NetworkCommunication::addTokenToAll(current->getGoalX());
 	}
 	if (newProjectiles.size() > 0) {
 		int networkingEnd = NetworkCommunication::getTokenCount(socketIndex) - 1;
-		NetworkCommunication::addToken(networkingEnd);
+		NetworkCommunication::addTokenToAll(networkingEnd);
 	}
 	newProjectiles.clear();
 }

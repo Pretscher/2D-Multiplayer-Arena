@@ -211,8 +211,8 @@ void VladR::followPlayer() {
 }
 
 void VladR::send() {
-	NetworkCommunication::addToken(this->myPlayerIndex);
-	NetworkCommunication::addToken(getTimeSincePhaseStart(2));
-	NetworkCommunication::addToken(this->y);
-	NetworkCommunication::addToken(this->x);
+	NetworkCommunication::addTokenToAll(this->myPlayerIndex);
+	NetworkCommunication::addTokenToAll(getTimeSincePhaseStart(2));
+	NetworkCommunication::addTokenToAll(this->y);
+	NetworkCommunication::addTokenToAll(this->x);
 }

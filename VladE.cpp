@@ -290,10 +290,10 @@ void VladE::limitPosToRange(int* io_goalY, int* io_goalX) {
 }
 
 void VladE::send() {
-	NetworkCommunication::addToken(this->myPlayerIndex);
-	NetworkCommunication::addToken(this->getPhase());
+	NetworkCommunication::addTokenToAll(this->myPlayerIndex);
+	NetworkCommunication::addTokenToAll(this->getPhase());
 
 	auto cTime = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
 	int timeSinceStart = cTime - this->getStartTime(this->getPhase());
-	NetworkCommunication::addToken(timeSinceStart);
+	NetworkCommunication::addTokenToAll(timeSinceStart);
 }
