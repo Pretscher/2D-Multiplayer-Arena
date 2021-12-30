@@ -63,6 +63,7 @@ void PlayerHandling::sendPlayerData() {
 			}
 			NetworkCommunication::addTokenToAll(c->getHp());
 			string s2 = NetworkCommunication::getSentData(i);
+
 		}
 	}
 	else {
@@ -88,6 +89,7 @@ void PlayerHandling::sendPlayerData() {
 		}
 		NetworkCommunication::addTokenToAll(me->getHp());
 	}
+	NetworkCommunication::addTokenToAll(-11);
 }
 
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
@@ -166,6 +168,12 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				players->at(i)->setHp(hp);
 				hpSyncDelay = 0;
 			}
+		}
+
+		int checkUp = NetworkCommunication::receiveNextToken(clientIndex);
+		if (checkUp != -11) {
+			cout << "Error, expected -11 as next token in PlayerHandling receive but received " + checkUp;
+			exit(0);
 		}
 	}
 }
