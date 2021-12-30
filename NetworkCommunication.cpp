@@ -9,6 +9,7 @@ vector<int> NetworkCommunication::tokenCount;
 vector<string> NetworkCommunication::rawSendData;
 vector<vector<int>> NetworkCommunication::parseToIntsData;
 vector<int> NetworkCommunication::tokenIndex;
+vector<shared_ptr<string>> NetworkCommunication::rawReceivedData;
 
 void NetworkCommunication::addTokenToAll(char* token) {
 	for (int i = 0; i < rawSendData.size(); i++) {
@@ -148,8 +149,8 @@ void NetworkCommunication::receiveTonkensFromClient(shared_ptr<PortableClient> c
 			copyAndParse = true;
 		}
 		if (copyAndParse == true) {
-			rawReceivedData[0] = shared_ptr<string>(new string(*rawReceivedData));//copy so received datais saved and network can overwrite string
-			string data = *rawReceivedData;//copy again to move and manipulate this string while keeping the data
+			rawReceivedData[0] = shared_ptr<string>(new string(*rawReceivedData[0]));//copy so received datais saved and network can overwrite string
+			string data = *rawReceivedData[0];//copy again to move and manipulate this string while keeping the data
 			client->getMutex()->unlock();
 			parseToIntsData[0] = extractInts(std::move(data));
 		}
