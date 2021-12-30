@@ -169,11 +169,10 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				hpSyncDelay = 0;
 			}
 		}
-
-		int checkUp = NetworkCommunication::receiveNextToken(clientIndex);
-		if (checkUp != -11) {
-			cout << "Error, expected -11 as next token in PlayerHandling receive but received " + checkUp;
-			exit(0);
-		}
+	}
+	int checkUp = NetworkCommunication::receiveNextToken(clientIndex);
+	if (checkUp != -11) {
+		cout << "Error, expected -11 as next token in PlayerHandling receive but received " + checkUp;
+		exit(0);
 	}
 }
