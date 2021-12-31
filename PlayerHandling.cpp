@@ -35,11 +35,12 @@ void PlayerHandling::draw() {
 }
 
 void PlayerHandling::sendPlayerData() {
+	int signal = 0;
 	if (GlobalRecources::isServer == true) {
 		NetworkCommunication::addTokenToAll(players->size());
 		for (int i = 0; i < players->size(); i++) {
 			const Player* c = players->at(i).get();
-			string s1 = NetworkCommunication::getSentData(i);
+
 			if (c->hasPath() == false) {
 				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
 
@@ -49,6 +50,7 @@ void PlayerHandling::sendPlayerData() {
 			}
 			else if (c->hasNewPath == true) {
 				//Option 2: Transmit new path to clients. SIGNAL -2
+				signal = -2;//rn only for debugging purposes
 
 				NetworkCommunication::addTokenToAllExceptClient(-2, i);//signal if new path was found
 
@@ -57,12 +59,14 @@ void PlayerHandling::sendPlayerData() {
 				//so that the current index and path lenght don't change in another thread while sending
 				int fixedIndex = c->cPathIndex;
 				int fixedLenght = c->pathLenght;
-				GlobalRecources::pfMtx->unlock();
 				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				int counter = 0;
 				for (int j = fixedIndex; j < fixedLenght; j++) {
 					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[j], j);
 					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[j], j);
+					counter++;
 				}
+				GlobalRecources::pfMtx->unlock();
 			}
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
@@ -72,8 +76,10 @@ void PlayerHandling::sendPlayerData() {
 				NetworkCommunication::addTokenToClient(-3, i);//dont tell current player to do anything with his own path
 			}
 			NetworkCommunication::addTokenToAll(c->getHp());
-			string s2 = NetworkCommunication::getSentData(i);
-
+			/*string s2 = NetworkCommunication::getSentData(i);
+			if (signal == -2) {
+				std::cout << s2;
+			}*/
 		}
 	}
 	else {
@@ -174,7 +180,6 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				//do nothing yet
 			}
 			int hp = NetworkCommunication::receiveNextToken(clientIndex);
-			std::cout << hp;
 			hpSyncDelay ++;
 			if (hpSyncDelay > 10) {
 				players->at(i)->setHp(hp);
