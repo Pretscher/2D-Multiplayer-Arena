@@ -38,42 +38,41 @@ void PlayerHandling::sendPlayerData() {
 	int signal = 0;
 	if (GlobalRecources::isServer == true) {
 		NetworkCommunication::addTokenToAll(players->size());
-		for (int i = 0; i < players->size(); i++) {
-			const Player* c = players->at(i).get();
+		for (int cIndex = 0; cIndex < players->size(); cIndex++) {
+			const Player* c = players->at(cIndex).get();
 
 			if (c->hasPath() == false) {
 				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
 
-				NetworkCommunication::addTokenToAllExceptClient(-1, i);//signal if path should be interrupted
-				NetworkCommunication::addTokenToAllExceptClient(c->getY(), i);
-				NetworkCommunication::addTokenToAllExceptClient(c->getX(), i);
+				NetworkCommunication::addTokenToAllExceptClient(-1, cIndex);//signal if path should be interrupted
+				NetworkCommunication::addTokenToAllExceptClient(c->getY(), cIndex);
+				NetworkCommunication::addTokenToAllExceptClient(c->getX(), cIndex);
 			}
 			else if (c->hasNewPath == true) {
 				//Option 2: Transmit new path to clients. SIGNAL -2
 				signal = -2;//rn only for debugging purposes
 
-				NetworkCommunication::addTokenToAllExceptClient(-2, i);//signal if new path was found
+				NetworkCommunication::addTokenToAllExceptClient(-2, cIndex);//signal if new path was found
 
 				GlobalRecources::pfMtx->lock();
-				players->at(i)->hasNewPath = false;
+				players->at(cIndex)->hasNewPath = false;
 				//so that the current index and path lenght don't change in another thread while sending
 				int fixedIndex = c->cPathIndex;
 				int fixedLenght = c->pathLenght;
-				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
-				int counter = 0;
-				for (int j = fixedIndex; j < fixedLenght; j++) {
-					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[j], j);
-					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[j], j);
-					counter++;
+				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex, cIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				
+				for (int pathIndex = fixedIndex; pathIndex < fixedLenght; pathIndex++) {
+					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[pathIndex], cIndex);
+					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[pathIndex], cIndex);
 				}
 				GlobalRecources::pfMtx->unlock();
 			}
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
-				NetworkCommunication::addTokenToAllExceptClient(-3, i);//signal to do nothing
+				NetworkCommunication::addTokenToAllExceptClient(-3, cIndex);//signal to do nothing
 			}
-			if (i != 0) {//host doesnt get a message from host (host has playerindex 0)
-				NetworkCommunication::addTokenToClient(-3, i);//dont tell current player to do anything with his own path
+			if (cIndex != 0) {//host doesnt get a message from host (host has playerindex 0)
+				NetworkCommunication::addTokenToClient(-3, cIndex);//dont tell current player to do anything with his own path
 			}
 			NetworkCommunication::addTokenToAll(c->getHp());
 			/*string s2 = NetworkCommunication::getSentData(i);
