@@ -41,24 +41,35 @@ void PlayerHandling::sendPlayerData() {
 			const Player* c = players->at(i).get();
 			string s1 = NetworkCommunication::getSentData(i);
 			if (c->hasPath() == false) {
-				NetworkCommunication::addTokenToAllExceptClient(-1, i);//bool if path should be interrupted
+				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
+
+				NetworkCommunication::addTokenToAllExceptClient(-1, i);//signal if path should be interrupted
 				NetworkCommunication::addTokenToAllExceptClient(c->getY(), i);
 				NetworkCommunication::addTokenToAllExceptClient(c->getX(), i);
 			}
 			else if (c->hasNewPath == true) {
-				players->at(i)->hasNewPath = false;
-				NetworkCommunication::addTokenToAllExceptClient(-2, i);//bool if new path was found
-				//NOT THREAD SAFE DO CHANGE LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-------------------------------------------------
-				int fixedIndex = c->cPathIndex;//so that the index doesnt change in another thread
+				//Option 2: Transmit new path to clients. SIGNAL -2
 
-				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
-				for (int i = fixedIndex; i < c->pathLenght; i++) {
+				NetworkCommunication::addTokenToAllExceptClient(-2, i);//signal if new path was found
+
+				GlobalRecources::pfMtx->lock();
+				players->at(i)->hasNewPath = false;
+				//so that the current index and path lenght don't change in another thread while sending
+				int fixedIndex = c->cPathIndex;
+				int fixedLenght = c->pathLenght;
+				GlobalRecources::pfMtx->unlock();
+				int count = 0;
+				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				for (int i = fixedIndex; i < fixedLenght; i++) {
 					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
 					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
+					count++;
 				}
+				std::cout << count << " " << fixedLenght - fixedIndex;
 			}
 			else {
-				NetworkCommunication::addTokenToAllExceptClient(-3, i);
+				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
+				NetworkCommunication::addTokenToAllExceptClient(-3, i);//signal to do nothing
 			}
 			if (i != 0) {//host doesnt get a message from host (host has playerindex 0)
 				NetworkCommunication::addTokenToClient(-3, i);//dont tell current player to do anything with his own path
