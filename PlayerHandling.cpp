@@ -58,14 +58,11 @@ void PlayerHandling::sendPlayerData() {
 				int fixedIndex = c->cPathIndex;
 				int fixedLenght = c->pathLenght;
 				GlobalRecources::pfMtx->unlock();
-				int count = 0;
-				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex - 1, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
 				for (int i = fixedIndex; i < fixedLenght; i++) {
 					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
 					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
-					count++;
 				}
-				std::cout << count << " " << fixedLenght - fixedIndex;
 			}
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
@@ -177,6 +174,7 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				//do nothing yet
 			}
 			int hp = NetworkCommunication::receiveNextToken(clientIndex);
+			std::cout << hp;
 			hpSyncDelay ++;
 			if (hpSyncDelay > 10) {
 				players->at(i)->setHp(hp);
