@@ -58,10 +58,10 @@ void PlayerHandling::sendPlayerData() {
 				int fixedIndex = c->cPathIndex;
 				int fixedLenght = c->pathLenght;
 				GlobalRecources::pfMtx->unlock();
-				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex - 1, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
-				for (int i = fixedIndex; i < fixedLenght; i++) {
-					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[i], i);
-					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[i], i);
+				NetworkCommunication::addTokenToAllExceptClient(fixedLenght - fixedIndex, i);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				for (int j = fixedIndex; j < fixedLenght; j++) {
+					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[j], j);
+					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[j], j);
 				}
 			}
 			else {
@@ -90,9 +90,9 @@ void PlayerHandling::sendPlayerData() {
 
 			int fixedIndex = me->cPathIndex;//so that the index doesnt change in another thread (NOT SAFE DO CHANGE LATER)
 			NetworkCommunication::addTokenToAll(me->pathLenght - fixedIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
-			for (int i = fixedIndex; i < me->pathLenght; i++) {
-				NetworkCommunication::addTokenToAll(me->pathXpositions[i]);
-				NetworkCommunication::addTokenToAll(me->pathYpositions[i]);
+			for (int j = fixedIndex; j < me->pathLenght; j++) {
+				NetworkCommunication::addTokenToAll(me->pathXpositions[j]);
+				NetworkCommunication::addTokenToAll(me->pathYpositions[j]);
 			}
 		}
 		else {
@@ -125,9 +125,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 
 			vector<int> pathX(pathLenght);
 			vector<int> pathY(pathLenght);
-			for (int i = 0; i < pathLenght; i++) {
-				pathX[i] = NetworkCommunication::receiveNextToken(clientIndex);
-				pathY[i] = NetworkCommunication::receiveNextToken(clientIndex);
+			for (int j = 0; j < pathLenght; j++) {
+				pathX[j] = NetworkCommunication::receiveNextToken(clientIndex);
+				pathY[j] = NetworkCommunication::receiveNextToken(clientIndex);
 			}
 			players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
 		}
@@ -164,9 +164,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 
 				vector<int> pathX(pathLenght);
 				vector<int> pathY(pathLenght);
-				for (int i = 0; i < pathLenght; i++) {
-					pathX[i] = NetworkCommunication::receiveNextToken(clientIndex);
-					pathY[i] = NetworkCommunication::receiveNextToken(clientIndex);
+				for (int j = 0; j < pathLenght; j++) {
+					pathX[j] = NetworkCommunication::receiveNextToken(clientIndex);
+					pathY[j] = NetworkCommunication::receiveNextToken(clientIndex);
 				}
 				players->at(i)->givePath(move(pathX), move(pathY), pathLenght);
 			}
