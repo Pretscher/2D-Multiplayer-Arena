@@ -21,6 +21,8 @@ public:
     //status effects
     bool targetAble = true;
     bool inVladW = false;
+
+    bool interruptedPath = false;
 private:
 
 	int y;
@@ -43,6 +45,7 @@ private:
     bool findingPath;
     long long lastMoveTime;
    
+    
 public:
     //used in pathfinding threads => mutices are locked and unlocked----------
     void setFindingPath(bool i_findingPath);

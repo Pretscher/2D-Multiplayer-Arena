@@ -81,7 +81,7 @@ void Player::move() {
 				nextX = pathXpositions[cPathIndex];
 				nextY = pathYpositions[cPathIndex];
 
-				if (cPathIndex == pathLenght - 1) {
+				if (cPathIndex == pathLenght - 1) {//arrived at end of path, path data can now be deleted
 					y = pathYpositions[pathLenght - 1];
 					x = pathXpositions[pathLenght - 1];
 					//go to state of not having a path
@@ -121,6 +121,7 @@ void Player::deletePath() {
 	GlobalRecources::pfMtx->lock();
 	if (pathLenght != -1) {
 		pathLenght = -1;
+		interruptedPath = true;
 	}
 	findingPath = false;
 	hasNewPath = false;

@@ -38,47 +38,51 @@ void PlayerHandling::sendPlayerData() {
 	int signal = 0;
 	if (GlobalRecources::isServer == true) {
 		NetworkCommunication::addTokenToAll(players->size());
-		for (int cIndex = 0; cIndex < players->size(); cIndex++) {
-			const Player* c = players->at(cIndex).get();
+		for (int clientIndex = 0; clientIndex < players->size(); clientIndex++) {
+			const Player* cPlayer = players->at(clientIndex).get();
 
-			if (c->hasPath() == false) {
+			GlobalRecources::pfMtx->lock();//there is no way to do this more efficiently and safe than blocking for the entire transmission
+			if (cPlayer->interruptedPath == true) {
 				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
+				NetworkCommunication::addTokenToAllExceptClient(-1, clientIndex);//signal if path should be interrupted
 
-				NetworkCommunication::addTokenToAllExceptClient(-1, cIndex);//signal if path should be interrupted
-				NetworkCommunication::addTokenToAllExceptClient(c->getY(), cIndex);
-				NetworkCommunication::addTokenToAllExceptClient(c->getX(), cIndex);
+				//we use the smart pointer instead of the derived const pointer here to mark that this is a command that changes the player object
+				players->at(clientIndex)->interruptedPath = false;//only once per interrupt
+
+				NetworkCommunication::addTokenToAllExceptClient(cPlayer->getY(), clientIndex);
+				NetworkCommunication::addTokenToAllExceptClient(cPlayer->getX(), clientIndex);
 			}
-			else if (c->hasNewPath == true) {
+			else if (cPlayer->hasNewPath == true) {
 				//Option 2: Transmit new path to clients. SIGNAL -2
-				signal = -2;//rn only for debugging purposes
+				NetworkCommunication::addTokenToAllExceptClient(-2, clientIndex);//signal if new path was found
 
-				NetworkCommunication::addTokenToAllExceptClient(-2, cIndex);//signal if new path was found
-
-				GlobalRecources::pfMtx->lock();
-
-				players->at(cIndex)->hasNewPath = false;
-				NetworkCommunication::addTokenToAllExceptClient(c->pathLenght - c->cPathIndex, cIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
-				for (int pathIndex = c->cPathIndex; pathIndex < c->pathLenght; pathIndex++) {
-					NetworkCommunication::addTokenToAllExceptClient(c->pathXpositions[pathIndex], cIndex);
-					NetworkCommunication::addTokenToAllExceptClient(c->pathYpositions[pathIndex], cIndex);
+				players->at(clientIndex)->hasNewPath = false;
+				NetworkCommunication::addTokenToAllExceptClient(cPlayer->pathLenght - cPlayer->cPathIndex, clientIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
+				for (int pathIndex = cPlayer->cPathIndex; pathIndex < cPlayer->pathLenght; pathIndex++) {
+					NetworkCommunication::addTokenToAllExceptClient(cPlayer->pathXpositions[pathIndex], clientIndex);
+					NetworkCommunication::addTokenToAllExceptClient(cPlayer->pathYpositions[pathIndex], clientIndex);
 				}
-				GlobalRecources::pfMtx->unlock();
 			}
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
-				NetworkCommunication::addTokenToAllExceptClient(-3, cIndex);//signal to do nothing
+				NetworkCommunication::addTokenToAllExceptClient(-3, clientIndex);//signal to do nothing
 			}
-			if (cIndex != 0) {//host doesnt get a message from host (host has playerindex 0)
-				NetworkCommunication::addTokenToClient(-3, cIndex);//dont tell current player to do anything with his own path
+			if (clientIndex != 0) {//host doesnt get a message from host (host has playerindex 0)
+				NetworkCommunication::addTokenToClient(-3, clientIndex);//dont tell current player to do anything with his own path
 			}
-			NetworkCommunication::addTokenToAll(c->getHp());
+			NetworkCommunication::addTokenToAll(cPlayer->getHp());
 		}
 	}
 	else {
 		NetworkCommunication::addTokenToAll(myPlayerI);
 		const Player* me = players->at(myPlayerI).get();
-		if (me->hasPath() == false) {
+		if (me->interruptedPath == true) {
+			//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
 			NetworkCommunication::addTokenToAll(-1);//bool if path should be interrupted
+
+			//we use the smart pointer instead of the derived const pointer here to mark that this is a command that changes the player object
+			players->at(myPlayerI)->interruptedPath = false;//only once per interrupt
+
 			NetworkCommunication::addTokenToAll(me->getY());
 			NetworkCommunication::addTokenToAll(me->getX());
 		}
@@ -120,6 +124,10 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			int x = NetworkCommunication::receiveNextToken(clientIndex);
 			players->at(playerIndex)->setY(y);
 			players->at(playerIndex)->setX(x);
+
+			if (playerIndex == 1) {
+				std::cout << actionIndex;
+			}
 		}
 		else if (actionIndex == -2) {//new path
 			int pathLenght = NetworkCommunication::receiveNextToken(clientIndex);
@@ -131,6 +139,10 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				pathY[pathIndex] = NetworkCommunication::receiveNextToken(clientIndex);
 			}
 			players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
+
+			if (playerIndex == 1) {
+				std::cout << actionIndex;
+			}
 		}
 		else if (actionIndex == -3) {//follow the path given to you
 			//do nothing yet
@@ -152,6 +164,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 		for (int playerIndex = 0; playerIndex < playerCount; playerIndex++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 			if (actionIndex == -1) {//interrupt path/no path is there
+				if (playerIndex == 1) {
+					std::cout << "-1";
+				}
 				if (players->at(playerIndex)->hasPath() == true) {
 					players->at(playerIndex)->deletePath();
 				}
@@ -162,7 +177,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			}
 			else if (actionIndex == -2) {//new path
 				int pathLenght = NetworkCommunication::receiveNextToken(clientIndex);
-
+				if (playerIndex == 1) {
+					std::cout << actionIndex;
+				}
 				vector<int> pathX(pathLenght);
 				vector<int> pathY(pathLenght);
 				for (int pathIndex = 0; pathIndex < pathLenght; pathIndex++) {
