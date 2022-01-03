@@ -85,10 +85,10 @@ void VladR::draw1() {
 }
 
 void VladR::init2() {
-	affectedPlayers = vector<shared_ptr<Player>>(GlobalRecources::playerCount);//just init static array to max player count, theyre few
+	affectedPlayers = vector<shared_ptr<Player>>(GlobalRecources::players->size());//just init static array to max player count, theyre few
 
 	//save players who are still in range when this phase is activated as affected, damagin them after 4 seconds
-	for (int i = 0; i < GlobalRecources::playerCount; i++) {
+	for (int i = 0; i < GlobalRecources::players->size(); i++) {
 		if (i != myPlayerIndex) {
 			shared_ptr<Player> cPlayer = GlobalRecources::players->at(i);
 			if (cPlayer->targetAble == true) {

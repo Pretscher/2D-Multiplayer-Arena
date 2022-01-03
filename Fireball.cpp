@@ -99,7 +99,7 @@ void Fireball::init2() {
 }
 
 void Fireball::execute2() {
-    for (int i = 0; i < GlobalRecources::playerCount; i++) {
+    for (int i = 0; i < GlobalRecources::players->size(); i++) {
         shared_ptr<Player> c = GlobalRecources::players->at(i);
         if (c->targetAble == true) {
             bool colision = Utils::colisionRectCircle(c->getX(), c->getY(), c->getWidth(), c->getHeight(),

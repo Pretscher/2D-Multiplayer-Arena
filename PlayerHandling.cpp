@@ -9,7 +9,6 @@ PlayerHandling::PlayerHandling() {//basically 100% hardcorded stuff for players
 	players = shared_ptr<vector<shared_ptr<Player>>>(new vector<shared_ptr<Player>>());
 	createPlayer();//Create hosting player
 	GlobalRecources::players = players;
-	GlobalRecources::playerCount = playerCount;
 }
 
 void PlayerHandling::createPlayer() {
@@ -20,14 +19,12 @@ void PlayerHandling::createPlayer() {
 	int defaultDmg = 10;
 
 
-	int startY = playerCount * 150 + 200;//move players away from each other in y
+	int startY = players->size() * 150 + 200;//move players away from each other in y
 	players->push_back(shared_ptr<Player>(new Player(startX, startY, rectSize, rectSize, vel, defaultMaxHp, defaultDmg)));//places players on map, x dist depends on playercount
-
-	playerCount = players->size();
 }
 
 void PlayerHandling::draw() {
-	for (int i = 0; i < playerCount; i++) {
+	for (int i = 0; i < players->size(); i++) {
 		if (players->at(i)->getHp() > 0) {
 			players->at(i)->draw();//if he has a path, he moves on this path
 		}

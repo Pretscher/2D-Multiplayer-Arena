@@ -30,15 +30,9 @@ public:
 		return players->at(myPlayerI);
 	}
 
-	inline int getPlayerCount() {
-		return playerCount;
-	}
-
-
 
 private:
 	shared_ptr<vector<shared_ptr<Player>>> players;//all players
 	int myPlayerI;
-	int playerCount;//number of players
 
 };

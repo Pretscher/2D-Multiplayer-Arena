@@ -21,7 +21,7 @@ VladW::VladW(bool createFromNetwork, int socketIndex) : Ability(NetworkCommunica
 
 void VladW::execute0() {
 	shared_ptr<Player> myPlayer = GlobalRecources::players->at(myPlayerIndex);
-	for (int i = 0; i < GlobalRecources::playerCount; i++) {
+	for (int i = 0; i < GlobalRecources::players->size(); i++) {
 		if (i != myPlayerIndex) {
 			shared_ptr<Player> current = GlobalRecources::players->at(i);
 			if (current->targetAble == true) {

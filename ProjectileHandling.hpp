@@ -30,5 +30,4 @@ private:
 	int worldHeight, worldWidth;
 	shared_ptr<vector<shared_ptr<Player>>> players;
 	int myPlayerI;
-	int playerCount;
 };

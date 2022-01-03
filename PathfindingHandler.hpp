@@ -48,7 +48,6 @@ private:
 	shared_ptr<mutex> pfMtx;
 	bool findingPath;
 	shared_ptr<vector<shared_ptr<Player>>> players;
-	int playerCount;
 	float pathfindingAccuracy;//the higher the less accuracy (1 means every pixel is considered)
 
 	bool sameClick = false;//dont do two pathfindings on the same click

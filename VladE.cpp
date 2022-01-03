@@ -52,9 +52,9 @@ void VladE::init1() {
 	endPhaseAfterMS(1000);//we want to save the start time only till now and are too lazy to do it in a passed variable.
 	projectileCount = 16;
 	projectiles = vector<unique_ptr<Projectile>>(projectileCount);
-	dealtDamageToPlayer = new bool[GlobalRecources::playerCount];
+	dealtDamageToPlayer = new bool[GlobalRecources::players->size()];
 	
-	for (int i = 0; i < GlobalRecources::playerCount; i++) {
+	for (int i = 0; i < GlobalRecources::players->size(); i++) {
 		dealtDamageToPlayer[i] = false;
 	}
 
@@ -211,7 +211,7 @@ void VladE::execute1() {
 
 
 
-	for (int j = 0; j < GlobalRecources::playerCount; j++) {
+	for (int j = 0; j < GlobalRecources::players->size(); j++) {
 		for (int i = 0; i < projectileCount; i++) {
 			if (projectiles[i]->getDead() == false) {
 				if (j != myPlayerIndex) {

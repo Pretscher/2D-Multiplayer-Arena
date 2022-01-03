@@ -26,7 +26,6 @@ Pathfinding::Pathfinding() {
 	wXs = GlobalRecources::worldWidth;
 
 	players = GlobalRecources::players;
-	playerCount = GlobalRecources::playerCount;
 	findingPath = false;
 	this->goalXToFind = vector<int>();
 	this->goalYToFind = vector<int>();
@@ -97,10 +96,10 @@ void Pathfinding::update() {
 void Pathfinding::findPath(int goalX, int goalY, int playerIndex) {
 
 	enablePlayer(myPlayerIndex, true);
-	for (int i = 0; i < playerCount; i++) {
+	for (int i = 0; i < players->size(); i++) {
 		if (players->at(i)->targetAble == false) {
 			if (i == myPlayerIndex) {
-				for (int j = 0; j < playerCount; j++) {
+				for (int j = 0; j < players->size(); j++) {
 					enablePlayer(j, false);//untargetable players walk through everyone
 				}
 			}
@@ -157,7 +156,7 @@ void Pathfinding::workThroughPathfindingQueue() {
 void Pathfinding::moveObjects() {
 	workThroughPathfindingQueue();
 	//this->enableArea(0, 0, wXs - 1, wYs - 1);//enable all
-	for (int i = 0; i < playerCount; i++) {
+	for (int i = 0; i < players->size(); i++) {
 		if (players->at(i)->getHp() > 0) {
 			if (players->at(i)->hasPath() == true) {
 				int tempY = players->at(i)->getY();
@@ -182,7 +181,7 @@ void Pathfinding::moveObjects() {
 void Pathfinding::playerInteraction(int movedPlayerIndex) {
 	//find new paths for players close to this player
 	const Player* movedPlayer = players->at(movedPlayerIndex).get();
-	for (int j = 0; j < playerCount; j++) {
+	for (int j = 0; j < players->size(); j++) {
 		if (players->at(j)->getHp() > 0) {
 			if (j != movedPlayerIndex) {
 				const Player* cPlayer = players->at(j).get();
@@ -236,7 +235,7 @@ void Pathfinding::enablePlayer(int i_playerIndex, bool disableOthers) {
 	g->enableObjectBounds(player->getY() - 150, player->getX() - 150, player->getWidth() + 200, player->getHeight() + 200);
 
 	if (disableOthers == true) {
-		for (int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < players->size(); i++) {
 			if (players->at(i)->getHp() > 0) {
 				if (i != i_playerIndex) {
 					disablePlayer(i);
@@ -268,10 +267,10 @@ void Pathfinding::startPathFinding() {
 			const Player* player = players->at(cPlayerIndex).get();
 
 			enablePlayer(cPlayerIndex, true);
-			for (int i = 0; i < playerCount; i++) {
+			for (int i = 0; i < players->size(); i++) {
 				if (players->at(i)->targetAble == false) {
 					if (i == cPlayerIndex) {
-						for (int j = 0; j < playerCount; j++) {
+						for (int j = 0; j < players->size(); j++) {
 							enablePlayer(j, false);//untargetable players walk through everyone
 						}
 					}

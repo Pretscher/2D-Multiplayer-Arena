@@ -15,7 +15,6 @@ ProjectileHandling::ProjectileHandling() {
 
 	this->worldHeight = GlobalRecources::worldHeight;
 	this->worldWidth = GlobalRecources::worldWidth;
-	this->playerCount = GlobalRecources::playerCount;
 	newProjectiles = vector<shared_ptr<Projectile>>();
 	projectiles = vector<shared_ptr<Projectile>>();//stores all projectiles for creation, drawing, moving and damage calculation. 
 }
@@ -65,7 +64,7 @@ void ProjectileHandling::update(const shared_ptr<vector<Rect>> collidables) {
 		const Projectile* p = projectiles.at(i).get();
 		projectiles.at(i)->move(worldHeight, worldWidth, collidables);//give it the maximum ys so it know when it can stop moving
 
-		for (int j = 0; j < playerCount; j++) {
+		for (int j = 0; j < players->size(); j++) {
 			const Player* cPlayer = players->at(j).get();//read only to shorten names
 			if (cPlayer->targetAble == true) {
 				if (cPlayer != p->getPlayer().get()) {

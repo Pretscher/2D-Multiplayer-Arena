@@ -30,7 +30,7 @@ public:
     }
     void update() {
         //if true, end next tick (if no player was selected just do nothing and end indicator)
-        for (int i = 0; i < GlobalRecources::playerCount; i++) {
+        for (int i = 0; i < GlobalRecources::players->size(); i++) {
             if (i != this->myPlayerIndex) {
                 shared_ptr<Player> c = GlobalRecources::players->at(i);
                 if(c->targetAble == true) {

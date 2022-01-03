@@ -14,7 +14,6 @@ public:
     static int frameWidth, frameHeight;
     static shared_ptr<Terrain> terrain;
     static  shared_ptr<vector<shared_ptr<Player>>> players;
-    static int playerCount;
     static bool isServer;
     static Pathfinding* pFinding;
     static shared_ptr<mutex> pfMtx;
