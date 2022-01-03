@@ -86,8 +86,6 @@ void PlayerHandling::sendPlayerData() {
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
 				NetworkCommunication::addTokenToAll(-3);//signal to do nothing
-				NetworkCommunication::addTokenToAll(cPlayer->getY());
-				NetworkCommunication::addTokenToAll(cPlayer->getX());
 			}
 			NetworkCommunication::addTokenToAll(cPlayer->getHp());
 		}
@@ -222,10 +220,6 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				players->at(playerIndex)->hasNewPath = false;
 			}
 			else if (actionIndex == -3) {//follow the path given to you
-				int y = NetworkCommunication::receiveNextToken(clientIndex);
-				int x = NetworkCommunication::receiveNextToken(clientIndex);
-				players->at(playerIndex)->setY(y);
-				players->at(playerIndex)->setX(x);
 				
 			}
 			int hp = NetworkCommunication::receiveNextToken(clientIndex);
