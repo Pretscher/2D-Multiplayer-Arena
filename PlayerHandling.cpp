@@ -154,7 +154,7 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				pathY[pathIndex] = NetworkCommunication::receiveNextToken(clientIndex);
 			}
 			players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
-
+			players->at(playerIndex)->hasNewPath = false;
 			if (playerIndex == 1) {
 				std::cout << actionIndex;
 			}
@@ -219,6 +219,7 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 					pathY[pathIndex] = NetworkCommunication::receiveNextToken(clientIndex);
 				}
 				players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
+				players->at(playerIndex)->hasNewPath = false;
 			}
 			else if (actionIndex == -3) {//follow the path given to you
 				int y = NetworkCommunication::receiveNextToken(clientIndex);
