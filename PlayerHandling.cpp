@@ -224,10 +224,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			else if (actionIndex == -3) {//follow the path given to you
 				int y = NetworkCommunication::receiveNextToken(clientIndex);
 				int x = NetworkCommunication::receiveNextToken(clientIndex);
-				if (syncCounter % 10 == 0) {
-					players->at(playerIndex)->setY(y);
-					players->at(playerIndex)->setX(x);
-				}
+				players->at(playerIndex)->setY(y);
+				players->at(playerIndex)->setX(x);
+				
 			}
 			int hp = NetworkCommunication::receiveNextToken(clientIndex);
 			syncCounter++;
