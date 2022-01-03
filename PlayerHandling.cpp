@@ -230,7 +230,6 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
 			}
 			else if (actionIndex == -3) {//follow the path given to you
-				int indexInPath = NetworkCommunication::receiveNextToken(clientIndex);
 				int y = NetworkCommunication::receiveNextToken(clientIndex);
 				int x = NetworkCommunication::receiveNextToken(clientIndex);
 				if (syncCounter % 10 == 0) {
