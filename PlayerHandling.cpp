@@ -163,9 +163,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			}
 		}
 		else if (actionIndex == -3) {//follow the path given to you
+			int y = NetworkCommunication::receiveNextToken(clientIndex);//call every time to stay in right place of network string, but only apply some of the time.
+			int x = NetworkCommunication::receiveNextToken(clientIndex);
 			if (syncCounter % 10 == 0) {
-				int y = NetworkCommunication::receiveNextToken(clientIndex);
-				int x = NetworkCommunication::receiveNextToken(clientIndex);
 				players->at(playerIndex)->setY(y);
 				players->at(playerIndex)->setX(x);
 			}
@@ -231,9 +231,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			}
 			else if (actionIndex == -3) {//follow the path given to you
 				int indexInPath = NetworkCommunication::receiveNextToken(clientIndex);
+				int y = NetworkCommunication::receiveNextToken(clientIndex);
+				int x = NetworkCommunication::receiveNextToken(clientIndex);
 				if (syncCounter % 10 == 0) {
-					int y = NetworkCommunication::receiveNextToken(clientIndex);
-					int x = NetworkCommunication::receiveNextToken(clientIndex);
 					players->at(playerIndex)->setY(y);
 					players->at(playerIndex)->setX(x);
 				}
