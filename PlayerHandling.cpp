@@ -187,13 +187,13 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 
 		for (int playerIndex = 0; playerIndex < playerCount; playerIndex++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
-			if (actionIndex == -4) {//freshly connection, all coords and paths have to be transmitted
-				for (int cPlayer = 0; cPlayer < players->size(); cPlayer++) {
+			if (actionIndex == -4) {//fresh connection, all coords and paths have to be transmitted
+				for (int cPlayer = 0; cPlayer < playerCount; cPlayer++) {
 					players->at(cPlayer)->setX(NetworkCommunication::receiveNextToken(clientIndex));
 					players->at(cPlayer)->setY(NetworkCommunication::receiveNextToken(clientIndex));
 				}
 
-				for (int playerI = 0; playerI < players->size(); playerI++) {
+				for (int playerI = 0; playerI < playerCount; playerI++) {
 					const Player* player = players->at(playerI).get();
 					if (NetworkCommunication::receiveNextToken(clientIndex) == -6) {//player has path
 						int pathLenght = NetworkCommunication::receiveNextToken(clientIndex);
