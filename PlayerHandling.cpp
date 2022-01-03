@@ -35,13 +35,12 @@ void PlayerHandling::draw() {
 }
 
 void PlayerHandling::sendPlayerData() {
-	int signal = 0;
+
+	GlobalRecources::pfMtx->lock();//there is no way to do this more efficiently and safe than blocking for the entire transmission
 	if (GlobalRecources::isServer == true) {
 		NetworkCommunication::addTokenToAll(players->size());
 		for (int clientIndex = 0; clientIndex < players->size(); clientIndex++) {
 			const Player* cPlayer = players->at(clientIndex).get();
-
-			GlobalRecources::pfMtx->lock();//there is no way to do this more efficiently and safe than blocking for the entire transmission
 			if (cPlayer->interruptedPath == true) {
 				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
 				NetworkCommunication::addTokenToAllExceptClient(-1, clientIndex);//signal if path should be interrupted
@@ -89,22 +88,19 @@ void PlayerHandling::sendPlayerData() {
 		else if (me->hasNewPath == true) {
 			NetworkCommunication::addTokenToAll(-2);//bool if new bath was found
 
-			GlobalRecources::pfMtx->lock();
-
 			players->at(myPlayerI)->hasNewPath = false;
 			NetworkCommunication::addTokenToAll(me->pathLenght - me->cPathIndex);//only the path that hasnt been walked yet (lag/connection built up while walking)
 			for (int pathIndex = me->cPathIndex; pathIndex < me->pathLenght; pathIndex++) {
 				NetworkCommunication::addTokenToAll(me->pathXpositions[pathIndex]);
 				NetworkCommunication::addTokenToAll(me->pathYpositions[pathIndex]);
 			}
-
-			GlobalRecources::pfMtx->unlock();
 		}
 		else {
 			NetworkCommunication::addTokenToAll(-3);
 		}
 		NetworkCommunication::addTokenToAll(me->getHp());
 	}
+	GlobalRecources::pfMtx->unlock();//there is no way to do this more efficiently and safe than blocking for the entire transmission
 	NetworkCommunication::addTokenToAll(-11);
 }
 
