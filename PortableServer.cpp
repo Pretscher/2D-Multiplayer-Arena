@@ -297,9 +297,11 @@ void startNewConnect(PortableServer* server) {
 
 vector<thread> connectThreads;
 void PortableServer::portableConnect() {
+    connectedMtx.lock();
     wait.push_back(true);
     gotNewMessage.push_back(false);
     lastMessages.push_back(string());
+    connectedMtx.unlock();
 #ifdef __linux__ 
 
     int listenSocket = 0;
@@ -422,10 +424,11 @@ void PortableServer::portableConnect() {
 
     connectedMtx.lock();
     clientSockets.push_back(tempClientSocket);
+    connectThreads.push_back(thread(&startNewConnect, this));
     connectedMtx.unlock();
     
     closesocket(listenSocket);
-    connectThreads.push_back(thread(&startNewConnect, this));
+
     this->receiveMultithreaded(connectThreads.size() - 1);//cant be called before pushing back cus loop so -1
 #endif
 }
