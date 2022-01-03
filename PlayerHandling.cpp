@@ -116,9 +116,7 @@ void PlayerHandling::sendPlayerData() {
 			}
 		}
 		else {
-			NetworkCommunication::addTokenToAll(-3);
-			NetworkCommunication::addTokenToAll(me->getY());
-			NetworkCommunication::addTokenToAll(me->getX());
+			NetworkCommunication::addTokenToAll(-3);//client doesnt sync coords to host or else it would be double sync which would be stupid
 		}
 		NetworkCommunication::addTokenToAll(me->getHp());
 	}
@@ -163,12 +161,6 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			}
 		}
 		else if (actionIndex == -3) {//follow the path given to you
-			int y = NetworkCommunication::receiveNextToken(clientIndex);//call every time to stay in right place of network string, but only apply some of the time.
-			int x = NetworkCommunication::receiveNextToken(clientIndex);
-			if (syncCounter % 10 == 0) {
-				players->at(playerIndex)->setY(y);
-				players->at(playerIndex)->setX(x);
-			}
 			//do nothing yet
 		}
 		int hp = NetworkCommunication::receiveNextToken(clientIndex);
