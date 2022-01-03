@@ -119,7 +119,7 @@ void Eventhandling::eventloop() {
 				GlobalRecources::isServer = false;
 				received.push_back(true);
 				int ind = playerHandling->getPlayerIndex();
-				int tempCount = playerHandling->getPlayerCount();
+				int tempCount = playerHandling->getPlayers()->size();
 				while (ind < tempCount) {
 					playerHandling->createPlayer();//all client connects should create a new player
 					ind++;
