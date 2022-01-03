@@ -141,7 +141,7 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 		}
 		else if (actionIndex == -3) {//follow the path given to you
 			int indexInPath = NetworkCommunication::receiveNextToken(clientIndex);
-			if (syncCounter % 10 == 0) {
+			if (syncCounter % 10 == 0 && players->at(playerIndex)->hasPath() == true) {
 				players->at(playerIndex)->skipPathToIndex(indexInPath);
 			}
 			//do nothing yet
@@ -195,7 +195,7 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			}
 			int hp = NetworkCommunication::receiveNextToken(clientIndex);
 			syncCounter++;
-			if (syncCounter > 10) {
+			if (syncCounter > 10 && players->at(playerIndex)->hasPath() == true) {
 				players->at(playerIndex)->setHp(hp);
 				syncCounter = 0;
 			}
