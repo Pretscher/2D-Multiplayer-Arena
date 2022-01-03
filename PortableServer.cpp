@@ -142,6 +142,9 @@ void PortableServer::receiveMultithreaded(int i) {
     while (true) {
         this_thread::sleep_for(chrono::milliseconds(1));
         char* recvBuffer = new char[recvbuflen];
+        if (i == 1) {
+            int a = 0;
+        }
         int iResult = portableRecv(clientSockets[i], recvBuffer);
         //save message
         if (iResult > 0) {
@@ -298,7 +301,7 @@ void startNewConnect(PortableServer* server) {
 vector<thread> connectThreads;
 void PortableServer::portableConnect() {
     connectedMtx.lock();
-    wait.push_back(true);
+    wait.push_back(false);
     gotNewMessage.push_back(false);
     lastMessages.push_back(string());
     connectedMtx.unlock();
