@@ -4,7 +4,7 @@
 using namespace std;
 #include "PortableClient.hpp"
 #include "PortableServer.hpp"
-
+#include "GlobalRecources.hpp"
 vector<int> NetworkCommunication::tokenCount;
 vector<string> NetworkCommunication::rawSendData;
 vector<vector<int>> NetworkCommunication::parseToIntsData;
@@ -168,12 +168,14 @@ void NetworkCommunication::initNewCommunication(int index) {
 		tokenIndex.push_back(0);
 		tokenCount.push_back(0);
 		parseToIntsData.push_back(vector<int>());
+		GlobalRecources::initNetwork.push_back(false);
 		return;
 	}
 	else {
 		tokenIndex[index] = 0;
 		tokenCount[index] = 0;
 		parseToIntsData[index].clear();
+		GlobalRecources::initNetwork[index] = false;
 		return;
 	}
 	std::cout << "Bad index in initNewCommunication (NetworkCommunication): " << index;

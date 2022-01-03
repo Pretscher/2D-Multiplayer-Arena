@@ -38,7 +38,7 @@ void PlayerHandling::sendPlayerData() {
 		NetworkCommunication::addTokenToAll(players->size());
 		for (int clientIndex = 0; clientIndex < players->size(); clientIndex++) {
 			const Player* cPlayer = players->at(clientIndex).get();
-			if (cPlayer->interruptedPath == true) {
+			if (cPlayer->interruptedPath == true || GlobalRecources::initNetwork[clientIndex] == false) {//on first send, sync coordinates
 				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
 				NetworkCommunication::addTokenToAllExceptClient(-1, clientIndex);//signal if path should be interrupted
 
@@ -62,6 +62,7 @@ void PlayerHandling::sendPlayerData() {
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
 				NetworkCommunication::addTokenToAllExceptClient(-3, clientIndex);//signal to do nothing
+				NetworkCommunication::addTokenToAllExceptClient(cPlayer->cPathIndex, clientIndex);//sync current position in path (periodically, watch receive)
 			}
 			if (clientIndex != 0) {//host doesnt get a message from host (host has playerindex 0)
 				NetworkCommunication::addTokenToClient(-3, clientIndex);//dont tell current player to do anything with his own path
@@ -94,6 +95,7 @@ void PlayerHandling::sendPlayerData() {
 		}
 		else {
 			NetworkCommunication::addTokenToAll(-3);
+			NetworkCommunication::addTokenToAll(me->cPathIndex);//sync current position in path (periodically, watch receive)
 		}
 		NetworkCommunication::addTokenToAll(me->getHp());
 	}
@@ -103,7 +105,7 @@ void PlayerHandling::sendPlayerData() {
 
 /** Has to pass pathfinding so that we can update pathfinding-graph if player positions changed
 **/
-int hpSyncDelay = 0;
+int syncCounter = 0;
 void PlayerHandling::receivePlayerData(int clientIndex) {
 	if (GlobalRecources::isServer == true) {
 		int playerIndex = NetworkCommunication::receiveNextToken(clientIndex);
@@ -138,13 +140,17 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			}
 		}
 		else if (actionIndex == -3) {//follow the path given to you
+			int indexInPath = NetworkCommunication::receiveNextToken(clientIndex);
+			if (syncCounter % 10 == 0) {
+				players->at(playerIndex)->skipPathToIndex(indexInPath);
+			}
 			//do nothing yet
 		}
 		int hp = NetworkCommunication::receiveNextToken(clientIndex);
-		hpSyncDelay ++;
-		if (hpSyncDelay > 10) {
+		syncCounter ++;
+		if (syncCounter % 10 == 0) {
 			players->at(playerIndex)->setHp(hp);
-			hpSyncDelay = 0;
+			syncCounter = 0;
 		}
 	}
 	else {
@@ -182,13 +188,16 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 				players->at(playerIndex)->givePath(move(pathX), move(pathY), pathLenght);
 			}
 			else if (actionIndex == -3) {//follow the path given to you
-				//do nothing yet
+				int indexInPath = NetworkCommunication::receiveNextToken(clientIndex);
+				if (syncCounter % 10 == 0) {
+					players->at(playerIndex)->skipPathToIndex(indexInPath);
+				}
 			}
 			int hp = NetworkCommunication::receiveNextToken(clientIndex);
-			hpSyncDelay ++;
-			if (hpSyncDelay > 10) {
+			syncCounter++;
+			if (syncCounter > 10) {
 				players->at(playerIndex)->setHp(hp);
-				hpSyncDelay = 0;
+				syncCounter = 0;
 			}
 		}
 	}

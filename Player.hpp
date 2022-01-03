@@ -50,7 +50,7 @@ public:
     //used in pathfinding threads => mutices are locked and unlocked----------
     void setFindingPath(bool i_findingPath);
     bool isFindingPath() const;
-
+    void skipPathToIndex(int index);
     //------------------------------------------------------------------------
 
 

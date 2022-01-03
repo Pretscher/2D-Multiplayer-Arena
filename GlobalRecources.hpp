@@ -17,4 +17,5 @@ public:
     static bool isServer;
     static Pathfinding* pFinding;
     static shared_ptr<mutex> pfMtx;
+    static vector<bool> initNetwork;
 };

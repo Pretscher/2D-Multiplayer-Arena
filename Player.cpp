@@ -165,3 +165,19 @@ bool Player::isFindingPath() const {
 	GlobalRecources::pfMtx->unlock();
 	return temp;
 }
+
+void Player::skipPathToIndex(int index) {
+	GlobalRecources::pfMtx->lock();
+	if (index >= pathLenght - 1) {
+		this->x = pathXpositions[pathLenght - 1];
+		this->y = pathYpositions[pathLenght - 1];
+		pathLenght = -1;
+		hasNewPath = false;
+	}
+	else {
+		this->x = pathXpositions[index];
+		this->y = pathYpositions[index];
+		cPathIndex = index;
+	}
+	GlobalRecources::pfMtx->unlock();
+}
