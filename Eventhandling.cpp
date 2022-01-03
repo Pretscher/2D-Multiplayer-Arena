@@ -108,7 +108,7 @@ void Eventhandling::eventloop() {
 			for (int i = 0; i < server->getClientCount(); i++) {
 				if (received[i] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
 					sendData(i);
-					GlobalRecources::initNetwork[i] = true;//first send can be different, thus we need to have an easy way of telling if its the first com
+					GlobalRecources::initNetwork->at(i) = true;//first send can be different, thus we need to have an easy way of telling if its the first com
 					received[i] = false;//only send to clients[i] again after receiving an answer
 				}
 				recvAndImplementData(i);//when completed (some readable data was recvd and parsed) sets received[i] to true
@@ -163,7 +163,7 @@ void Eventhandling::drawingloop() {
 
 
 void Eventhandling::sendData(int index) {
-	NetworkCommunication::initNewCommunication(index);
+	NetworkCommunication::initNewCommunication(index, GlobalRecources::initNetwork);
 	abilityHandling->sendData();
 	playerHandling->sendPlayerData();
 	projectileHandling->sendProjectiles(index);
@@ -176,7 +176,7 @@ void Eventhandling::sendData(int index) {
 }
 
 void Eventhandling::recvAndImplementData(int index) {
-	NetworkCommunication::initNewCommunication(index);
+	NetworkCommunication::initNewCommunication(index, GlobalRecources::initNetwork);
 	if (GlobalRecources::isServer == true) {
 		//server receive
 		if (server->newMessage(index) == true) {

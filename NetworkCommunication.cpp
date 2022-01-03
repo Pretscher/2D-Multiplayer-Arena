@@ -4,7 +4,7 @@
 using namespace std;
 #include "PortableClient.hpp"
 #include "PortableServer.hpp"
-#include "GlobalRecources.hpp"
+
 vector<int> NetworkCommunication::tokenCount;
 vector<string> NetworkCommunication::rawSendData;
 vector<vector<int>> NetworkCommunication::parseToIntsData;
@@ -161,21 +161,21 @@ void NetworkCommunication::receiveTonkensFromClient(shared_ptr<PortableClient> c
 	}
 }
 
-void NetworkCommunication::initNewCommunication(int index) {
+void NetworkCommunication::initNewCommunication(int index, shared_ptr<vector<bool>> io_clientInits) {
 	if(index == rawSendData.size()) {
 		rawSendData.push_back(string());
 		rawReceivedData.push_back(shared_ptr<string>(new string()));
 		tokenIndex.push_back(0);
 		tokenCount.push_back(0);
 		parseToIntsData.push_back(vector<int>());
-		GlobalRecources::initNetwork.push_back(false);
+		io_clientInits->push_back(false);
 		return;
 	}
 	else {
 		tokenIndex[index] = 0;
 		tokenCount[index] = 0;
 		parseToIntsData[index].clear();
-		GlobalRecources::initNetwork[index] = false;
+		io_clientInits->at(index) = false;
 		return;
 	}
 	std::cout << "Bad index in initNewCommunication (NetworkCommunication): " << index;

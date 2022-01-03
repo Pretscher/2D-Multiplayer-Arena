@@ -10,4 +10,4 @@ shared_ptr<vector<shared_ptr<Player>>> GlobalRecources::players;
 Pathfinding* GlobalRecources::pFinding;
 shared_ptr<mutex> GlobalRecources::pfMtx;
 bool GlobalRecources::isServer = false;
-vector<bool> GlobalRecources::initNetwork;
+shared_ptr<vector<bool>> GlobalRecources::initNetwork = shared_ptr<vector<bool>>(new vector<bool>());
