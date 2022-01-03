@@ -104,6 +104,7 @@ void Eventhandling::eventloop() {
 					received.push_back(false);
 				}
 				playerHandling->createPlayer();//all client connects should create a new player
+				GlobalRecources::initNetwork->push_back(false);
 			}
 			for (int i = 0; i < server->getClientCount(); i++) {
 				if (received[i] == true) {//handshaking: only if something was received send again. Prevents lag and unwanted behavior
@@ -163,7 +164,7 @@ void Eventhandling::drawingloop() {
 
 
 void Eventhandling::sendData(int index) {
-	NetworkCommunication::initNewCommunication(index, GlobalRecources::initNetwork);
+	NetworkCommunication::initNewCommunication(index);
 	abilityHandling->sendData();
 	playerHandling->sendPlayerData();
 	projectileHandling->sendProjectiles(index);
@@ -176,7 +177,7 @@ void Eventhandling::sendData(int index) {
 }
 
 void Eventhandling::recvAndImplementData(int index) {
-	NetworkCommunication::initNewCommunication(index, GlobalRecources::initNetwork);
+	NetworkCommunication::initNewCommunication(index);
 	if (GlobalRecources::isServer == true) {
 		//server receive
 		if (server->newMessage(index) == true) {

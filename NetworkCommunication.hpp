@@ -8,7 +8,7 @@ class PortableServer;
 class PortableClient;
 class NetworkCommunication {
 public:
-	static void initNewCommunication(int index, shared_ptr<vector<bool>> io_clientInits);
+	static void initNewCommunication(int index);
 
 	static void addTokenToAll(int token);
 	static void addTokenToAll(char* token);

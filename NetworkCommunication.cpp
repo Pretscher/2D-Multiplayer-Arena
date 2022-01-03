@@ -161,21 +161,19 @@ void NetworkCommunication::receiveTonkensFromClient(shared_ptr<PortableClient> c
 	}
 }
 
-void NetworkCommunication::initNewCommunication(int index, shared_ptr<vector<bool>> io_clientInits) {
+void NetworkCommunication::initNewCommunication(int index) {
 	if(index == rawSendData.size()) {
 		rawSendData.push_back(string());
 		rawReceivedData.push_back(shared_ptr<string>(new string()));
 		tokenIndex.push_back(0);
 		tokenCount.push_back(0);
 		parseToIntsData.push_back(vector<int>());
-		io_clientInits->push_back(false);
 		return;
 	}
 	else {
 		tokenIndex[index] = 0;
 		tokenCount[index] = 0;
 		parseToIntsData[index].clear();
-		io_clientInits->at(index) = false;
 		return;
 	}
 	std::cout << "Bad index in initNewCommunication (NetworkCommunication): " << index;
