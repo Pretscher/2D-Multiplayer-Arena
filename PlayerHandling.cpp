@@ -38,7 +38,7 @@ void PlayerHandling::sendPlayerData() {
 		NetworkCommunication::addTokenToAll(players->size());
 		for (int clientIndex = 0; clientIndex < players->size(); clientIndex++) {
 			const Player* cPlayer = players->at(clientIndex).get();
-			if (cPlayer->interruptedPath == true || GlobalRecources::initNetwork->at(clientIndex) == false) {//on first send, sync coordinates
+			if (cPlayer->interruptedPath == true || GlobalRecources::initNetwork->at(clientIndex - 1) == false) {//on first send, sync coordinates
 				//Option 1: Stop going on path and move to current coordinates of player. SIGNAL -1
 				NetworkCommunication::addTokenToAllExceptClient(-1, clientIndex);//signal if path should be interrupted
 
