@@ -132,7 +132,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 		int playerIndex = NetworkCommunication::receiveNextToken(clientIndex);
 
 		int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
-		std::cout << actionIndex << " ";
+		if (actionIndex != -3) {
+			std::cout << actionIndex << " ";
+		}
 		if (actionIndex == -1) {//interrupt path/no path is there
 			if (players->at(playerIndex)->hasPath() == true) {
 				players->at(playerIndex)->deletePath();
@@ -176,7 +178,9 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 
 		for (int playerIndex = 0; playerIndex < playerCount; playerIndex++) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
-			std::cout << playerIndex << ": " << actionIndex << " ";
+			if (actionIndex != -3) {
+				std::cout << playerIndex << ": " << actionIndex << " ";
+			}
 			if (actionIndex == -4) {//fresh connection, all coords and paths have to be transmitted
 				for (int cPlayer = 0; cPlayer < playerCount; cPlayer++) {
 					players->at(cPlayer)->setY(NetworkCommunication::receiveNextToken(clientIndex));
