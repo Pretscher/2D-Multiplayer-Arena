@@ -86,8 +86,8 @@ void PlayerHandling::sendPlayerData() {
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
 				NetworkCommunication::addTokenToAll(-3);//signal to do nothing
-				NetworkCommunication::addTokenToAllExceptClient(cPlayer->getY(), clientIndex);
-				NetworkCommunication::addTokenToAllExceptClient(cPlayer->getX(), clientIndex);
+				NetworkCommunication::addTokenToAll(cPlayer->getY());
+				NetworkCommunication::addTokenToAll(cPlayer->getX());
 			}
 			NetworkCommunication::addTokenToAll(cPlayer->getHp());
 		}
