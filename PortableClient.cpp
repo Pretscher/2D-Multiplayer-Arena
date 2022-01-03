@@ -309,7 +309,9 @@ void PortableClient::connectToHost(string ip) {
 
             this->sendToServer("getPlayerCount");
             char* recvBuf = new char[recvbuflen];
+            wait = true;
             int len = this->portableRecv(this->serverSocket, recvBuf);
+            wait = false;
             string msg;
             for (int i = 0; i < len; i++) {
                 msg.push_back(recvBuf[i]);
