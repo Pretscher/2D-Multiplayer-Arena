@@ -61,11 +61,8 @@ void PlayerHandling::sendPlayerData() {
 			}
 			else {
 				//Option 3: Do nothing, either stay on path or stay still. SIGNAL -3
-				NetworkCommunication::addTokenToAllExceptClient(-3, clientIndex);//signal to do nothing
-				NetworkCommunication::addTokenToAllExceptClient(cPlayer->cPathIndex, clientIndex);//sync current position in path (periodically, watch receive)
-			}
-			if (clientIndex != 0) {//host doesnt get a message from host (host has playerindex 0)
-				NetworkCommunication::addTokenToClient(-3, clientIndex);//dont tell current player to do anything with his own path
+				NetworkCommunication::addTokenToAll(-3);//signal to do nothing
+				NetworkCommunication::addTokenToAll(cPlayer->cPathIndex);//sync current position in path (periodically, watch receive)
 			}
 			NetworkCommunication::addTokenToAll(cPlayer->getHp());
 		}
