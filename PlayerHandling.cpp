@@ -189,8 +189,8 @@ void PlayerHandling::receivePlayerData(int clientIndex) {
 			int actionIndex = NetworkCommunication::receiveNextToken(clientIndex);
 			if (actionIndex == -4) {//fresh connection, all coords and paths have to be transmitted
 				for (int cPlayer = 0; cPlayer < playerCount; cPlayer++) {
-					players->at(cPlayer)->setX(NetworkCommunication::receiveNextToken(clientIndex));
 					players->at(cPlayer)->setY(NetworkCommunication::receiveNextToken(clientIndex));
+					players->at(cPlayer)->setX(NetworkCommunication::receiveNextToken(clientIndex));
 				}
 
 				for (int playerI = 0; playerI < playerCount; playerI++) {
