@@ -49,14 +49,14 @@ public:
         connectedMtx.lock();
         int temp = clientSockets.size();
         connectedMtx.unlock();
-        return temp;
+        return 0;
     }
     void portableConnect();
 private:
 
 #ifdef  __linux__ 
     int addrlen;
-    vector<int> clientSocket;
+    vector<int> clientSockets;
     struct sockaddr_in address;
     int portableSend(int socket, const char* message) const;
     int portableRecv(int socket, char* recvBuffer);

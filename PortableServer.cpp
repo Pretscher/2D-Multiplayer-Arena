@@ -286,11 +286,13 @@ int PortableServer::portableSend(SOCKET socket, const char* message) const {
 void PortableServer::portableShutdown(SOCKET socket) {
     closesocket(socket);
 }
-#endif
 
 int PortableServer::portableRecv(SOCKET socket, char* recvBuffer) {
     return recv(socket, recvBuffer, recvbuflen, 0);
 }
+#endif
+
+
 
 
 
@@ -344,7 +346,7 @@ void PortableServer::portableConnect() {
 
     cout << "Server successfully set up.\n";
 
-    int tempClientSocket = accept(listenSocket, (struct sockaddr*) &address, (socklen_t*) &addrlen));
+    int tempClientSocket = accept(listenSocket, (struct sockaddr*) &address, (socklen_t*) &addrlen);
     if (tempClientSocket < 0) {
         cout << "Server accept failed";
     }
