@@ -1,5 +1,3 @@
-/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build/CMakeFiles/2DArena.dir
-/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build/CMakeFiles/package.dir
-/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build/CMakeFiles/package_source.dir
-/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build/CMakeFiles/edit_cache.dir
-/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build/CMakeFiles/rebuild_cache.dir
+/home/allah/Desktop/2D-Multiplayer-Arena/build/CMakeFiles/rebuild_cache.dir
+/home/allah/Desktop/2D-Multiplayer-Arena/build/CMakeFiles/edit_cache.dir
+/home/allah/Desktop/2D-Multiplayer-Arena/build/CMakeFiles/2DArena.dir

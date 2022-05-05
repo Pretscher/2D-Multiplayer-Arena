@@ -1,127 +1,127 @@
 [
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Ability.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Ability.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Ability.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Ability.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Ability.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Ability.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Algorithm.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Algorithm.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Algorithm.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Algorithm.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Algorithm.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Algorithm.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/BinaryHeap.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/BinaryHeap.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/BinaryHeap.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/BinaryHeap.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/BinaryHeap.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/BinaryHeap.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Eventhandling.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Eventhandling.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Eventhandling.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Eventhandling.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Eventhandling.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Eventhandling.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Fireball.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Fireball.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Fireball.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Fireball.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Fireball.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Fireball.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/GlobalRecources.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/GlobalRecources.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/GlobalRecources.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/GlobalRecources.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/GlobalRecources.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/GlobalRecources.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Graph.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Graph.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Graph.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Graph.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Graph.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Graph.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Main.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Main.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Main.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Main.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Main.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Main.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/NetworkCommunication.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/NetworkCommunication.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/NetworkCommunication.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/NetworkCommunication.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/NetworkCommunication.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/NetworkCommunication.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/PathfindingHandler.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PathfindingHandler.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PathfindingHandler.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/PathfindingHandler.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/PathfindingHandler.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/PathfindingHandler.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Player.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Player.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Player.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Player.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Player.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Player.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/PlayerHandling.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PlayerHandling.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PlayerHandling.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/PlayerHandling.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/PlayerHandling.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/PlayerHandling.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/PortableClient.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PortableClient.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PortableClient.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/PortableClient.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/PortableClient.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/PortableClient.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/PortableServer.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PortableServer.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/PortableServer.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/PortableServer.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/PortableServer.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/PortableServer.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Projectile.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Projectile.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Projectile.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Projectile.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Projectile.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Projectile.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/ProjectileHandling.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/ProjectileHandling.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/ProjectileHandling.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/ProjectileHandling.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/ProjectileHandling.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/ProjectileHandling.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Renderer.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Renderer.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Renderer.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Renderer.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Renderer.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Renderer.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Terrain.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Terrain.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Terrain.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Terrain.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Terrain.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Terrain.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Transfusion.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Transfusion.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Transfusion.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Transfusion.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Transfusion.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Transfusion.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/UiHandling.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/UiHandling.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/UiHandling.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/UiHandling.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/UiHandling.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/UiHandling.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/Utils.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Utils.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Utils.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/Utils.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/Utils.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/Utils.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/VladE.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/VladE.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/VladE.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/VladE.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/VladE.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/VladE.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/VladR.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/VladR.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/VladR.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/VladR.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/VladR.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/VladR.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/VladW.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/VladW.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/VladW.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/VladW.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/VladW.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/VladW.cpp"
 },
 {
-  "directory": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/build",
-  "command": "/usr/bin/g++  -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/2DLib/include -g -o CMakeFiles/2DArena.dir/WorldHandling.cpp.o -c /home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/WorldHandling.cpp",
-  "file": "/home/allah/Desktop/Vscode-Workspace/2D-Multiplayer-Arena/WorldHandling.cpp"
+  "directory": "/home/allah/Desktop/2D-Multiplayer-Arena/build",
+  "command": "/usr/bin/g++   -I/home/allah/Desktop/2D-Multiplayer-Arena/Textures -I/home/allah/Desktop/2D-Multiplayer-Arena/2DLib/include  -g   -o CMakeFiles/2DArena.dir/src/WorldHandling.cpp.o -c /home/allah/Desktop/2D-Multiplayer-Arena/src/WorldHandling.cpp",
+  "file": "/home/allah/Desktop/2D-Multiplayer-Arena/src/WorldHandling.cpp"
 }
 ]
