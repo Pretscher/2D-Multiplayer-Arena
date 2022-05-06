@@ -11,7 +11,7 @@ shared_ptr<sf::RenderWindow> Renderer::currentWindow;
 
 void Renderer::init(shared_ptr<sf::RenderWindow> window) {
     currentWindow = window;
-    currentWindow->setPosition(sf::Vector2i(-13, -13));//fsr thats left top, good library
+    currentWindow->setPosition(sf::Vector2i(0, 0));//fsr thats left top, good library
 }
 
 void Renderer::linkViewSpace(shared_ptr<int[]> io_viewSpace, shared_ptr<const int[]> io_viewspaceLimits) {
